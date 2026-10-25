@@ -399,6 +399,16 @@ html[data-sector="xeltar"] { --s1: #5dffa8; --s2: #1fbf8f; --s3: #c6f36b; }
 .gladder span.on { border-color: var(--win); color: var(--win); }
 .lowfx .aurora, .lowfx #stars, .lowfx .sheen, .lowfx .scanline { display: none; }
 
+/* ---------- Signatur ---------- */
+.intro-by { margin-top: 18px; font: 600 .72rem var(--f-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--ink-soft); opacity: .8; animation: fadeIn .8s 1.9s both; }
+.intro-by b { color: var(--ink); font-weight: 700; background: linear-gradient(90deg, var(--s1), var(--s3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.credit { max-width: 1320px; margin: 22px auto 0; display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;
+  font: 600 .7rem var(--f-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); opacity: .7; padding-bottom: 70px; }
+.credit span { font-family: var(--f-display); letter-spacing: .14em; }
+.credit i { width: 4px; height: 4px; border-radius: 50%; background: var(--s1); box-shadow: 0 0 6px var(--s1); }
+.credit a { color: var(--ink); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--s1) 60%, transparent); padding-bottom: 1px; transition: color .2s, border-color .2s; }
+.credit a:hover, .credit a:focus-visible { color: var(--s1); border-color: var(--s1); }
+
 /* ---------- Kopfzeile ---------- */
 .machine { display: grid; gap: 14px; padding: 16px; min-width: 0; position: relative; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
@@ -916,7 +926,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
   #wheel { transition-duration: .3s; }
   .pod, .pod.open { animation: none; }
-  .daily.ready svg, .warpfx.go, .gamble, .pdot, .mapship, .ach.new, .bip-bot svg, .bip-thrust, .bip-ant, .bip-eyes, .bip-arm, .bip-heart, .bip-tear, #shipG.roll, #focusShip.roll, .ship.boost .flame, .bubble, .sonar, .dent, .peek, .jackpot::after, .streak svg, .frame.heat3, .contract, .contract.done::after, .hsheen, .fire, .cable, .nav, .strobe, .chase, .diamond, .ripple, .cone, .focus-view svg.cam, .scanline, .callout i, .sym.lasered svg, .sym.lasered::before, .sym.grow svg, .sym.wildborn::before, .aurora i, .emb-ring, .emb-ring2, .emb-star, .brand h1, .sheen, .spinwrap.idle::after, .intro-title span, .emblem.big, .intro-btn, .banner.mega::after, .banner .b-amt.glitch, .radio i, .sym.hit svg, .reel.tease, .banner::before, .frame.shake, .strip.land, .spinwrap.go .spinring, .sym.feature::after, .ship, .flame, .dish, .ping, .pulse, .flick, .blink, .energy, .shipview.damage { animation: none; }
+  .intro-by, .daily.ready svg, .warpfx.go, .gamble, .pdot, .mapship, .ach.new, .bip-bot svg, .bip-thrust, .bip-ant, .bip-eyes, .bip-arm, .bip-heart, .bip-tear, #shipG.roll, #focusShip.roll, .ship.boost .flame, .bubble, .sonar, .dent, .peek, .jackpot::after, .streak svg, .frame.heat3, .contract, .contract.done::after, .hsheen, .fire, .cable, .nav, .strobe, .chase, .diamond, .ripple, .cone, .focus-view svg.cam, .scanline, .callout i, .sym.lasered svg, .sym.lasered::before, .sym.grow svg, .sym.wildborn::before, .aurora i, .emb-ring, .emb-ring2, .emb-star, .brand h1, .sheen, .spinwrap.idle::after, .intro-title span, .emblem.big, .intro-btn, .banner.mega::after, .banner .b-amt.glitch, .radio i, .sym.hit svg, .reel.tease, .banner::before, .frame.shake, .strip.land, .spinwrap.go .spinring, .sym.feature::after, .ship, .flame, .dish, .ping, .pulse, .flick, .blink, .energy, .shipview.damage { animation: none; }
 }
 </style>
 
@@ -939,6 +949,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
     <p class="intro-sub">Salvage Slots · Bergen. Ausbauen. Überleben.</p>
     <button type="button" class="intro-btn" id="introBtn">Andocken</button>
     <small class="intro-hint">Startet Musik und Sound. Beides lässt sich oben jederzeit umschalten.</small>
+    <small class="intro-by">ein Spiel von <b>heinr2ch</b></small>
   </div>
 </div>
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -1234,6 +1245,8 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
     </div>
   </div>
 </div>
+
+<footer class="credit"><span>Sternenwrack</span><i aria-hidden="true"></i>ein Spiel von <a href="https://github.com/heinr2ch" target="_blank" rel="noopener">heinr2ch</a></footer>
 
 <div class="bonus" id="focus" hidden>
   <div class="bonus-card glass focus-card" style="--bc: var(--cyan)" role="dialog" aria-modal="true" aria-labelledby="focusTitle">
@@ -2342,13 +2355,15 @@ function shipSVG(L, k = "a") {
     ${[150, 158, 166].map(x => `<rect x="${x}" y="${t + 8}" width="5" height="10" rx="1" fill="#1a2238"/>`).join("")}
     ${Array.from({ length: 5 }, (_, i) => `<rect x="${186 + i * 12}" y="${t + 10}" width="7" height="4" rx="1.4" fill="#bff4ff" opacity=".8"/>`).join("")}
     <path d="M${l + 10},118 L${n - 40},118" stroke="#4fe3ff" stroke-width="2" opacity=".7"/>
-    <text x="244" y="129" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" fill="#c9d3e6">KSV-7</text>`;
+    <text x="244" y="129" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" fill="#c9d3e6">KSV-7</text>
+    <text x="146" y="129" font-family="JetBrains Mono, monospace" font-size="4.2" fill="#c9d3e6" opacity=".45">WERFT HEINR2CH</text>`;
   if (H === 3) det += `
     <path d="M150,${t} v${b - t} M210,${t} v${b - t} M270,${t} v${b - t}" stroke="#4fe3ff" stroke-width="1" opacity=".35"/>
     <path d="M${l + 14},114 L${n - 50},114" stroke="#4fe3ff" stroke-width="2.4" filter="url(#glow)"/><path d="M${l + 24},120 L${n - 70},120" stroke="#ff4fd8" stroke-width="1.6" filter="url(#glow)"/>
     ${Array.from({ length: 10 }, (_, i) => `<rect class="chase" style="animation-delay:${i * .12}s" x="${116 + i * 16}" y="88" width="9" height="4" rx="1.6" fill="#bff4ff"/>`).join("")}
     <g transform="translate(228 100) scale(.32)"><circle cx="32" cy="32" r="26" fill="none" stroke="#e0e6ff" stroke-width="3"/><path d="M18 41 L28 20 L35 30 L41 24 L46 42 Z" fill="none" stroke="#e0e6ff" stroke-width="3.4" stroke-linejoin="round"/></g>
-    <text x="250" y="131" font-family="Unbounded, sans-serif" font-weight="800" font-size="7" fill="#e0e6ff">KSV-7</text>`;
+    <text x="250" y="131" font-family="Unbounded, sans-serif" font-weight="800" font-size="7" fill="#e0e6ff">KSV-7</text>
+    <text x="150" y="131" font-family="JetBrains Mono, monospace" font-size="4.2" fill="#e0e6ff" opacity=".5">WERFT HEINR2CH</text>`;
   // Reaktorleitungen im Rumpf
   if (R === 2) det += `<path d="M${l + 20},${t + 6} H${n - 40} M${l + 20},${b - 6} H${n - 50}" stroke="#4fe3ff" stroke-width="1.2" opacity=".45"/>`;
   if (R === 3) det += `<path class="energy" d="M${l + 20},${t + 6} H${n - 40} M${l + 20},${b - 6} H${n - 50}" stroke="#b49cff" stroke-width="1.6" stroke-dasharray="5 7" filter="url(#glow)"/>`;
