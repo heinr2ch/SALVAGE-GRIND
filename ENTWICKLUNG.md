@@ -60,3 +60,12 @@ Stand: **Beta 0.10.0** (25.10.2026). Diese Datei dient als Übergabe für neue C
 - Die CSS-Klasse `.bonus` ist das Vollbild-Overlay. Keine anderen Elemente so nennen (früherer Bug mit `msg bonus`).
 - Die Leertaste startet einen Scan, außer in Eingabefeldern.
 - Elemente, die per `setInterval` aktualisiert werden, nicht komplett per `innerHTML` neu bauen, sonst laufen Einblend-Animationen immer wieder neu.
+
+## Weitere Stile (Themes)
+- Weitere Stile werden **nicht von Hand kopiert**, sondern per Skript aus dem Sternenwrack-Quelltext erzeugt. So bekommen sie neue Features automatisch.
+- **Treibgut** (Meer, Floß, Inseln) liegt unter `treibgut/index.html`, live unter https://heinr2ch.github.io/STERNENWRACK/treibgut/. Eigene Version (Start Beta 0.1.0), eigenes `treibgut/CHANGELOG.md`.
+- Erzeugen: `python3 tools/treibgut.py <sternenwrack-quelltext.html> <ausgabe.html>` (Quelltext = Artifact-Fassung ohne `<html>/<head>`), danach wie üblich in die Standalone-Hülle packen.
+  Die Inhalte liegen in `tools/treibgut_parts*.py`: Farben (`COLOR_MAP`), Symbole, Papagei-SVG, Floß-Grafik (`RAFT_SVG`), Meer-Szene (`OCEAN_SKY`), Inseln, Crew, Erfolge, Texte (`PHRASES` exakt, `WORDS` als Regex).
+- Das Skript bricht ab, wenn ein Ankertext fehlt. Nach Sternenwrack-Änderungen also neu laufen lassen und fehlende Anker in den Parts anpassen.
+- Getrennte Speicherschlüssel (`tg-` statt `sw-`, Codes `TGS1-`/`TGK1-`), damit sich die Spielstände auf derselben Domain nicht mischen.
+- WORDS-Ersetzungen nie auf Bezeichner im Code loslassen (z. B. `countCredits`), daher Lookbehind `(?<![A-Za-z])`.

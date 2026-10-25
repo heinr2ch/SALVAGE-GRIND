@@ -17,3 +17,13 @@ Ein Sci-Fi-Spielautomat im Browser – **nur mit Spielgeld**, es geht um kein ec
 Der Spielstand wird im eigenen Browser gespeichert. Über das Bordbuch lässt er sich als Code mitnehmen.
 
 Das ganze Spiel steckt in einer einzigen Datei: `index.html`.
+
+## Weitere Stile
+
+### Treibgut · Survival Slots
+
+**Aktuelle Version: Beta 0.1.0** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
+
+Dasselbe Spielsystem im Meeres-Survival-Stil: Floß statt Raumschiff, Inseln statt Sektoren, Papagei Koko statt Bip. Eigener Spielstand.
+
+**Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/treibgut/
