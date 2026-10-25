@@ -17,6 +17,21 @@ def load():
             n = p[0].count("#")
             if any(x.count("#") != n for x in p[1:]): bad.append((f, p[0])); continue
             d[p[0]] = p[1:]
+    # Teil 2 und 3: nummerierte Übersetzungen (Spalte 1 = Nummer in pX_keys.json); "§" steht für beliebigen Text
+    sig = lambda t: (t.count("#"), t.count("§"), t.count("{C}"), t.count("{S}"), sorted(re.findall(r"</?[a-z]+", t)))
+    for part in ("p2", "p3"):
+        kf = os.path.join(HERE, "i18n", part + "_keys.json")
+        if not os.path.exists(kf): continue
+        keys = json.load(open(kf, encoding="utf-8"))
+        for f in sorted(glob.glob(os.path.join(HERE, "i18n", part + "_*.tsv"))):
+            for line in open(f, encoding="utf-8"):
+                line = line.rstrip("\n")
+                if not line or line.startswith("#"): continue
+                p = line.split("\t")
+                if len(p) != 7 or not p[0].isdigit() or int(p[0]) >= len(keys): bad.append((f, line[:50])); continue
+                k = keys[int(p[0])]
+                if any(sig(x) != sig(k) for x in p[1:]): bad.append((f, part + " Nr. " + p[0] + " passt nicht")); continue
+                d[k] = p[1:]
     return d, bad
 
 def strip(s):

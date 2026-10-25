@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.13.1**, Treibgut 0.5.1, Eisenfront 0.4.1, Neustadt 0.5.1 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.14.0**, Treibgut 0.6.0, Eisenfront 0.5.0, Neustadt 0.6.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -97,4 +97,7 @@ Stand: Sternenwrack **Beta 0.13.1**, Treibgut 0.5.1, Eisenfront 0.4.1, Neustadt 
 - **Tab-Symbole:** `tools/favicons.py` (`FAVICONS` je Welt, SVG als data-URL). Sternenwrack: `python3 tools/favicons.py index.html sw`, die Welt-Skripte setzen ihres am Ende.
 - **Start-Knopf (SW 0.13.1 usw.):** CSS-Block `Start-Knopf mit Feedback` direkt nach `.spin.stop`, JS-Block `Start-Knopf: Feedback` vor `window.claude?.hot?.snapshot`. Klassen am `#spinwrap`: `pressed` (Einfedern + `.sp-ripple`), `go` (Lichtbogen `.sp-arc`, drehendes Symbol), `won` (über umhülltes `celebrateWin`), `nope` (Kopfschütteln, wenn der Knopf gesperrt ist). Zähler `#spBadge` zeigt Auto-Drehs bzw. Freispiele. Farbe über `--sp-glow` (Standard `--cyan`, in Freispielen `--lime`), also passt er sich jeder Welt an.
 - **Versionen für alle Welten auf einmal:** `python3 tools/bump.py "Titel" "Punkt 1" ...` (PATCH) bzw. mit `--minor`. Trägt Version, Protokoll im Spiel, CHANGELOG.md und README ein. Danach Welten neu erzeugen.
-- **Sprachen Teil 2 (in Arbeit):** `trFull` übersetzt ganze HTML-Texte (Sprechblasen in `bip`, Hilfe in `helpShow`, Funk in `radio`), Namen werden dabei zu `{C}`/`{S}`. `trRich` übersetzt Absätze mit Fettdruck als Ganzes. Texte gesammelt in `tools/i18n/p2_keys.json` (nummeriert).
+- **Sprachen Teil 2 (SW 0.14.0, TG 0.6.0, EF 0.5.0, NS 0.6.0):** `trFull` übersetzt ganze HTML-Texte (Sprechblasen in `bip`, Hilfe in `helpShow`, Funk in `radio`), Namen werden dabei zu `{C}`/`{S}`. `trRich` übersetzt Absätze mit Fettdruck als Ganzes. Texte in `tools/i18n/p2_keys.json` (Sprüche, Funk, Regeln) und `p3_keys.json` (Meldungen aus dem Code), Übersetzungen in `p2_*.tsv`/`p3_*.tsv` (Spalte 1 = Nummer).
+  - Muster: In Schlüsseln steht `§` für beliebigen Text, der selbst wieder übersetzt wird (`trLoose`, `TR_PATS`, längste Muster zuerst; `trBits` zerlegt an „ · “ und „, “). `#` = Zahl, `%` ist ein echtes Prozentzeichen. Ohne Treffer wird an „ · “ zerlegt.
+  - Neue Texte finden: Parser-Skript (acorn aus `/opt/node-tools/node_modules`) sammelt alle deutschen Zeichenketten aus den gebauten Dateien, die noch nicht im Wörterbuch stehen. Das Versionsprotokoll bleibt absichtlich Deutsch.
+  - `tools/de_fix.py`: Grammatik-Korrekturen am deutschen Text, die durch die Wortersetzung entstehen (läuft vor dem Einsetzen der Sprachdaten). Wer dort etwas ändert, muss passende Schlüssel in den Sprachdateien mit anpassen.

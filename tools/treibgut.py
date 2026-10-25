@@ -136,6 +136,8 @@ s = WORLDS_RE.sub(lambda m: WORLDS_ORIG, s, count=1)
 rep('const WORLD_ID = "sternenwrack";', 'const WORLD_ID = "treibgut";')
 
 from favicons import set_favicon
+from de_fix import de_fix
+s = de_fix(s, "tg")
 s, _n = i18n_inject(s); print("Sprachdaten:", _n, "Einträge")
 s = set_favicon(s, "tg")
 open(OUT, "w", encoding="utf-8").write(s)

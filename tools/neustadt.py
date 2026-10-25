@@ -108,7 +108,7 @@ for a, b in POST_NS:
 
 # 11. Fahrzeuge werden Stadtstufen, Version, Protokoll
 s = re.sub(r"const VEHICLES = \[\n.*?\n\];\n", lambda m: VEHICLES_NS, s, count=1, flags=re.S)
-s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.5.1";', s)
+s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.6.0";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_NS)
 
 # 12. Welten
@@ -116,6 +116,8 @@ s = WORLDS_RE.sub(lambda m: WORLDS_ORIG, s, count=1)
 rep('const WORLD_ID = "eisenfront";', 'const WORLD_ID = "neustadt";')
 
 from favicons import set_favicon
+from de_fix import de_fix
+s = de_fix(s, "ns")
 s, _n = i18n_inject(s); print("Sprachdaten:", _n, "Einträge")
 s = set_favicon(s, "ns")
 open(OUT, "w", encoding="utf-8").write(s)

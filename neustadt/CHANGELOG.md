@@ -2,6 +2,12 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.6.0 · Sprachen Teil 2 · 25.10.2026
+- Jetzt übersetzt: Spielregeln, Hilfemodus, Sprechblasen von Bip, Koko, Rex und Paule, Funkzeile, Aufträge, Erfolge, Ränge und Gewinnmeldungen.
+- Zusammengesetzte Meldungen mit Namen und Zahlen werden ebenfalls übersetzt.
+- Nur das Versionsprotokoll bleibt auf Deutsch.
+- Kleine Grammatikfehler in Neustadt, Treibgut und Eisenfront behoben.
+
 ## Beta 0.5.1 · Neuer Start-Knopf · 25.10.2026
 - Der Start-Knopf ist moderner und gibt mehr Rückmeldung: Er federt beim Drücken ein und schickt eine Lichtwelle los, beim Drehen läuft ein Lichtbogen um ihn herum und das Symbol dreht sich mit.
 - Bei einem Gewinn leuchtet der Knopf golden auf. Geht gerade nichts, zum Beispiel weil der Einsatz zu hoch ist, schüttelt er kurz den Kopf.
