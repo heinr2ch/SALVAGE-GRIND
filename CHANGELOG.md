@@ -2,6 +2,12 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.10.0 · Risikoleiter · 25.10.2026
+- Neue Risikoleiter nach normalen Gewinnen, neben „Risiko ×2“: von ×1 bis ×100 hochsteigen.
+- Das Licht springt zwischen Ziel und Absturz, du drückst Stopp (oder Leertaste).
+- Eine oder zwei Sprossen auf einmal. Jede Chance wird angezeigt und ist fair (alter Wert / neuer Wert). Kassieren jederzeit.
+- Ganz oben gibt es 2 Sternenstaub extra. Neuer Erfolg: Höhenluft.
+
 ## Beta 0.9.0 · Freispiele, die krachen · 25.10.2026
 - Freispiele: Der Multiplikator startet bei ×2 und steigt mit jedem Gewinn bis ×5.
 - Kristalldrohnen setzen in Freispielen feste Wild-Kristalle auf Walze 2 bis 4, die bis zum Rundenende liegen bleiben (bis zu 3).

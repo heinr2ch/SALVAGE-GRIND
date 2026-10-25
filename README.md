@@ -1,6 +1,6 @@
 # Sternenwrack · Salvage Slots
 
-**Aktuelle Version: Beta 0.9.0** · [Änderungsprotokoll](CHANGELOG.md)
+**Aktuelle Version: Beta 0.10.0** · [Änderungsprotokoll](CHANGELOG.md)
 
 Ein Sci-Fi-Spielautomat im Browser – **nur mit Spielgeld**, es geht um kein echtes Geld.
 

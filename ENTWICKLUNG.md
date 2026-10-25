@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: **Beta 0.9.0** (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: **Beta 0.10.0** (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -40,6 +40,7 @@ Stand: **Beta 0.9.0** (25.10.2026). Diese Datei dient als Übergabe für neue Cl
 - **Sternenschatz (Jackpot):** wächst pro Scan (`JP_FEED`), Chance `bet()/JP_DIV`.
 - **Bip-Boost:** Nach 12 Scans ohne Gewinn (`BOOST_AT`) garantiert Bip einen Gewinn.
 - **Signal-Risiko:** Gewinn verdoppeln per Farbwahl, 50:50, bis ×32.
+- **Risikoleiter (0.10.0):** `playLadder`, Sprossen `LADDER` ×1 bis ×100. Chance = alter/neuer Wert (fair), 1 oder 2 Sprossen pro Sprung, Licht mit Stopp-Knopf (`#rStop`, Leertaste). Gipfel +2 Staub.
 - **Hangar:** Schiff vom Wrack zum Kreuzer aufrüsten, sichtbar animiert. Bei Pleite Notverkauf von Teilen, ohne Teile ist das Schiff verloren und es gibt ein neues Wrack.
 - **Schiffsregister (0.8.2):** Benennungsdialog `#naming` (`openNaming("start"|"lost")`). Kapitänsname (`state.captain`) und Schiffsname mit festem Präfix „KSV-7“ (`state.shipName`, `state.shipNamed`). Zufallsvorschläge mit Würfel. Nach Schiffsverlust neu taufen.
 - **Sternenstaub (0.8.0):** Zweitwährung `state.dust`, Messer `dustMeter` (+2 pro Scan, +8 pro sichtbarem Sternenkristall, 100 ergeben 1 Staub). Extra für große Gewinne, Bonusspiele, Jackpot (+5) und starke Freispiele.
