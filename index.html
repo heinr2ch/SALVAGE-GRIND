@@ -1341,16 +1341,16 @@ const ICONS = {
   warp: `<svg viewBox="0 0 40 40"><rect x="1.5" y="1.5" width="37" height="37" rx="9" fill="#2a0726" stroke="#ff4fd8" stroke-width="2"/><circle cx="20" cy="16.5" r="12" fill="#3d0a38"/><path d="M20 14a2.5 2.5 0 1 1-2.5 2.5a5 5 0 0 1 5-5a7.5 7.5 0 1 1-7.5 7.5a10 10 0 0 1 10-10" fill="none" stroke="#ff4fd8" stroke-width="2.2" stroke-linecap="round"/><circle cx="20" cy="16.5" r="1.8" fill="#fff"/><circle cx="31" cy="7" r="1" fill="#fff"/><circle cx="9" cy="24" r=".8" fill="#fff"/>${band("BONUS", "#ff4fd8", "#2a0726")}</svg>`,
 };
 
-// Abgestimmt per Simulation (2 Mio. Scans): Auszahlungsquote rund 96 %.
-// Freispiele etwa alle 80 Scans, jedes Bonusspiel etwa alle 200 Scans, Bergungslaser etwa alle 45 Scans.
-// Strähne, Aufträge, Rang-Belohnungen und Sternenschatz sind eingerechnet: zusammen rund 97 %.
+// Balance ab Beta 0.7.2 (per Simulation, 1,5 Mio. Scans): Etwa jeder dritte Scan gewinnt.
+// Der Automat allein zahlt rund 105 % zurück, mit Aufträgen, Rang und Jackpot mehr.
+// Man kommt also im Schnitt langsam voran, Pech und Notverkäufe bleiben trotzdem möglich.
 const SYMBOLS = [
-  { id: "scrap",   name: "Schrott",         w: 26, pay: [4, 15, 37],     color: "#b9c3dc" },
-  { id: "cell",    name: "Energiezelle",    w: 22, pay: [7, 22, 66],     color: "#5dffa8" },
-  { id: "chip",    name: "Datenkern",       w: 17, pay: [11, 37, 112],   color: "#a48cff" },
-  { id: "core",    name: "Reaktorkern",     w: 12, pay: [18, 66, 224],   color: "#ff9a3c" },
-  { id: "crystal", name: "Sternenkristall", w: 8,  pay: [37, 150, 560],  color: "#4fe3ff" },
-  { id: "relic",   name: "Fremdartefakt",   w: 6,  pay: [60, 225, 930],  color: "#ff6b9a" },
+  { id: "scrap",   name: "Schrott",         w: 42, pay: [3, 12, 30],     color: "#b9c3dc" },
+  { id: "cell",    name: "Energiezelle",    w: 30, pay: [5, 18, 52],     color: "#5dffa8" },
+  { id: "chip",    name: "Datenkern",       w: 14, pay: [9, 29, 88],     color: "#a48cff" },
+  { id: "core",    name: "Reaktorkern",     w: 9,  pay: [15, 52, 175],   color: "#ff9a3c" },
+  { id: "crystal", name: "Sternenkristall", w: 5,  pay: [29, 118, 440],  color: "#4fe3ff" },
+  { id: "relic",   name: "Fremdartefakt",   w: 3,  pay: [49, 175, 735],  color: "#ff6b9a" },
   { id: "beacon",  name: "Notsignal",       w: 4,  pay: null, special: "#b8ff5c" },
   { id: "capsule", name: "Frachtkapsel",    w: 6,  pay: null, reels: [0, 2, 4], special: "#ffc94a" },
   { id: "warp",    name: "Sprungkern",      w: 6,  pay: null, reels: [1, 2, 3], special: "#ff4fd8" },
@@ -4037,8 +4037,9 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "0.7.1";
+const GAME_VERSION = "0.7.2";
 const CHANGELOG = [
+  { v: "0.7.2", date: "25.10.2026", title: "Mehr Gewinne", items: ["Etwa jeder dritte Scan gewinnt jetzt, vorher nur jeder fünfte.", "Der Automat zahlt im Schnitt mehr aus, als man einsetzt: Man kommt langsam voran, statt Credits zu verlieren.", "Gewinntabelle angepasst: häufigere kleine Funde, seltene Funde bleiben wertvoll."] },
   { v: "0.7.1", date: "25.10.2026", title: "Korrektur", items: ["Die goldene Statuszeile legt sich nach Bonus-Ereignissen nicht mehr als dunkle Ebene über den Automaten.", "Versionsnummer und „Was ist neu“ im Bordbuch."] },
   { v: "0.7.0", date: "25.10.2026", title: "Bip-Boost", items: ["Bips Glücksladung füllt sich bei Scans ohne Gewinn.", "Nach 12 Scans ohne Gewinn garantiert Bip den nächsten Gewinn, mit eigener Animation."] },
   { v: "0.6.1", date: "25.10.2026", title: "Online", items: ["Sternenwrack läuft auf GitHub Pages.", "Dezentes heinr2ch-Branding im Intro, in der Fußzeile und als Werftstempel.", "Titel im Intro bricht nicht mehr um."] },

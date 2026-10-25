@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.7.2 · Mehr Gewinne · 25.10.2026
+- Etwa jeder dritte Scan gewinnt jetzt, vorher nur jeder fünfte.
+- Der Automat zahlt im Schnitt mehr aus, als man einsetzt: Man kommt langsam voran, statt Credits zu verlieren.
+- Gewinntabelle angepasst: häufigere kleine Funde, seltene Funde bleiben wertvoll.
+
 ## Beta 0.7.1 · Korrektur · 25.10.2026
 - Die goldene Statuszeile legt sich nach Bonus-Ereignissen nicht mehr als dunkle Ebene über den Automaten.
 - Versionsnummer im Spiel und „Was ist neu“ im Bordbuch.
