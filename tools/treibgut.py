@@ -28,6 +28,7 @@ def block(start, end, new, keep_end=True):
 from treibgut_parts import *   # Inhalte (Grafiken, Texte)
 from treibgut_parts4 import *  # rustikaler Look und eigene Musik
 from treibgut_parts5 import *  # Fangnetz-Kaskaden, rustikale Geräusche, Wurfhaken
+from treibgut_parts6 import *  # drei Fahrzeuge
 for _a, _b in SKY_SLOW:
     assert _a in OCEAN_SKY, ("SKY_SLOW", _a[:60])
     OCEAN_SKY = OCEAN_SKY.replace(_a, _b)
@@ -62,7 +63,8 @@ block("const BIP = {", "const bipState", BIP_NEW)
 # ---------- 7. Floß statt Raumschiff ----------
 block("const CATS = [", "CATS.forEach(c =>", CATS_NEW)
 rep('const CLASS_NAMES = [[1, "Wrack", "#ff6b7a"], [4, "Schrottschlepper", "#ff9a3c"], [8, "Bergungsfrachter", "#ffc94a"], [12, "Sternenkreuzer", "#4fe3ff"], [14, "Flaggschiff", "#b49cff"], [15, "Legende", "#ff4fd8"]];', CLASS_NEW)
-block("/* Schiffsgrafik: jede Kategorie", "/* Himmel, Trümmer und Partikel", RAFT_SVG)
+block("/* Schiffsgrafik: jede Kategorie", "/* Fahrzeugklassen: Zusatzteile", RAFT_SVG + VEH_TG + "\n")
+block("/* Fahrzeugklassen: Zusatzteile", "/* Himmel, Trümmer und Partikel", "")
 block("function sizeSkyObj(o) {", "const mainSky = makeSky(", OCEAN_SKY)
 block("function decalSVG(g) {", "function choosePaint(id) {", DECAL_NEW)
 block("const PAINTS = [", "const DECALS = [", PAINTS_NEW)
@@ -79,6 +81,7 @@ block("const SECTORS = [", "const curSector", SECTORS_NEW)
 block("const CREW = [", "const hasCrew", CREW_NEW)
 block("const EXPED = [", "const sectorIdx", EXPED_NEW)
 block("const ACH = [", "function checkAch()", ACH_NEW)
+for a, b in ACH_TG_REPS: rep(a, b)
 for a, b in ALBUM_REPS:
     rep(a, b)
 rep(RANKS_OLD, RANKS_NEW)
@@ -109,6 +112,7 @@ for a, b in WORDS:
 rep("\n</style>", "\n" + RUSTIC_CSS + EXTRA_CSS)
 rep_all("Fredoka, sans-serif", "'Patua One', serif")
 
+s = re.sub(r"const VEHICLES = \[\n.*?\n\];\n", lambda m: VEHICLES_TG, s, count=1, flags=re.S)
 # ---------- 13. Version und Änderungsprotokoll ----------
 s = re.sub(r'const GAME_VERSION = "[^"]+";', f'const GAME_VERSION = "{TG_VERSION_NET}";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_NEW)

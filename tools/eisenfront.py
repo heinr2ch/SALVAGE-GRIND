@@ -32,6 +32,7 @@ from eisenfront_parts1 import *
 from eisenfront_parts2 import *
 from eisenfront_parts3 import *
 from eisenfront_parts4 import *
+from eisenfront_parts5 import *
 
 # 1. Speicher und Codes
 s = re.sub(r'(["`])tg-', r'\1ef-', s)
@@ -55,7 +56,7 @@ block("const DRONE = `", "function sparkAt(", PIGEON + "\n")
 # 5. Panzer, Gelände, Hintergrund
 block("const CATS = [", "CATS.forEach(c =>", CATS_EF)
 rep(CLASS_TG, CLASS_EF)
-block("/* Floßgrafik", "/* Himmel, Trümmer", TANK_SVG)
+block("/* Floßgrafik", "/* Himmel, Trümmer", TANK_SVG + VEH_EF + "\n")
 block("function sizeSkyObj(o) {", "const mainSky = makeSky(", FIELD_SKY)
 block("function drawStars(dt) {", "let lastT = performance.now();", EMBERS + "\n")
 block("function decalSVG(g) {", "function choosePaint(id) {", DECAL_EF)
@@ -69,6 +70,7 @@ block("const SECTORS = [", "const curSector", SECTORS_EF)
 block("const CREW = [", "const hasCrew", CREW_EF)
 block("const EXPED = [", "const sectorIdx", EXPED_EF)
 block("const ACH = [", "function checkAch()", ACH_EF)
+for a, b in ACH_EF_REPS: rep(a, b)
 for a, b in ALBUM_REPS_EF:
     if a != b: rep(a, b)
 rep(RANKS_TG, RANKS_EF)
@@ -129,8 +131,10 @@ for a, b in POST_FIX:
 s = s.replace("'Patua One', serif", "'Black Ops One', sans-serif").replace("Patua One", "Black Ops One")
 s = s.replace("/* ---------- Treibgut: Fangnetz", "/* ---------- Eisenfront: Ersatzteillager (Fangnetz-Engine)")
 
+s = re.sub(r"const VEHICLES = \[\n.*?\n\];\n", lambda m: VEHICLES_EF, s, count=1, flags=re.S)
+
 # 10. Version und Protokoll
-s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.2.0";', s)
+s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.3.0";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_EF)
 
 # 11. Welten

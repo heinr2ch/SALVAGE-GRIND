@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Treibgut</title><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><meta name="claude:viewport-fit-sides" content="cover">
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><title>Treibgut</title><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patua+One&family=Alegreya+Sans:wght@400;500;700;800&family=Courier+Prime:wght@400;700&display=swap">
 <style>
@@ -382,6 +382,23 @@ html[data-sector="xeltar"] { --s1: #8fe07a; --s2: #1f8fbf; --s3: #9ff3d6; }
 .swatch:disabled { opacity: .45; cursor: default; }
 .swatch small { color: var(--ink-soft); font-size: .56rem; line-height: 1.2; }
 .expcard { display: grid; gap: 8px; padding: 12px; border-radius: 12px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07); }
+.vpills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.vp { display: flex; align-items: center; gap: 6px; min-width: 0; padding: 6px 8px; border-radius: 9px; border: 1px solid var(--line); background: rgba(0,0,0,.22); color: var(--ink-soft); font: 600 .68rem var(--f-body); line-height: 1.15; }
+.vp i { flex: none; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; font: 700 .62rem var(--f-mono); font-style: normal; background: rgba(255,255,255,.08); color: var(--ink-soft); }
+.vp.on { color: var(--ink); border-color: var(--vc); box-shadow: inset 0 0 0 1px var(--vc), 0 0 14px color-mix(in srgb, var(--vc) 30%, transparent); }
+.vp.on i { background: var(--vc); color: #0a0c14; }
+.vp.done { color: var(--ink); }
+.vp.done i { background: var(--win); color: #0a0c14; }
+.vnote { margin: 0; font-size: .78rem; color: var(--ink-soft); }
+.vnote b { color: var(--ink); }
+.vreq { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: .74rem; color: var(--ink-soft); }
+.vreq li { display: flex; justify-content: space-between; gap: 8px; padding-left: 18px; position: relative; }
+.vreq li::before { content: "○"; position: absolute; left: 2px; color: var(--ink-soft); }
+.vreq li.ok { color: var(--ink); }
+.vreq li.ok::before { content: "✓"; color: var(--win); }
+.vreq b { font: 700 .72rem var(--f-mono); }
+.vehcard .bbtn { justify-self: start; }
+.vehcard .bbtn:disabled { opacity: .45; cursor: default; }
 .expcard h3 { margin: 0; font: 700 .68rem var(--f-display); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
 .exprow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .expbtn { display: grid; gap: 2px; padding: 8px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0,0,0,.25); color: var(--ink); cursor: pointer; text-align: left; font: inherit; }
@@ -1083,6 +1100,51 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
   .pod, .pod.open { animation: none; }
   .stat.dust b.pop, .bchip.low, .bip-charge.full, .bip.boost .bip-bot, .boostbeam.go, .frame.boosted, .intro-by, .daily.ready svg, .warpfx.go, .gamble, .pdot, .mapship, .ach.new, .bip-bot svg, .bip-thrust, .bip-ant, .bip-eyes, .bip-arm, .bip-heart, .bip-tear, #shipG.roll, #focusShip.roll, .ship.boost .flame, .bubble, .sonar, .dent, .peek, .jackpot::after, .streak svg, .frame.heat3, .contract, .contract.done::after, .hsheen, .fire, .cable, .nav, .strobe, .chase, .diamond, .ripple, .cone, .focus-view svg.cam, .scanline, .callout i, .sym.lasered svg, .sym.lasered::before, .sym.grow svg, .sym.wildborn::before, .aurora i, .emb-ring, .emb-ring2, .emb-star, .brand h1, .sheen, .spinwrap.idle::after, .intro-title span, .emblem.big, .intro-btn, .banner.mega::after, .banner .b-amt.glitch, .radio i, .sym.hit svg, .reel.tease, .banner::before, .frame.shake, .strip.land, .spinwrap.go .spinring, .sym.feature::after, .ship, .flame, .dish, .ping, .pulse, .flick, .blink, .energy, .shipview.damage { animation: none; }
 }
+/* ---------- Handy: kompakt, Kontrollleiste unten fest, kein Doppeltipp-Zoom ---------- */
+html { touch-action: manipulation; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+button, a, label, .chip, .frame, .bay, .deck { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+@media (max-width: 600px) {
+  html body { padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); padding-top: 8px; padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)); }
+  html body .app { gap: 12px; }
+  html body .machine { padding: 10px; gap: 9px; -webkit-backdrop-filter: none; backdrop-filter: none; transform: none; filter: none; contain: none; }
+  html body .card { padding: 12px; gap: 10px; }
+  html body .topbar { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  html body .brand .emblem { width: 34px; height: 34px; }
+  html body .toggles { display: flex; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; gap: 6px; margin: 0 -10px; padding: 0 10px 2px; scrollbar-width: none; }
+  html body .toggles::-webkit-scrollbar { display: none; }
+  html body .toggles .chip { flex: none; padding: 6px 9px; font-size: .62rem; }
+  html body .radio { font-size: .64rem; padding: 6px 9px; }
+  html body .metarow { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  html body .rank { padding: 8px 10px; }
+  html body .jackpot { padding: 6px 12px; justify-items: end; }
+  html body .jackpot b { font-size: 1.15rem; }
+  html body .frame { padding: 8px; grid-template-columns: minmax(0, 1fr); gap: 0; --cell: calc((100cqw - 16px - 26px) / 5); }
+  html body .frame .lp { display: none; }
+  html body .bay:not(.net) { gap: 6px; }
+  html body .msg { min-height: 2em; font-size: .82rem; }
+  html body .hint { display: none; }
+  html body .deck { position: fixed; z-index: 70; left: max(6px, env(safe-area-inset-left, 0px)); right: max(6px, env(safe-area-inset-right, 0px)); bottom: max(6px, env(safe-area-inset-bottom, 0px));
+    grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "wallet spin" "bets spin"; gap: 6px 10px; padding: 8px 10px; border-radius: 14px;
+    background: color-mix(in srgb, var(--bg) 93%, #000); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    box-shadow: 0 -8px 26px rgba(0,0,0,.6), 0 0 0 1px var(--line); }
+  html body .wallet { grid-template-columns: 1.25fr 1fr .9fr; gap: 6px; }
+  html body .stat { gap: 1px; }
+  html body .stat span { font-size: .5rem; letter-spacing: .1em; }
+  html body .stat b { font-size: 1.05rem; }
+  html body .gbtns { position: absolute; left: 10px; right: 10px; bottom: calc(100% + 6px); display: flex; gap: 6px; justify-content: center; }
+  html body .spinwrap { width: 74px; height: 74px; align-self: center; margin-right: 2px; }
+  html body .spin { font-size: .6rem; }
+  html body .spin svg { width: 24px; height: 24px; }
+  html body .bets { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; min-width: 0; }
+  html body .stepper button { width: 30px; height: 32px; }
+  html body .stepper output { min-width: 48px; }
+  html body .betcap { display: none; }
+  html body .auto { flex-wrap: nowrap; }
+  html body .auto button { padding: 6px 7px; font-size: .6rem; }
+  html body .bip { bottom: calc(126px + env(safe-area-inset-bottom, 0px)); }
+  html body .bip-bot { width: 44px; height: 50px; }
+  input, select, textarea { font-size: 16px; }
+}
 
 /* ---------- Treibgut: rustikaler Look (Holz, Tau, Messing, Pergament) ---------- */
 :root { --ink: #f3e6c8; --ink-soft: #c2ad86; --line: rgba(243,230,200,.14); --glass: rgba(255,240,210,.04); --glass-2: rgba(255,240,210,.08);
@@ -1418,6 +1480,7 @@ body { font-synthesis: none;
       <div><span>Ausbau</span><b id="condTxt">0 / 45</b></div>
       <div class="bar"><i id="condBar"></i></div>
     </div>
+    <div class="expcard vehcard" id="vehCard"></div>
     <div class="expcard" id="expCard"></div>
     <div class="upgrades" id="upgrades"></div>
     <p class="hnote"><b>Pleite?</b> Fallen deine Muscheln unter den Mindesteinsatz, wird automatisch ein Teil verkauft und teilweise erstattet. Ein starkes Floß bringt mehr zurück. Ist nichts mehr übrig, ist das Floß verloren und du startest mit einem neuen Wrack.</p>
@@ -1647,7 +1710,7 @@ const REEL_SETS = [0, 1, 2, 3, 4].map(i => {
 });
 const LINES = [[1,1,1,1,1], [0,0,0,0,0], [2,2,2,2,2], [0,1,2,1,0], [2,1,0,1,2]];
 const LINE_COLORS = ["#5cc8b0", "#ffc94a", "#d8b27a", "#8fe07a", "#ff6b9a"];
-const LINE_BETS = [1, 2, 5, 10, 20];
+const LINE_BETS = [1, 2, 5, 10, 20, 30, 50, 100, 200];
 const FS_AWARD = { 3: 8, 4: 12, 5: 20 };
 const FS_MULT = 2;          // Startmultiplikator der Freispiele
 const FS_MULT_MAX = 5;      // jeder Gewinn-Freispiel erhöht um 1, bis maximal ×5
@@ -1676,7 +1739,7 @@ try {
   const vs = localStorage.getItem("tg-vs"); if (vs !== null) state.sfxVol = +vs;
   state.lowfx = localStorage.getItem("tg-lowfx") === "1";
 } catch (e) {}
-const T = () => state.turbo && state.ship.engine >= 2 ? 0.55 : 1;   // Zeitfaktor (Turbo braucht Antrieb Stufe 2)
+const T = () => state.turbo && effStep("engine") >= 2 ? 0.55 : 1;   // Zeitfaktor (Turbo braucht Antrieb Stufe 2)
 
 /* ---------- Sound (Web Audio, alles synthetisch) ---------- */
 let ctx = null, master = null, musicBus = null, noiseBuf = null;
@@ -2476,6 +2539,32 @@ async function wheelBonus(f) {
 
 /* ---------- Hangar: Floß und Upgrades ---------- */
 const COSTS = [120, 200, 320, 600, 850, 1200, 2200, 3200, 4800];
+/* Drei Fahrzeugklassen. Die nächste Klasse braucht das aktuelle Fahrzeug voll ausgebaut (45/45) und einen Mindestrang.
+   Jede Klasse startet wieder bei Stufe 0, kostet mehr und baut in der Wirkung auf der vorherigen auf (wirksame Stufe = Klasse × 9 + Stufe). */
+const VEHICLES = [
+  { name: "Floß", rank: 1, cost: 1, color: "#d9b27c", desc: "Ein paar Bretter, ein Segel und viel Hoffnung." },
+  { name: "Katamaran", acc: "einen Katamaran", rank: 8, cost: 4, color: "#5cc8b0", desc: "Zwei Rümpfe, ein Vorsegel und mehr Platz. Neue Teile kosten mehr, dafür steigen Einsätze bis 250." },
+  { name: "Schoner", acc: "einen Schoner", rank: 14, cost: 12, color: "#e0704a", desc: "Ein echtes Segelschiff mit Achterkajüte und zweitem Mast. Einsätze bis 1.000." },
+];
+const veh = () => Math.max(0, Math.min(VEHICLES.length - 1, state.vehicle | 0));
+const effStep = id => veh() * 9 + state.ship[id];
+const stepCost = s => Math.round(COSTS[s] * VEHICLES[veh()].cost);
+const hullPct = e => Math.min(.9, .3 + .05 * Math.min(e, 9) + .015 * Math.max(0, e - 9));
+const MAXLINE = [[1, 1, 1, 2, 2, 2, 3, 3, 3, 4], [4, 4, 4, 5, 5, 5, 6, 6, 6, 6], [6, 6, 6, 7, 7, 7, 8, 8, 8, 8]];
+const effTotal = () => veh() * 45 + totalSteps();
+function catEffect(id, st, V = veh()) {
+  const e = V * 9 + st, pc = x => x.toFixed(1).replace(".", ",");
+  if (id === "hull") return `Notverkauf erstattet ${Math.round(hullPct(e) * 100)} % des Teilwerts.`;
+  if (id === "engine") {
+    const un = [[1, "Auto 10"], [2, "Turbo"], [4, "Auto 25"], [7, "Auto 50"]];
+    const have = un.filter(u => e >= u[0]).map(u => u[1]), next = un.find(u => e < u[0]);
+    return `${have.length ? "Frei: " + have.join(", ") + "." : "Noch nichts freigeschaltet."}${next ? ` Nächstes: ${next[1]} ab Stufe ${next[0]}.` : ""}`;
+  }
+  if (id === "scanner") return `Liniengewinne +${pc(0.2 * e)} %.`;
+  if (id === "cargo") return `Bonusspiel-Gewinne +${pc(0.6 * e)} %.`;
+  const row = MAXLINE[V], cap = i => LINE_BETS[row[i]] * 5, nx = [3, 6, 9].find(x => st < x && row[x] > row[st]);
+  return `Max. Einsatz ${cap(st)}.${nx ? ` ${cap(nx)} ab Stufe ${nx}.` : ""}`;
+}
 const CATS = [
   { id: "hull", name: "Floß", color: "#d9b27c", tiers: ["Morsch", "Gezurrt", "Verstärkt", "Doppelrumpf"],
     icon: `<svg viewBox="0 0 24 24"><path d="M3 13h18l-2 5H5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 13v5M12 13v5M17 13v5" stroke="currentColor" stroke-width="1.6"/><path d="M2 21q2.5-1.5 5 0t5 0 5 0 5 0" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>`,
@@ -2501,10 +2590,10 @@ const CATS = [
 CATS.forEach(c => { ICONS["up_" + c.id] = c.icon.replace("<svg ", `<svg style="color:${c.color}" `); });
 const CLASS_NAMES = [[1, "Wrack", "#ff6b7a"], [4, "Bretterhaufen", "#ff9a3c"], [8, "Floß", "#ffc94a"], [12, "Segelfloß", "#3fe0c5"], [14, "Hausfloß", "#7fc8ff"], [15, "Legende", "#ff7a59"]];
 const tierOfCat = id => Math.floor(state.ship[id] / 3);
-const maxLineIdx = () => [1, 1, 1, 2, 2, 2, 3, 3, 3, 4][state.ship.reactor];
-const unlocked = what => ({ auto10: 1, turbo: 2, auto25: 4, auto50: 7 })[what] <= state.ship.engine;
-const lineBoost = () => (1 + 0.002 * state.ship.scanner) * (typeof boostOn === "function" && boostOn("scanner") ? 1.25 : 1);
-const bonusBoost = () => 1 + 0.006 * state.ship.cargo;
+const maxLineIdx = () => MAXLINE[veh()][state.ship.reactor];
+const unlocked = what => ({ auto10: 1, turbo: 2, auto25: 4, auto50: 7 })[what] <= effStep("engine");
+const lineBoost = () => (1 + 0.002 * effStep("scanner")) * (typeof boostOn === "function" && boostOn("scanner") ? 1.25 : 1);
+const bonusBoost = () => 1 + 0.006 * effStep("cargo");
 const totalSteps = () => CATS.reduce((a, c) => a + state.ship[c.id], 0);
 
 function buildHangar() {
@@ -2527,11 +2616,11 @@ function renderHangar() {
   CATS.forEach(c => {
     const s = state.ship[c.id];
     $("ut-" + c.id).textContent = `${c.tiers[Math.floor(s / 3)]} · ${s}/9`;
-    $("ue-" + c.id).textContent = c.effect(s);
+    $("ue-" + c.id).textContent = catEffect(c.id, s);
     [...$("up-pips-" + c.id).children].forEach((p, i) => p.classList.toggle("on", i < s));
     const btn = $("buy-" + c.id);
     if (s >= 9) { btn.className = "buy max"; btn.disabled = true; btn.innerHTML = `MAX<small>Ausgebaut</small>`; $("up-" + c.id).classList.remove("can"); return; }
-    const cost = COSTS[s], big = (s + 1) % 3 === 0;
+    const cost = stepCost(s), big = (s + 1) % 3 === 0;
     btn.className = "buy"; btn.disabled = !free || state.credits < cost || !!state.exped;
     btn.innerHTML = `${cost}<small>${big ? "Großes Upgrade" : "Stufe " + (s + 1)}</small>`;
     btn.setAttribute("aria-label", `${c.name} auf Stufe ${s + 1} für ${cost} Muscheln verbessern`);
@@ -2544,8 +2633,9 @@ function renderHangar() {
   $("condBar").style.setProperty("--p", (tot / 45 * 100) + "%");
   $("shipTag").textContent = `Zustand ${Math.round(tot / 45 * 100)} %`;
   $("lostTag").textContent = `Verlorene Flöße: ${state.shipsLost || 0}`;
-  const key = CATS.map(c => state.ship[c.id]).join(",") + (state.paint || "") + (state.decal || "");
-  if (key !== lastShipKey) { lastShipKey = key; $("shipG").innerHTML = shipSVG(state.ship, "a"); renderFocus(); }
+  const key = CATS.map(c => state.ship[c.id]).join(",") + (state.paint || "") + (state.decal || "") + "v" + veh();
+  if (key !== lastShipKey) { lastShipKey = key; $("shipG").innerHTML = vehicleSVG(state.ship, "a"); renderFocus(); }
+  renderVehCard(free);
 }
 
 function toast(text, color) {
@@ -2565,11 +2655,50 @@ function burstAt(el, n, colors, power = 1) {
   if (!fxRunning) { fxRunning = true; requestAnimationFrame(stepFx); }
 }
 
+function vehicleSVG(L, k = "a") {
+  const [vb, vf] = vehLayers(L, k);
+  return `<g class="veh v${veh()}">${vb}${shipSVG(L, k)}${vf}</g>`;
+}
+let lastVehKey = "";
+function renderVehCard(free) {
+  const box = $("vehCard"); if (!box) return;
+  const V = veh(), nx = VEHICLES[V + 1], tot = totalSteps(), okSteps = tot >= 45, okRank = nx && state.level >= nx.rank;
+  const canGo = !!nx && okSteps && okRank, enabled = canGo && free && !state.exped;
+  const key = [V, tot, state.level, enabled].join("|");
+  if (key === lastVehKey) return; lastVehKey = key;
+  const pills = VEHICLES.map((x, i) => `<span class="vp${i === V ? " on" : i < V ? " done" : ""}" style="--vc:${x.color}"><i>${i + 1}</i>${x.name}</span>`).join("");
+  let body;
+  if (!nx) body = `<p class="vnote">${tot >= 45 ? "Höchste Klasse, komplett ausgebaut. Mehr geht nicht!" : `Höchste Klasse erreicht. Noch ${45 - tot} Stufen bis zum Vollausbau.`}</p>`;
+  else body = `<p class="vnote">Nächstes Fahrzeug: <b>${nx.name}</b>. ${nx.desc}</p>
+    <ul class="vreq"><li class="${okSteps ? "ok" : ""}">${VEHICLES[V].name} voll ausgebaut <b>${tot}/45</b></li><li class="${okRank ? "ok" : ""}">Rang ${nx.rank} erreicht <b>du: ${state.level}</b></li></ul>
+    <button type="button" class="bbtn" id="vehBtn" ${enabled ? "" : "disabled"}>${canGo ? `Umsteigen auf ${nx.name}` : "Noch nicht bereit"}</button>`;
+  box.innerHTML = `<h3>Fahrzeug ${V + 1} von ${VEHICLES.length}</h3><div class="vpills">${pills}</div>${body}`;
+  const b = $("vehBtn"); if (b) b.addEventListener("click", switchVehicle);
+}
+async function switchVehicle() {
+  const nx = VEHICLES[veh() + 1];
+  if (!nx || totalSteps() < 45 || state.level < nx.rank || spinning || busy || inFs() || state.exped) return;
+  busy = true;
+  state.vehicle = veh() + 1;
+  state.ship = { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 };
+  lastShipKey = ""; lastVehKey = "";
+  bump("vehicles");
+  const v = $("shipview");
+  render();
+  flashScreen(); sfx.bigUpgrade(); burstAt(v, 160, [nx.color, "#ffffff", "#ffc94a"], 1.4);
+  addLog("up_hull", `Neues Fahrzeug: ${nx.name}`, "", nx.color);
+  radio(`Funk: Die Gilde überschreibt dir ${nx.acc}. Noch ein Wrack, aber ein großes.`, true, 12000);
+  await simpleBanner({ tier: "Neues Fahrzeug", color: nx.color, mega: veh() === VEHICLES.length - 1, sub: "Startet als Wrack · Wirkung baut auf dem alten auf · teurere, stärkere Teile" }, nx.name, sfx.rankUp, [nx.color, "#ffffff", "#ffc94a"], 3200);
+  busy = false;
+  bipState.last = 0; bip("bigUpgrade", 3);
+  checkAch(); render(); saveGame();
+}
 function buyUpgrade(id) {
   if (spinning || busy || !ready || inFs() || state.exped) return;
   const c = CATS.find(x => x.id === id), s = state.ship[id];
-  if (s >= 9 || state.credits < COSTS[s]) return;
-  state.credits -= COSTS[s];
+  if (s >= 9 || state.credits < stepCost(s)) return;
+  const cost = stepCost(s);
+  state.credits -= cost;
   state.ship[id] = s + 1;
   countCredits(state.credits, 400);
   const big = (s + 1) % 3 === 0;
@@ -2581,12 +2710,12 @@ function buyUpgrade(id) {
     setTimeout(() => bip("bigUpgrade", 3), 900);
     radio(`Funk: Die Werft bestätigt ${c.name} „${c.tiers[(s + 1) / 3]}“. Floßklasse wird neu bewertet.`, true);
     flashScreen();
-    addLog("up_" + id, `${c.name}: ${c.tiers[(s + 1) / 3]}`, "-" + COSTS[s], c.color);
+    addLog("up_" + id, `${c.name}: ${c.tiers[(s + 1) / 3]}`, "-" + cost, c.color);
   } else {
     sfx.upgrade(); burstAt(v, 35, [c.color, "#ffffff"], .8);
     toast(`${c.name} Stufe ${s + 1}`, c.color);
     bip("upgrade", 1);
-    addLog("up_" + id, `${c.name} Stufe ${s + 1}`, "-" + COSTS[s], c.color);
+    addLog("up_" + id, `${c.name} Stufe ${s + 1}`, "-" + cost, c.color);
   }
   track("upgrade"); bump("upgrades"); if (big) bump("tierUps"); checkAch();
   render(); saveGame();
@@ -2728,6 +2857,46 @@ function shipSVG(L, k = "a") {
   return `<g class="ship t${H}">${back}${hull}${front}${zones}</g>`;
 }
 
+
+/* Fahrzeugklassen: Katamaran (zwei Rümpfe, Vorsegel) und Schoner (Schiffsrumpf, Achterkajüte, zweiter Mast). */
+function vehLayers(L, k) {
+  const V = veh(); if (!V) return ["", ""];
+  const H = Math.min(3, Math.floor(L.hull / 3)), g = GEO[H], { l, t, b, n } = g, mx = l + Math.round((n - l) * .28);
+  const wood = ["#5a4a3a", "#7a5230", "#8a5c32", "#9a6838"][H], dark = ["#2e261e", "#3e2814", "#46301a", "#4a3218"][H], light = ["#8f7f6c", "#c99a62", "#d9aa6c", "#e6b877"][H];
+  const cloth = H === 0 ? "#c9b896" : "#efe4c8", pf = `style="filter:${paintFilter()}"`;
+  let back = "", front = "";
+  if (V === 1) {
+    const canoe = (y, sc, op) => `<path d="M${l - 18},${y - 6} Q${l - 12},${y + 6 * sc} ${l + 12},${y + 7 * sc} L${n - 6},${y + 7 * sc} Q${n + 22},${y + 5 * sc} ${n + 30},${y - 8} Q${n + 8},${y - 1} ${n - 10},${y} L${l + 8},${y} Q${l - 6},${y - 1} ${l - 18},${y - 6} Z" fill="${wood}" stroke="${dark}" stroke-width="1.6" opacity="${op}"/>
+      <path d="M${l + 6},${y + 3 * sc} H${n - 8}" stroke="${light}" stroke-width="1" opacity="${op * .6}"/>`;
+    const hullC = H === 0 ? "#4a3a2a" : ["#4a3a2a", "#3aa0ae", "#2f9aa8", "#2a90a0"][H];
+    front += `<g ${pf}><path d="M${l - 34},${b - 8} Q${l - 26},${b + 14} ${l + 4},${b + 14} L${n - 4},${b + 14} Q${n + 34},${b + 13} ${n + 44},${b - 12} Q${n + 18},${b + 1} ${n - 6},${b + 2} L${l + 2},${b + 2} Q${l - 20},${b + 1} ${l - 34},${b - 8} Z" fill="${hullC}" stroke="${dark}" stroke-width="1.6"/>
+      <path d="M${l - 6},${b + 8} H${n + 4}" stroke="${H ? "#e8f0e8" : light}" stroke-width="1.4" opacity=".7"/>
+      ${H === 0 ? `<path d="M${l + 40},${b + 3} l5,6 M${n - 50},${b + 3} l-4,6" stroke="#1a120a" stroke-width="2"/>` : `<path d="M${n + 30},${b - 6} l6,-2" stroke="#e8b04a" stroke-width="1.6"/>`}</g>`;
+    back += `<g ${pf}>${canoe(WL - 4, .7, .75)}
+      <path d="M${l - 6},${t + 4} L${l - 10},${WL + 2} M${n + 10},${t + 4} L${n + 14},${WL + 1}" stroke="${dark}" stroke-width="3" stroke-linecap="round"/></g>
+      <path d="M${mx + 2},${t - 70} L${n + 24},${WL - 10}" stroke="#8a6a45" stroke-width="1.2"/>
+      <path class="sail" d="M${mx + 4},${t - 64} L${n + 18},${t - 6} L${mx + 6},${t - 6} Z" fill="${cloth}" stroke="#8a6a45" stroke-width="1.2" opacity=".95"/>
+      ${H === 0 ? `<circle cx="${mx + 26}" cy="${t - 22}" r="3" fill="#2a1d12"/><path d="M${mx + 14},${t - 40} l8,3" stroke="#8a6a45" stroke-width="1"/>` : `<path d="M${mx + 8},${t - 30} L${n},${t - 10}" stroke="#c9a46a" stroke-width="1" opacity=".6"/>`}`;
+  }
+  if (V === 2) {
+    const sx = Math.min(n + 46, 348), st = l - 26;
+    back += `<g ${pf}>
+      <path d="M${st},${t - 24} L${l + 10},${t - 24} L${l + 14},${t + 2} L${n + 6},${t + 2} Q${n + 30},${t - 2} ${sx - 6},${t - 20} Q${n + 30},${WL + 2} ${n - 12},${WL + 13} L${l},${WL + 13} Q${st - 2},${WL + 6} ${st},${t - 24} Z" fill="${wood}" stroke="${dark}" stroke-width="1.8" stroke-linejoin="round"/>
+      ${[0, 1, 2].map(i => `<path d="M${st + 4},${b + 2 + i * 5} Q${(l + n) / 2},${b + 6 + i * 5} ${n + 20},${b - 2 + i * 4}" stroke="${dark}" stroke-width="1" fill="none" opacity=".6"/>`).join("")}
+      <path d="M${st},${t - 24} H${l + 10}" stroke="${light}" stroke-width="2"/>
+      ${[0, 1, 2].map(i => `<rect x="${st + 5 + i * 11}" y="${t - 18}" width="7" height="7" rx="1.5" fill="${H === 0 ? "#1a120a" : "#ffd27a"}" stroke="${dark}" stroke-width="1" opacity="${H === 0 ? .9 : .85}"/>`).join("")}
+      ${H >= 2 ? `<path d="M${st + 2},${t - 8} H${l + 10}" stroke="#e8b04a" stroke-width="1.2"/>` : ""}
+      <path d="M${n + 26},${t - 12} L${sx + 6},${t - 30}" stroke="${dark}" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M${st + 18},${t - 24} V${t - 104}" stroke="${dark}" stroke-width="3" stroke-linecap="round"/>
+      <path class="sail" d="M${st + 20},${t - 98} L${st + 52},${t - 92} L${st + 58},${t - 32} L${st + 20},${t - 30} Z" fill="${cloth}" stroke="#8a6a45" stroke-width="1.2"/>
+      ${H === 0 ? `<path d="M${st + 34},${t - 70} l6,8 M${st + 44},${t - 50} l-5,6" stroke="#7a6a50" stroke-width="1.4"/><circle cx="${st + 40}" cy="${t - 60}" r="3" fill="#2a1d12"/>` : `<path d="M${st + 22},${t - 64} L${st + 55},${t - 62}" stroke="#c9a46a" stroke-width="1" opacity=".6"/>`}
+      <path class="sail" d="M${st + 18},${t - 104} l12,3 l-12,4z" fill="${["#8a7a6a", "#c0563a", "#3a8a6a", "#2f6fb0"][H]}"/>
+      <path class="sail" d="M${sx + 4},${t - 30} L${mx + 6},${t - 76} L${mx + 8},${t - 8} Z" fill="${cloth}" stroke="#8a6a45" stroke-width="1.1" opacity=".95"/>
+    </g>`;
+  }
+  return [back, front];
+}
+
 /* Himmel, Trümmer und Partikel im Schiffsfenster (Hangar und Inspektion) */
 function makeSky(canvas, host) { return { canvas, cx: canvas.getContext("2d"), host, w: 0, h: 0, stars: [], dust: [], parts: [], debris: [] }; }
 function sizeSkyObj(o) {
@@ -2867,7 +3036,7 @@ function skyLoop(now) {
 /* Inspektionsansicht */
 function renderFocus() {
   if ($("focus").hidden) return;
-  $("focusShip").innerHTML = shipSVG(state.ship, "b");
+  $("focusShip").innerHTML = vehicleSVG(state.ship, "b");
   const a = partAnchors(state.ship), view = $("focusView").getBoundingClientRect();
   const s = Math.min(view.width / VB.w, view.height / VB.h), ox = (view.width - VB.w * s) / 2, oy = (view.height - VB.h * s) / 2;
   $("callouts").innerHTML = CATS.map(c => {
@@ -2875,7 +3044,7 @@ function renderFocus() {
     const left = ox + (x - VB.x) * s, top = oy + (y - VB.y) * s;
     return `<div class="callout" style="--uc:${c.color};left:${(left / view.width * 100).toFixed(2)}%;top:${(top / view.height * 100).toFixed(2)}%"><i></i><span><b>${c.name}</b> ${c.tiers[Math.floor(st / 3)]} · ${st}/9</span></div>`;
   }).join("");
-  $("focusParts").innerHTML = CATS.map(c => { const st = state.ship[c.id]; return `<div style="--uc:${c.color}"><span>${c.name}</span><b>${c.tiers[Math.floor(st / 3)]}</b><small>${c.effect(st)}</small><div class="pips">${Array.from({ length: 9 }, (_, i) => `<i class="${i < st ? "on" : ""}"></i>`).join("")}</div></div>`; }).join("");
+  $("focusParts").innerHTML = CATS.map(c => { const st = state.ship[c.id]; return `<div style="--uc:${c.color}"><span>${c.name}</span><b>${c.tiers[Math.floor(st / 3)]}</b><small>${catEffect(c.id, st)}</small><div class="pips">${Array.from({ length: 9 }, (_, i) => `<i class="${i < st ? "on" : ""}"></i>`).join("")}</div></div>`; }).join("");
   $("focusTitle").textContent = `${shipLabel()} · ${$("shipClass").textContent}`;
 }
 function openFocus() {
@@ -2926,8 +3095,8 @@ async function handleBankruptcy() {
     if (!pickId) { await gameOver(); return; }
     const c = CATS.find(x => x.id === pickId), step = state.ship[pickId];
     state.ship[pickId] = step - 1;
-    const pct = 0.3 + 0.05 * state.ship.hull + (hasCrew("mira") ? .1 : 0);
-    const refund = Math.round(COSTS[step - 1] * pct);
+    const pct = Math.min(1, hullPct(effStep("hull")) + (hasCrew("mira") ? .1 : 0));
+    const refund = Math.round(stepCost(step - 1) * pct);
     state.credits += refund;
     state.lineIdx = Math.min(state.lineIdx, maxLineIdx());
     sfx.scrap();
@@ -2973,7 +3142,7 @@ function gameOver() {
 
 /* ---------- Spielstand (privat pro Spieler) ---------- */
 let ready = false, saveRef = null, saveTimer = null, saving = false, saveDirty = false, localApi = false;
-const SAVE_KEYS = ["credits", "lineIdx", "spins", "best", "peak", "fsRounds", "bonusCount", "shipsLost", "xp", "level", "pot", "luck", "boostReady", "dust", "dustMeter"];
+const SAVE_KEYS = ["credits", "lineIdx", "spins", "best", "peak", "fsRounds", "bonusCount", "shipsLost", "xp", "level", "pot", "luck", "boostReady", "dust", "dustMeter", "vehicle"];
 function serialize() {
   const o = { v: 1, ship: { ...state.ship }, missions: state.missions.map(m => ({ ...m })), found: [...(state.found || [])],
     crew: [...(state.crew || [])], paint: state.paint || "std", decal: state.decal || "none", shipName: state.shipName || "Salzbrise", captain: state.captain || "", shipNamed: !!state.shipNamed, exped: state.exped || null,
@@ -3004,6 +3173,7 @@ function applySave(d) {
   if (d.boosts && typeof d.boosts === "object") { state.boosts = {}; BOOSTS.forEach(b => { if (typeof d.boosts[b.id] === "number") state.boosts[b.id] = d.boosts[b.id]; }); }
   if (Array.isArray(d.missions)) state.missions = d.missions.filter(m => m && MISSION_TYPES[m.type] && typeof m.goal === "number").map(m => ({ ...m }));
   state.level = Math.max(1, state.level | 0);
+  state.vehicle = Math.max(0, Math.min(VEHICLES.length - 1, state.vehicle | 0));
   if (!(state.pot >= JP_SEED)) state.pot = JP_SEED;
   state.lineIdx = Math.min(state.lineIdx, maxLineIdx());
   shownCredits = state.credits;
@@ -3869,7 +4039,7 @@ const EXPED = [
   { id: "long", name: "Unbekannte Insel", min: 120, album: .3 },
 ];
 const sectorIdx = () => Math.max(0, SECTORS.findIndex(x => x.id === (state.sector || "orion")));
-function expedReward(e) { return Math.round(e.min * (2 + 0.4 * totalSteps()) * (1 + 0.25 * sectorIdx())); }
+function expedReward(e) { return Math.round(e.min * (2 + 0.4 * effTotal()) * (1 + 0.25 * sectorIdx())); }
 function expedDuration(e) { return e.min * 60000 * (hasCrew("juno") ? .75 : 1); }
 const fmtTime = ms => { const s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h}:${String(m).padStart(2, "0")}:${String(x).padStart(2, "0")}` : `${m}:${String(x).padStart(2, "0")}`; };
 let expedNotified = false;
@@ -4044,7 +4214,10 @@ const ACH = [
   A("allin", "Alles oder nichts", "Gewinne 4 Risikorunden am Stück.", "wild", 300, () => (st().gambleChain || 0) >= 4),
   A("up1", "Erste Bastelei", "Kaufe eine Upgrade-Stufe.", "up_hull", 25, () => (st().upgrades || 0) >= 1),
   A("tier", "Großes Upgrade", "Schließe eine Ausbaustufe ab.", "up_engine", 75, () => (st().tierUps || 0) >= 1),
-  A("maxed", "Voll ausgebaut", "Alle 45 Upgrade-Stufen.", "up_reactor", 1000, () => totalSteps() >= 45),
+  A("maxed", "Voll ausgebaut", "Alle 45 Upgrade-Stufen.", "up_reactor", 1000, () => totalSteps() >= 45 || (state.vehicle | 0) >= 1),
+  A("veh2", "Zwei Rümpfe", "Steig auf den Katamaran um.", "up_engine", 500, () => (state.vehicle | 0) >= 1),
+  A("veh3", "Kapitän eines Schoners", "Steig auf den Schoner um.", "up_reactor", 2000, () => (state.vehicle | 0) >= 2),
+  A("allmax", "Alles ausgebaut", "Bau auch den Schoner komplett aus.", "up_reactor", 5000, () => (state.vehicle | 0) >= 2 && totalSteps() >= 45),
   A("crew", "Volle Besatzung", "Heuere alle vier Crewmitglieder an.", "up_scanner", 300, () => (state.crew || []).length >= 4),
   A("captain", "Kapitän", "Erreiche Rang 7.", "up_reactor", 200, () => state.level >= 7),
   A("veteran", "Gildenveteran", "Erreiche Rang 15.", "up_reactor", 600, () => state.level >= 15),
@@ -4494,8 +4667,9 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "0.3.1";
+const GAME_VERSION = "0.4.0";
 const CHANGELOG = [
+  { v: "0.4.0", date: "25.10.2026", title: "Drei Fahrzeuge", items: ["Neue Fahrzeugklassen: Floß, Katamaran und Schoner, jedes mit eigenem Aussehen.", "Umsteigen geht, wenn das aktuelle Fahrzeug voll ausgebaut ist (45/45) und du den Rang erreicht hast: Rang 8 für den Katamaran, Rang 14 für den Schoner.", "Das neue Fahrzeug startet als Wrack mit teureren Teilen. Seine Wirkung baut auf dem alten auf, nichts geht verloren.", "Höhere Einsätze: bis 250 mit dem Katamaran, bis 1.000 mit dem Schoner.", "Handy: Muscheln, Einsatz und Start-Knopf bleiben unten immer sichtbar, alles ist kompakter, und schnelles Tippen zoomt nicht mehr hinein."] },
   { v: "0.3.1", date: "25.10.2026", title: "Dritte Welt", items: ["Im Welt-Menü gibt es jetzt auch Eisenfront: eine Werkstatt, in der du einen rostigen Panzer wieder flottmachst."] },
   { v: "0.3.0", date: "25.10.2026", title: "Fangnetz", items: ["Neues Grundspiel statt Walzen: ein 6×5-Fangnetz. Ab 5 gleichen Funden, die sich berühren, landet ein Schwarm im Netz.", "Nachfang: Danach rutscht alles nach unten, neues Treibgut fällt nach, und jede weitere Welle zahlt mehr (×1, ×2, ×3, ×5).", "Freispiele über 3 Flaschenposten: Der Nachfang-Multiplikator startet bei ×2, steigt bis ×10 und bleibt die ganze Runde erhalten.", "Treibkisten und Strudel starten ab 3 Stück im Netz ihre Bonusspiele. Die Hilfsmöwe wirft Rettungsringe ins Netz.", "Rustikale Geräusche: Holz, Wasser, Tau, Schiffsglocke und Marimba statt Synthesizer.", "Klick aufs Meer wirft jetzt einen Haken an der Leine statt eines Lasers.", "Die Lagune bewegt sich ruhiger. Mit besserem Segel wird das Floß schneller."] },
   { v: "0.2.0", date: "25.10.2026", title: "Rustikal", items: ["Neuer Look: Holzplanken, Messingnägel, Taurahmen um die Walzen und Funkmeldungen auf Papier.", "Neue Schriften mit Seefahrer-Charme.", "Eigene Musik: Seemannslied mit Akkordeon im 6/8-Takt, ruhige Lagerfeuer-Gitarre und ein fröhliches Inselfest mit Steeldrum.", "Neuer Knopf „Welt“: Wechsel zu Sternenwrack und zurück, auch vom Startbildschirm aus."] },
@@ -4832,7 +5006,7 @@ const HELP_RULES = [
   ['.ptabs [data-pv="map"]', () => ["Karte", "Inseln mit eigenem Wetter, eigenen Farben und eigener Musikstimmung. Neue Inseln schaltest du mit Stufen frei."]],
   ['.ptabs [data-pv="col"]', () => ["Sammlung", "Erfolge und Funde für dein Album."]],
   ['.ptabs [data-pv="log"]', () => ["Logbuch", "Statistik, Verlauf, Freunde, Spielstand, Einstellungen und Regeln."]],
-  [".up", el => { const c = CATS.find(x => el.id === "up-" + x.id); return c ? [c.name, `${CATS_HELP[c.id]} Jetzt: ${c.effect(state.ship[c.id])}`] : null; }],
+  [".up", el => { const c = CATS.find(x => el.id === "up-" + x.id); return c ? [c.name, `${CATS_HELP[c.id]} Jetzt: ${catEffect(c.id, state.ship[c.id])}`] : null; }],
   [".expbtn, #expCard", () => ["Expedition", "Schick dein Floß los. Es kommt nach der angegebenen Zeit mit Muscheln zurück, auch wenn das Spiel zu ist."]],
   ["#focusBtn", () => ["Inspektion", "Zeigt dein Floß groß."]],
   ["#shipview", () => ["Lagune", "Dein Floß. Klick auf Bauteile oder aufs Meer, da gibt es was zu entdecken. Mit Upgrades wird es vom Wrack zum Kreuzer."]],
@@ -5345,6 +5519,8 @@ function start(saved) {
   initSave();
 }
 window.claude?.hot?.snapshot?.(() => ({ ...state }));
+document.addEventListener("gesturestart", e => e.preventDefault(), { passive: false });
+document.addEventListener("dblclick", e => { if (e.target.closest("button, .frame, .deck")) e.preventDefault(); }, { passive: false });
 
 /* ===================== Treibgut: Fangnetz-Kaskaden statt Walzen =====================
    6×5-Feld. Schwärme ab 5 gleichen Funden, die sich waagerecht oder senkrecht berühren, landen im Netz.

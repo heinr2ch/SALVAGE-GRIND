@@ -2,6 +2,14 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.4.0 · Drei Fahrzeuge · 25.10.2026
+- Neue Fahrzeugklassen: Floß, Katamaran und Schoner, jedes mit eigenem Aussehen.
+- Umsteigen geht, wenn das aktuelle Fahrzeug voll ausgebaut ist (45/45) und du den Rang erreicht hast: Rang 8 für den Katamaran, Rang 14 für den Schoner.
+- Das neue Fahrzeug startet als Wrack mit teureren Teilen. Seine Wirkung baut auf dem alten auf, nichts geht verloren.
+- Höhere Einsätze: bis 250 mit dem Katamaran, bis 1.000 mit dem Schoner.
+- Neue Erfolge für den Klassenwechsel und den kompletten Ausbau.
+- Handy: Muscheln, Einsatz und Start-Knopf bleiben unten immer sichtbar, alles ist kompakter, und schnelles Tippen zoomt nicht mehr hinein.
+
 ## Beta 0.3.1 · Dritte Welt · 25.10.2026
 - Im Welt-Menü gibt es jetzt auch Eisenfront: eine Werkstatt, in der du einen rostigen Panzer wieder flottmachst.
 

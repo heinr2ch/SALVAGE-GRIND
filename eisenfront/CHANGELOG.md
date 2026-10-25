@@ -2,6 +2,14 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.3.0 · Drei Fahrzeuge · 25.10.2026
+- Neue Fahrzeugklassen: Panzer, Schwerer Panzer und Mammut, jedes mit eigenem Aussehen.
+- Umsteigen geht, wenn das aktuelle Fahrzeug voll ausgebaut ist (45/45) und du den Rang erreicht hast: Rang 8 für den schweren Panzer, Rang 14 für das Mammut.
+- Das neue Fahrzeug startet als Wrack mit teureren Teilen. Seine Wirkung baut auf dem alten auf, nichts geht verloren.
+- Höhere Einsätze: bis 250 mit dem schweren Panzer, bis 1.000 mit dem Mammut.
+- Neue Erfolge für den Klassenwechsel und den kompletten Ausbau.
+- Handy: Schrauben, Einsatz und Start-Knopf bleiben unten immer sichtbar, alles ist kompakter, und schnelles Tippen zoomt nicht mehr hinein.
+
 ## Beta 0.2.0 · Rex sammelt · 25.10.2026
 - Neues Grundspiel: 5 Walzen, 3 Reihen und 243 Wege. Gleiche Teile ab der linken Walze gewinnen, egal in welcher Reihe.
 - Schraubenkisten tragen Beträge. Landet Rex, holt er alle Kisten ein, mehrere Rex holen jeder einzeln.

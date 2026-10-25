@@ -2,6 +2,14 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.12.0 · Drei Fahrzeuge · 25.10.2026
+- Neue Fahrzeugklassen: Bergungsschlepper, Frachtkreuzer und Sternenträger, jedes mit eigenem Aussehen.
+- Umsteigen geht, wenn das aktuelle Fahrzeug voll ausgebaut ist (45/45) und du den Rang erreicht hast: Rang 8 für den Kreuzer, Rang 14 für den Träger.
+- Das neue Fahrzeug startet als Wrack mit teureren Teilen. Seine Wirkung baut auf dem alten auf, nichts geht verloren.
+- Höhere Einsätze: bis 250 mit dem Kreuzer, bis 1.000 mit dem Träger.
+- Neue Erfolge für den Klassenwechsel und den kompletten Ausbau.
+- Handy: Credits, Einsatz und Start-Knopf bleiben unten immer sichtbar, alles ist kompakter, und schnelles Tippen zoomt nicht mehr hinein.
+
 ## Beta 0.11.1 · Dritte Welt · 25.10.2026
 - Neue Welt im Welt-Menü: Eisenfront, eine Werkstatt, in der du einen rostigen Panzer wieder flottmachst.
 
