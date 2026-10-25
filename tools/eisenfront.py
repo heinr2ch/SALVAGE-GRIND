@@ -31,6 +31,7 @@ def const_def(new):
 from eisenfront_parts1 import *
 from eisenfront_parts2 import *
 from eisenfront_parts3 import *
+from eisenfront_parts4 import *
 
 # 1. Speicher und Codes
 s = re.sub(r'(["`])tg-', r'\1ef-', s)
@@ -85,16 +86,25 @@ for a, b in PHRASES_EF:
     if a not in s: MISSING.append(a); continue
     s = s.replace(a, b)
 
+# 7b. Eigenes Grundspiel: Rex sammelt (ersetzt das Fangnetz)
+for a, b in COL_HTML: rep(a, b)
+block("/* ===================== Treibgut: Fangnetz-Kaskaden statt Walzen", "/* ---------- Treibgut: rustikale Geräusche", 'const fmtF = f => String(f).replace(".", ",");\n' + COL_JS + "\n")
+rep("\nnetFill(netNewBoard(), false);\n", "\ncolFill(colBoard(false), false);\n")
+
 # 8. Look, Musik, Geräusche
 block("/* ---------- Treibgut: rustikaler Look", "/* ---------- Treibgut: Segel und Wellen", MILITARY_CSS + "\n")
 block("/* ---------- Treibgut: Segel und Wellen", "/* ---------- Treibgut: Fangnetz", MOTION_EF)
 rep(NETGRID_TG, NETGRID_EF)
 for a, b in NET_CSS_REPS: rep(a, b)
 block("/* Eigene Treibgut-Musik", "TRACKS.forEach(tr =>", MUSIC_EF)
-block("/* ---------- Treibgut: rustikale Geräusche", "\nnetFill(netNewBoard(), false);", SFX_EF)
+block("/* ---------- Treibgut: rustikale Geräusche", "\ncolFill(colBoard(false), false);", SFX_EF)
 
 for a, b in COLOR_MAP_EF:
     s = re.sub(re.escape(a), b, s, flags=re.I)
+
+rep("\n</style>", "\n" + COL_CSS + DARK_CSS + "</style>")
+
+rep('effect: "Hilfsmöwe 4× so oft"', 'effect: "Rex springt und Tauben liefern doppelt so oft"')
 
 # 9. Wortliste
 for a, b in WORDS_EF:
@@ -108,6 +118,11 @@ POST_FIX = [
     ("Ordenfieber", "Ordensfieber"),
     ("Layout: Meer mit Luftblasen im Hintergrund.", "Layout: Werkhalle mit Funken im Hintergrund."),
 ]
+POST_FIX += [
+    ("Kostet ${bet()} Schrauben (5 Linien × ${lineBet()}). <b>Leertaste</b> geht auch, erneut drücken stoppt die Walzen sofort.", "Kostet ${bet()} Schrauben. <b>Leertaste</b> geht auch, erneut drücken stoppt sofort."),
+    ("`Einsatz pro Linie: <b>${lineBet()}</b>, also ${bet()} Schrauben pro Schub.", "`Einsatz: <b>${bet()}</b> Schrauben pro Schub. Kisten und Gewinne wachsen mit."),
+    ("Liniengewinne +", "Alle Gewinne +"),
+]
 for a, b in POST_FIX:
     if a not in s: MISSING.append("POST " + a); continue
     s = s.replace(a, b)
@@ -115,7 +130,7 @@ s = s.replace("'Patua One', serif", "'Black Ops One', sans-serif").replace("Patu
 s = s.replace("/* ---------- Treibgut: Fangnetz", "/* ---------- Eisenfront: Ersatzteillager (Fangnetz-Engine)")
 
 # 10. Version und Protokoll
-s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.1.0";', s)
+s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.2.0";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_EF)
 
 # 11. Welten

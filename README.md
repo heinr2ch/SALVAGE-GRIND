@@ -30,8 +30,8 @@ Meeres-Survival mit eigenem Grundspiel: Statt Walzen ein Fangnetz mit Schwärmen
 
 ### Eisenfront · Werkstatt-Slots
 
-**Aktuelle Version: Beta 0.1.0** · [Änderungsprotokoll](eisenfront/CHANGELOG.md)
+**Aktuelle Version: Beta 0.2.0** · [Änderungsprotokoll](eisenfront/CHANGELOG.md)
 
-Werkstatt an der Front: Ein rostiger Panzer wird Stück für Stück wieder flottgemacht. Grundspiel wie bei Treibgut (Ersatzteillager mit Sätzen und Nachschub-Kaskaden), dazu Werkstatthund Rex, Brieftaube, Fallschirmkisten, vier Fronten, eigene Musik und Geräusche. Fiktives Szenario ohne echte Armeen oder Abzeichen. Eigener Spielstand.
+Düstere Werkstatt an der Front: Ein rostiger Panzer wird Stück für Stück wieder flottgemacht. Eigenes Grundspiel als Sammler-Slot: 5 Walzen, 243 Wege, Schraubenkisten mit Beträgen, die Werkstatthund Rex einsammelt. Dazu Brieftaube, Fallschirmkisten, vier Fronten, eigene Musik und Geräusche. Fiktives Szenario ohne echte Armeen oder Abzeichen. Eigener Spielstand.
 
 **Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/eisenfront/

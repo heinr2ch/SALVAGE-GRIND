@@ -81,21 +81,21 @@ CLASS_TG = 'const CLASS_NAMES = [[1, "Wrack", "#ff6b7a"], [4, "Bretterhaufen", "
 CLASS_EF = 'const CLASS_NAMES = [[1, "Wrack", "#ff6b7a"], [4, "Rostbeule", "#ff9a3c"], [8, "Fahrbereit", "#ffc94a"], [12, "Einsatzbereit", "#a7c060"], [14, "Schwerer Brocken", "#b8c7cf"], [15, "Legende", "#e07a4a"]];'
 
 SECTORS_EF = r'''const SECTORS = [
-  { id: "orion", name: "Werkhof Nord", rank: 1, color: "#a7c060", transpose: 0, x: 60, y: 160, shape: "depot", land: "#2a2c26", grass: "rgba(140,150,90,.45)",
-    sky: ["#3a4652", "#7a8a8e", "#d8c49a"], sun: ["#fff0c8", "rgba(255,214,150,.3)"], cloud: "rgba(200,200,195,.45)", ground: ["#5a5440", "#2a261a"],
-    desc: "Der Heimatwerkhof. Hallen, Schrottberge und der Ort, an dem jeder Panzer wieder flottgemacht wird.",
+  { id: "orion", name: "Werkhof Nord", rank: 1, color: "#a7c060", transpose: 0, x: 60, y: 160, shape: "depot", land: "#101110", grass: "rgba(110,110,70,.35)",
+    sky: ["#15181b", "#33383a", "#6e5a44"], sun: ["#e8c890", "rgba(255,170,90,.18)"], cloud: "rgba(40,40,38,.7)", ground: ["#3a3628", "#141209"],
+    desc: "Der Heimatwerkhof. Rußige Hallen, Schrottberge und der Ort, an dem jeder Panzer wieder flottgemacht wird.",
     radio: ["Funk: Im Werkhof Nord ist heute viel los. Werkzeug bereithalten."] },
-  { id: "kryos", name: "Schlammfeld", rank: 4, color: "#b8a070", transpose: 2, x: 160, y: 70, shape: "mud", land: "#2a241c", grass: "rgba(110,100,70,.45)",
-    sky: ["#2e333a", "#5e6268", "#a8a090"], sun: ["#e8e4d8", "rgba(220,220,210,.2)"], cloud: "rgba(150,150,150,.55)", ground: ["#4a3e2c", "#1e180f"],
+  { id: "kryos", name: "Schlammfeld", rank: 4, color: "#b8a070", transpose: 2, x: 160, y: 70, shape: "mud", land: "#0e0c09", grass: "rgba(80,74,52,.4)",
+    sky: ["#111315", "#2a2e30", "#4e4c44"], sun: ["#b8b4a8", "rgba(200,200,190,.1)"], cloud: "rgba(60,62,62,.75)", ground: ["#2e271c", "#100c07"],
     desc: "Zäher Schlamm, kahle Bäume, Nieselregen. Expeditionen bringen hier 25 % mehr.",
     radio: ["Funk: Schlammwarnung. Ketten gut fetten.", "Funk: Ein Frosch sitzt auf dem Funkgerät. Kein Scherz."] },
-  { id: "ignis", name: "Wüstenpass", rank: 8, color: "#ffb36b", transpose: -3, x: 265, y: 150, shape: "desert", land: "#7a5a34", grass: "rgba(150,120,70,.4)",
-    sky: ["#3a6a9a", "#9ab8c8", "#ffd9a0"], sun: ["#fff6d8", "rgba(255,220,150,.45)"], cloud: "rgba(255,245,230,.4)", ground: ["#c9a46a", "#7a5a34"],
-    desc: "Sand, Hitze und Luftflimmern. Expeditionen bringen hier 50 % mehr.",
+  { id: "ignis", name: "Wüstenpass", rank: 8, color: "#ffb36b", transpose: -3, x: 265, y: 150, shape: "desert", land: "#2a1a10", grass: "rgba(120,90,50,.35)",
+    sky: ["#1a1214", "#4a2620", "#a4542e"], sun: ["#ffb070", "rgba(255,120,50,.3)"], cloud: "rgba(50,30,26,.65)", ground: ["#6a4c2c", "#2a1c10"],
+    desc: "Glutroter Abendhimmel, Sand und Rauch über dem Pass. Expeditionen bringen hier 50 % mehr.",
     radio: ["Funk: Sandsturm am Pass. Luftfilter wechseln nicht vergessen.", "Funk: Die Kühlung läuft heiß. Die Kamele tun so, als wäre nichts."] },
-  { id: "xeltar", name: "Eiswald", rank: 12, color: "#b8c7cf", transpose: 5, x: 350, y: 60, shape: "snow", land: "#2a3a3a", grass: "rgba(220,230,235,.5)",
-    sky: ["#1e2a3a", "#5a7088", "#c8d8e0"], sun: ["#f4f8ff", "rgba(220,235,255,.3)"], cloud: "rgba(230,238,245,.5)", ground: ["#d8e2e8", "#8a9aa4"],
-    desc: "Tiefer Schnee zwischen dunklen Tannen. Niemand weiß, wer hier die alte Werkstatt gebaut hat. Expeditionen bringen hier 75 % mehr.",
+  { id: "xeltar", name: "Eiswald", rank: 12, color: "#b8c7cf", transpose: 5, x: 350, y: 60, shape: "snow", land: "#0c1214", grass: "rgba(180,190,195,.35)",
+    sky: ["#080b12", "#1c2430", "#44505c"], sun: ["#d8e2f0", "rgba(200,220,255,.12)"], cloud: "rgba(70,80,90,.55)", ground: ["#8a949a", "#3a4248"],
+    desc: "Nacht, tiefer Schnee zwischen dunklen Tannen. Niemand weiß, wer hier die alte Werkstatt gebaut hat. Expeditionen bringen hier 75 % mehr.",
     radio: ["Funk: Frost im Eiswald. Motor warm laufen lassen.", "Funk: Spuren im Schnee entdeckt. Vermutlich ein Hase."] },
 ];
 '''
@@ -317,6 +317,7 @@ COUGH_TG = 'skySparks(sky, g.l - 24, 118, 14); bubbleAt(svg, view, g.l, 92, "*pl
 COUGH_EF = 'for (let i = 0; i < 12; i++) { const [x, y, sc] = toSky(sky, g.l + 8, g.t - 8); sky.parts.push({ x, y, vx: -Math.random() * 1.6, vy: -Math.random() * 1.2, r: 2.6 * sc, life: .9, kind: "smoke", dark: true }); } bubbleAt(svg, view, g.l, 86, "*knatter*");'
 
 CHANGELOG_EF = r'''const CHANGELOG = [
+  { v: "0.2.0", date: "25.10.2026", title: "Rex sammelt", items: ["Neues Grundspiel: 5 Walzen, 3 Reihen und 243 Wege. Gleiche Teile ab der linken Walze gewinnen, egal in welcher Reihe.", "Schraubenkisten tragen Beträge. Landet Rex, holt er alle Kisten ein, mehrere Rex holen jeder einzeln.", "Kisten ohne Rex: Manchmal springt Rex von selbst auf die Werkbank. Rex ohne Kisten: Manchmal bringt die Brieftaube welche.", "Freispiele als Großeinsatz: Rex kommt öfter, je 4 sammelnde Rex gibt es +10 Freispiele und der Sammler steigt auf ×2, ×3 und ×10.", "Düsterer Look: Ruß, Rauch, Glut am Boden, dunkle Himmel an allen Fronten."] },
   { v: "0.1.0", date: "25.10.2026", title: "Erste Fassung", items: ["Eisenfront ist da: Werkstatt-Slots mit einem rostigen Panzer, den du Stück für Stück wieder flottmachst.", "Fünf Ausbaubereiche in je vier sichtbaren Stufen: Panzerung, Motor, Funk, Lager und Kanone.", "Grundspiel mit Ersatzteil-Lager: Ab 5 gleichen Teilen, die sich berühren, wird ein Satz verbaut, Nachschub fällt nach und jeder Schub zahlt mehr.", "Werkstatthund Rex begleitet dich, die Brieftaube bringt Schraubenschlüssel, und Kisten schweben am Fallschirm vorbei.", "Eigener Look mit Stahl, Oliv und Schablonenschrift, eigene Musik (Marsch, Mundharmonika, Werkhalle) und metallische Geräusche.", "Wie alle Welten: nur Spielgeld, eigener Spielstand, über „Welt“ jederzeit wechselbar."] },
 '''
 

@@ -1191,6 +1191,69 @@ body { font-synthesis: none;
 .swarmdemo i.on { background: #e07a4a; box-shadow: 0 0 8px #e07a4a; }
 .swarmdemo i.w { background: #ff5a4a; }
 @media (prefers-reduced-motion: reduce) { .tile, .tile.sink { transition: none; } .tile.caught, .netfloat, .tile.grow svg { animation-duration: .01s; } }
+
+/* ---------- Eisenfront: Werkbank (5 × 3, Rex sammelt) ---------- */
+.frame { width: min(100%, calc(min(46vh, 380px) * 5 / 3 + 38px)); }
+.bay.net.col { aspect-ratio: 5 / 3; }
+.bay.col .netgrid { background:
+    linear-gradient(90deg, rgba(0,0,0,.55) 2px, transparent 2px) 0 0 / 20% 100%,
+    linear-gradient(rgba(232,228,212,.05) 1px, transparent 1px) 0 0 / 100% calc(100% / 3),
+    radial-gradient(ellipse at 50% -20%, rgba(255,190,110,.10), transparent 65%),
+    linear-gradient(180deg, #1a1c1a, #121412 60%, #0c0d0c); }
+.bay.col .tile { left: calc(var(--c) * 20%); top: calc(var(--r) * 100% / 3); width: 20%; height: calc(100% / 3) !important; transition: top .38s cubic-bezier(.3,1.25,.55,1), opacity .25s; }
+.bay.col .tile.sym svg { width: 74%; height: 74%; }
+.tile .cv { position: absolute; z-index: 3; left: 50%; top: 56%; transform: translate(-50%, -50%); padding: 1px 7px; border-radius: 4px; white-space: nowrap; pointer-events: none;
+  font: 700 clamp(.75rem, 2.8vw, 1.15rem) var(--f-mono); color: #1a1408; background: linear-gradient(180deg, #f0d68a, #c9a24a); border: 1px solid #5a4410; box-shadow: 0 2px 0 rgba(0,0,0,.5); }
+.tile .cv.big { background: linear-gradient(180deg, #ffe7a0, #e8a03a); color: #2a0e04; box-shadow: 0 0 10px rgba(255,190,80,.7), 0 2px 0 rgba(0,0,0,.5); }
+.tile .cv.rexsum { top: 18%; background: linear-gradient(180deg, #e86a4a, #a33a2a); color: #fff4dc; border-color: #3a0e08; font-size: clamp(.8rem, 3vw, 1.2rem); }
+.tile.rexon { z-index: 4; animation: rexBark .5s ease-in-out 3; }
+@keyframes rexBark { 50% { transform: scale(1.14) rotate(-4deg); filter: brightness(1.3) drop-shadow(0 0 12px #e8b04a); } }
+.tile.jumpin svg { animation: rexJump .7s cubic-bezier(.3,1.5,.5,1); }
+@keyframes rexJump { 0% { transform: translate(-160%, -140%) rotate(-40deg) scale(.6); opacity: 0; } 60% { opacity: 1; } }
+.tile.dim { opacity: .38; filter: grayscale(.7); }
+.colfly { position: absolute; z-index: 9; pointer-events: none; transform: translate(-50%, -50%); padding: 1px 6px; border-radius: 4px;
+  font: 700 clamp(.62rem, 2.4vw, .95rem) var(--f-mono); color: #1a1408; background: linear-gradient(180deg, #f0d68a, #c9a24a); border: 1px solid #5a4410;
+  transition: left .45s cubic-bezier(.5,0,.7,1), top .45s cubic-bezier(.5,0,.7,1), transform .45s, opacity .45s; }
+.colfly.gone { transform: translate(-50%, -50%) scale(.4); opacity: .2; }
+.waysdemo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; max-width: 200px; margin: 6px 0; }
+.waysdemo i { aspect-ratio: 1; border-radius: 4px; background: rgba(232,228,212,.08); }
+.waysdemo i.on { background: #e07a4a; box-shadow: 0 0 8px #e07a4a; }
+.waysdemo i.w { background: #c9ccd1; }
+@media (prefers-reduced-motion: reduce) { .tile.rexon, .tile.jumpin svg { animation: none; } .colfly { transition-duration: .01s; } }
+
+/* ---------- Eisenfront: düsterer Grundton (Ruß, Rauch, Glut) ---------- */
+:root { --ink: #d6d2c2; --ink-soft: #8e8c7c; --line: rgba(214,210,194,.1); --glass: rgba(214,210,194,.025); --glass-2: rgba(214,210,194,.05);
+  --cyan: #8a9a52; --lime: #b8a84a; --win: #9cc46a; --grad: linear-gradient(135deg, #a8b46a, #4a5426); }
+body { background:
+    radial-gradient(ellipse 90% 60% at 50% 115%, rgba(160,60,20,.22), transparent 65%),
+    radial-gradient(ellipse 70% 50% at 15% -10%, rgba(80,80,74,.25), transparent 70%),
+    radial-gradient(ellipse 120% 90% at 50% 50%, transparent 45%, rgba(0,0,0,.75) 100%),
+    repeating-linear-gradient(90deg, transparent 0 119px, rgba(0,0,0,.5) 119px 121px, rgba(255,255,255,.02) 121px 122px),
+    repeating-linear-gradient(0deg, transparent 0 79px, rgba(0,0,0,.4) 79px 81px),
+    linear-gradient(180deg, #161816, #0a0b0a); background-color: #0a0b0a; }
+.glass { border-color: #0c0d0c;
+  background:
+    radial-gradient(ellipse 40% 30% at 85% 100%, rgba(120,60,20,.12), transparent 70%),
+    radial-gradient(ellipse 30% 25% at 10% 90%, rgba(90,50,20,.1), transparent 70%),
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.35)),
+    repeating-linear-gradient(115deg, rgba(255,255,255,.01) 0 2px, rgba(0,0,0,.025) 2px 5px),
+    linear-gradient(180deg, #252824, #1b1d1b);
+  box-shadow: 0 18px 44px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.05), inset 0 0 0 1px rgba(0,0,0,.5), inset 0 0 50px rgba(0,0,0,.5); }
+.glass::after { opacity: .7; }
+.brand h1, .topbar .brand h1 { background: linear-gradient(180deg, #d6d2c2 0%, #8e9a5a 55%, #3a4220 100%); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 2px 0 #000); }
+.intro { background: radial-gradient(ellipse at 50% 110%, rgba(170,70,20,.3), transparent 60%), radial-gradient(ellipse at 50% 40%, rgba(120,110,90,.12), transparent 60%), linear-gradient(180deg, #121412, #050605); }
+.intro-title span { background: linear-gradient(180deg, #d6d2c2, #8e9a5a 55%, #3a4220); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 3px 0 #000) drop-shadow(0 0 22px rgba(200,90,30,.35)); }
+.intro-btn { background: repeating-linear-gradient(-45deg, #b8862e 0 12px, #8a6420 12px 24px); color: #120e04; }
+.radio { background: linear-gradient(180deg, #a8a080, #8e866a); border-color: #4a4430; color: #14120a; }
+.radio span, .radio.hot span { color: #14120a; }
+.frame { background: linear-gradient(#0d0e0d, #0d0e0d) padding-box, repeating-linear-gradient(-45deg, #b8862e 0 10px, #141510 10px 20px) border-box; box-shadow: 0 0 0 2px #000, 0 14px 34px rgba(0,0,0,.75), inset 0 0 50px rgba(0,0,0,.85); }
+.frame.fs { background: linear-gradient(#0d0e0d, #0d0e0d) padding-box, repeating-linear-gradient(-45deg, #b8a84a 0 10px, #141510 10px 20px) border-box; box-shadow: 0 0 0 2px #000, 0 0 30px rgba(200,110,40,.45), inset 0 0 50px rgba(0,0,0,.85); }
+.spin { background: radial-gradient(circle at 50% 30%, #4e5a2a 0%, #232a12 70%); }
+.jackpot { background: linear-gradient(135deg, rgba(184,134,46,.14), rgba(30,24,10,.4)); border-color: #5a4a1e; }
+.shipview { border-color: #141614; box-shadow: inset 0 0 0 2px #000, inset 0 0 60px rgba(0,0,0,.6); }
+.shipview::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: radial-gradient(ellipse 110% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.55) 100%); }
+.toast, .ticket, .bip-bubble { filter: brightness(.86) saturate(.85); }
+#stars { opacity: .65; }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="emb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a7c060"/><stop offset=".5" stop-color="#6f8fa8"/><stop offset="1" stop-color="#e0704a"/></linearGradient><linearGradient id="shadeG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".35" stop-color="#ffffff" stop-opacity="0"/><stop offset=".7" stop-color="#000000" stop-opacity=".15"/><stop offset="1" stop-color="#000000" stop-opacity=".5"/></linearGradient><linearGradient id="sheenG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset=".5" stop-color="#ffffff" stop-opacity=".28"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><linearGradient id="coneG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a7c060" stop-opacity=".35"/><stop offset="1" stop-color="#a7c060" stop-opacity="0"/></linearGradient><linearGradient id="dustG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#b8c7cf"/><stop offset="1" stop-color="#a7c060"/></linearGradient><linearGradient id="wildG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".3" stop-color="#a7c060"/><stop offset=".65" stop-color="#b8c7cf"/><stop offset="1" stop-color="#e0704a"/></linearGradient></defs></svg>
@@ -1312,15 +1375,15 @@ body { font-synthesis: none;
 
     <div class="fsbar" id="fsbar" hidden>
       <strong>Freispiele</strong>
-      <span><b id="fsLeft">0</b> übrig · Nachschub <em class="fsmult" id="fsMultBox">×<b id="fsMult">2</b></em><b id="fsStick" hidden>0</b> · bisher <b id="fsWin">0</b></span>
+      <span><b id="fsLeft">0</b> übrig · Rex <b id="fsStick">0</b>/4 · Sammler <em class="fsmult" id="fsMultBox">×<b id="fsMult">1</b></em> · bisher <b id="fsWin">0</b></span>
     </div>
 
     <div class="stage">
       <div class="frame" id="frame">
         <div class="streak" id="streak" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c3 4 5 6.5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-5 .5 2 1.5 3 3 3-1-3 0-5.5 0-8z" fill="currentColor"/></svg><b id="streakN">2</b><span id="streakX">×1,1</span></div>
-        <div class="bay net" id="bay">
-          <div class="netgrid" id="netGrid" aria-label="Ersatzteillager mit 6 mal 5 Feldern"></div>
-          <div class="casc" id="casc" hidden>Nachschub <b id="cascN">×1</b></div>
+        <div class="bay net col" id="bay">
+          <div class="netgrid" id="netGrid" aria-label="Werkbank mit 5 Walzen und 3 Reihen"></div>
+          <div class="casc" id="casc" hidden>Rex sammelt <b id="cascN">0</b></div>
           <svg class="linesvg" id="linesvg" aria-hidden="true"></svg>
           <div class="banner" id="banner" hidden>
             <div class="b-tier" id="bTier"></div>
@@ -1364,7 +1427,7 @@ body { font-synthesis: none;
       <h3>Bergungsaufträge</h3>
       <div class="clist" id="contracts"></div>
     </section>
-    <p class="hint">Leertaste fordert Nachschub an. Erneut drücken lädt alles sofort ab.</p>
+    <p class="hint">Leertaste fordert Nachschub an. Erneut drücken stoppt sofort.</p>
     <div class="loading" id="loading">Spielstand wird geladen …</div>
   </main>
 
@@ -1496,16 +1559,16 @@ body { font-synthesis: none;
         <div class="tabs" role="tablist">
           <button type="button" role="tab" id="tab-pay" aria-selected="true" aria-controls="panel-pay">Gewinne</button>
           <button type="button" role="tab" id="tab-bonus" aria-selected="false" aria-controls="panel-bonus">Boni</button>
-          <button type="button" role="tab" id="tab-lines" aria-selected="false" aria-controls="panel-lines">Sätze</button>
+          <button type="button" role="tab" id="tab-lines" aria-selected="false" aria-controls="panel-lines">Wege</button>
         </div>
         <div class="tabpanel" id="panel-pay" role="tabpanel" aria-labelledby="tab-pay">
-          <table class="pt"><thead><tr><th>Satz</th><th>5–6</th><th>7–8</th><th>9–10</th><th>11–12</th><th>13+</th></tr></thead><tbody id="payRows"></tbody></table>
-          <p class="note">Gewinn = Wert × Einsatz. Ein Satz sind mindestens 5 gleiche Teile, die sich waagerecht oder senkrecht berühren. Schraubenschlüssel zählen für jeden Satz.</p>
+          <table class="pt"><thead><tr><th>Teil</th><th>3 Walzen</th><th>4 Walzen</th><th>5 Walzen</th></tr></thead><tbody id="payRows"></tbody></table>
+          <p class="note">Gewinn = Wert × Einsatz × Wege. Gleiche Teile zählen, wenn sie auf nebeneinanderliegenden Walzen ab der linken Walze liegen, egal in welcher Reihe. Liegen auf einer Walze zwei davon, verdoppeln sich die Wege. Schraubenschlüssel (nur Walze 2 bis 4) ersetzen jedes Teil.</p>
         </div>
         <div class="tabpanel" id="panel-bonus" role="tabpanel" aria-labelledby="tab-bonus" hidden></div>
         <div class="tabpanel" id="panel-lines" role="tabpanel" aria-labelledby="tab-lines" hidden>
           <div class="lines" id="lines"></div>
-          <p class="note">Verbaute Sätze verschwinden, alles darüber rutscht nach unten und Nachschub fällt nach. Jeder weitere Schub erhöht den Nachschub-Multiplikator: ×1, ×2, ×3, dann ×5.</p>
+          <p class="note">243 Wege: Ein Teil muss nur auf Walze 1, 2 und 3 liegen, egal in welcher Reihe. Jede weitere Fundstelle auf denselben Walzen zählt als eigener Weg.</p>
         </div>
       </details>
     </div>
@@ -2479,7 +2542,7 @@ const CATS = [
     } },
   { id: "scanner", name: "Funk", color: "#a7c060", tiers: ["Verbogen", "Antenne", "Periskop", "Radar"],
     icon: `<svg viewBox="0 0 24 24"><path d="M12 21V9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="2" fill="currentColor"/><path d="M7 3a7 7 0 0 0 0 8M17 3a7 7 0 0 1 0 8M4 1a11 11 0 0 0 0 13M20 1a11 11 0 0 1 0 13" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`,
-    effect: s => `Liniengewinne +${(0.2 * s).toFixed(1).replace(".", ",")} %.` },
+    effect: s => `Alle Gewinne +${(0.2 * s).toFixed(1).replace(".", ",")} %.` },
   { id: "cargo", name: "Lager", color: "#ffc94a", tiers: ["Leer", "Kiste", "Kanister", "Vollgepackt"],
     icon: `<svg viewBox="0 0 24 24"><rect x="3" y="9" width="12" height="11" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 14h12M9 9v11" stroke="currentColor" stroke-width="1.6"/><path d="M16 8h4l1 2v10h-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
     effect: s => `Bonusspiel-Gewinne +${(0.6 * s).toFixed(1).replace(".", ",")} %.` },
@@ -3856,21 +3919,21 @@ setInterval(() => {
 
 /* ---------- Frontkarte ---------- */
 const SECTORS = [
-  { id: "orion", name: "Werkhof Nord", rank: 1, color: "#a7c060", transpose: 0, x: 60, y: 160, shape: "depot", land: "#2a2c26", grass: "rgba(140,150,90,.45)",
-    sky: ["#3a4652", "#7a8a8e", "#d8c49a"], sun: ["#fff0c8", "rgba(255,214,150,.3)"], cloud: "rgba(200,200,195,.45)", ground: ["#5a5440", "#2a261a"],
-    desc: "Der Heimatwerkhof. Hallen, Schrottberge und der Ort, an dem jeder Panzer wieder flottgemacht wird.",
+  { id: "orion", name: "Werkhof Nord", rank: 1, color: "#a7c060", transpose: 0, x: 60, y: 160, shape: "depot", land: "#101110", grass: "rgba(110,110,70,.35)",
+    sky: ["#15181b", "#33383a", "#6e5a44"], sun: ["#e8c890", "rgba(255,170,90,.18)"], cloud: "rgba(40,40,38,.7)", ground: ["#3a3628", "#141209"],
+    desc: "Der Heimatwerkhof. Rußige Hallen, Schrottberge und der Ort, an dem jeder Panzer wieder flottgemacht wird.",
     radio: ["Funk: Im Werkhof Nord ist heute viel los. Werkzeug bereithalten."] },
-  { id: "kryos", name: "Schlammfeld", rank: 4, color: "#b8a070", transpose: 2, x: 160, y: 70, shape: "mud", land: "#2a241c", grass: "rgba(110,100,70,.45)",
-    sky: ["#2e333a", "#5e6268", "#a8a090"], sun: ["#e8e4d8", "rgba(220,220,210,.2)"], cloud: "rgba(150,150,150,.55)", ground: ["#4a3e2c", "#1e180f"],
+  { id: "kryos", name: "Schlammfeld", rank: 4, color: "#b8a070", transpose: 2, x: 160, y: 70, shape: "mud", land: "#0e0c09", grass: "rgba(80,74,52,.4)",
+    sky: ["#111315", "#2a2e30", "#4e4c44"], sun: ["#b8b4a8", "rgba(200,200,190,.1)"], cloud: "rgba(60,62,62,.75)", ground: ["#2e271c", "#100c07"],
     desc: "Zäher Schlamm, kahle Bäume, Nieselregen. Expeditionen bringen hier 25 % mehr.",
     radio: ["Funk: Schlammwarnung. Ketten gut fetten.", "Funk: Ein Frosch sitzt auf dem Funkgerät. Kein Scherz."] },
-  { id: "ignis", name: "Wüstenpass", rank: 8, color: "#ffb36b", transpose: -3, x: 265, y: 150, shape: "desert", land: "#7a5a34", grass: "rgba(150,120,70,.4)",
-    sky: ["#3a6a9a", "#9ab8c8", "#ffd9a0"], sun: ["#fff6d8", "rgba(255,220,150,.45)"], cloud: "rgba(255,245,230,.4)", ground: ["#c9a46a", "#7a5a34"],
-    desc: "Sand, Hitze und Luftflimmern. Expeditionen bringen hier 50 % mehr.",
+  { id: "ignis", name: "Wüstenpass", rank: 8, color: "#ffb36b", transpose: -3, x: 265, y: 150, shape: "desert", land: "#2a1a10", grass: "rgba(120,90,50,.35)",
+    sky: ["#1a1214", "#4a2620", "#a4542e"], sun: ["#ffb070", "rgba(255,120,50,.3)"], cloud: "rgba(50,30,26,.65)", ground: ["#6a4c2c", "#2a1c10"],
+    desc: "Glutroter Abendhimmel, Sand und Rauch über dem Pass. Expeditionen bringen hier 50 % mehr.",
     radio: ["Funk: Sandsturm am Pass. Luftfilter wechseln nicht vergessen.", "Funk: Die Kühlung läuft heiß. Die Kamele tun so, als wäre nichts."] },
-  { id: "xeltar", name: "Eiswald", rank: 12, color: "#b8c7cf", transpose: 5, x: 350, y: 60, shape: "snow", land: "#2a3a3a", grass: "rgba(220,230,235,.5)",
-    sky: ["#1e2a3a", "#5a7088", "#c8d8e0"], sun: ["#f4f8ff", "rgba(220,235,255,.3)"], cloud: "rgba(230,238,245,.5)", ground: ["#d8e2e8", "#8a9aa4"],
-    desc: "Tiefer Schnee zwischen dunklen Tannen. Niemand weiß, wer hier die alte Werkstatt gebaut hat. Expeditionen bringen hier 75 % mehr.",
+  { id: "xeltar", name: "Eiswald", rank: 12, color: "#b8c7cf", transpose: 5, x: 350, y: 60, shape: "snow", land: "#0c1214", grass: "rgba(180,190,195,.35)",
+    sky: ["#080b12", "#1c2430", "#44505c"], sun: ["#d8e2f0", "rgba(200,220,255,.12)"], cloud: "rgba(70,80,90,.55)", ground: ["#8a949a", "#3a4248"],
+    desc: "Nacht, tiefer Schnee zwischen dunklen Tannen. Niemand weiß, wer hier die alte Werkstatt gebaut hat. Expeditionen bringen hier 75 % mehr.",
     radio: ["Funk: Frost im Eiswald. Motor warm laufen lassen.", "Funk: Spuren im Schnee entdeckt. Vermutlich ein Hase."] },
 ];
 const curSector = () => SECTORS.find(x => x.id === (state.sector || "orion")) || SECTORS[0];
@@ -4434,8 +4497,9 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "0.1.0";
+const GAME_VERSION = "0.2.0";
 const CHANGELOG = [
+  { v: "0.2.0", date: "25.10.2026", title: "Rex sammelt", items: ["Neues Grundspiel: 5 Walzen, 3 Reihen und 243 Wege. Gleiche Teile ab der linken Walze gewinnen, egal in welcher Reihe.", "Schraubenkisten tragen Beträge. Landet Rex, holt er alle Kisten ein, mehrere Rex holen jeder einzeln.", "Kisten ohne Rex: Manchmal springt Rex von selbst auf die Werkbank. Rex ohne Kisten: Manchmal bringt die Brieftaube welche.", "Freispiele als Großeinsatz: Rex kommt öfter, je 4 sammelnde Rex gibt es +10 Freispiele und der Sammler steigt auf ×2, ×3 und ×10.", "Düsterer Look: Ruß, Rauch, Glut am Boden, dunkle Himmel an allen Fronten."] },
   { v: "0.1.0", date: "25.10.2026", title: "Erste Fassung", items: ["Eisenfront ist da: Werkstatt-Slots mit einem rostigen Panzer, den du Stück für Stück wieder flottmachst.", "Fünf Ausbaubereiche in je vier sichtbaren Stufen: Panzerung, Motor, Funk, Lager und Kanone.", "Grundspiel mit Ersatzteil-Lager: Ab 5 gleichen Teilen, die sich berühren, wird ein Satz verbaut, Nachschub fällt nach und jeder Schub zahlt mehr.", "Werkstatthund Rex begleitet dich, die Brieftaube bringt Schraubenschlüssel, und Kisten schweben am Fallschirm vorbei.", "Eigener Look mit Stahl, Oliv und Schablonenschrift, eigene Musik (Marsch, Mundharmonika, Werkhalle) und metallische Geräusche.", "Wie alle Welten: nur Spielgeld, eigener Spielstand, über „Welt“ jederzeit wechselbar."] },
 ];
 function renderVersion() {
@@ -4461,8 +4525,8 @@ function announceVersion() {
 // Extra: große Gewinne +1, Bonusspiele +1, Goldtresor +5. Etwa 1 Orden alle 12 bis 15 Schübe.
 const DUST_ICON = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1 L12.2 7.8 L19 10 L12.2 12.2 L10 19 L7.8 12.2 L1 10 L7.8 7.8 Z" fill="url(#dustG)"/></svg>`;
 const BOOSTS = [
-  { id: "scanner", name: "Scharfes Fernglas", icon: "up_scanner", color: "#a7c060", cost: 4, min: 3, effect: "Liniengewinne +25 %" },
-  { id: "drones", name: "Taubenfutter", icon: "wild", color: "#b8c7cf", cost: 5, min: 3, effect: "Brieftaube 4× so oft" },
+  { id: "scanner", name: "Scharfes Fernglas", icon: "up_scanner", color: "#a7c060", cost: 4, min: 3, effect: "Alle Gewinne +25 %" },
+  { id: "drones", name: "Taubenfutter", icon: "wild", color: "#b8c7cf", cost: 5, min: 3, effect: "Rex springt und Tauben liefern doppelt so oft" },
   { id: "signal", name: "Funkverstärker", icon: "beacon", color: "#d9c75a", cost: 6, min: 3, effect: "Depeschen 2,5× so häufig" },
   { id: "guild", name: "Feldhandbuch", icon: "up_reactor", color: "#ffc94a", cost: 3, min: 5, effect: "Doppelte XP" },
   { id: "treasure", name: "Spürnase", icon: "crystal", color: "#e0704a", cost: 8, min: 2, effect: "Goldtresor-Chance ×5" },
@@ -4731,7 +4795,7 @@ const HELP_RULES = [
     return [x.name, SYM_HELP[id]]; }],
   [".bay, #frame", () => ["Walzen", "Fünf Walzen, drei Reihen, 5 Gewinnlinien. Gleiche Symbole von links zählen. Ohne Gewinn kommt manchmal die Brieftaube, pickt einen störenden Fund weg und lässt einen Schraubenschlüssel fallen."]],
   [".lp", () => ["Gewinnlinien", "Die Nummern zeigen, wo die 5 Linien starten und enden. Alle Linien im Logbuch unter „Linien“."]],
-  ["#spin, #spinwrap", () => ["Schub", `Startet einen Schub. Kostet ${bet()} Schrauben (5 Linien × ${lineBet()}). <b>Leertaste</b> geht auch, erneut drücken stoppt die Walzen sofort.`]],
+  ["#spin, #spinwrap", () => ["Schub", `Startet einen Schub. Kostet ${bet()} Schrauben. <b>Leertaste</b> geht auch, erneut drücken stoppt sofort.`]],
   ["#ladderBtn", () => ["Risikoleiter", `Setzt den letzten Gewinn (${gambleOffer || 0}) auf die Leiter, bis ×100. Jede Sprosse hat eine angezeigte, faire Chance. Bei Absturz ist der Gewinn weg, kassieren geht jederzeit.`]],
   [".rbtn[data-j]", el => ["Sprung", el.dataset.j === "2" ? "Zwei Sprossen auf einmal: mehr Gewinn, kleinere Chance." : "Eine Sprosse höher. Die Chance steht darunter."]],
   ["#rStop", () => ["Stopp", "Hält das Licht an. Leertaste geht auch."]],
@@ -4739,7 +4803,7 @@ const HELP_RULES = [
   ["#gambleBtn", () => ["Risiko ×2", "Signal-Risiko: Errate die Farbe des nächsten Signals. Richtig verdoppelt den Gewinn (bis ×32), falsch verliert ihn. Genau 50 : 50, du kannst jederzeit einsacken."]],
   [".stat.dust", () => ["Orden", `Seltene Zweitwährung, du hast <b>${state.dust || 0}</b>. Der Balken füllt sich mit jedem Schub, Orden bringen extra. Ausgeben in der Feldküche unten.`]],
   [".stat", el => el.querySelector("#credits") ? ["Schrauben", "Dein Spielgeld. Für Schübe, Panzer-Upgrades, Rubbellose. Kein echtes Geld."] : el.querySelector("#lastWin") ? ["Gewinn", "Was der letzte Schub eingebracht hat."] : null],
-  ["#betDown, #betUp, #betShow, .stepper", () => ["Einsatz", `Einsatz pro Linie: <b>${lineBet()}</b>, also ${bet()} Schrauben pro Schub. Höhere Einsätze schaltet die Kanone frei.`]],
+  ["#betDown, #betUp, #betShow, .stepper", () => ["Einsatz", `Einsatz: <b>${bet()}</b> Schrauben pro Schub. Kisten und Gewinne wachsen mit. Höhere Einsätze schaltet die Kanone frei.`]],
   ["#betCap", () => ["Einsatzgrenze", "Die Kanone deines Panzers bestimmt den Höchsteinsatz. Rüste sie in der Werkhalle aus."]],
   [".auto, #auto10, #auto25, #auto50", () => ["Auto-Schub", "Fordert mehrmals hintereinander an. Freigeschaltet über den Motor. Ein Klick auf Anfordern bricht ab."]],
   ["#jackpot", () => ["Goldtresor", `Wächst mit jedem Schub. Kann bei jedem Schub zufällig fallen, mit höherem Einsatz öfter.${boostOn("treasure") ? " <b>Schatzpeilung aktiv: Chance ×5!</b>" : ""}`]],
@@ -5281,143 +5345,174 @@ function start(saved) {
 }
 window.claude?.hot?.snapshot?.(() => ({ ...state }));
 
-/* ===================== Eisenfront: Fangnetz-Kaskaden statt Walzen =====================
-   6×5-Feld. Sätze ab 5 gleichen Funden, die sich waagerecht oder senkrecht berühren, landen im Netz.
-   Danach rutscht alles nach unten und neues Eisenfront fällt nach (Nachschub). Jede Welle erhöht den Multiplikator.
-   Balance per Simulation (300.000 Runden): Etwa jede zweite Runde fängt etwas, Freispiele etwa alle 114 Schübe,
-   im Mittel 32× Einsatz. Gesamt rund 119 % Auszahlung (ähnlich wie Sternenwrack). */
-const NET_C = 6, NET_R = 5;
-const NET_W = { scrap: 30, cell: 26, chip: 20, core: 14, crystal: 7, relic: 4, beacon: 1.25, capsule: .75, warp: .75 };
-const NET_PAY = { scrap: [.3, .6, 1.2, 2.25, 6], cell: [.45, .9, 1.8, 3.75, 9], chip: [.6, 1.2, 2.4, 5.25, 12], core: [.9, 1.8, 3.75, 7.5, 18], crystal: [1.5, 3, 6, 12, 30], relic: [2.25, 4.5, 9, 22.5, 60] };
-const netBucket = n => n >= 13 ? 4 : n >= 11 ? 3 : n >= 9 ? 2 : n >= 7 ? 1 : 0;
-const CASCADE_MULT = [1, 2, 3, 5];
-const GULL_P = .08;
-const FS_NET_MAX = 10;
-const NET_FEAT = { capsule: { bonus: "pick", title: "Kistenbergung", color: "#ffc94a" }, warp: { bonus: "wheel", title: "Geländefahrt", color: "#e0704a" } };
-let netRun = null, netCascading = false;
 const fmtF = f => String(f).replace(".", ",");
-function netPick() {
-  const w = { ...NET_W };
+
+/* ===================== Eisenfront: Rex sammelt (Sammler-Slot) =====================
+   5 Walzen × 3 Reihen, 243 Wege (gleiche Teile auf Walze 1, 2, 3 … in beliebiger Reihe).
+   Schraubenkisten tragen Werte (× Einsatz). Landet Rex, holt er alle Kisten ein. Mehrere Rex holen jeder einzeln.
+   Kisten ohne Rex: manchmal springt Rex selbst rein. Rex ohne Kisten: manchmal bringt die Brieftaube Kisten.
+   Freispiele (3+ Depeschen): Rex kommt öfter, jeder sammelnde Rex füllt den Knochenzähler. Je 4 Rex: +10 Freispiele
+   und der Sammler-Multiplikator steigt ×1 → ×2 → ×3 → ×10.
+   Balance per Simulation (600.000 Runden, tools/sim/rexsammelt.js): Treffer ~47 %, Rex sammelt ~14 %,
+   Freispiele ~1/205 im Mittel 68×, Gesamt rund 114 % (vergleichbar mit den anderen Welten). */
+const COL_C = 5, COL_R = 3;
+const COL_W = { scrap: 22, cell: 20, chip: 16, core: 12, crystal: 7, relic: 4, wild: 1.5, cash: 14, rex: .8, beacon: 2.4, capsule: 1.3, warp: 1.3 };
+const COL_PAY = { scrap: [.1, .25, .6], cell: [.15, .3, .75], chip: [.2, .4, 1], core: [.25, .6, 1.5], crystal: [.4, 1, 2.5], relic: [.6, 2, 6] };
+const COL_VALS = [[.2, 30], [.5, 28], [1, 18], [2, 12], [3, 7], [5, 3.5], [10, 1.5], [25, .5], [50, .15]];
+const COL_JUMP = .05, COL_FS_JUMP = .2, COL_DROP = .25, COL_FS_REX = 1.6, COL_FS_CASH = 1.1;
+const COL_LEV = [1, 2, 3, 10], COL_FS_AWARD = { 3: 10, 4: 15, 5: 20 };
+const COL_FEAT = { capsule: { bonus: "pick", title: "Kistenbergung", color: "#e8b04a" }, warp: { bonus: "wheel", title: "Geländefahrt", color: "#e07a4a" } };
+const REX_SYM = { id: "rex", name: "Rex", w: 0, pay: null, special: "#e8b04a" };
+const CASH_SYM = { id: "cash", name: "Schraubenkiste", w: 0, pay: null, special: "#c9a24a" };
+BY_ID.rex = REX_SYM; BY_ID.cash = CASH_SYM;
+ICONS.cash = `<svg viewBox="0 0 40 40"><rect x="1.5" y="1.5" width="37" height="37" rx="7" fill="#24200f" stroke="#8a6a2a" stroke-width="1.6"/><rect x="7" y="8" width="26" height="19" rx="1.5" fill="#6a4a22" stroke="#2a1a08" stroke-width="1.3"/><path d="M7 14 h26 M7 20.5 h26" stroke="#3a2610" stroke-width="1.1"/><path d="M7 8 L33 27 M33 8 L7 27" stroke="#8a6232" stroke-width="1.6" opacity=".8"/><rect x="5.5" y="6.5" width="5" height="5" fill="#9aa0a6" stroke="#3a3d42" stroke-width=".8"/><rect x="29.5" y="6.5" width="5" height="5" fill="#9aa0a6" stroke="#3a3d42" stroke-width=".8"/><circle cx="20" cy="17" r="3.4" fill="#c9ccd1" stroke="#3a3d42" stroke-width="1"/><path d="M18.3 17 h3.4 M20 15.3 v3.4" stroke="#3a3d42" stroke-width=".9"/></svg>`;
+ICONS.rex = `<svg viewBox="0 0 40 40"><defs><radialGradient id="rexG" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#4a3a1a"/><stop offset="1" stop-color="#1a140a"/></radialGradient></defs><rect x="1.5" y="1.5" width="37" height="37" rx="9" fill="url(#rexG)" stroke="#e8b04a" stroke-width="2.2"/>
+  <path d="M9.5 9 q-5 2 -4 12 q5 -1 7 -6z M30.5 9 q5 2 4 12 q-5 -1 -7 -6z" fill="#6a4422" stroke="#2a1a08" stroke-width="1"/>
+  <circle cx="20" cy="17" r="10" fill="#b07a42" stroke="#3a2410" stroke-width="1.3"/>
+  <path d="M10.5 12.5 q9.5 -9 19 0 l-1.2 2 h-16.6z" fill="#4f5a2c" stroke="#1e240c" stroke-width="1"/><path d="M11.6 14.5 h16.8" stroke="#1e240c" stroke-width="1.4"/>
+  <ellipse cx="20" cy="22.5" rx="6" ry="4.3" fill="#ead6ab" stroke="#5a3a1a" stroke-width=".9"/><ellipse cx="20" cy="20.3" rx="2.5" ry="1.8" fill="#1a1208"/>
+  <ellipse cx="15.6" cy="17" rx="1.7" ry="2.1" fill="#1a1208"/><ellipse cx="24.4" cy="17" rx="1.7" ry="2.1" fill="#1a1208"/><circle cx="16.1" cy="16.3" r=".6" fill="#fff"/><circle cx="24.9" cy="16.3" r=".6" fill="#fff"/>
+  <path d="M17.6 24.3 q2.4 3 4.8 0" fill="#e86a7a" stroke="#5a1a10" stroke-width=".6"/><path d="M12 28 q8 3.5 16 0" stroke="#a33a2a" stroke-width="2.2" fill="none" stroke-linecap="round"/><circle cx="20" cy="29.6" r="1.6" fill="#e8b04a"/>
+  ${band("SAMMLER", "#e8b04a", "#1a140a")}</svg>`;
+
+let colRun = null, colLev = 0, colMeter = 0, netCascading = false;
+const colWait = ms => wait(colRun && colRun.fast ? Math.min(ms, 90) : ms * T());
+function colVal() { let t = 0; for (const [, w] of COL_VALS) t += w; let r = Math.random() * t; for (const [v, w] of COL_VALS) if ((r -= w) < 0) return v; return 1; }
+function colPick(c, free) {
+  const w = { ...COL_W };
+  if (c === 0 || c === 4) w.wild = 0;
   if (typeof boostOn === "function" && boostOn("signal")) w.beacon *= 2.5;
+  if (free) { w.rex *= COL_FS_REX; w.cash *= COL_FS_CASH; w.beacon *= .8; w.capsule = 0; w.warp = 0; }
   let tot = 0; for (const k in w) tot += w[k];
-  let r = Math.random() * tot;
-  for (const k in w) { if ((r -= w[k]) < 0) return BY_ID[k]; }
-  return BY_ID.scrap;
+  let r = Math.random() * tot, id = "scrap";
+  for (const k in w) { if ((r -= w[k]) < 0) { id = k; break; } }
+  if (id === "cash") return { s: CASH_SYM, v: colVal() };
+  return { s: id === "wild" ? WILD : BY_ID[id] };
 }
-const netNewBoard = () => Array.from({ length: NET_C }, () => Array.from({ length: NET_R }, netPick));
-function netTile(sym, c, r, fromRow, delay) {
-  const el = symEl(sym); el.classList.add("tile");
+const colBoard = free => Array.from({ length: COL_C }, (_, c) => Array.from({ length: COL_R }, () => colPick(c, free)));
+const colAmt = v => Math.max(1, Math.round(v * bet() * lineBoost()));
+function colTile(cell, c, r, fromRow, delay) {
+  const el = symEl(cell.s); el.classList.add("tile");
+  if (cell.s.id === "cash") { const b = document.createElement("b"); b.className = "cv" + (cell.v >= 10 ? " big" : ""); b.textContent = colAmt(cell.v); el.appendChild(b); el.dataset.v = cell.v; }
   el.style.setProperty("--c", c); el.style.setProperty("--r", fromRow ?? r);
   if (delay) el.style.transitionDelay = delay + "ms";
   $("netGrid").appendChild(el);
   return el;
 }
-function netFill(board, animate) {
+function colFill(board, animate) {
   const g = $("netGrid"); g.replaceChildren();
   const tf = T(), els = [];
-  board.forEach((col, c) => col.forEach((s, r) => els.push([netTile(s, c, r, animate ? r - NET_R - 1 : undefined, animate ? Math.round((c * 70 + (NET_R - r) * 22) * tf) : 0), r])));
+  board.forEach((col, c) => col.forEach((cell, r) => els.push([colTile(cell, c, r, animate ? r - COL_R - 1 : undefined, animate ? Math.round((c * 150 + (COL_R - r) * 30) * tf) : 0), r])));
   if (animate) { void g.offsetWidth; els.forEach(([el, r]) => el.style.setProperty("--r", r)); }
 }
-const netEl = (c, r) => [...$("netGrid").children].find(el => !el.classList.contains("caught") && +el.style.getPropertyValue("--c") === c && +el.style.getPropertyValue("--r") === r);
-function netClusters(board) {
-  const res = [], seen = new Set();
-  for (let c = 0; c < NET_C; c++) for (let r = 0; r < NET_R; r++) {
-    const s = board[c][r]; if (!s.pay || seen.has(c * 10 + r)) continue;
-    const stack = [[c, r]], cl = new Set([c * 10 + r]);
-    while (stack.length) {
-      const [x, y] = stack.pop();
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-        const nx = x + dx, ny = y + dy;
-        if (nx < 0 || ny < 0 || nx >= NET_C || ny >= NET_R) continue;
-        const k = nx * 10 + ny; if (cl.has(k)) continue;
-        const t = board[nx][ny]; if (t === s || t.wild) { cl.add(k); stack.push([nx, ny]); }
-      }
+const colEl = (c, r) => [...$("netGrid").children].find(el => +el.style.getPropertyValue("--c") === c && +el.style.getPropertyValue("--r") === r);
+function colWays(board) {
+  const res = [];
+  for (const id in COL_PAY) {
+    let ways = 1, k = 0; const cells = [];
+    for (let c = 0; c < COL_C; c++) {
+      const hit = board[c].map((x, r) => [x, r]).filter(([x]) => x.s.id === id || x.s.wild);
+      if (!hit.length) break;
+      ways *= hit.length; k++; hit.forEach(([, r]) => cells.push([c, r]));
     }
-    for (const k of cl) if (board[(k / 10) | 0][k % 10] === s) seen.add(k);
-    if (cl.size >= 5) res.push({ sym: s, cells: [...cl].map(k => [(k / 10) | 0, k % 10]) });
+    if (k >= 3 && board.slice(0, k).some(col => col.some(x => x.s.id === id))) res.push({ sym: BY_ID[id], k, ways, factor: COL_PAY[id][k - 3] * ways, cells });
   }
   return res;
 }
 function evaluate(board) {
-  // für Hilfe und Tests: Sätze als "wins", Depeschen als "scatters"
-  const wins = netClusters(board).map(x => ({ sym: x.sym, count: x.cells.length, factor: NET_PAY[x.sym.id][netBucket(x.cells.length)], cells: x.cells }));
-  const scatters = []; board.forEach((col, c) => col.forEach((s, r) => { if (s.id === "beacon") scatters.push([c, r]); }));
+  const b = board[0] && board[0][0] && board[0][0].s ? board : board.map(col => col.map(s => ({ s })));
+  const wins = colWays(b).map(x => ({ sym: x.sym, count: x.k, factor: x.factor, cells: x.cells }));
+  const scatters = []; b.forEach((col, c) => col.forEach((x, r) => { if (x.s.id === "beacon") scatters.push([c, r]); }));
   return { wins, scatters, scatterReels: scatters.length, features: [] };
 }
-function netForceWin(board) {
-  // Rex-Boost: ein kleiner, zusammenhängender Satz aus einfachen Funden
-  const pool = [["scrap", 50], ["cell", 35], ["chip", 12], ["core", 3]];
-  let rr = Math.random() * 100, id = "scrap";
-  for (const [k, w] of pool) { if ((rr -= w) < 0) { id = k; break; } }
-  const sym = BY_ID[id], cells = [[(Math.random() * NET_C) | 0, (Math.random() * NET_R) | 0]], key = ([c, r]) => c * 10 + r, have = new Set(cells.map(key));
-  while (cells.length < 5) {
-    const [c, r] = cells[(Math.random() * cells.length) | 0], [dx, dy] = [[1, 0], [-1, 0], [0, 1], [0, -1]][(Math.random() * 4) | 0];
-    const nc = c + dx, nr = r + dy;
-    if (nc < 0 || nr < 0 || nc >= NET_C || nr >= NET_R || have.has(nc * 10 + nr)) continue;
-    cells.push([nc, nr]); have.add(nc * 10 + nr);
-  }
-  cells.forEach(([c, r]) => { board[c][r] = sym; });
+function colForce(board) {
+  // Rex-Boost: Rex und zwei, drei kleine Kisten sicher aufs Feld
+  const spots = []; for (let c = 0; c < COL_C; c++) for (let r = 0; r < COL_R; r++) spots.push([c, r]);
+  const take = () => spots.splice((Math.random() * spots.length) | 0, 1)[0];
+  const [rc, rr] = take(); board[rc][rr] = { s: REX_SYM };
+  const n = 2 + ((Math.random() * 2) | 0);
+  for (let i = 0; i < n; i++) { const [c, r] = take(); board[c][r] = { s: CASH_SYM, v: [.5, 1, 1, 2, 3][(Math.random() * 5) | 0] }; }
 }
-function netFloat(cells, text, sub, color) {
-  const bay = $("bay"), w = bay.clientWidth / NET_C, h = bay.clientHeight / NET_R;
-  const cx = cells.reduce((a, [c]) => a + c, 0) / cells.length, cy = cells.reduce((a, [, r]) => a + r, 0) / cells.length;
+function colFloat(c, r, text, sub, color) {
+  const bay = $("bay"), w = bay.clientWidth / COL_C, h = bay.clientHeight / COL_R;
   const f = document.createElement("div"); f.className = "netfloat"; f.style.setProperty("--fc", color);
-  f.style.left = ((cx + .5) * w) + "px"; f.style.top = ((cy + .5) * h) + "px";
+  f.style.left = ((c + .5) * w) + "px"; f.style.top = ((r + .5) * h) + "px";
   f.innerHTML = `${text}${sub ? `<small>${sub}</small>` : ""}`;
   bay.appendChild(f); setTimeout(() => f.remove(), 1150);
 }
-function netCasc(m, show) {
-  const b = $("casc"); b.hidden = !show; $("cascN").textContent = "×" + m;
-  if (show) { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); }
+function colCasc(n, show) { const b = $("casc"); b.hidden = !show; $("cascN").textContent = n; if (show) { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); } }
+function colSet(board, c, r, cell, cls) {
+  board[c][r] = cell;
+  const old = colEl(c, r); if (old) old.remove();
+  const el = colTile(cell, c, r); if (cls) el.classList.add(cls);
+  return el;
 }
-const netWait = ms => wait(netRun && netRun.fast ? Math.min(ms, 120) : ms * T());
-async function netGull(board) {
-  // Brieftaube: fliegt über das Netz und lässt 1 bis 3 Schraubenschlüssel fallen
+async function colJump(board) {
+  // Rex springt selbst aufs Feld, auf einen Platz ohne Kiste
+  const free = []; board.forEach((col, c) => col.forEach((x, r) => { if (x.s.id !== "cash" && !x.s.special) free.push([c, r]); }));
+  if (!free.length) return false;
+  const [c, r] = free[(Math.random() * free.length) | 0];
+  $("msg").className = "msg gold"; $("msg").textContent = "Wuff! Rex springt selbst auf die Werkbank …";
+  sfx.squeak(1.2);
+  colSet(board, c, r, { s: REX_SYM }, "jumpin");
+  if (typeof bip === "function") { bipState.last = 0; bip("star", 2); }
+  await colWait(750);
+  return true;
+}
+async function colPigeon(board) {
+  // Brieftaube bringt 1 bis 3 Schraubenkisten, wenn Rex ohne Beute dasteht
   const bay = $("bay"), W = bay.clientWidth, H = bay.clientHeight;
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("class", "netgull"); svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   svg.innerHTML = `<g id="gullG">${DRONE}</g>`; bay.appendChild(svg);
   const g = svg.querySelector("#gullG"), dur = 1300 * T(), t0 = performance.now();
-  $("msg").className = "msg gold"; $("msg").textContent = "Brieftaube! Sie bringt Schraubenschlüssel …";
+  $("msg").className = "msg gold"; $("msg").textContent = "Brieftaube! Sie bringt Schraubenkisten für Rex …";
   radio("Funk: Eine Brieftaube landet an der Werkbank.", true);
   sfx.droneIn();
-  const cand = []; board.forEach((col, c) => col.forEach((s, r) => { if (s.pay) cand.push([c, r]); }));
+  const cand = []; board.forEach((col, c) => col.forEach((x, r) => { if (x.s.pay) cand.push([c, r]); }));
   const n = Math.min(cand.length, 1 + ((Math.random() * 3) | 0)), drops = [];
   for (let i = 0; i < n; i++) drops.push(cand.splice((Math.random() * cand.length) | 0, 1)[0]);
   await new Promise(res => {
     const fr = now => {
       const k = Math.min(1, (now - t0) / dur);
-      g.setAttribute("transform", `translate(${W + 40 - (W + 80) * k} ${H * .12 + Math.sin(k * 9) * 6}) scale(${Math.max(1, W / 380)}) scale(-1 1)`);
+      g.setAttribute("transform", `translate(${W + 40 - (W + 80) * k} ${H * .14 + Math.sin(k * 9) * 6}) scale(${Math.max(1, W / 380)}) scale(-1 1)`);
       if (k < 1) requestAnimationFrame(fr); else res();
     };
     requestAnimationFrame(fr);
-    drops.forEach(([c, r], i) => setTimeout(() => {
-      board[c][r] = WILD;
-      const old = netEl(c, r); if (old) old.remove();
-      const el = netTile(WILD, c, r); el.classList.add("grow", "wildborn");
-      sfx.crystal();
-    }, dur * (.25 + i * .22)));
+    drops.forEach(([c, r], i) => setTimeout(() => { colSet(board, c, r, { s: CASH_SYM, v: colVal() }, "grow"); sfx.crystal(); }, dur * (.25 + i * .22)));
   });
   svg.remove();
   track("laser"); bump("lasers");
+  return n;
 }
-async function netGravity(board, removed) {
-  // entfernte Felder raus, Rest rutscht nach unten, neues Eisenfront fällt von oben nach
-  let crystals = 0;
-  const tf = T();
-  for (let c = 0; c < NET_C; c++) {
-    const keep = [];
-    for (let r = 0; r < NET_R; r++) if (!removed.has(c * 10 + r)) keep.push({ s: board[c][r], el: netEl(c, r) });
-    const missing = NET_R - keep.length; if (!missing) continue;
-    const fresh = Array.from({ length: missing }, () => { const s = netPick(); if (s.id === "crystal") crystals++; return { s, el: null }; });
-    const col = [...fresh, ...keep];
-    col.forEach((it, r) => {
-      board[c][r] = it.s;
-      if (it.el) { it.el.style.transitionDelay = "0ms"; it.el.style.setProperty("--r", r); }
-      else { const el = netTile(it.s, c, r, r - missing - 1, Math.round((c * 30) * tf)); void el.offsetWidth; el.style.setProperty("--r", r); }
-    });
+async function colCollect(board, rexes, mult) {
+  // jeder Rex holt nacheinander alle Kisten ein
+  const bay = $("bay"), w = bay.clientWidth / COL_C, h = bay.clientHeight / COL_R;
+  const crates = []; board.forEach((col, c) => col.forEach((x, r) => { if (x.s.id === "cash") crates.push([c, r, x.v]); }));
+  const sumV = crates.reduce((a, x) => a + x[2], 0);
+  let total = 0;
+  for (const [rc, rr] of rexes) {
+    const rex = colEl(rc, rr); if (rex) rex.classList.add("rexon");
+    sfx.squeak(1);
+    let got = 0;
+    for (const [c, r, v] of crates) {
+      const ce = colEl(c, r); if (ce) ce.classList.add("hit");
+      const f = document.createElement("div"); f.className = "colfly"; f.textContent = colAmt(v);
+      f.style.left = ((c + .5) * w) + "px"; f.style.top = ((r + .78) * h) + "px"; bay.appendChild(f);
+      void f.offsetWidth; f.style.left = ((rc + .5) * w) + "px"; f.style.top = ((rr + .5) * h) + "px"; f.classList.add("gone");
+      setTimeout(() => f.remove(), 480);
+      await colWait(colRun && colRun.fast ? 40 : 170);
+      got += colAmt(v); sfx.coin(1);
+      if (rex) { let sb = rex.querySelector(".cv"); if (!sb) { sb = document.createElement("b"); sb.className = "cv rexsum"; rex.appendChild(sb); } sb.textContent = got * mult; }
+      colCasc(total + got * mult, true);
+    }
+    const amt = got * mult; total += amt;
+    colFloat(rc, rr, `+${amt}`, `Rex holt ${crates.length} Kiste${crates.length === 1 ? "" : "n"}${mult > 1 ? " · ×" + mult : ""}`, "#e8b04a");
+    sfx.streakUp(Math.min(4, 1 + Math.floor(sumV / 5)));
+    await colWait(650);
+    if (rex) rex.classList.remove("rexon");
   }
-  return crystals;
+  return total;
 }
 function netDust(pts) {
   state.dustMeter = (state.dustMeter || 0) + pts;
@@ -5427,6 +5522,7 @@ function netDust(pts) {
 }
 function gainDustFromSpin() {}
 function renderSticky() {}
+function colFsUi() { fsMult = COL_LEV[colLev]; fsSticky = Array(colLev >= 3 ? 4 : colMeter).fill(0); render(); }
 
 function spin(auto) {
   if (spinning || busy || !ready || !$("scratch").hidden || !$("bonus").hidden || !$("naming").hidden || !$("worlds").hidden) return;
@@ -5441,92 +5537,107 @@ function spin(auto) {
     bipState.lastSession++;
     if (bipState.lastSession % 200 === 0) setTimeout(() => bip("session", 2), 400);
   }
-  $("bay").classList.remove("showing"); netCasc(1, false);
+  $("bay").classList.remove("showing"); colCasc(0, false);
   $("msg").className = free ? "msg fs" : "msg";
   $("msg").textContent = free ? `Freispiel ${fsTotal - fsLeft} von ${fsTotal} …` : autoLeft > 0 ? `Auto-Schub · noch ${autoLeft} …` : "Nachschub rollt an …";
   $("lastWin").textContent = "0"; $("lastWin").classList.remove("pos");
   render();
   sfx.start();
-  const board = netNewBoard();
+  const board = colBoard(free);
   boostSpinActive = false;
-  if (!free && state.boostReady) { netForceWin(board); boostSpinActive = true; state.boostReady = 0; state.luck = 0; sfx.boostSpin(); }
+  if (!free && state.boostReady) { colForce(board); boostSpinActive = true; state.boostReady = 0; state.luck = 0; sfx.boostSpin(); }
   const tf = T();
-  [...$("netGrid").children].forEach(el => { el.style.transitionDelay = Math.round(+el.style.getPropertyValue("--c") * 35 * tf) + "ms"; el.classList.add("sink"); el.style.setProperty("--r", NET_R + 1); });
-  const run = netRun = { board, free, fast: false, timers: [], done: false };
-  const dropAt = reduced ? 0 : 300 * tf, landAt = reduced ? 30 : dropAt + (NET_C * 70 + NET_R * 22 + 420) * tf;
-  run.timers.push(setTimeout(() => { if (!run.done) netFill(board, !reduced); }, dropAt));
-  for (let c = 0; c < NET_C; c++) run.timers.push(setTimeout(() => { if (!run.done && !slammed) sfx.stop(); }, dropAt + (c * 70 + 330) * tf));
-  run.timers.push(setTimeout(() => netLanded(run), landAt));
+  [...$("netGrid").children].forEach(el => { el.style.transitionDelay = Math.round(+el.style.getPropertyValue("--c") * 60 * tf) + "ms"; el.classList.add("sink"); el.style.setProperty("--r", COL_R + 1); });
+  const run = colRun = { board, free, fast: false, timers: [], done: false };
+  const dropAt = reduced ? 0 : 280 * tf, landAt = reduced ? 30 : dropAt + (COL_C * 150 + COL_R * 30 + 400) * tf;
+  run.timers.push(setTimeout(() => { if (!run.done) colFill(board, !reduced); }, dropAt));
+  for (let c = 0; c < COL_C; c++) run.timers.push(setTimeout(() => { if (!run.done && !slammed) sfx.stop(); }, dropAt + (c * 150 + 360) * tf));
+  run.timers.push(setTimeout(() => colLanded(run), landAt));
 }
-function netLanded(run) {
+function colLanded(run) {
   if (run.done) return;
   run.done = true; run.timers.forEach(clearTimeout);
   [...$("netGrid").children].forEach(el => { el.style.transitionDelay = "0ms"; });
   finish(run.board, run.free);
 }
 function quickStop() {
-  if (!spinning || slammed || !netRun || netRun.done) return;
+  if (!spinning || slammed || !colRun || colRun.done) return;
   slammed = true; sfx.slam();
-  netFill(netRun.board, false);
-  netLanded(netRun);
+  colFill(colRun.board, false);
+  colLanded(colRun);
 }
 function press() {
   if (!$("bonus").hidden || !$("scratch").hidden) return;
   if (skipCelebration) { skipCelebration(); return; }
   if (spinning) { quickStop(); return; }
-  if (netCascading && netRun) { netRun.fast = true; return; }
+  if (netCascading && colRun) { colRun.fast = true; return; }
   spin();
 }
 
 async function finish(board, free) {
   faces = board;
   spinning = false; busy = true; netCascading = true; render();
-  let total = 0, waves = 0, gull = false, dustPts = 2 + board.flat().filter(s => s.id === "crystal").length * 3;
-  const caught = [];
-  for (;;) {
-    let cl = netClusters(board);
-    if (!cl.length && waves === 0 && !gull && !free && Math.random() < GULL_P * (boostOn("drones") ? 4 : 1)) { gull = true; await netGull(board); await netWait(450); cl = netClusters(board); }
-    if (!cl.length && waves === 0 && free && !gull && Math.random() < .25) { gull = true; await netGull(board); await netWait(450); cl = netClusters(board); }
-    if (!cl.length) break;
-    let m;
-    if (free) { m = fsMult; if (fsMult < FS_NET_MAX) fsMult++; }
-    else m = CASCADE_MULT[Math.min(waves, CASCADE_MULT.length - 1)];
-    waves++;
-    const removed = new Set(); let w = 0;
-    for (const x of cl) {
-      const f = NET_PAY[x.sym.id][netBucket(x.cells.length)];
-      w += f; caught.push({ sym: x.sym, count: x.cells.length, factor: f });
-      track("symwin", 1, x.sym.id); if (x.cells.length >= 8) track("four");
-      x.cells.forEach(([c, r]) => { removed.add(c * 10 + r); const el = netEl(c, r); if (el) { el.classList.add("hit"); el.style.setProperty("--hc", x.sym.color || "#ffffff"); } });
-    }
-    const cw = Math.round(w * bet() * m * lineBoost());
-    total += cw;
+  const mult = free ? COL_LEV[colLev] : 1;
+  const find = id => { const out = []; board.forEach((col, c) => col.forEach((x, r) => { if (x.s.id === id) out.push([c, r]); })); return out; };
+  let total = 0, helper = false, dustPts = 2 + find("crystal").length * 3, collected = 0, rexCount = 0;
+
+  // 1. Wege
+  const ways = colWays(board);
+  if (ways.length) {
     $("bay").classList.add("showing");
-    cl.forEach((x, i) => netFloat(x.cells, `+${Math.round(NET_PAY[x.sym.id][netBucket(x.cells.length)] * bet() * m * lineBoost())}`, `${x.cells.length}× ${x.sym.name}${m > 1 ? " · ×" + m : ""}`, x.sym.color));
-    netCasc(m, waves > 1 || free);
-    if (waves > 1) sfx.streakUp(Math.min(4, waves)); else sfx.small();
+    for (const x of ways) {
+      const amt = Math.round(x.factor * bet() * lineBoost());
+      total += amt;
+      track("symwin", 1, x.sym.id); if (x.k >= 5) track("four");
+      x.cells.forEach(([c, r]) => { const el = colEl(c, r); if (el) { el.classList.add("hit"); el.style.setProperty("--hc", x.sym.color || "#ffffff"); } });
+      const mid = x.cells.find(([c]) => c === 1) || x.cells[0];
+      colFloat(mid[0], mid[1], `+${amt}`, `${x.k} Walzen ${x.sym.name}${x.ways > 1 ? ` · ${x.ways} Wege` : ""}`, x.sym.color);
+    }
+    sfx.small();
     $("lastWin").textContent = total; $("lastWin").classList.add("pos");
     $("msg").className = free ? "msg fs" : "msg win";
-    $("msg").textContent = `${waves > 1 ? `Nachschub ${waves}: ` : ""}${cl.map(x => `${x.cells.length}× ${x.sym.name}`).join(", ")}${m > 1 ? ` (×${m})` : ""} · bisher +${total}`;
-    await netWait(700);
-    removed.forEach(k => { const el = netEl((k / 10) | 0, k % 10); if (el) el.classList.add("caught"); });
-    sfx.coin(waves);
-    await netWait(360);
-    [...$("netGrid").querySelectorAll(".caught")].forEach(el => el.remove());
-    $("bay").classList.remove("showing");
+    $("msg").textContent = ways.map(x => `${x.k}× ${x.sym.name}${x.ways > 1 ? ` (${x.ways} Wege)` : ""}`).join(", ") + ` · +${total}`;
+    await colWait(900);
     [...$("netGrid").children].forEach(el => el.classList.remove("hit"));
-    dustPts += (await netGravity(board, removed)) * 3;
-    await netWait(480);
-    if (free) multUp();
+    $("bay").classList.remove("showing");
+  }
+
+  // 2. Rex sammelt
+  let rex = find("rex"), crates = find("cash");
+  const boostDrop = boostOn("drones") ? 2 : 1;
+  if (crates.length && !rex.length && Math.random() < (free ? COL_FS_JUMP : COL_JUMP) * boostDrop) { helper = true; await colJump(board); rex = find("rex"); }
+  if (rex.length && !crates.length && Math.random() < COL_DROP * boostDrop) { helper = true; await colPigeon(board); await colWait(350); crates = find("cash"); }
+  if (rex.length && crates.length) {
+    [...$("netGrid").children].forEach(el => { const id = el.dataset.sym; if (id !== "rex" && id !== "cash") el.classList.add("dim"); });
+    $("msg").className = "msg gold"; $("msg").textContent = rex.length > 1 ? `${rex.length}× Rex! Jeder holt alle Kisten …` : "Rex holt die Kisten …";
+    collected = await colCollect(board, rex, mult);
+    total += collected; rexCount = rex.length;
+    $("lastWin").textContent = total; $("lastWin").classList.add("pos");
+    [...$("netGrid").children].forEach(el => el.classList.remove("dim", "hit"));
+    track("symwin", rex.length, "rex");
+  } else if (rex.length) {
+    $("msg").className = "msg"; $("msg").textContent = "Rex schnüffelt, aber keine Kiste in Sicht.";
   }
   netCascading = false;
   netDust(dustPts);
 
-  const cells = id => { const out = []; board.forEach((col, c) => col.forEach((s, r) => { if (s.id === id) out.push([c, r]); })); return out; };
-  const scatters = cells("beacon");
-  const award = scatters.length >= 3 ? FS_AWARD[Math.min(scatters.length, 5)] : 0;
-  const features = ["capsule", "warp"].map(id => ({ id, ...NET_FEAT[id], cells: cells(id) })).filter(f => f.cells.length >= 3);
-  const mark = (list, col) => list.forEach(([c, r]) => { const el = netEl(c, r); if (el) { el.classList.add("hit"); el.style.setProperty("--hc", col); } });
+  // 3. Freispiele: Knochenzähler
+  let fsGain = 0;
+  if (free && rexCount) {
+    colMeter += rexCount;
+    while (colMeter >= 4 && colLev < 3) { colMeter -= 4; colLev++; fsGain += 10; }
+    if (colLev >= 3) colMeter = Math.min(colMeter, 4);
+    colFsUi();
+    if (fsGain) {
+      fsLeft += fsGain; fsTotal += fsGain; multUp(); render();
+      await simpleBanner({ tier: "Rex bekommt Verstärkung", color: "#e8b04a", sub: `Sammler jetzt ×${COL_LEV[colLev]}` }, `+${fsGain} Freispiele`, sfx.fs, ["#e8b04a", "#e07a4a", "#f4f0dc"], 2300);
+    }
+  }
+
+  const scatters = find("beacon");
+  const award = scatters.length >= 3 ? COL_FS_AWARD[Math.min(scatters.length, 5)] : 0;
+  const features = ["capsule", "warp"].map(id => ({ id, ...COL_FEAT[id], cells: find(id) })).filter(f => f.cells.length >= 3);
+  const mark = (list, col) => list.forEach(([c, r]) => { const el = colEl(c, r); if (el) { el.classList.add("hit"); el.style.setProperty("--hc", col); } });
   if (award) { mark(scatters, "#d9c75a"); sfx.scatter(scatters.length); }
   features.forEach(f => { mark(f.cells, f.color); sfx.feature(f.id === "capsule" ? 0 : 1, 3); });
   if (award || features.length) $("bay").classList.add("showing");
@@ -5550,12 +5661,14 @@ async function finish(board, free) {
 
   const msg = $("msg"), parts = [];
   if (win > 0) {
-    const top = caught.slice().sort((a, b) => b.factor - a.factor)[0];
-    parts.push(`${boostSpinActive ? "Rex-Boost! " : ""}${gull ? "Schraubenschlüssel! " : ""}${caught.length} ${caught.length > 1 ? "Sätze" : "Satz"}${waves > 1 ? ` in ${waves} Schüben` : ""}: +${win} Schrauben${sMult > 1 ? ` · Strähne ×${String(sMult).replace(".", ",")}` : ""}.`);
-    addLog(gull ? "wild" : top.sym.id, `${top.count}× ${top.sym.name}${caught.length > 1 ? ` +${caught.length - 1}` : ""}${waves > 1 ? ` · ${waves} Schübe` : ""}`, "+" + win, gull ? "#ffffff" : top.sym.color);
+    const what = [ways.length ? `${ways.length} Weg-Gewinn${ways.length > 1 ? "e" : ""}` : "", collected ? `Rex sammelt${rexCount > 1 ? ` ×${rexCount}` : ""}` : ""].filter(Boolean).join(", ");
+    parts.push(`${boostSpinActive ? "Rex-Boost! " : ""}${what}: +${win} Schrauben${sMult > 1 ? ` · Strähne ×${String(sMult).replace(".", ",")}` : ""}.`);
+    const top = ways.slice().sort((a, b) => b.factor - a.factor)[0];
+    addLog(collected ? "rex" : top.sym.id, collected ? `Rex sammelt${rexCount > 1 ? ` ×${rexCount}` : ""}${mult > 1 ? ` · ×${mult}` : ""}` : `${top.k}× ${top.sym.name}`, "+" + win, collected ? "#e8b04a" : top.sym.color);
   }
-  netCasc(1, false);
-  bipAfterSpin({ win, factor: win / bet(), lasered: gull, award, features: features.length, prevStreak, streak, free });
+  if (fsGain) parts.push(`Rex-Zähler voll: +${fsGain} Freispiele, Sammler ×${COL_LEV[colLev]}!`);
+  colCasc(0, false);
+  bipAfterSpin({ win, factor: win / bet(), lasered: helper, award, features: features.length, prevStreak, streak, free });
   if (!free && win >= bet() * 15) setTimeout(() => addDust(1, "große Bergung"), 1200);
   if (win > 0) { bump("wins"); sess.won += win; sess.best = Math.max(sess.best, win); if (!free) maxStat("maxFactor", win / bet()); }
   if (award && !free) bump("fs");
@@ -5590,13 +5703,14 @@ async function finish(board, free) {
   }
   if (award) {
     fsLeft += award; fsTotal += award;
-    if (!free) { state.fsRounds++; fsWin = 0; fsMult = FS_MULT; }
-    render();
-    await celebrateFs(award, free);
+    if (!free) { state.fsRounds++; fsWin = 0; colLev = 0; colMeter = 0; }
+    colFsUi();
+    await simpleBanner({ tier: free ? "Noch eine Depesche" : "Großeinsatz", color: "var(--lime)", sub: free ? "Rex-Zähler und Sammler bleiben" : "Rex kommt öfter · je 4 Rex: +10 Freispiele und mehr Sammler" },
+      `+${award} Freispiele`, sfx.fs, ["#d9c75a", "#e8b04a", "#f4f0dc"], 2400);
   }
 
   if (inFs()) {
-    if (!parts.length) { msg.className = "msg fs"; msg.textContent = `Kein Fund. Noch ${fsLeft} Freispiel${fsLeft === 1 ? "" : "e"}, Nachschub bleibt bei ×${fsMult}.`; }
+    if (!parts.length) { msg.className = "msg fs"; msg.textContent = `Kein Fund. Noch ${fsLeft} Freispiel${fsLeft === 1 ? "" : "e"}, Rex ${colLev >= 3 ? "4" : colMeter}/4, Sammler ×${COL_LEV[colLev]}.`; }
     busy = false; fsActive = true; render();
     await wait((parts.length ? 500 : 650) * T());
     spin(true);
@@ -5606,18 +5720,17 @@ async function finish(board, free) {
   if (free) {
     fsActive = false;
     msg.className = "msg win";
-    msg.textContent = `Freispiele beendet: insgesamt +${fsWin} Schrauben, Nachschub bis ×${fsMult}.`;
+    msg.textContent = `Freispiele beendet: insgesamt +${fsWin} Schrauben, Sammler bis ×${COL_LEV[colLev]}.`;
     if (fsWin >= bet() * 50) setTimeout(() => addDust(2, "starke Freispiele"), 2500);
-    fsMult = FS_MULT;
     addLog("beacon", "Freispiele gesamt", "+" + fsWin, "#d9c75a");
-    render();
+    colLev = 0; colMeter = 0; colFsUi();
     await celebrateFsEnd(fsWin, state.credits);
     bip("fsend", 2);
     fsTotal = 0;
-  } else if (!parts.length) {
+  } else if (!parts.length && !rex.length) {
     if (state.credits < 5) { msg.className = "msg lose"; msg.textContent = "Schrauben erschöpft."; }
     else if (state.credits < bet()) { msg.className = "msg lose"; msg.textContent = "Zu wenig Schrauben für diesen Einsatz. Senke den Einsatz."; }
-    else { msg.className = "msg"; msg.textContent = "Kein Satz komplett. Neuer Schub?"; }
+    else { msg.className = "msg"; msg.textContent = crates.length ? "Kisten da, aber kein Rex. Neuer Schub?" : "Nichts Brauchbares dabei. Neuer Schub?"; }
   }
   countCredits(state.credits, 0);
   fsActive = false;
@@ -5626,7 +5739,7 @@ async function finish(board, free) {
     state.pot = JP_SEED; state.credits += amount;
     state.best = Math.max(state.best, amount); state.peak = Math.max(state.peak, state.credits);
     autoLeft = 0; clearAutoMarks();
-    addLog("crystal", "GOLDTRESOR", "+" + amount, "#ffc94a");
+    addLog("relic", "GOLDTRESOR", "+" + amount, "#ffc94a");
     radio(`Funk: GOLDTRESOR GEKNACKT! ${amount} Schrauben. Alle Fronten reden davon.`, true, 15000);
     renderMeta();
     bump("jackpots"); sess.won += amount; setTimeout(() => addDust(5, "Goldtresor"), 5000);
@@ -5660,38 +5773,42 @@ async function finish(board, free) {
 
 function buildInfo() {
   $("payRows").innerHTML = SYMBOLS.filter(x => x.pay).reverse().map(x =>
-    `<tr><td>${ICONS[x.id]}${x.name}</td>${NET_PAY[x.id].map(p => `<td class="pay">${fmtF(p)}</td>`).join("")}</tr>`).join("");
+    `<tr><td>${ICONS[x.id]}${x.name}</td>${COL_PAY[x.id].map(p => `<td class="pay">${fmtF(p)}</td>`).join("")}</tr>`).join("");
   $("panel-bonus").innerHTML = `
-    <div class="feat" style="--fc:#a7c060">${ICONS.core}<div><h3>Sätze und Nachschub</h3><p>Ab 5 gleichen Teilen, die sich waagerecht oder senkrecht berühren, wird ein Satz verbaut. Danach rutscht alles nach unten und Nachschub fällt nach. Jeder weitere Schub in derselben Runde zahlt mehr: ×1, ×2, ×3, dann ×5.</p></div></div>
-    <div class="feat" style="--fc:#d9c75a">${ICONS.beacon}<div><h3>Depesche · Freispiele</h3><p>Liegen nach dem letzten Nachschub 3, 4 oder 5 Depeschen irgendwo im Lager, gibt es 8, 12 oder 20 Freispiele. Der Nachschub-Multiplikator startet bei ×2, steigt mit jedem Schub bis ×10 und bleibt bis zum Ende der Freispiele erhalten. Neue Depeschen verlängern die Runde.</p></div></div>
-    <div class="feat" style="--fc:#ffc94a">${ICONS.capsule}<div><h3>Nachschubkiste · Kistenbergung</h3><p>3 oder mehr Nachschubkisten im Lager starten die Kistenbergung: Kisten öffnen, Schrauben sammeln, ein ×2 verdoppelt alles. Beim dritten Alarm ist Schluss.</p></div></div>
-    <div class="feat" style="--fc:#e0704a">${ICONS.warp}<div><h3>Kompass · Geländefahrt</h3><p>3 oder mehr Kompasse im Lager starten die Geländefahrt am Kartenrad. „Weiter“ führt in höhere Ringe, bis zum 300-fachen Einsatz.</p></div></div>
-    <div class="feat" style="--fc:#b8c7cf">${ICONS.wild}<div><h3>Brieftaube · Schraubenschlüssel</h3><p>Bleibt das Lager leer, kommt manchmal eine Brieftaube und bringt 1 bis 3 Schraubenschlüssel. Ein Schraubenschlüssel zählt für jeden Satz. In Freispielen hilft sie öfter.</p></div></div>
-    <div class="feat" style="--fc:#ffb347">${ICONS.crystal}<div><h3>Orden und Feldküche</h3><p>Jeder Schub füllt den Ordensmesser ein wenig, jeder Orden im Lager deutlich mehr, auch die nachgefallenen. Ist er voll, gibt es 1 Orden. In der Feldküche tauschst du ihn gegen Rationen für einige Minuten.</p></div></div>
-    <div class="feat" style="--fc:#ffc94a">${ICONS.wild}<div><h3>Rex-Boost</h3><p>Jeder Schub ohne Fund füllt Rex' Glücksladung. Nach ${BOOST_AT} leeren Schüben ist sie voll, und der nächste Schub bringt garantiert einen Satz.</p></div></div>
+    <div class="feat" style="--fc:#e8b04a">${ICONS.rex}<div><h3>Rex sammelt</h3><p>Schraubenkisten tragen Beträge. Landet Rex irgendwo auf der Werkbank, holt er alle Kisten ein und du bekommst die Summe. Zwei Rex holen alles doppelt, drei dreifach.</p></div></div>
+    <div class="feat" style="--fc:#c9a24a">${ICONS.cash}<div><h3>Schraubenkisten</h3><p>Werte von 0,2- bis 50-fachem Einsatz. Ohne Rex bleiben sie liegen. Aber manchmal springt Rex von selbst auf die Werkbank, wenn Kisten da sind.</p></div></div>
+    <div class="feat" style="--fc:#b8c0c8">${ICONS.wild}<div><h3>Brieftaube</h3><p>Steht Rex ohne Kisten da, bringt manchmal eine Brieftaube 1 bis 3 Kisten vorbei. Der Schraubenschlüssel (Walze 2 bis 4) ersetzt jedes Teil.</p></div></div>
+    <div class="feat" style="--fc:#d9c75a">${ICONS.beacon}<div><h3>Depesche · Großeinsatz</h3><p>3, 4 oder 5 Depeschen bringen 10, 15 oder 20 Freispiele. Rex kommt dort öfter. Jeder Rex, der Kisten holt, füllt den Rex-Zähler. Je 4 Rex gibt es +10 Freispiele, und der Sammler-Multiplikator steigt: ×1, ×2, ×3, dann ×10.</p></div></div>
+    <div class="feat" style="--fc:#e8b04a">${ICONS.capsule}<div><h3>Nachschubkiste · Kistenbergung</h3><p>3 oder mehr Nachschubkisten irgendwo starten die Kistenbergung: Kisten öffnen, Schrauben sammeln, ein ×2 verdoppelt alles. Beim dritten Alarm ist Schluss.</p></div></div>
+    <div class="feat" style="--fc:#e07a4a">${ICONS.warp}<div><h3>Kompass · Geländefahrt</h3><p>3 oder mehr Kompasse irgendwo starten die Geländefahrt am Kartenrad. „Weiter“ führt in höhere Ringe, bis zum 300-fachen Einsatz.</p></div></div>
+    <div class="feat" style="--fc:#e8b04a">${ICONS.crystal}<div><h3>Orden und Feldküche</h3><p>Jeder Schub füllt den Ordensmesser ein wenig, jeder Orden auf der Werkbank deutlich mehr. Ist er voll, gibt es 1 Orden. In der Feldküche tauschst du ihn gegen Rationen für einige Minuten.</p></div></div>
+    <div class="feat" style="--fc:#e8b04a">${ICONS.rex}<div><h3>Rex-Boost</h3><p>Jeder Schub ohne Fund füllt Rex' Glücksladung. Nach ${BOOST_AT} leeren Schüben ist sie voll, und beim nächsten Schub bringt Rex garantiert Kisten mit.</p></div></div>
     <div class="feat" style="--fc:#ffc94a">${ICONS.ladder}<div><h3>Risikoleiter</h3><p>Nach einem normalen Gewinn: Steig die Leiter hoch, von ×1 bis ×100. Das Licht springt zwischen Ziel und Absturz, du drückst Stopp. Die Chancen sind fair, kassieren geht jederzeit.</p></div></div>
-    <div class="feat" style="--fc:#e0704a">${ICONS.beacon}<div><h3>Signal-Risiko</h3><p>Nach einem normalen Gewinn kannst du ihn verdoppeln: Oliv oder Signalrot raten, genau 50 : 50, höchstens fünf Runden.</p></div></div>
-    <div class="feat" style="--fc:#ff9a3c">${ICONS.core}<div><h3>Strähne</h3><p>Findest du mehrere Schübe hintereinander etwas, gibt es einen Bonus auf den Fund: 2 in Folge ×1,1, 3 in Folge ×1,25, ab 4 in Folge ×1,5.</p></div></div>
+    <div class="feat" style="--fc:#e07a4a">${ICONS.beacon}<div><h3>Signal-Risiko</h3><p>Nach einem normalen Gewinn kannst du ihn verdoppeln: Oliv oder Signalrot raten, genau 50 : 50, höchstens fünf Runden.</p></div></div>
+    <div class="feat" style="--fc:#ff9a3c">${ICONS.core}<div><h3>Strähne</h3><p>Findest du mehrere Schübe hintereinander etwas, gibt es einen Bonus: 2 in Folge ×1,1, 3 in Folge ×1,25, ab 4 in Folge ×1,5.</p></div></div>
     <div class="feat" style="--fc:#ffc94a">${ICONS.relic}<div><h3>Goldtresor</h3><p>Jeder Schub legt 1,5 % deines Einsatzes in den Topf, der bei 500 Schrauben startet. Die Chance pro Schub ist Einsatz ÷ 40.000.</p></div></div>
     <div class="feat" style="--fc:#a7c060">${ICONS.up_engine}<div><h3>Expeditionen, Fronten und Aufträge</h3><p>Schick deinen Panzer auf Expedition, erkunde neue Fronten über deinen Rang und erfülle Aufträge für Schrauben und XP.</p></div></div>`;
-  const demo = [0,0,1,0,0,0, 0,1,1,2,0,0, 0,0,1,1,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0];
-  $("lines").innerHTML = `<div><b>Beispiel:</b> 6 Motorblöcke, die sich berühren, plus ein Schraubenschlüssel = ein Satz aus 7.</div><div class="swarmdemo">${demo.map(v => `<i class="${v === 1 ? "on" : v === 2 ? "w" : ""}"></i>`).join("")}</div>`;
+  const demo = [1,0,0,0,0, 0,1,0,0,0, 0,2,1,0,0];
+  $("lines").innerHTML = `<div><b>Beispiel:</b> Motorblock auf Walze 1, 2 und 3, auf Walze 2 zweimal (einmal als Schraubenschlüssel) = 2 Wege über 3 Walzen.</div><div class="waysdemo">${[0,1,2].map(r => [0,1,2,3,4].map(c => demo[r * 5 + c])).flat().map(v => `<i class="${v === 1 ? "on" : v === 2 ? "w" : ""}"></i>`).join("")}</div>`;
 }
 
-MISSION_TYPES.symwin.text = m => `Verbaue ${m.goal} Sätze mit ${BY_ID[m.meta].name}`;
-MISSION_TYPES.four.text = () => "Verbaue einen Satz aus 8 oder mehr";
+MISSION_TYPES.symwin.text = m => m.meta === "rex" ? `Lass Rex ${m.goal}-mal sammeln` : `Gewinne ${m.goal}-mal mit ${BY_ID[m.meta].name}`;
+MISSION_TYPES.four.text = () => "Gewinne mit einem Teil über alle 5 Walzen";
 Object.assign(SYM_HELP, {
-  beacon: "Depesche. Liegen 3 oder mehr nach dem letzten Nachschub im Lager, gibt es Freispiele (3 = 8, 4 = 12, 5 = 20). Dort bleibt der Nachschub-Multiplikator bis ×10 erhalten.",
-  capsule: "Nachschubkiste. 3 oder mehr im Lager starten die Kistenbergung.",
-  warp: "Kompass. 3 oder mehr im Lager starten die Geländefahrt am Kartenrad.",
-  wild: "Schraubenschlüssel. Kommt nur von der Brieftaube und zählt für jeden Satz.",
+  beacon: "Depesche. 3 oder mehr irgendwo bringen Freispiele (3 = 10, 4 = 15, 5 = 20). Dort kommt Rex öfter, und je 4 sammelnde Rex gibt es +10 Freispiele und einen höheren Sammler-Multiplikator (bis ×10).",
+  capsule: "Nachschubkiste. 3 oder mehr irgendwo starten die Kistenbergung.",
+  warp: "Kompass. 3 oder mehr irgendwo starten die Geländefahrt am Kartenrad.",
+  wild: "Schraubenschlüssel. Nur auf Walze 2 bis 4, ersetzt jedes Teil.",
+  rex: "Rex, der Sammler. Holt alle Schraubenkisten auf der Werkbank ein. Mehrere Rex holen jeder einzeln.",
 });
 HELP_RULES.unshift(
   [".tile[data-sym]", el => { const id = el.dataset.sym, x = id === "wild" ? WILD : BY_ID[id]; if (!x) return null;
-    if (x.pay) { const p = NET_PAY[id]; return [x.name, `Satz aus 5–6: <b>${Math.round(p[0] * bet())}</b>, 7–8: <b>${Math.round(p[1] * bet())}</b>, 9–10: <b>${Math.round(p[2] * bet())}</b>, 13+: <b>${Math.round(p[4] * bet())}</b> Schrauben beim aktuellen Einsatz, vor dem Nachschub-Multiplikator.${id === "crystal" ? " Jeder Orden füllt außerdem den Ordensmesser." : ""}`]; }
+    if (id === "cash") return ["Schraubenkiste", `Wert <b>${el.querySelector(".cv") ? el.querySelector(".cv").textContent : ""}</b> Schrauben. Zählt nur, wenn Rex auf der Werkbank landet, dann holt er alle Kisten ein.`];
+    if (x.pay) { const p = COL_PAY[id]; return [x.name, `Pro Weg über 3 Walzen: <b>${Math.round(p[0] * bet())}</b>, 4 Walzen: <b>${Math.round(p[1] * bet())}</b>, 5 Walzen: <b>${Math.round(p[2] * bet())}</b> Schrauben beim aktuellen Einsatz.${id === "crystal" ? " Jeder Orden füllt außerdem den Ordensmesser." : ""}`]; }
     return [x.name, SYM_HELP[id]]; }],
-  [".bay, #frame, #netGrid", () => ["Ersatzteillager", "6 × 5 Felder. Ab 5 gleichen Teilen, die sich berühren, wird ein Satz verbaut. Danach fällt Nachschub nach, und jeder weitere Schub zahlt mehr (×1, ×2, ×3, ×5)."]],
-  ["#casc", () => ["Nachschub", "Der aktuelle Multiplikator dieser Runde. Er steigt mit jedem neuen Schub."]],
+  [".bay, #frame, #netGrid", () => ["Werkbank", "5 Walzen, 3 Reihen, 243 Wege. Gleiche Teile ab der linken Walze gewinnen, egal in welcher Reihe. Schraubenkisten holt Rex ein, sobald er landet."]],
+  ["#casc", () => ["Rex sammelt", "So viel hat Rex in dieser Runde schon eingeholt."]],
+  ["#fsbar", () => ["Großeinsatz", `Kostenlose Schübe. Rex-Zähler ${colLev >= 3 ? 4 : colMeter} von 4: Je 4 sammelnde Rex gibt es +10 Freispiele. Sammler-Multiplikator gerade ×${COL_LEV[colLev]} (Stufen ×1, ×2, ×3, ×10).`]],
 );
 
 /* ---------- Eisenfront: Werkstatt-Geräusche (Blech, Ratsche, Druckluft, Amboss) ---------- */
@@ -5767,7 +5884,7 @@ function skySparks(sky, x, y, n) {
   for (let i = 0; i < n; i++) sky.parts.push({ x: sx, y: sy, vx: (Math.random() - .5) * 4, vy: -1 - Math.random() * 2.5, r: 1.3, life: 1, kind: "spark" });
 }
 
-netFill(netNewBoard(), false);
+colFill(colBoard(false), false);
 
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 </script>
