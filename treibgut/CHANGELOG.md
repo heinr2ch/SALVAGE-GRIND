@@ -2,6 +2,9 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.4.2 · Welt-Menü · 25.10.2026
+- Im Welt-Menü steht bei Neustadt jetzt das neue Grundspiel: die Stadtrundfahrt mit Würfeln, Stadtbus und Grundstücken.
+
 ## Beta 0.4.1 · Vierte Welt · 25.10.2026
 - Im Welt-Menü gibt es jetzt auch Neustadt, ein Städtebau-Spiel mit eigenem Grundspiel zum Hochstapeln.
 

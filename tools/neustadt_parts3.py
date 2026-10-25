@@ -1,58 +1,119 @@
-# Neustadt Teil 3: eigenes Grundspiel "Hochstapler" (kleine Walze, Etagen stapeln, auszahlen oder Abriss)
+# Neustadt Teil 3: eigenes Grundspiel "Stadtrundfahrt" (Brettspiel: würfeln, Stadtbus fährt, Grundstücke kaufen, Miete kassieren)
+# Ersetzt seit Neustadt 0.3.0 den Hochstapler. Balance: tools/sim/stadtrundfahrt.js
 
-TOWER_HTML = [
+BOARD_HTML = [
     ('''        <div class="bay net col" id="bay">
           <div class="netgrid" id="netGrid" aria-label="Werkbank mit 5 Walzen und 3 Reihen"></div>
           <div class="casc" id="casc" hidden>Rex sammelt <b id="cascN">0</b></div>''',
-     '''        <div class="bay tower" id="bay">
-          <div class="tw-stage" id="twStage"><svg viewBox="0 0 160 200" preserveAspectRatio="xMidYMax meet" id="twSvg" aria-label="Dein Hochhaus"><g id="twCam"><g id="twFloors"></g><g id="twTop"></g></g><g id="twFx"></g></svg>
-            <div class="tw-height"><span>Höhe</span><b id="twH">0</b></div><div class="tw-next10" id="twNext10">Richtfest bei 10</div><div class="tw-mini" id="twMini" hidden></div></div>
-          <div class="tw-side">
-            <div class="tw-reel" id="twReel" aria-label="Bauwalze"><div class="tw-strip" id="twStrip"></div><i class="tw-line" aria-hidden="true"></i></div>
-            <div class="tw-val"><span>Wert</span><b id="twVal">×0</b><small id="twNext">Nächste Etage: ×1,16</small></div>
-            <div class="tw-flags"><span class="tw-shield" id="twShield" hidden>Kran-Sicherung <b id="twShieldN">1</b></span><span class="tw-plans" id="twPlans">Baupläne <b id="twPlansN">0</b>/3</span><span class="tw-boom" id="twBoom" hidden>Bauboom <b id="twBoomN">3</b></span><span class="tw-run" id="twRun">Serie <b id="twRunN">0</b>/5</span></div>
-            <div class="tw-offer" id="twOffer" hidden></div>
-            <button type="button" class="tw-cash" id="twCash" disabled>Auszahlen<b id="twCashAmt">0</b></button>
-            <button type="button" class="tw-target" id="twTarget" title="Auto-Runden zahlen bei diesem Wert automatisch aus">Auto-Ziel ×2</button>
+     '''        <div class="bay board" id="bay">
+          <div class="bd-board" id="bdBoard" aria-label="Spielbrett der Stadtrundfahrt">
+            <div class="bd-mid">
+              <div class="bd-title"><b>Stadtrundfahrt</b><span id="bdSub">Würfeln und losfahren</span></div>
+              <div class="bd-dice" id="bdDice" aria-label="Würfel"><i class="die" id="bdD1"></i><i class="die" id="bdD2"></i></div>
+              <div class="bd-total"><span>Diese Fahrt</span><b id="bdTotal">0</b></div>
+              <div class="bd-chips"><span id="bdPlansBox">Baupläne <b id="bdPlans">0</b>/5</span><span id="bdParkBox">Parkkasse <b id="bdPark">0</b></span></div>
+              <div class="bd-card" id="bdCard" hidden></div>
+            </div>
+            <div class="bd-bus" id="bdBus" aria-hidden="true"></div>
+            <div class="tw-mini" id="twMini" hidden></div>
           </div>
-          <div class="casc" id="casc" hidden>Etage <b id="cascN">0</b></div>'''),
+          <div class="bd-side">
+            <div class="bd-info" id="bdInfo"></div>
+            <button type="button" class="tw-cash bd-buy" id="bdBuy" hidden><span id="bdBuyLbl">Kaufen</span><b id="bdBuyAmt">0</b></button>
+            <button type="button" class="tw-target bd-auto" id="bdAuto">Auto-Bauen: aus</button>
+            <div class="bd-dists" id="bdDists"></div>
+          </div>
+          <div class="casc" id="casc" hidden>Feld <b id="cascN">0</b></div>'''),
     ('<span><b id="fsLeft">0</b> übrig · Rex <b id="fsStick">0</b>/4 · Sammler <em class="fsmult" id="fsMultBox">×<b id="fsMult">1</b></em> · bisher <b id="fsWin">0</b></span>',
-     '<span><b id="fsLeft">0</b> übrig · Start auf Etage <em class="fsmult" id="fsMultBox"><b id="fsMult">3</b></em><b id="fsStick" hidden>0</b> · bisher <b id="fsWin">0</b></span>'),
-    ('<th>Teil</th><th>3 Walzen</th><th>4 Walzen</th><th>5 Walzen</th>', '<th>Baustein</th><th>Etagen</th><th>Chance</th><th>Besonderheit</th>'),
-    ('aria-controls="panel-lines">Wege</button>', 'aria-controls="panel-lines">Wert</button>'),
+     '<span><b id="fsLeft">0</b> übrig · alle Gewinne <em class="fsmult" id="fsMultBox">×<b id="fsMult">2</b></em><b id="fsStick" hidden>0</b> · bisher <b id="fsWin">0</b></span>'),
+    ('<th>Teil</th><th>3 Walzen</th><th>4 Walzen</th><th>5 Walzen</th>', '<th>Viertel</th><th>Felder</th><th>Kaufen und Ausbauen</th><th>Miete je Halt</th>'),
+    ('aria-controls="panel-lines">Wege</button>', 'aria-controls="panel-lines">Würfel</button>'),
 ]
 
-TOWER_CSS = r'''
-/* ---------- Neustadt: Hochstapler (Turm und kleine Walze) ---------- */
-.frame { grid-template-columns: minmax(0, 1fr); width: min(100%, 640px); margin: 0 auto; }
-.bay.tower { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px; align-items: stretch; position: relative; min-height: 0; }
-.tw-stage { position: relative; border-radius: 12px; overflow: hidden; min-height: 320px; min-width: 0;
-  background: linear-gradient(180deg, #1c3a5a 0%, #2a5a7a 55%, #f0b07a 100%); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
-.tw-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-#twCam { transition: transform .45s cubic-bezier(.3,1.2,.5,1); }
-.tw-height { position: absolute; left: 8px; top: 8px; padding: 4px 9px; border-radius: 9px; background: rgba(8,16,26,.6); display: grid; line-height: 1.05; }
-.tw-height span { font: 700 .55rem var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
-.tw-height b { font: 700 1.25rem var(--f-mono); color: #ffffff; }
-.tw-side { display: grid; gap: 9px; align-content: start; min-width: 0; }
-.tw-reel { position: relative; height: calc(var(--twc, 64px) * 3); overflow: hidden; border-radius: 12px; background: linear-gradient(180deg, #0c1824, #16283a 50%, #0c1824); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), inset 0 0 20px rgba(0,0,0,.6); --twc: 64px; }
-.tw-strip { position: absolute; left: 0; right: 0; top: 0; will-change: transform; }
-.tw-strip .sym { height: var(--twc, 64px) !important; width: 100%; display: grid; place-items: center; }
-.tw-strip .sym svg, .tw-strip .sym.feature svg { width: calc(var(--twc, 64px) * .8); height: calc(var(--twc, 64px) * .8); }
-.tw-strip.blur { filter: blur(1.4px); }
-.tw-line { position: absolute; left: 0; right: 0; top: calc(var(--twc, 64px)); height: var(--twc, 64px); border-block: 2px solid rgba(126,224,200,.55); pointer-events: none; box-shadow: 0 0 18px rgba(126,224,200,.15) inset; }
-.tw-reel::before, .tw-reel::after { content: ""; position: absolute; left: 0; right: 0; height: 30%; z-index: 2; pointer-events: none; }
-.tw-reel::before { top: 0; background: linear-gradient(180deg, rgba(8,14,22,.9), transparent); }
-.tw-reel::after { bottom: 0; background: linear-gradient(0deg, rgba(8,14,22,.9), transparent); }
-.tw-val { display: grid; gap: 1px; padding: 8px 10px; border-radius: 12px; background: rgba(0,0,0,.25); border: 1px solid var(--line); }
-.tw-val span { font: 700 .58rem var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
-.tw-val b { font: 700 1.6rem var(--f-mono); color: var(--ink); background: none; border: 0; padding: 0; box-shadow: none; }
-.tw-val b.up { animation: twUp .45s cubic-bezier(.3,1.6,.5,1); color: var(--win); }
+BOARD_CSS = r'''
+/* ---------- Neustadt: Stadtrundfahrt (Spielbrett) ---------- */
+.frame { grid-template-columns: minmax(0, 1fr); width: min(100%, 680px); margin: 0 auto; }
+.bay.board { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 12px; align-items: start; position: relative; min-height: 0; }
+.bd-board { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(6, minmax(0, 1fr)); gap: 3px; aspect-ratio: 1; padding: 6px; border-radius: 14px; min-width: 0;
+  background: radial-gradient(circle at 50% 45%, #355a46, #1d3328 72%); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.35); }
+.bd-f { position: relative; display: grid; place-items: center; align-content: center; gap: 0; min-width: 0; min-height: 0; padding: 0; border: 0; border-radius: 7px; overflow: hidden; cursor: pointer;
+  background: #ece6d6; color: #1c2430; font: inherit; box-shadow: inset 0 -2px 0 rgba(0,0,0,.12); transition: box-shadow .2s, transform .2s; }
+.bd-f:focus-visible { outline: 2px solid #ffffff; outline-offset: 1px; }
+.bd-f svg { width: 78%; height: auto; display: block; }
+.bd-f.bd-plot svg { width: 86%; margin-top: 14%; }
+.bd-strip { position: absolute; left: 0; right: 0; top: 0; height: 15%; }
+.bd-pips { position: absolute; left: 0; right: 0; bottom: 4%; display: flex; justify-content: center; gap: 2px; }
+.bd-pips b { width: 9%; aspect-ratio: 1; border-radius: 50%; background: rgba(0,0,0,.15); }
+.bd-pips b.on { background: var(--dc); box-shadow: 0 0 0 1px rgba(0,0,0,.35); }
+.bd-f small { font: 800 clamp(.42rem, 1.5vw, .58rem) var(--f-body); letter-spacing: .02em; color: #2a3440; line-height: 1; margin-top: 1px; white-space: nowrap; }
+.bd-f .bd-ic { display: grid; place-items: center; width: 64%; }
+.bd-f .bd-ic svg { width: 100%; }
+.bd-start, .bd-mini, .bd-park, .bd-office { background: #f6f0de; }
+.bd-start { background: linear-gradient(160deg, #d8fff0, #b6ecd8); }
+.bd-office { background: linear-gradient(160deg, #f0ffd0, #d8f0a8); }
+.bd-park { background: linear-gradient(160deg, #e0f8d0, #bfe8a8); }
+.bd-mini { background: repeating-linear-gradient(135deg, #ffe39a 0 8px, #f6f0de 8px 16px); }
+.bd-news { background: #f4f4f4; }
+.bd-f.here { box-shadow: 0 0 0 2px #ffffff, 0 0 16px rgba(255,255,255,.55); z-index: 2; }
+.bd-f.sel:not(.here) { box-shadow: 0 0 0 2px var(--dc, #7ee0c8); }
+.bd-f.can { animation: bdCan 1.1s ease-in-out infinite; }
+@keyframes bdCan { 50% { box-shadow: 0 0 0 2px #ffffff, 0 0 22px #7ee0c8; } }
+.bd-f.new svg { animation: bdNew .6s cubic-bezier(.3,1.6,.5,1); transform-origin: 50% 100%; }
+@keyframes bdNew { from { transform: scale(.2) translateY(20px); opacity: 0; } }
+.bd-f.flash { animation: bdFl .5s ease-out; }
+@keyframes bdFl { 40% { transform: scale(1.12); box-shadow: 0 0 0 2px #ffd34a, 0 0 20px #ffd34a; } }
+.bd-mid { grid-area: 2 / 2 / 6 / 6; position: relative; display: grid; align-content: center; justify-items: center; gap: 6%; padding: 6%; border-radius: 12px; min-width: 0; min-height: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(255,255,255,.08), transparent 70%); }
+.bd-title { display: grid; justify-items: center; gap: 1px; text-align: center; }
+.bd-title b { font: 800 clamp(.8rem, 2.6vw, 1.05rem) var(--f-display); color: #ffd27a; letter-spacing: .04em; }
+.bd-title span { font: 600 clamp(.56rem, 1.8vw, .7rem) var(--f-body); color: rgba(255,255,255,.75); min-height: 1.2em; }
+.bd-dice { display: flex; gap: 10%; width: 62%; justify-content: center; }
+.die { position: relative; width: 44%; aspect-ratio: 1; border-radius: 18%; background: linear-gradient(160deg, #ffffff, #e2e2e2); box-shadow: inset 0 -3px 0 rgba(0,0,0,.15), 0 4px 10px rgba(0,0,0,.35);
+  display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 14%; gap: 4%; }
+.die b { border-radius: 50%; }
+.die b.on { background: #1c2430; }
+.die.dbl { box-shadow: inset 0 -3px 0 rgba(0,0,0,.15), 0 0 0 2px #ffc94a, 0 0 18px #ffc94a; }
+.die.roll { animation: bdRoll .18s linear infinite; }
+@keyframes bdRoll { 25% { transform: rotate(12deg) translateY(-3px); } 75% { transform: rotate(-12deg) translateY(-1px); } }
+.bd-total { display: grid; justify-items: center; line-height: 1.05; }
+.bd-total span { font: 700 .55rem var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.6); }
+.bd-total b { font: 700 clamp(1.05rem, 3.6vw, 1.45rem) var(--f-mono); color: #ffffff; background: none; border: 0; padding: 0; box-shadow: none; min-width: 0; }
+.bd-total b.up { animation: twUp .45s cubic-bezier(.3,1.6,.5,1); color: var(--win); }
 @keyframes twUp { 40% { transform: scale(1.18); } }
-.tw-val small { font: 600 .66rem var(--f-mono); color: var(--ink-soft); }
-.tw-flags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tw-flags span { padding: 3px 8px; border-radius: 99px; font: 700 .62rem var(--f-body); background: rgba(255,255,255,.06); color: var(--ink-soft); }
-.tw-shield { color: #1a1408 !important; background: linear-gradient(180deg, #ffd27a, #e8a83a) !important; }
-.tw-plans b { color: #9ad4ff; }
+.bd-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.bd-chips span { padding: 2px 7px; border-radius: 99px; background: rgba(0,0,0,.3); font: 700 clamp(.5rem, 1.6vw, .62rem) var(--f-body); color: rgba(255,255,255,.8); white-space: nowrap; }
+.bd-chips b { color: #ffd27a; font-family: var(--f-mono); }
+.bd-chips span.hot { background: #4aa8ff; color: #06121e; }
+.bd-chips span.hot b { color: #06121e; }
+.bd-bus { position: absolute; left: 0; top: 0; z-index: 5; width: 13%; pointer-events: none; transform: translate(-50%, -78%); transition: left .14s ease-out, top .14s ease-out; filter: drop-shadow(0 3px 3px rgba(0,0,0,.45)); }
+.bd-bus svg { display: block; width: 100%; height: auto; }
+.bd-bus.left svg { transform: scaleX(-1); }
+.bd-bus.hop svg { animation: bdHop .14s ease-out; }
+@keyframes bdHop { 50% { translate: 0 -18%; } }
+.bd-bus.slow { transition-duration: .35s; }
+.bd-pop { position: absolute; z-index: 6; transform: translate(-50%, -50%); pointer-events: none; display: grid; justify-items: center; padding: 2px 7px; border-radius: 9px; background: rgba(8,16,26,.85);
+  font: 800 .82rem var(--f-mono); color: var(--fc, #7ee0c8); white-space: nowrap; box-shadow: 0 0 0 1px var(--fc, #7ee0c8); animation: bdPop 1.4s cubic-bezier(.2,1.2,.4,1) forwards; }
+.bd-pop small { font: 700 .56rem var(--f-body); color: #ffffff; }
+@keyframes bdPop { 0% { opacity: 0; transform: translate(-50%, -30%) scale(.6); } 15% { opacity: 1; transform: translate(-50%, -60%) scale(1.08); } 75% { opacity: 1; transform: translate(-50%, -110%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -150%); } }
+.bd-card { position: absolute; inset: 4%; z-index: 7; display: grid; align-content: center; justify-items: center; gap: 4px; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer;
+  background: #f7f3e8; color: #1c2430; box-shadow: 0 0 0 2px var(--fc, #4aa8ff), 0 12px 30px rgba(0,0,0,.5); }
+.bd-card.in { animation: bdCard .45s cubic-bezier(.2,1.5,.4,1); }
+@keyframes bdCard { from { transform: rotate(-8deg) scale(.4); opacity: 0; } }
+.bd-card small { font: 800 .58rem var(--f-body); letter-spacing: .2em; text-transform: uppercase; color: #6a7480; border-bottom: 2px solid #1c2430; padding-bottom: 2px; }
+.bd-card b { font: 800 clamp(.82rem, 2.8vw, 1.05rem) var(--f-display); color: #1c2430; line-height: 1.15; }
+.bd-card span { font: 600 clamp(.62rem, 2vw, .76rem) var(--f-body); color: #3a4450; }
+.bd-card em { font: 800 1rem var(--f-mono); font-style: normal; color: var(--fc, #2f8a4a); }
+.bd-side { display: grid; gap: 9px; align-content: start; min-width: 0; }
+.bd-info { display: grid; gap: 5px; padding: 10px; border-radius: 12px; background: rgba(0,0,0,.25); border: 1px solid var(--line); min-height: 128px; align-content: start; }
+.bd-ih { display: flex; align-items: center; gap: 7px; }
+.bd-ih i { width: 10px; height: 10px; border-radius: 3px; background: var(--dc, #7ee0c8); flex: none; }
+.bd-ih b { font: 800 .9rem var(--f-display); color: var(--ink); }
+.bd-ih span { margin-left: auto; font: 700 .6rem var(--f-body); color: var(--dc, #7ee0c8); text-transform: uppercase; letter-spacing: .08em; }
+.bd-info p { margin: 0; font: 600 .72rem/1.35 var(--f-body); color: var(--ink-soft); }
+.bd-info dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font: 600 .7rem var(--f-body); }
+.bd-info dt { color: var(--ink-soft); }
+.bd-info dd { margin: 0; text-align: right; font-family: var(--f-mono); color: var(--ink); }
+.bd-info .full { color: #ffd27a; font-weight: 800; }
 .tw-cash { display: grid; gap: 1px; padding: 10px; border-radius: 12px; border: 0; cursor: pointer; font: 800 .82rem var(--f-display); letter-spacing: .06em; text-transform: uppercase;
   color: #0c1a14; background: linear-gradient(180deg, #8ff0c8, #3fd0a0); box-shadow: 0 4px 0 #1f8a64, 0 8px 20px rgba(63,208,160,.25); transition: transform .08s, filter .15s; }
 .tw-cash b { font: 700 1.15rem var(--f-mono); }
@@ -60,28 +121,26 @@ TOWER_CSS = r'''
 .tw-cash:disabled { cursor: default; filter: grayscale(.8) brightness(.6); box-shadow: none; }
 .tw-cash.hot { animation: twHot 1.2s ease-in-out infinite; }
 @keyframes twHot { 50% { filter: brightness(1.2); box-shadow: 0 4px 0 #1f8a64, 0 0 26px rgba(63,208,160,.6); } }
+.bd-buy span { font-size: .72rem; }
 .tw-target { justify-self: start; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--line); background: rgba(0,0,0,.2); color: var(--ink-soft); font: 700 .64rem var(--f-body); cursor: pointer; }
-.twf { transition: opacity .3s; }
-.twf.new { animation: twDrop .42s cubic-bezier(.3,1.5,.5,1); }
-@keyframes twDrop { from { transform: translateY(-40px); opacity: 0; } }
-#twFloors.fall .twf { transition: transform 1s cubic-bezier(.5,0,.8,.6), opacity 1s; }
-.tw-crane .hook { animation: twSwing 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0%; }
-@keyframes twSwing { 50% { transform: rotate(6deg); } }
-.tw-stage.shake { animation: shake .5s cubic-bezier(.36,.07,.19,.97) 2; }
-.tw-stage.won { box-shadow: inset 0 0 0 2px #7ee0c8, 0 0 30px rgba(126,224,200,.4); }
-.car { animation: carDrive var(--d, 10s) linear infinite; }
-@keyframes carDrive { from { transform: translateX(-90px); } to { transform: translateX(300px); } }
-.rotor { animation: rotor 3s linear infinite; }
-@keyframes rotor { to { transform: rotate(360deg); } }
-.tw-next10 { position: absolute; right: 8px; top: 8px; padding: 4px 9px; border-radius: 9px; background: rgba(8,16,26,.6); font: 700 .62rem var(--f-body); color: #ffd27a; }
-.tw-flash { position: absolute; left: 50%; top: 22%; z-index: 9; transform: translate(-50%, 0); display: grid; justify-items: center; gap: 2px; padding: 8px 16px; border-radius: 14px; pointer-events: none; text-align: center;
-  background: rgba(8,16,26,.82); box-shadow: 0 0 0 2px var(--fc), 0 0 30px color-mix(in srgb, var(--fc) 50%, transparent); animation: twFlash 1.7s cubic-bezier(.2,1.4,.4,1) forwards; }
+.bd-auto.on { background: #3fd0a0; border-color: #3fd0a0; color: #0c1a14; }
+.bd-dists { display: grid; gap: 4px; }
+.bd-dists div { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto auto; align-items: center; gap: 7px; padding: 4px 8px; border-radius: 9px; background: rgba(255,255,255,.04); font: 700 .66rem var(--f-body); color: var(--ink); }
+.bd-dists div > i { width: 10px; height: 10px; border-radius: 3px; background: var(--dc); }
+.bd-dists span { display: flex; gap: 3px; }
+.bd-dists span b { width: 14px; height: 7px; border-radius: 2px; background: rgba(255,255,255,.1); }
+.bd-dists span b.l1 { background: color-mix(in srgb, var(--dc) 40%, transparent); }
+.bd-dists span b.l2 { background: color-mix(in srgb, var(--dc) 60%, transparent); }
+.bd-dists span b.l3 { background: color-mix(in srgb, var(--dc) 80%, transparent); }
+.bd-dists span b.l4 { background: var(--dc); }
+.bd-dists em { font: 800 .6rem var(--f-mono); font-style: normal; color: #ffd27a; }
+.tw-flash { position: absolute; left: 50%; top: 30%; z-index: 9; transform: translate(-50%, 0); display: grid; justify-items: center; gap: 2px; padding: 8px 16px; border-radius: 14px; pointer-events: none; text-align: center;
+  background: rgba(8,16,26,.86); box-shadow: 0 0 0 2px var(--fc), 0 0 30px color-mix(in srgb, var(--fc) 50%, transparent); animation: twFlash 1.7s cubic-bezier(.2,1.4,.4,1) forwards; }
 .tw-flash b { font: 800 1.15rem var(--f-display); color: var(--fc); letter-spacing: .04em; white-space: nowrap; }
 .tw-flash small { font: 700 .72rem var(--f-body); color: #ffffff; }
 @keyframes twFlash { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.6); } 15% { opacity: 1; transform: translate(-50%, 0) scale(1.08); } 80% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -16px) scale(.96); } }
-.tw-boom { color: #1a0a04 !important; background: linear-gradient(180deg, #ffb07a, #ff7a59) !important; animation: twHot 1s ease-in-out infinite; }
-.tw-run b { color: #ff9a7a; }
-.tw-mini { position: absolute; inset: 0; z-index: 10; background: rgba(6,12,20,.55); backdrop-filter: blur(1.5px); -webkit-backdrop-filter: blur(1.5px); overflow: hidden; touch-action: manipulation; user-select: none; -webkit-user-select: none; cursor: pointer; }
+.bd-board.shake { animation: shake .5s cubic-bezier(.36,.07,.19,.97) 1; }
+.tw-mini { position: absolute; inset: 0; z-index: 10; border-radius: 14px; background: rgba(6,12,20,.6); backdrop-filter: blur(1.5px); -webkit-backdrop-filter: blur(1.5px); overflow: hidden; touch-action: manipulation; user-select: none; -webkit-user-select: none; cursor: pointer; }
 .mg-head { position: absolute; left: 8px; right: 8px; top: 8px; display: grid; gap: 3px; padding: 8px 10px; border-radius: 12px; background: rgba(8,16,26,.85); text-align: center; pointer-events: none; }
 .mg-head b { font: 800 1rem var(--f-display); color: #ffd27a; letter-spacing: .04em; }
 .mg-head span { font: 600 .7rem var(--f-body); color: #ffffff; }
@@ -110,134 +169,226 @@ TOWER_CSS = r'''
 .mg-result { position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%); padding: 10px 16px; border-radius: 14px; font: 800 .95rem var(--f-display); text-align: center; animation: fsPop .5s cubic-bezier(.2,1.6,.4,1); pointer-events: none; }
 .mg-result.good { background: #7ed957; color: #0c1a08; }
 .mg-result.bad { background: #ff6b7a; color: #2a0408; }
-.tw-offer { display: grid; gap: 6px; padding: 10px; border-radius: 12px; background: linear-gradient(180deg, rgba(126,224,200,.18), rgba(74,168,255,.12)); border: 1px solid #7ee0c8; animation: fsPop .5s cubic-bezier(.2,1.6,.4,1); }
-.tw-offer > b { font: 800 .95rem var(--f-display); color: #7ee0c8; }
-.tw-offer span { font: 600 .72rem var(--f-body); color: var(--ink); }
-.tw-offer em { font: 700 .9rem var(--f-mono); font-style: normal; color: #ffd27a; }
-.tw-offer div { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.tw-yes, .tw-no { padding: 8px 6px; border: 0; border-radius: 10px; font: 800 .74rem var(--f-body); cursor: pointer; }
-.tw-yes { background: linear-gradient(180deg, #8ff0c8, #3fd0a0); color: #0c1a14; }
-.tw-no { background: rgba(255,255,255,.1); color: var(--ink); }
-@media (prefers-reduced-motion: reduce) { .tw-flash, .tw-boom { animation-duration: .01s; } }
-@media (max-width: 600px) { .bay.tower { gap: 8px; } .tw-stage { min-height: 250px; } .tw-flags span { font-size: .56rem; padding: 2px 6px; } .tw-val { padding: 6px 8px; } .tw-val small { font-size: .56rem; } .tw-val b { font-size: 1.25rem; } .tw-cash { padding: 8px; } .tw-cash b { font-size: 1rem; } .tw-reel { --twc: 52px; } }
-@media (prefers-reduced-motion: reduce) { .car, .rotor, .tw-crane .hook, .tw-cash.hot { animation: none; } }
+.car { animation: carDrive var(--d, 10s) linear infinite; }
+@keyframes carDrive { from { transform: translateX(-90px); } to { transform: translateX(300px); } }
+.rotor { animation: rotor 3s linear infinite; }
+@keyframes rotor { to { transform: rotate(360deg); } }
+@media (max-width: 600px) {
+  .bay.board { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .bd-board { padding: 4px; gap: 2px; }
+  .bd-side { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .bd-info { grid-column: 1 / -1; min-height: 0; padding: 8px; }
+  .bd-buy, .bd-auto { align-self: stretch; }
+  .bd-auto { justify-self: stretch; border-radius: 12px; }
+  .bd-dists { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
+  .bd-pop { font-size: .7rem; }
+}
+@media (prefers-reduced-motion: reduce) { .tw-flash, .bd-pop, .bd-card.in { animation-duration: .01s; } .car, .rotor, .tw-cash.hot, .bd-f.can, .die.roll { animation: none; } .bd-bus { transition: none; } }
 '''
 
-TOWER_JS = r'''
-/* ===================== Neustadt: Hochstapler (kleine Walze, Etagen stapeln) =====================
-   Pro Runde zahlst du einmal den Einsatz. Jeder Dreh der kleinen Walze setzt Etagen auf dein Hochhaus, der Wert steigt.
-   Du entscheidest nach jedem Dreh: weiterbauen oder auszahlen. Die Abrissbirne reißt alles ein (außer eine Kran-Sicherung fängt sie ab).
-   Wert = 1,1 × 1,07^Höhe (Höhe 1: ×1,18 · 10: ×2,2 · 25: ×6 · 50: ×32 · 100: ×954, dann wird automatisch ausgezahlt).
-   Dazu: Richtfest alle 10 Etagen (Sofortbonus), Bauboom (5 Bausteine in Folge: 3 Drehs je +1 Etage), Investor (Kaufangebot +30 %),
-   Mini-Events mit Geschicklichkeit (Kran-Timing, Ziegelregen, Tauben-Alarm).
-   Balance per Simulation (tools/sim/hochstapler.js): je nach Ausstiegsstrategie etwa 97 bis 129 % (mutiges Bauen lohnt sich etwas mehr). */
-const TW_W = { scrap: 30, cell: 22, chip: 16, core: 8, relic: 1.6, crystal: 5, wild: 2.5, capsule: 2.5, beacon: .3, warp: .1, crash: 20 };
-const TW_D = { scrap: 1, cell: 1, chip: 2, core: 3, relic: 6, crystal: 1, wild: 1, capsule: 0, beacon: 0, warp: 0, crash: 0 };
-const TW_RF = [.5, .75, 1, 1.5, 2, 2.5, 3, 4, 5, 6], TW_EVENT_P = .06, TW_INVEST_P = .025, TW_INVEST_F = 1.3, TW_BOOM_AT = 5;
-const TW_C = 1.1, TW_G = 1.07, TW_MAX = 100, TW_FS_START = 3, TW_FS_AWARD = 3, TW_TARGETS = [1.5, 2, 3, 5, 10, 25];
-const CRASH_SYM = { id: "crash", name: "Abrissbirne", w: 0, pay: null, special: "#ff4b5c" };
-BY_ID.crash = CRASH_SYM;
-const twSym = id => id === "wild" ? WILD : BY_ID[id];
-const twMult = h => h <= 0 ? 0 : TW_C * Math.pow(TW_G, Math.min(h, TW_MAX));
-const twFmt = m => "×" + String(m >= 100 ? Math.round(m) : m >= 10 ? m.toFixed(1) : m.toFixed(2)).replace(".", ",");
-let twMiniKey = null, tw = null, twHold = false, twSpinning = false, twFast = false, netCascading = false, colRun = null;
-const twTarget = () => TW_TARGETS[Math.max(0, Math.min(TW_TARGETS.length - 1, state.twTarget ?? 1))];
-function twPick() {
-  const w = { ...TW_W };
-  if (typeof boostOn === "function") { if (boostOn("drones")) w.wild *= 3; if (boostOn("signal")) w.beacon *= 2.5; }
-  let tot = 0; for (const k in w) tot += w[k];
-  let r = Math.random() * tot;
-  for (const k in w) { if ((r -= w[k]) < 0) return k; }
-  return "scrap";
-}
-const twAmount = () => tw ? Math.round(tw.bet * twMult(tw.h) * lineBoost()) : 0;
-
-/* ----- Turmgrafik ----- */
-const TW_STYLE = {
-  scrap: { w: 58, fill: "#e8e2d0", win: "#ffd27a", trim: "#2f8a4a" }, cell: { w: 62, fill: "#dce6f0", win: "#9ad4ff", trim: "#4aa8ff" },
-  chip: { w: 52, fill: "#3a5a7a", win: "#9ad4ff", trim: "#6fb8ff" }, core: { w: 46, fill: "#5a6a7a", win: "#cfe8ff", trim: "#ff7a59" },
-  relic: { w: 50, fill: "#e8c060", win: "#fff4c8", trim: "#a87a10" }, crystal: { w: 56, fill: "#2a5aa8", win: "#ffe39a", trim: "#ffc94a" },
-  wild: { w: 56, fill: "#c9ccd1", win: "#ffd27a", trim: "#ffc94a" },
+BOARD_JS = r'''
+/* ===================== Neustadt: Stadtrundfahrt (Brettspiel mit Stadtbus) =====================
+   Eine Runde kostet einmal den Einsatz. Zwei Würfel, der Stadtbus fährt die 20 Felder ab und das Feld, auf dem er hält, wirkt.
+   Pasch: noch einmal würfeln (höchstens 3 Würfe pro Runde). Über den Busbahnhof fahren gibt den Rundenbonus.
+   Grundstücke kaufen und ausbauen (Stufe 1 bis 4). Hält der Bus auf deinem Grundstück, zahlt es Miete, ein ganzes Viertel ×1,5.
+   Die Miete rechnet mit dem Einsatz, zu dem du gebaut hast (Durchschnitt), höchstens mit dem aktuellen Einsatz.
+   Balance per Simulation (tools/sim/stadtrundfahrt.js): leere Stadt ~110 %, alles Stufe 1 ~130 %, alles Stufe 4 ~177 %. */
+const BD_PRICE = [3, 5, 8, 12], BD_RENT = [0, .12, .2, .3, .42], BD_FULL = 1.5;
+const BD_PASS = .25, BD_LAND = .6, BD_KIOSK = .4, BD_PARK = .05, BD_PLANS = 5, BD_FS = 3, BD_FS_MULT = 2, BD_RESERVE = 50, BD_MAX_ROLLS = 3;
+const BD_DIST = [
+  { name: "Gartenweg", sym: "scrap", color: "#7ed957", f: .7 },
+  { name: "Marktviertel", sym: "cell", color: "#4aa8ff", f: .9 },
+  { name: "Büromeile", sym: "chip", color: "#c08cff", f: 1.1 },
+  { name: "Turmallee", sym: "core", color: "#ff7a59", f: 1.4 },
+];
+const BD_LV = ["Bauland", "Häuschen", "Stadthaus", "Wohnblock", "Hochhaus"];
+const BD_F = [
+  { t: "start" }, { t: "plot", d: 0, n: "Rosenweg" }, { t: "news" }, { t: "plot", d: 0, n: "Lindenweg" }, { t: "plan" },
+  { t: "mini" }, { t: "plot", d: 1, n: "Bäckergasse" }, { t: "plot", d: 1, n: "Marktstraße" }, { t: "news" }, { t: "plot", d: 1, n: "Uhrmacherweg" },
+  { t: "park" }, { t: "plot", d: 2, n: "Kontorstraße" }, { t: "kiosk" }, { t: "plot", d: 2, n: "Börsenplatz" }, { t: "plot", d: 2, n: "Am Funkturm" },
+  { t: "office" }, { t: "plot", d: 3, n: "Glasallee" }, { t: "news" }, { t: "plot", d: 3, n: "Sonnenhöhe" }, { t: "plot", d: 3, n: "Skyline-Platz" },
+];
+const BD_N = BD_F.length;
+const BD_ICON = {
+  start: `<svg viewBox="0 0 32 32"><path d="M16 31 V14" stroke="#5a6470" stroke-width="2.4"/><circle cx="16" cy="11" r="9" fill="#ffd34a" stroke="#2f8a4a" stroke-width="2.6"/><text x="16" y="15" font-size="11" font-weight="900" font-family="sans-serif" text-anchor="middle" fill="#2f8a4a">H</text></svg>`,
+  news: `<svg viewBox="0 0 32 32"><path d="M5 7 h20 v19 a2 2 0 0 1 -2 2 h-17 a2 2 0 0 1 -2 -2 v-16" fill="#ffffff" stroke="#2a3440" stroke-width="1.6"/><path d="M25 12 h3 v14 a2 2 0 0 1 -2 2" fill="#e8e8e8" stroke="#2a3440" stroke-width="1.6"/><rect x="8" y="10" width="14" height="4" fill="#2a3440"/><path d="M8 17.5 h6 M8 20.5 h6 M8 23.5 h6" stroke="#6a7480" stroke-width="1.4"/><rect x="16" y="17" width="6" height="7" fill="#4aa8ff"/></svg>`,
+  park: `<svg viewBox="0 0 32 32"><circle cx="12" cy="11" r="7" fill="#3fa84a"/><circle cx="19" cy="13" r="7" fill="#2f8a4a"/><path d="M15 18 v9" stroke="#7a5a3a" stroke-width="2.4"/><path d="M4 24 h12 M5 24 v4 M15 24 v4" stroke="#8a5a2a" stroke-width="1.8"/><rect x="21" y="21" width="7" height="7" rx="1" fill="#ffd34a" stroke="#a87a10" stroke-width="1.2"/><text x="24.5" y="27" font-size="6" font-weight="900" font-family="sans-serif" text-anchor="middle" fill="#7a5a10">T</text></svg>`,
+  office: `<svg viewBox="0 0 32 32"><path d="M16 2 v6" stroke="#5a6470" stroke-width="1.4"/><path d="M16 2 h6 l-2 2 l2 2 h-6z" fill="#ff7a59"/><path d="M3 13 L16 7 L29 13 Z" fill="#c8b088" stroke="#2a3440" stroke-width="1.3"/><rect x="5" y="13" width="22" height="14" fill="#f2ead6" stroke="#2a3440" stroke-width="1.3"/><path d="M9 15 v10 M13 15 v10 M19 15 v10 M23 15 v10" stroke="#9a8a6a" stroke-width="2"/><rect x="14.5" y="19" width="3" height="8" fill="#2a3440"/><rect x="3" y="27" width="26" height="3" fill="#9a9484"/></svg>`,
+  mini: `<svg viewBox="0 0 32 32"><path d="M8 30 V5 M12 30 V5" stroke="#e8a83a" stroke-width="1.8"/><path d="M8 9 L12 13 M12 9 L8 13 M8 17 L12 21 M12 17 L8 21 M8 25 L12 29 M12 25 L8 29" stroke="#e8a83a" stroke-width=".9"/><path d="M4 5 H29" stroke="#ffc94a" stroke-width="2.4"/><rect x="3" y="6" width="5" height="4" fill="#6a6f76"/><path d="M24 6 V14" stroke="#5a6470" stroke-width="1"/><rect x="20" y="14" width="8" height="4" fill="#c8b088" stroke="#6a5a3a" stroke-width=".8"/><path d="M19 30 L22.5 20 L26 30 Z" fill="#ff7a59"/><path d="M20.4 26 h4.2" stroke="#ffffff" stroke-width="1.6"/><path d="M2 30.5 H30" stroke="#5a6470" stroke-width="1.6"/></svg>`,
+  plan: `<svg viewBox="0 0 32 32"><rect x="4" y="6" width="22" height="20" rx="1.5" fill="#2f6fb8" stroke="#1a3a6a" stroke-width="1.2"/><path d="M4 11 h22 M4 16 h22 M4 21 h22 M9 6 v20 M14 6 v20 M19 6 v20" stroke="#9ad4ff" stroke-width=".5" opacity=".7"/><path d="M8 22 V13 L14 9 L20 13 V22 Z" fill="none" stroke="#ffffff" stroke-width="1.4"/><rect x="12.5" y="17" width="3" height="5" fill="none" stroke="#ffffff" stroke-width="1"/><ellipse cx="26" cy="16" rx="3" ry="10" fill="#4a8ad0" stroke="#1a3a6a" stroke-width="1.2"/><circle cx="24" cy="25" r="4.5" fill="#ff4b5c" stroke="#8a1a2a" stroke-width="1"/><path d="M22 25 l1.5 1.5 l3 -3" stroke="#ffffff" stroke-width="1.2" fill="none"/></svg>`,
+  kiosk: `<svg viewBox="0 0 32 32"><rect x="7" y="13" width="18" height="15" fill="#f2ead6" stroke="#2a3440" stroke-width="1.3"/><path d="M5 13 L8 6 H24 L27 13 Z" fill="#ff7a59" stroke="#2a3440" stroke-width="1.3"/><path d="M10 6 L9 13 M14 6 L14 13 M18 6 L18 13 M22 6 L23 13" stroke="#ffffff" stroke-width="1.6"/><rect x="10" y="16" width="12" height="5" fill="#9ad4ff"/><rect x="11" y="22" width="4" height="3" fill="#ffd34a"/><rect x="17" y="22" width="4" height="3" fill="#7ed957"/></svg>`,
 };
-function twFloorSVG(id, i, isNew) {
-  const st = TW_STYLE[id] || TW_STYLE.scrap, y = 188 - (i + 1) * 10, x = 80 - st.w / 2;
-  const wins = Math.floor((st.w - 8) / 8);
-  return `<g class="twf${isNew ? " new" : ""}" data-i="${i}"><rect x="${x}" y="${y}" width="${st.w}" height="10" fill="${st.fill}" stroke="rgba(0,0,0,.35)" stroke-width=".6"/>
-    <rect x="${x - 1}" y="${y}" width="${st.w + 2}" height="1.6" fill="${st.trim}"/>
-    ${Array.from({ length: wins }, (_, k) => `<rect x="${x + 5 + k * 8}" y="${y + 3.4}" width="4.6" height="4.6" fill="${(i * 7 + k * 3) % 5 ? st.win : "#2a3a4a"}" opacity=".92"/>`).join("")}</g>`;
+const BD_SPECIAL = {
+  start: { name: "Busbahnhof", short: "Start", color: "#3fd0a0", icon: () => BD_ICON.start, text: () => `Drüberfahren bringt den Rundenbonus (+${bdT(BD_PASS)}). Genau hier halten: zusätzlich +${bdT(BD_LAND)}.` },
+  news: { name: "Stadtanzeiger", short: "Zeitung", color: "#4aa8ff", icon: () => BD_ICON.news, text: () => "Zieh eine Meldung: Taler, Bauplan, ein geschenkter Ausbau, Zahltag, Wappen oder sogar die Stadtlotterie." },
+  plan: { name: "Bauamt", short: "Bauamt", color: "#4aa8ff", icon: () => BD_ICON.plan, text: () => `Gibt einen Bauplan. Bei ${BD_PLANS} Bauplänen startet die Bauplanauswahl (Bonusspiel). Gerade ${bd().plans} von ${BD_PLANS}.` },
+  mini: { name: "Baustelle", short: "Baustelle", color: "#ffc94a", icon: () => BD_ICON.mini, text: () => "Mini-Event mit Geschicklichkeit: Kran-Timing, Ziegelregen oder Tauben-Alarm. Bis zu 2,6× Einsatz." },
+  park: { name: "Stadtpark", short: "Park", color: "#7ed957", icon: () => BD_ICON.park, text: () => `Jede Runde wandern 5 % des Einsatzes in die Parkkasse. Wer hier hält, bekommt alles: gerade ${Math.round(bd().park)} Taler.` },
+  kiosk: { name: "Kiosk", short: "Kiosk", color: "#ff7a59", icon: () => BD_ICON.kiosk, text: () => `Kleiner Snack, kleiner Gewinn: +${bdT(BD_KIOSK)} und etwas Wappenstaub.` },
+  office: { name: "Rathaus", short: "Rathaus", color: "#c6f06b", icon: () => BD_ICON.office, text: () => `Der Bürgermeister spendiert ${BD_FS + (boostOn("signal") ? 2 : 0)} Freifahrten. Sie kosten nichts und alle Gewinne zählen doppelt.` },
+};
+const BD_CARDS = [
+  { k: "cash", v: .5, w: 5, t: ["Straßenfest im Viertel", "Flohmarkt-Erlös", "Fundsache abgegeben"], s: "Die Nachbarschaft legt zusammen." },
+  { k: "cash", v: 1.5, w: 3, t: ["Der Bäckerverein spendet", "Glück im Stadtteil-Lotto"], s: "Ein schöner Batzen für die Stadtkasse." },
+  { k: "cash", v: 4, w: 1, t: ["Preis: Schönste Stadt!"], s: "Die Jury ist begeistert." },
+  { k: "start", w: 2, t: ["Umleitung zum Busbahnhof"], s: "Der Bus fährt direkt zum Start." },
+  { k: "plan", w: 1.5, t: ["Bauplan im Briefkasten"], s: "+1 Bauplan." },
+  { k: "wheel", w: .2, t: ["Stadtlotterie!"], s: "Ab zum Glücksrad." },
+  { k: "free", w: 1, t: ["Das Bauamt schenkt dir was"], s: "Ein kostenloser Ausbau." },
+  { k: "none", w: 4, t: ["Regen in Neustadt", "Baustellenumleitung", "Funkstille im Rathaus"], s: "Heute passiert nichts." },
+  { k: "payday", v: .3, w: 1, t: ["Zahltag!"], s: "Alle Mieter zahlen ein Drittel Miete extra." },
+  { k: "dust", w: 1, t: ["Wappen gefunden!"], s: "+1 Wappen für das Bauamt." },
+];
+const BD_CARD_W = BD_CARDS.reduce((a, c) => a + c.w, 0);
+const BD_PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+const BD_BUS = `<svg viewBox="0 0 48 30"><rect x="2" y="3" width="42" height="20" rx="5" fill="#ff9a3a" stroke="#7a3a10" stroke-width="1.4"/><rect x="2" y="15" width="42" height="3" fill="#ffd34a"/><path d="M38 6 h4 a2 2 0 0 1 2 2 v6 h-6z" fill="#bfe6ff" stroke="#7a3a10" stroke-width="1"/>
+  <rect x="6" y="6" width="7" height="6" rx="1" fill="#bfe6ff"/><rect x="15" y="6" width="7" height="6" rx="1" fill="#bfe6ff"/><rect x="24" y="6" width="7" height="6" rx="1" fill="#bfe6ff"/><rect x="32" y="6" width="4" height="13" rx="1" fill="#e8f4ff" stroke="#7a3a10" stroke-width=".8"/>
+  <circle cx="12" cy="24" r="4.2" fill="#22262a"/><circle cx="12" cy="24" r="1.6" fill="#c9ccd1"/><circle cx="35" cy="24" r="4.2" fill="#22262a"/><circle cx="35" cy="24" r="1.6" fill="#c9ccd1"/><rect x="43" y="17" width="3" height="3" rx="1" fill="#fff4c8"/></svg>`;
+
+let rd = null, bdRolling = false, bdFast = false, bdBuilt = -1, bdSel = -1, bdFsBet = 0, twMiniKey = null, netCascading = false, colRun = null, bdDir = 1;
+function bdFresh() { return { pos: 0, plots: {}, plans: 0, park: 0 }; }
+function bd() { if (!state.board || typeof state.board !== "object" || !state.board.plots) state.board = bdFresh(); return state.board; }
+const bdPlot = i => bd().plots[i] || { l: 0, inv: 0 };
+const bdDF = i => BD_DIST[BD_F[i].d].f;
+const bdUnits = (l, i) => { let u = 0; for (let k = 0; k < l; k++) u += BD_PRICE[k] * bdDF(i); return u; };
+const bdBbar = i => { const p = bdPlot(i); return p.l ? p.inv / bdUnits(p.l, i) : 0; };
+const bdFull = d => BD_F.every((f, i) => f.t !== "plot" || f.d !== d || bdPlot(i).l > 0);
+const bdOwned = () => BD_F.reduce((a, f, i) => a + (f.t === "plot" && bdPlot(i).l > 0 ? 1 : 0), 0);
+const bdT = u => Math.max(1, Math.round(u * bet() * lineBoost())).toLocaleString("de-DE");
+const bdName = i => BD_F[i].t === "plot" ? BD_F[i].n : BD_SPECIAL[BD_F[i].t].name;
+function bdRentRaw(i, b) { const p = bdPlot(i); if (!p.l) return 0; return BD_RENT[p.l] * bdDF(i) * Math.min(b, bdBbar(i)) * (bdFull(BD_F[i].d) ? BD_FULL : 1); }
+const bdPriceFull = i => BD_PRICE[Math.min(3, bdPlot(i).l)] * bdDF(i) * bet();
+const bdCost = i => bdPlot(i).l >= 4 ? 0 : Math.max(1, Math.ceil(bdPriceFull(i) * (boostOn("drones") ? .75 : 1)));
+function bdRC(i) { if (i <= 5) return [6, 6 - i]; if (i <= 10) return [6 - (i - 5), 1]; if (i <= 15) return [1, 1 + (i - 10)]; return [1 + (i - 15), 6]; }
+const bdTile = i => document.querySelector(`.bd-f[data-i="${i}"]`);
+
+/* ----- Grafik ----- */
+function bdHouse(l, c) {
+  const W = "#fff4c8", S = `stroke="#2a3440" stroke-width="1"`;
+  if (!l) return `<svg viewBox="0 0 40 34"><path d="M3 31 h34" stroke="#b8b0a0" stroke-width="2"/><path d="M20 31 V15" stroke="#7a6a50" stroke-width="2"/><rect x="8" y="5" width="24" height="11" rx="2" fill="#ffffff" stroke="${c}" stroke-width="1.8"/><text x="20" y="13.2" font-size="6.6" font-weight="800" font-family="sans-serif" text-anchor="middle" fill="#3a4a5a">frei</text></svg>`;
+  if (l === 1) return `<svg viewBox="0 0 40 34"><path d="M3 31 h34" stroke="#8a9a6a" stroke-width="2"/><rect x="12" y="18" width="16" height="13" fill="${c}" ${S}/><path d="M9.5 19 L20 9.5 L30.5 19 Z" fill="#c8553d" ${S}/><rect x="18" y="24" width="4" height="7" fill="#2a3440"/><rect x="14" y="21" width="3" height="3" fill="${W}"/><rect x="23" y="21" width="3" height="3" fill="${W}"/></svg>`;
+  if (l === 2) return `<svg viewBox="0 0 40 34"><path d="M3 31 h34" stroke="#8a9a6a" stroke-width="2"/><rect x="11" y="12" width="18" height="19" fill="${c}" ${S}/><path d="M9 13 L20 4 L31 13 Z" fill="#a8443a" ${S}/>${[14, 20.5].map(y => [13.5, 18.5, 23.5].map(x => `<rect x="${x}" y="${y}" width="3" height="3.4" fill="${W}"/>`).join("")).join("")}<rect x="18.5" y="26" width="3" height="5" fill="#2a3440"/></svg>`;
+  if (l === 3) return `<svg viewBox="0 0 40 34"><path d="M3 31 h34" stroke="#8a9a6a" stroke-width="2"/><rect x="7" y="8" width="26" height="23" fill="${c}" ${S}/><rect x="6" y="6" width="28" height="3" fill="#5a6470"/>${[11, 16, 21].map(y => [9.5, 14.5, 19.5, 24.5, 29].map(x => `<rect x="${x}" y="${y}" width="2.6" height="3" fill="${W}"/>`).join("")).join("")}<rect x="18" y="26" width="4" height="5" fill="#2a3440"/></svg>`;
+  return `<svg viewBox="0 0 40 34"><path d="M3 31 h34" stroke="#8a9a6a" stroke-width="2"/><rect x="5" y="17" width="9" height="14" fill="${c}" opacity=".75" ${S}/><rect x="14" y="3" width="15" height="28" fill="${c}" ${S}/><path d="M21.5 3 V0" stroke="#2a3440" stroke-width="1.2"/><circle cx="21.5" cy="0.6" r=".9" fill="#ff4b5c"/>${[6, 10, 14, 18, 22].map(y => [16, 20, 24.5].map(x => `<rect x="${x}" y="${y}" width="2.6" height="2.6" fill="${W}"/>`).join("")).join("")}${[20, 24].map(y => `<rect x="7" y="${y}" width="5" height="2" fill="${W}"/>`).join("")}<rect x="20" y="26.5" width="3" height="4.5" fill="#2a3440"/></svg>`;
 }
-function twDraw(full) {
-  const floors = tw ? tw.floors : [], fl = $("twFloors"), cam = $("twCam");
-  if (full || !fl.children.length || fl.children.length > floors.length) {
-    fl.classList.remove("fall");
-    fl.innerHTML = `<rect x="0" y="188" width="160" height="12" fill="#3a3f46"/><path d="M0 191 H160" stroke="#e8e4d4" stroke-width=".7" stroke-dasharray="6 6" opacity=".6"/><rect x="34" y="185" width="92" height="3" fill="#8a8a84"/>` + floors.map((id, i) => twFloorSVG(id, i, false)).join("");
-  } else {
-    for (let i = fl.querySelectorAll(".twf").length; i < floors.length; i++) fl.insertAdjacentHTML("beforeend", twFloorSVG(floors[i], i, true));
-  }
-  const top = 188 - floors.length * 10, ct = Math.min(140, top - 30), mx = 132;
-  let lattice = ""; for (let y = 186; y > ct + 6; y -= 8) lattice += `M${mx - 3},${y} L${mx + 3},${y - 8} M${mx + 3},${y} L${mx - 3},${y - 8} `;
-  const hookY = Math.max(ct + 10, top - 14), shield = tw && tw.shield;
-  $("twTop").innerHTML = `<g class="tw-crane">
-    <rect x="${mx - 8}" y="184" width="16" height="4" fill="#5a5f66"/>
-    <path d="M${mx - 3},188 V${ct} M${mx + 3},188 V${ct}" stroke="#ffc94a" stroke-width="1.6"/><path d="${lattice}" stroke="#e8a83a" stroke-width=".7"/>
-    <path d="M${mx - 4},${ct} L${mx},${ct - 10} L${mx + 4},${ct} Z" fill="#ffc94a"/>
-    <path d="M44,${ct} H${mx + 22}" stroke="#ffc94a" stroke-width="2.4"/><path d="M48,${ct} L${mx},${ct - 10} L${mx + 20},${ct}" stroke="#e8a83a" stroke-width=".8" fill="none"/>
-    <rect x="${mx + 10}" y="${ct + 1}" width="12" height="7" fill="#6a6f76"/>
-    <rect x="${mx - 9}" y="${ct + 1}" width="9" height="7" rx="1" fill="#ffffff" stroke="#5a5f66" stroke-width=".6"/><rect x="${mx - 8}" y="${ct + 2}" width="5" height="3" fill="#9ad4ff"/>
-    <rect x="76" y="${ct + 1}" width="8" height="3" fill="#5a5f66"/>
-    <g class="hook"><path d="M80,${ct + 4} V${hookY}" stroke="#c9ccd1" stroke-width=".8"/><rect x="${80 - 13}" y="${hookY}" width="26" height="6" fill="${shield ? "#ffd27a" : "#c8b088"}" stroke="${shield ? "#a87a10" : "#6a5a3a"}" stroke-width=".7"/><path d="M${80 - 13},${hookY + 3} h26" stroke="rgba(0,0,0,.2)" stroke-width=".6"/></g>
-    ${shield ? `<g transform="translate(${mx - 10} ${ct - 22})"><path d="M0 9 q10 -14 20 0z" fill="#ffd27a" stroke="#a87a10" stroke-width="1"/><path d="M-2 9 h24" stroke="#a87a10" stroke-width="1.8"/></g>` : ""}</g>`;
-  const shift = Math.max(0, floors.length * 10 - 96);
-  cam.setAttribute("transform", `translate(0 ${shift})`);
-  $("twH").textContent = tw ? tw.h : 0;
+function bdTileHTML(i) {
+  const f = BD_F[i];
+  if (f.t === "plot") { const D = BD_DIST[f.d], p = bdPlot(i);
+    return `<i class="bd-strip" style="background:${D.color}"></i>${bdHouse(p.l, D.color)}<span class="bd-pips">${[1, 2, 3, 4].map(k => `<b class="${k <= p.l ? "on" : ""}"></b>`).join("")}</span>`; }
+  const S = BD_SPECIAL[f.t];
+  return `<span class="bd-ic">${S.icon()}</span><small>${S.short}</small>`;
 }
-function twUi() {
-  const v = tw ? twMult(tw.h) : 0, nextM = twMult((tw ? tw.h : 0) + 1);
-  const vb = $("twVal"); vb.textContent = tw && tw.h ? twFmt(v) : "×0";
-  $("twNext").textContent = tw && tw.h ? `Auszahlen: ${twAmount()} · nächste Etage ${twFmt(nextM)}` : `Erste Etage: ${twFmt(twMult(1))}`;
-  $("twShield").hidden = !(tw && tw.shield); $("twShieldN").textContent = tw ? tw.shield : 0;
-  $("twPlansN").textContent = tw ? tw.plans : 0;
-  $("twBoom").hidden = !(tw && tw.boom); $("twBoomN").textContent = tw ? tw.boom : 0;
-  $("twRun").hidden = !!(tw && tw.boom); $("twRunN").textContent = tw ? tw.run : 0;
-  const nx = (Math.floor((tw ? tw.h : 0) / 10) + 1) * 10;
-  $("twNext10").textContent = nx <= TW_MAX ? `Richtfest bei ${nx}: +${Math.max(1, Math.round((tw ? tw.bet : bet()) * TW_RF[Math.min(nx / 10 - 1, TW_RF.length - 1)]))}` : "Höchste Höhe";
-  const can = !!tw && tw.h > 0 && !twSpinning && !twHold && !skipCelebration;
-  const cb = $("twCash"); cb.disabled = !can; $("twCashAmt").textContent = tw && tw.h ? twAmount() : 0;
-  cb.classList.toggle("hot", can && v >= 3);
-  $("twTarget").textContent = `Auto-Ziel ${twFmt(twTarget())}`;
-}
-function twReelIdle() {
-  const strip = $("twStrip"); if (strip.children.length) return;
-  ["chip", "scrap", "core"].forEach(id => strip.appendChild(symEl(twSym(id))));
-}
-function twReel(result) {
-  // kleine Walze: Streifen mit Zufallssymbolen, das Ergebnis landet in der Mitte
-  return new Promise(res => {
-    const strip = $("twStrip"), cell = strip.firstElementChild ? strip.firstElementChild.getBoundingClientRect().height || 64 : 64;
-    const n = twFast || reduced ? 3 : 14;
-    const ids = Array.from({ length: n }, () => { const k = twPick(); return k; });
-    const keep = [...strip.children].slice(0, 3).map(el => el.dataset.sym);
-    strip.replaceChildren();
-    const seq = [...ids, keep[0] || "scrap", result, ids[0]].reverse();
-    // oben: altes Feld, unten: neues Ergebnis; wir rollen von oben (alt) nach unten (neu)
-    const all = [...keep, ...ids, "pad", result, "pad2"];
-    all.forEach(id => strip.appendChild(symEl(twSym(id === "pad" || id === "pad2" ? twPick() : id))));
-    strip.style.transition = "none"; strip.style.transform = "translateY(0)";
-    void strip.offsetWidth;
-    const target = -(all.length - 3) * cell, dur = (twFast || reduced ? 120 : 760) * T();
-    strip.classList.toggle("blur", !twFast && !reduced);
-    strip.style.transition = `transform ${dur}ms cubic-bezier(.2,.75,.25,1.08)`;
-    strip.style.transform = `translateY(${target}px)`;
-    const done = () => { strip.classList.remove("blur"); strip.style.transition = "none"; const last = [...strip.children].slice(-3); strip.replaceChildren(...last); strip.style.transform = "translateY(0)"; res(); };
-    setTimeout(done, dur + 30);
-    void seq;
+function bdRender() {
+  const el = $("bdBoard"); if (!el) return;
+  el.querySelectorAll(".bd-f").forEach(x => x.remove());
+  BD_F.forEach((f, i) => {
+    const [r, c] = bdRC(i), b = document.createElement("button");
+    b.type = "button"; b.className = `bd-f bd-${f.t}`; b.dataset.i = i; b.style.gridArea = `${r} / ${c}`;
+    if (f.t === "plot") b.style.setProperty("--dc", BD_DIST[f.d].color);
+    b.setAttribute("aria-label", bdName(i)); b.innerHTML = bdTileHTML(i);
+    el.insertBefore(b, el.firstChild);
   });
+  $("bdBus").innerHTML = BD_BUS;
+  bdBusTo(bd().pos, true); bdUi();
 }
-function twFloat(text, sub, color) {
-  const st = $("twStage"), f = document.createElement("div"); f.className = "netfloat"; f.style.setProperty("--fc", color);
-  f.style.left = "50%"; f.style.top = "38%"; f.innerHTML = `${text}${sub ? `<small>${sub}</small>` : ""}`;
-  st.appendChild(f); setTimeout(() => f.remove(), 1150);
+function bdRedrawTile(i, fresh) { const t = bdTile(i); if (!t) return; t.innerHTML = bdTileHTML(i); if (fresh) { t.classList.remove("new"); void t.offsetWidth; t.classList.add("new"); } }
+function bdBusTo(i, instant) {
+  const t = bdTile(i), bus = $("bdBus"); if (!t || !bus) return;
+  if (instant) bus.style.transition = "none";
+  bus.style.left = (t.offsetLeft + t.offsetWidth / 2) + "px"; bus.style.top = (t.offsetTop + t.offsetHeight / 2) + "px";
+  if (i >= 1 && i <= 5) bdDir = -1; else if (i >= 11 && i <= 15) bdDir = 1;
+  bus.classList.toggle("left", bdDir < 0);
+  if (instant) { void bus.offsetWidth; bus.style.transition = ""; }
+  else { bus.classList.remove("hop"); void bus.offsetWidth; bus.classList.add("hop"); }
+  document.querySelectorAll(".bd-f.here").forEach(x => x.classList.remove("here"));
+  t.classList.add("here");
 }
+function bdDie(el, v) { el.innerHTML = Array.from({ length: 9 }, (_, k) => `<b class="${BD_PIPS[v].includes(k) ? "on" : ""}"></b>`).join(""); el.dataset.v = v; }
+function bdPop(i, text, sub, color) {
+  const t = bdTile(i), b = $("bdBoard"); if (!t) return;
+  const p = document.createElement("div"); p.className = "bd-pop"; p.style.setProperty("--fc", color || "#7ee0c8");
+  p.style.left = (t.offsetLeft + t.offsetWidth / 2) + "px"; p.style.top = (t.offsetTop + t.offsetHeight * .3) + "px";
+  p.innerHTML = `${text}${sub ? `<small>${sub}</small>` : ""}`; b.appendChild(p); setTimeout(() => p.remove(), 1450);
+}
+function bdFlash(title, sub, color) {
+  const st = $("bdBoard"), f = document.createElement("div"); f.className = "tw-flash"; f.style.setProperty("--fc", color);
+  f.innerHTML = `<b>${title}</b><small>${sub}</small>`; st.appendChild(f); setTimeout(() => f.remove(), 1700);
+}
+function bdTotal(pop) { const b = $("bdTotal"); b.textContent = rd ? (rd.win + rd.bonus).toLocaleString("de-DE") : $("bdTotal").dataset.last || "0"; if (pop) { b.classList.remove("up"); void b.offsetWidth; b.classList.add("up"); } }
+
+function bdUi() {
+  if (!$("bdInfo")) return;
+  const B = bd(), pos = B.pos;
+  $("bdPlans").textContent = B.plans; $("bdPlansBox").classList.toggle("hot", B.plans >= BD_PLANS - 1);
+  $("bdPark").textContent = Math.round(B.park).toLocaleString("de-DE");
+  bdTotal(false);
+  const i = bdSel >= 0 ? bdSel : pos, f = BD_F[i];
+  document.querySelectorAll(".bd-f.sel").forEach(x => x.classList.remove("sel")); const st = bdTile(i); if (st) st.classList.add("sel");
+  let h;
+  if (f.t === "plot") {
+    const D = BD_DIST[f.d], p = bdPlot(i), full = bdFull(f.d), rentNow = p.l ? Math.max(1, Math.round(bdRentRaw(i, bet()) * lineBoost())) : 0;
+    const fullAfter = BD_F.every((g, k) => g.t !== "plot" || g.d !== f.d || k === i || bdPlot(k).l > 0);
+    const rentNext = p.l < 4 ? Math.max(1, Math.round(BD_RENT[p.l + 1] * bdDF(i) * bet() * (fullAfter ? BD_FULL : 1) * lineBoost())) : 0;
+    h = `<div class="bd-ih" style="--dc:${D.color}"><i></i><b>${f.n}</b><span>${D.name}</span></div>
+      <p>${p.l ? `${BD_LV[p.l]} · Stufe ${p.l} von 4` : "Freies Bauland"}${full && p.l ? ` · <span class="full">ganzes Viertel ×1,5</span>` : ""}</p>
+      <dl>${p.l ? `<dt>Miete je Halt</dt><dd>${rentNow.toLocaleString("de-DE")}</dd>` : ""}${p.l < 4 ? `<dt>${p.l ? "Ausbau" : "Kaufpreis"}</dt><dd>${bdCost(i).toLocaleString("de-DE")}</dd><dt>Miete danach</dt><dd>${rentNext.toLocaleString("de-DE")}</dd>` : `<dt>Ausbau</dt><dd>fertig</dd>`}</dl>
+      ${i !== pos && p.l < 4 ? `<p>Kaufen und ausbauen geht nur, wenn der Bus hier hält.</p>` : ""}`;
+  } else {
+    const S = BD_SPECIAL[f.t];
+    h = `<div class="bd-ih" style="--dc:${S.color}"><i></i><b>${S.name}</b><span>Sonderfeld</span></div><p>${S.text()}</p>`;
+  }
+  $("bdInfo").innerHTML = h;
+  // Kaufen-Knopf: nur für das Feld, auf dem der Bus steht
+  const pf = BD_F[pos], pp = bdPlot(pos), show = pf.t === "plot" && pp.l < 4 && bdBuilt !== pos;
+  const btn = $("bdBuy"); btn.hidden = !show;
+  if (show) {
+    const cost = bdCost(pos), can = !rd && !busy && !spinning && state.credits >= cost;
+    $("bdBuyLbl").textContent = `${pp.l ? "Ausbauen" : "Kaufen"}: ${pf.n}`; $("bdBuyAmt").textContent = cost.toLocaleString("de-DE");
+    btn.disabled = !can; btn.classList.toggle("hot", can);
+  }
+  document.querySelectorAll(".bd-f.can").forEach(x => x.classList.remove("can"));
+  if (show && !btn.disabled) { const t = bdTile(pos); if (t) t.classList.add("can"); }
+  const a = $("bdAuto"); a.textContent = `Auto-Bauen: ${state.bdAuto ? "an" : "aus"}`; a.classList.toggle("on", !!state.bdAuto);
+  $("bdDists").innerHTML = BD_DIST.map((D, d) => `<div style="--dc:${D.color}"><i></i>${D.name}<span>${BD_F.map((g, k) => g.t === "plot" && g.d === d ? `<b class="l${bdPlot(k).l}"></b>` : "").join("")}</span>${bdFull(d) ? "<em>×1,5</em>" : ""}</div>`).join("");
+}
+
+/* ----- Kaufen und Ausbauen ----- */
+function bdApplyLevel(i, invAdd) {
+  const B = bd(), p = bdPlot(i), d = BD_F[i].d, wasFull = bdFull(d);
+  B.plots[i] = { l: p.l + 1, inv: Math.round((p.inv + invAdd) * 100) / 100 };
+  bdRedrawTile(i, true);
+  if (p.l + 1 === 4) { bump("tower4"); }
+  if (!wasFull && bdFull(d)) { bump("fullDistrict"); bdFlash(`${BD_DIST[d].name} komplett!`, "Ganzes Viertel: Miete ×1,5", BD_DIST[d].color); sfx.fanfare(0); bipState.last = 0; bip("district", 3); }
+}
+function bdCanBuild(i, auto) {
+  const f = BD_F[i], p = bdPlot(i); if (f.t !== "plot" || p.l >= 4 || bdBuilt === i) return false;
+  const cost = bdCost(i);
+  return auto ? state.credits - cost >= BD_RESERVE * bet() : state.credits >= cost;
+}
+function bdBuild(i, auto) {
+  if (!bdCanBuild(i, auto)) return false;
+  if (!auto && (rd || busy || spinning || bd().pos !== i)) return false;
+  const cost = bdCost(i), l = bdPlot(i).l, name = BD_F[i].n;
+  state.credits -= cost; countCredits(state.credits, 300);
+  bdApplyLevel(i, bdPriceFull(i));
+  bdBuilt = i; bump("plotsBought"); track("upgrade");
+  sfx.upgrade(); bdPop(i, "-" + cost.toLocaleString("de-DE"), BD_LV[l + 1], "#ffd27a");
+  addLog(BD_DIST[BD_F[i].d].sym, `${l ? "Ausbau" : "Kauf"}: ${name} (${BD_LV[l + 1]})`, "-" + cost, "#ffd27a");
+  if (!auto) { bipState.last = 0; bip("buy", 2); $("msg").className = "msg gold"; $("msg").textContent = `${name}: ${BD_LV[l + 1]} gebaut. Ab jetzt zahlt es Miete, wenn der Bus hier hält.`; }
+  bdUi(); render(); saveGame(); checkAch();
+  return true;
+}
+function bdFreeUpgrade() {
+  const plots = BD_F.map((f, i) => i).filter(i => BD_F[i].t === "plot");
+  let cand = plots.filter(i => bdPlot(i).l > 0 && bdPlot(i).l < 4);
+  if (!cand.length) cand = plots.filter(i => bdPlot(i).l === 0);
+  if (!cand.length) return -1;
+  const i = cand[(Math.random() * cand.length) | 0];
+  bdApplyLevel(i, BD_PRICE[bdPlot(i).l] * bdDF(i) * rd.bet);
+  return i;
+}
+
+/* ----- Ablauf einer Runde ----- */
 function netDust(pts) {
   state.dustMeter = (state.dustMeter || 0) + pts;
   let whole = 0;
@@ -248,9 +399,7 @@ function gainDustFromSpin() {}
 function renderSticky() {}
 
 function spin(auto) {
-  if (!ready || twSpinning || skipCelebration || !$("scratch").hidden || !$("bonus").hidden || !$("naming").hidden || !$("worlds").hidden) return;
-  if (tw) { if (!twHold) twStep(); return; }
-  if (busy || spinning) return;
+  if (!ready || rd || busy || spinning || skipCelebration || !$("scratch").hidden || !$("bonus").hidden || !$("naming").hidden || !$("worlds").hidden) return;
   const free = inFs();
   if (!free && state.credits < bet()) return;
   slammed = false;
@@ -259,94 +408,154 @@ function spin(auto) {
     state.credits -= bet(); state.spins++; countCredits(state.credits, 250);
     sess.spins++; sess.bet += bet(); clearGamble();
     state.pot += bet() * JP_FEED; addXP(bet()); track("spins");
+    bd().park += bet() * BD_PARK;
     bipState.lastSession++;
     if (bipState.lastSession % 200 === 0) setTimeout(() => bip("session", 2), 400);
   }
-  tw = { h: free ? TW_FS_START : 0, shield: 0, plans: 0, floors: free ? Array(TW_FS_START).fill("scrap") : [], free, bet: free ? (tw && tw.bet) || bet() : bet(), spins: 0, bonus: 0, fsGain: 0, saved: 0, dust: 2, boost: false, run: 0, boom: 0 };
+  rd = { bet: free ? (bdFsBet || bet()) : bet(), free, win: 0, bonus: 0, fs: 0, dust: 2, boost: false, rolls: 0, doubles: 0 };
   boostSpinActive = false;
-  if (!free && state.boostReady) { tw.shield = 2; tw.boost = true; boostSpinActive = true; state.boostReady = 0; state.luck = 0; sfx.boostSpin(); }
-  busy = true; twFast = false;
-  $("twStage").classList.remove("won");
+  if (!free && state.boostReady) { rd.boost = true; boostSpinActive = true; state.boostReady = 0; state.luck = 0; sfx.boostSpin(); }
+  rd.mult = (free ? BD_FS_MULT : 1) * (rd.boost ? 2 : 1) * lineBoost();
+  busy = true; bdFast = false; bdBuilt = -1; bdSel = -1;
   $("lastWin").textContent = "0"; $("lastWin").classList.remove("pos");
-  twDraw(true); twUi(); render();
-  twStep();
+  bdUi(); render();
+  bdRound();
 }
-async function twStep() {
-  if (!tw || twSpinning || twHold) return;
-  twSpinning = spinning = true; render(); twUi();
-  sfx.start();
-  $("msg").className = tw.free ? "msg fs" : "msg";
-  $("msg").textContent = tw.h ? `Etage ${tw.h + 1} wird gebaut …` : tw.free ? `Freibau ${fsTotal - fsLeft} von ${fsTotal} …` : "Der Grundstein wird gelegt …";
-  const id = twPick();
-  await twReel(id);
-  sfx.stop();
-  twSpinning = spinning = false; tw.spins++;
-  if (id === "crash") {
-    if (tw.shield) {
-      tw.shield--; tw.saved++; sfx.crystal(); shakeFrame();
-      twFloat("Abgefangen!", "Der Kran hält die Abrissbirne", "#ffd27a");
-      $("msg").className = "msg gold"; $("msg").textContent = `Kran-Sicherung! Die Abrissbirne prallt ab. Wert bleibt ${twFmt(twMult(tw.h))}.`;
-      track("laser"); bump("lasers");
-      twDraw(); twUi(); render();
-      return twAfterStep();
-    }
-    return twCrash();
-  }
-  const sym = twSym(id), h0 = tw.h;
-  let d = TW_D[id], boomed = false;
-  if (d && tw.boom > 0) { d += 1; tw.boom--; boomed = true; }
-  if (d) tw.run++; else tw.run = 0;
-  for (let i = 0; i < d; i++) tw.floors.push(id);
-  tw.h += d;
-  if (id === "wild") { tw.shield = Math.min(1, tw.shield + 1); }
-  if (id === "crystal") tw.dust += 6;
-  if (d) { track("symwin", 1, id); if (tw.h >= 20 && tw.h - d < 20) track("four"); }
-  twDraw(); twUi(); render();
-  const vb = $("twVal"); vb.classList.remove("up"); void vb.offsetWidth; if (d) vb.classList.add("up");
-  if (d) { sfx.coin(Math.min(3, d)); twFloat(`+${d} ${d === 1 ? "Etage" : "Etagen"}`, `${sym.name}${boomed ? " · Bauboom" : ""} · ${twFmt(twMult(tw.h))}`, boomed ? "#ff7a59" : sym.color || sym.special || "#7ee0c8"); }
-  $("msg").className = tw.free ? "msg fs" : "msg win";
-  $("msg").textContent = d ? `${sym.name}: +${d} · Höhe ${tw.h} · Wert ${twFmt(twMult(tw.h))} = ${twAmount()}` : "";
-  if (id === "capsule") {
-    tw.plans++; twUi(); sfx.feature(0, 3);
-    $("msg").className = "msg gold"; $("msg").textContent = `Bauplan ${tw.plans} von 3!${tw.plans === 3 ? " Bonusspiel!" : ""}`;
-    if (tw.plans === 3) { tw.plans = 0; await twBonus("capsule"); }
-  }
-  if (id === "warp") await twBonus("warp");
-  if (id === "beacon") {
-    tw.fsGain += TW_FS_AWARD; fsLeft += TW_FS_AWARD; fsTotal += TW_FS_AWARD; sfx.scatter(3);
-    if (!tw.free) { state.fsRounds++; fsWin = 0; }
-    $("msg").className = "msg fs"; $("msg").textContent = `Baugenehmigung! +${TW_FS_AWARD} Freibauten nach dieser Runde, sie starten auf Etage ${TW_FS_START}.`;
-    addLog("beacon", "Freibauten erhalten", `+${TW_FS_AWARD}`, "#c6f06b");
-    if (!tw.free) { bump("fs"); track("fs"); }
-  }
-  await twMilestones(h0);
-  if (tw.run >= TW_BOOM_AT && !tw.boom) {
-    tw.boom = 3; tw.run = 0; sfx.mult(); twFlash("BAUBOOM!", "3 Drehs: je +1 Etage extra", "#ff7a59"); bipState.last = 0; bip("boom", 2);
-    $("msg").className = "msg gold"; $("msg").textContent = "Bauboom! Fünf Bausteine in Folge: Die nächsten 3 Bausteine bringen je eine Etage extra.";
-  }
-  twUi();
-  if (tw.h >= TW_MAX) { $("msg").textContent = "Wolkenkratzer fertig! Höchste Höhe erreicht."; return twCash(true); }
-  if (tw.h >= 2 && Math.random() < TW_EVENT_P) { await twMiniEvent(); if (!tw) return; }
-  if (tw.h >= 5 && Math.random() < TW_INVEST_P) { const sold = await twInvestor(); if (sold || !tw) return; }
-  return twAfterStep();
+function bdGain(taler, i, label, color) {
+  const amt = Math.max(1, Math.round(taler * rd.mult));
+  rd.win += amt; bdPop(i, "+" + amt.toLocaleString("de-DE"), label, color); bdTotal(true);
+  return amt;
 }
-async function twMilestones(h0) {
-  // Richtfest alle 10 Etagen: Sofortbonus, bleibt auch bei Abriss
-  for (let k = Math.floor(h0 / 10) + 1; k <= Math.floor(Math.min(tw.h, TW_MAX) / 10); k++) {
-    const amt = Math.max(1, Math.round(tw.bet * TW_RF[Math.min(k - 1, TW_RF.length - 1)]));
-    state.credits += amt; tw.bonus += amt; countCredits(state.credits, 500);
-    sfx.fanfare(0); twFlash(`Richtfest! Etage ${k * 10}`, `+${amt} Taler sofort`, "#ffc94a"); burstAt($("twStage"), 60, ["#ffc94a", "#ff7a59", "#7ee0c8", "#ffffff"], 1);
-    addLog("relic", `Richtfest Etage ${k * 10}`, "+" + amt, "#ffc94a");
-    bipState.last = 0; bip("richtfest", 2);
-    await wait(650 * T());
+async function bdRound() {
+  const msg = $("msg");
+  for (;;) {
+    rd.rolls++;
+    msg.className = rd.free ? "msg fs" : "msg";
+    msg.textContent = rd.rolls > 1 ? `Pasch! Wurf ${rd.rolls} …` : rd.free ? `Freifahrt ${fsTotal - fsLeft} von ${fsTotal} …` : "Die Würfel rollen …";
+    $("bdSub").textContent = rd.rolls > 1 ? `Wurf ${rd.rolls} von ${BD_MAX_ROLLS}` : rd.free ? "Freifahrt · Gewinne ×2" : rd.boost ? "Paule-Boost · Gewinne ×2" : "Gute Fahrt!";
+    const [a, b] = await bdRollDice();
+    const dbl = a === b;
+    $("bdSub").textContent = `${a} + ${b} = ${a + b}${dbl ? " · Pasch!" : ""}`;
+    await bdMove(a + b);
+    await bdLand(bd().pos);
+    if (dbl) { rd.doubles++; bump("lasers"); track("laser"); if (rd.doubles === 2) track("four"); }
+    bdUi();
+    if (!dbl || rd.rolls >= BD_MAX_ROLLS) break;
+    sfx.mult(); bdFlash("Pasch!", "Noch einmal würfeln", "#ffc94a"); if (rd.doubles === 1) { bipState.last = 0; bip("pasch", 1); }
+    await wait((bdFast || autoLeft > 0 ? 450 : 900) * T());
+  }
+  return bdEnd();
+}
+function bdRollDice() {
+  bdRolling = spinning = true; render();
+  sfx.roll();
+  const d1 = $("bdD1"), d2 = $("bdD2"), a = 1 + ((Math.random() * 6) | 0), b = 1 + ((Math.random() * 6) | 0);
+  d1.classList.remove("dbl"); d2.classList.remove("dbl"); d1.classList.add("roll"); d2.classList.add("roll");
+  return new Promise(res => {
+    let k = 0;
+    const tick = () => {
+      const n = bdFast || reduced ? 1 : 9;
+      if (k++ < n) { bdDie(d1, 1 + ((Math.random() * 6) | 0)); bdDie(d2, 1 + ((Math.random() * 6) | 0)); sfx.wheelTick(); setTimeout(tick, 60 * T()); return; }
+      bdDie(d1, a); bdDie(d2, b); d1.classList.remove("roll"); d2.classList.remove("roll");
+      if (a === b) { d1.classList.add("dbl"); d2.classList.add("dbl"); }
+      sfx.stop(); bdRolling = spinning = false; render(); res([a, b]);
+    };
+    tick();
+  });
+}
+async function bdMove(steps) {
+  const B = bd();
+  for (let s = 0; s < steps; s++) {
+    B.pos = (B.pos + 1) % BD_N;
+    bdBusTo(B.pos);
+    sfx.wheelTick();
+    if (B.pos === 0) { bdGain(BD_PASS * rd.bet, 0, "Rundenbonus", "#3fd0a0"); sfx.coin(1); }
+    await wait((bdFast || reduced ? 45 : autoLeft > 0 ? 110 : 150) * T());
   }
 }
-function twFlash(title, sub, color) {
-  const st = $("twStage"), f = document.createElement("div"); f.className = "tw-flash"; f.style.setProperty("--fc", color);
-  f.innerHTML = `<b>${title}</b><small>${sub}</small>`; st.appendChild(f); setTimeout(() => f.remove(), 1700);
+async function bdLand(i) {
+  const f = BD_F[i], B = bd(), msg = $("msg"), t = bdTile(i);
+  if (t) { t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); }
+  msg.className = rd.free ? "msg fs" : "msg win";
+  if (f.t === "start") { const a = bdGain(BD_LAND * rd.bet, i, "Busbahnhof", "#3fd0a0"); sfx.coin(2); msg.textContent = `Genau am Busbahnhof gehalten: +${a} extra.`; }
+  else if (f.t === "plot") {
+    const D = BD_DIST[f.d], p = bdPlot(i);
+    track("symwin", 1, D.sym);
+    if (p.l) {
+      const a = bdGain(bdRentRaw(i, rd.bet), i, `Miete · ${f.n}`, D.color); sfx.coin(Math.min(3, p.l)); bump("rents");
+      msg.textContent = `${f.n} (${BD_LV[p.l]}) zahlt Miete: +${a}${bdFull(f.d) ? " · ganzes Viertel ×1,5" : ""}.`;
+      if (p.l >= 3 && Math.random() < .25) { bipState.last = 0; bip("rent", 1); }
+    } else { msg.className = rd.free ? "msg fs" : "msg"; msg.textContent = `${f.n} ist noch frei. Kaufpreis: ${bdCost(i).toLocaleString("de-DE")} Taler.`; }
+    if (state.bdAuto && bdCanBuild(i, true)) { await wait(250 * T()); bdBuild(i, true); }
+  }
+  else if (f.t === "news") await bdNews(i);
+  else if (f.t === "plan") await bdPlan(i, false);
+  else if (f.t === "mini") await bdMini(i);
+  else if (f.t === "park") {
+    if (B.park >= 1) { const a = bdGain(B.park, i, "Parkkasse", "#7ed957"); B.park = 0; sfx.coin(3); msg.textContent = `Stadtpark! Die Parkkasse gehört dir: +${a}.`; }
+    else { msg.className = "msg"; msg.textContent = "Stadtpark. Die Parkkasse ist gerade leer."; }
+  }
+  else if (f.t === "kiosk") { const a = bdGain(BD_KIOSK * rd.bet, i, "Kiosk", "#ff7a59"); rd.dust += 12; sfx.coin(1); msg.textContent = `Kiosk: +${a} und ein bisschen Wappenstaub.`; }
+  else if (f.t === "office") {
+    const n = BD_FS + (boostOn("signal") ? 2 : 0);
+    rd.fs += n; fsLeft += n; fsTotal += n; bdFsBet = rd.bet;
+    if (!rd.free) { state.fsRounds++; fsWin = 0; bump("fs"); track("fs"); }
+    sfx.scatter(3); bdFlash("Rathaus!", `+${n} Freifahrten · Gewinne ×2`, "#c6f06b");
+    addLog("beacon", "Freifahrten erhalten", `+${n}`, "#c6f06b");
+    msg.className = "msg fs"; msg.textContent = `Rathaus! +${n} Freifahrten nach dieser Runde. Sie kosten nichts, alle Gewinne zählen doppelt.`;
+    await wait(500 * T());
+  }
+  bdUi();
+}
+async function bdPlan(i, card) {
+  const B = bd(); B.plans++;
+  sfx.feature(0, 3); bdPop(i, `Bauplan ${B.plans}/${BD_PLANS}`, card ? "aus der Zeitung" : "vom Bauamt", "#4aa8ff");
+  $("msg").className = "msg gold"; $("msg").textContent = `Bauplan ${B.plans} von ${BD_PLANS}!${B.plans >= BD_PLANS ? " Bonusspiel!" : ""}`;
+  bdUi();
+  if (B.plans >= BD_PLANS) { B.plans = 0; await wait(400 * T()); await bdBonus("capsule"); bdUi(); }
+}
+function bdCardShow(title, sub, color, extra) {
+  const c = $("bdCard"); c.style.setProperty("--fc", color);
+  c.innerHTML = `<small>Stadtanzeiger</small><b>${title}</b><span>${sub}</span>${extra ? `<em>${extra}</em>` : ""}`;
+  c.hidden = false; c.classList.remove("in"); void c.offsetWidth; c.classList.add("in");
+  sfx.feature(0, 2);
+  return new Promise(res => {
+    let done = false;
+    const end = () => { if (done) return; done = true; c.hidden = true; c.onclick = null; twMiniKey = null; res(); };
+    c.onclick = end; twMiniKey = end;
+    setTimeout(end, (bdFast || autoLeft > 0 ? 1000 : 2100) * T());
+  });
+}
+async function bdNews(i) {
+  let r = Math.random() * BD_CARD_W, c = BD_CARDS[0];
+  for (const x of BD_CARDS) { if ((r -= x.w) < 0) { c = x; break; } }
+  const title = c.t[(Math.random() * c.t.length) | 0], msg = $("msg");
+  if (c.k === "cash") { const amt = Math.max(1, Math.round(c.v * rd.bet * rd.mult)); await bdCardShow(title, c.s, "#2f8a4a", "+" + amt.toLocaleString("de-DE")); bdGain(c.v * rd.bet, i, "Stadtanzeiger", "#4aa8ff"); msg.textContent = `${title}: +${amt}.`; }
+  else if (c.k === "start") {
+    await bdCardShow(title, c.s, "#3fd0a0");
+    const B = bd(); $("bdBus").classList.add("slow");
+    while (B.pos !== 0) { B.pos = (B.pos + 1) % BD_N; bdBusTo(B.pos); await wait((bdFast ? 40 : 90) * T()); }
+    $("bdBus").classList.remove("slow");
+    const a = bdGain(BD_LAND * rd.bet, 0, "Busbahnhof", "#3fd0a0"); sfx.coin(2); msg.textContent = `Umleitung: Der Bus steht am Busbahnhof, +${a}.`;
+  }
+  else if (c.k === "plan") { await bdCardShow(title, c.s, "#4aa8ff"); await bdPlan(i, true); }
+  else if (c.k === "wheel") { await bdCardShow(title, c.s, "#ff7a59"); await bdBonus("warp"); }
+  else if (c.k === "free") {
+    await bdCardShow(title, c.s, "#ffc94a");
+    const k = bdFreeUpgrade();
+    if (k >= 0) { sfx.upgrade(); bdPop(k, BD_LV[bdPlot(k).l], "geschenkt!", "#ffc94a"); addLog(BD_DIST[BD_F[k].d].sym, `Geschenkt: ${BD_F[k].n} (${BD_LV[bdPlot(k).l]})`, "0", "#ffc94a"); msg.textContent = `Geschenkt: ${BD_F[k].n} ist jetzt ${BD_LV[bdPlot(k).l]}.`; checkAch(); }
+    else msg.textContent = "Alles schon voll ausgebaut. Das Bauamt staunt.";
+  }
+  else if (c.k === "payday") {
+    let raw = 0; BD_F.forEach((g, k) => { if (g.t === "plot") raw += bdRentRaw(k, rd.bet) * c.v; });
+    if (raw > 0) { const amt = Math.max(1, Math.round(raw * rd.mult)); await bdCardShow(title, c.s, "#ffc94a", "+" + amt.toLocaleString("de-DE")); bdGain(raw, i, "Zahltag", "#ffc94a"); msg.textContent = `Zahltag: Alle Mieter zahlen extra, +${amt}.`; }
+    else { await bdCardShow(title, "Leider hast du noch keine Mieter. Kauf ein Grundstück!", "#ffc94a"); msg.textContent = "Zahltag, aber noch keine Mieter."; }
+  }
+  else if (c.k === "dust") { await bdCardShow(title, c.s, "#ffc94a"); addDust(1, "Stadtanzeiger"); msg.textContent = "Ein Wappen gefunden!"; }
+  else { await bdCardShow(title, c.s, "#6a7480"); msg.className = "msg"; msg.textContent = `${title}. Heute passiert nichts.`; }
 }
 
-/* ----- Mini-Events: kurze Geschicklichkeitsspiele ----- */
+/* ----- Baustelle: Mini-Events mit Geschicklichkeit ----- */
 function mgOverlay(title, sub, ms) {
   const m = $("twMini"); m.hidden = false; m.className = "tw-mini";
   m.innerHTML = `<div class="mg-head"><b>${title}</b><span>${sub}</span><i class="mg-time"><i id="mgBar"></i></i></div>`;
@@ -359,7 +568,7 @@ function mgClose(text, good) {
   return wait(1100).then(() => { m.hidden = true; m.innerHTML = ""; });
 }
 function mgCrane() {
-  const ms = 5000, m = mgOverlay("Kran-Timing", "Tippe, wenn der Block genau über dem Haus schwebt!", ms);
+  const ms = 5000, m = mgOverlay("Kran-Timing", "Tippe, wenn der Block genau über der Baugrube schwebt!", ms);
   m.insertAdjacentHTML("beforeend", `<i class="mg-guide"></i><div class="mg-block" id="mgBlock"></div><button type="button" class="mg-go" id="mgGo">Jetzt!</button>`);
   const blk = $("mgBlock");
   return new Promise(res => {
@@ -389,7 +598,7 @@ function mgBricks() {
   });
 }
 function mgPigeons() {
-  const ms = 3800, N = 5, m = mgOverlay("Tauben-Alarm", "Verscheuch alle Tauben vom Dach! Tipp sie an.", ms);
+  const ms = 3800, N = 5, m = mgOverlay("Tauben-Alarm", "Verscheuch alle Tauben von der Baustelle! Tipp sie an.", ms);
   let left = N, done = false;
   return new Promise(res => {
     for (let i = 0; i < N; i++) {
@@ -402,101 +611,55 @@ function mgPigeons() {
     setTimeout(() => { if (!done) { done = true; res(false); } }, ms);
   });
 }
-async function twMiniEvent() {
-  twHold = true; twUi();
-  const kind = (Math.random() * 3) | 0, auto = autoLeft > 0;
+async function bdMini(i) {
+  const kind = (Math.random() * 3) | 0, auto = autoLeft > 0, msg = $("msg");
   bipState.last = 0; bip("mini", 3); sfx.alarm();
   await wait(300);
+  let u = .2, label = "Baustelle", text;
   if (kind === 0) {
-    const r = auto ? 1 : await mgCrane();
-    if (r) { for (let i = 0; i < r; i++) tw.floors.push("chip"); const h0 = tw.h; tw.h += r; twDraw(); sfx.mult(); if (!auto) await mgClose(r === 3 ? "Perfekt! +3 Etagen" : "Gut! +1 Etage", true); await twMilestones(h0); }
-    else if (!auto) await mgClose("Daneben! Der Block landet im Container.", false);
-    $("msg").className = "msg gold"; $("msg").textContent = r ? `Kran-Timing: +${r} Etage${r > 1 ? "n" : ""}. Wert ${twFmt(twMult(tw.h))}.` : "Kran-Timing verpasst.";
+    const r = auto ? [0, 1, 3][(Math.random() * 3) | 0] : await mgCrane();
+    u = r === 3 ? 2.6 : r ? 1 : .2; label = "Kran-Timing";
+    if (!auto) await mgClose(r === 3 ? "Perfekt gesetzt!" : r ? "Gut gesetzt!" : "Daneben! Trostpflaster.", r > 0);
+    text = r === 3 ? "Kran-Timing perfekt" : r ? "Kran-Timing gut" : "Kran-Timing verpasst";
   } else if (kind === 1) {
     const c = auto ? 3 : await mgBricks();
-    const amt = Math.round(tw.bet * .3 * c);
-    if (amt) { state.credits += amt; tw.bonus += amt; countCredits(state.credits, 500); addLog("scrap", `Ziegelregen ×${c}`, "+" + amt, "#ffc94a"); }
-    if (!auto) await mgClose(c ? `${c} Ziegel gefangen: +${amt} Taler` : "Kein Ziegel gefangen.", c > 0);
-    $("msg").className = "msg gold"; $("msg").textContent = `Ziegelregen: ${c} gefangen, +${amt} Taler sofort.`;
+    u = .2 + .3 * c; label = `Ziegelregen ×${c}`;
+    if (!auto) await mgClose(c ? `${c} Ziegel gefangen!` : "Kein Ziegel gefangen.", c > 0);
+    text = `Ziegelregen: ${c} gefangen`;
   } else {
     const ok = auto ? Math.random() < .6 : await mgPigeons();
-    if (ok) { tw.shield = Math.min(1, tw.shield + 1); tw.floors.push("wild"); const h0 = tw.h; tw.h += 1; twDraw(); sfx.crystal(); if (!auto) await mgClose("Alle weg! +1 Etage und eine Kran-Sicherung", true); await twMilestones(h0); }
-    else if (!auto) await mgClose("Die Tauben bleiben sitzen. Gurr.", false);
-    $("msg").className = "msg gold"; $("msg").textContent = ok ? "Tauben verscheucht: +1 Etage und eine Kran-Sicherung." : "Tauben-Alarm verloren.";
+    u = ok ? 2 : .2; label = "Tauben-Alarm";
+    if (!auto) await mgClose(ok ? "Alle Tauben weg!" : "Die Tauben bleiben sitzen. Gurr.", ok);
+    text = ok ? "Tauben verscheucht" : "Tauben-Alarm verloren";
   }
   if (!auto) { const m = $("twMini"); m.hidden = true; m.innerHTML = ""; }
-  bump("minis"); twHold = false; twMiniKey = null; twUi(); render();
+  twMiniKey = null; bump("minis");
+  const a = bdGain(u * rd.bet, i, label, "#ffc94a"); sfx.coin(2);
+  msg.className = "msg gold"; msg.textContent = `${text}: +${a}.`;
 }
-function twInvestor() {
-  const amount = Math.round(twAmount() * TW_INVEST_F);
-  if (autoLeft > 0) { if (twMult(tw.h) * TW_INVEST_F >= twTarget()) { twFlash("Investor kauft!", `+${amount} Taler`, "#7ee0c8"); return twCash(false, amount).then(() => true); } return Promise.resolve(false); }
-  twHold = true; twUi(); sfx.feature(0, 3); bipState.last = 0; bip("investor", 3);
-  const o = $("twOffer"); o.hidden = false;
-  o.innerHTML = `<b>Investor!</b><span>Bietet <em>${amount}</em> Taler für dein Haus, 30 % über Wert.</span><div><button type="button" class="tw-yes" id="offYes">Verkaufen</button><button type="button" class="tw-no" id="offNo">Weiterbauen</button></div><i class="mg-time"><i id="offBar"></i></i>`;
-  const bar = $("offBar"); bar.style.width = "100%"; void bar.offsetWidth; bar.style.transition = "width 7s linear"; bar.style.width = "0%";
-  return new Promise(res => {
-    let done = false;
-    const end = async yes => { if (done) return; done = true; o.hidden = true; o.innerHTML = ""; twHold = false; twMiniKey = null;
-      if (yes) { await twCash(false, amount); res(true); } else { $("msg").className = "msg"; $("msg").textContent = "Angebot abgelehnt. Weiterbauen!"; twUi(); res(false); } };
-    $("offYes").addEventListener("click", () => end(true)); $("offNo").addEventListener("click", () => end(false));
-    twMiniKey = () => end(false);
-    setTimeout(() => end(false), 7000);
-  });
-}
-async function twAfterStep() {
-  render(); twUi();
-  if (autoLeft > 0 && tw && tw.h > 0 && twMult(tw.h) >= twTarget()) { await wait(250 * T()); return twCash(); }
-  if (autoLeft > 0 && tw) { await wait(320 * T()); if (tw && !twSpinning && !twHold) return twStep(); }
-}
-async function twBonus(id) {
-  twHold = true;
-  const f = { id, ...({ capsule: { bonus: "pick", title: "Bauplanauswahl", color: "#4aa8ff" }, warp: { bonus: "wheel", title: "Stadtrundfahrt", color: "#ff7a59" } })[id], cells: [] };
+async function bdBonus(id) {
+  const f = { id, ...({ capsule: { bonus: "pick", title: "Bauplanauswahl", color: "#4aa8ff" }, warp: { bonus: "wheel", title: "Stadtlotterie", color: "#ff7a59" } })[id], cells: [] };
   await celebrateFeature(f);
-  const amount = Math.round((await runBonus(f)) * bonusBoost());
-  state.credits += amount; tw.bonus += amount;
+  const amount = Math.round((await runBonus(f)) * bonusBoost() * (rd.free ? BD_FS_MULT : 1));
+  state.credits += amount; rd.bonus += amount;
   state.best = Math.max(state.best, amount); state.peak = Math.max(state.peak, state.credits);
   state.bonusCount = (state.bonusCount || 0) + 1; bump("pick"); track("bonus", 1);
   track("haul", amount); sess.won += amount; sess.best = Math.max(sess.best, amount);
   addDust(1, f.title); addLog(id, f.title, "+" + amount, f.color);
-  render();
+  render(); bdTotal(true);
   if (amount > 0) await celebrateWin(amount, state.credits);
   bip(amount >= bet() * 10 ? "bonusGood" : "bonusMeh", 3);
-  twHold = false;
-  $("msg").className = "msg gold"; $("msg").textContent = `${f.title}: +${amount} Taler. Dein Hochhaus steht noch, weiterbauen oder auszahlen?`;
+  $("msg").className = "msg gold"; $("msg").textContent = `${f.title}: +${amount} Taler. Der Bus fährt weiter.`;
 }
-async function twCrash() {
-  twHold = true;
-  sfx.alarm(); shakeFrame();
-  const st = $("twStage"); st.classList.remove("shake"); void st.offsetWidth; st.classList.add("shake");
-  const fx = $("twFx"), top = 188 - tw.floors.length * 10 + Math.max(0, tw.floors.length * 10 - 120);
-  fx.innerHTML = `<g><path d="M170 ${top - 40} Q130 ${top - 50} 100 ${top - 10}" stroke="#8a9098" stroke-width="1.2" fill="none"/><circle cx="100" cy="${top - 8}" r="11" fill="#2a2d30" stroke="#6a6f76" stroke-width="2"><animate attributeName="cx" from="190" to="100" dur=".35s" fill="freeze"/></circle></g>`;
-  await wait(380 * T());
-  sfx.scrap();
-  const fl = $("twFloors"); fl.classList.add("fall");
-  fl.querySelectorAll(".twf").forEach((el, i) => { const dx = (Math.random() - .5) * 120, rot = (Math.random() - .5) * 90; el.style.transform = `translate(${dx}px, ${220 - i * 4}px) rotate(${rot}deg)`; el.style.opacity = "0"; el.style.transformOrigin = "80px 150px"; });
-  for (let i = 0; i < 18; i++) { const [x, y] = [80 + (Math.random() - .5) * 60, top + Math.random() * 40]; const p = document.createElementNS("http://www.w3.org/2000/svg", "circle"); p.setAttribute("cx", x); p.setAttribute("cy", y); p.setAttribute("r", 2 + Math.random() * 4); p.setAttribute("fill", "rgba(180,170,160,.6)"); fx.appendChild(p); }
-  $("msg").className = "msg lose"; $("msg").textContent = `Abrissbirne! Das Hochhaus (Höhe ${tw.h}) ist eingestürzt.${tw.bonus ? ` Der Bonus von ${tw.bonus} bleibt dir.` : ""}`;
-  addLog("crash", `Abriss bei Höhe ${tw.h}`, tw.bonus ? "+" + tw.bonus : "0", "#ff4b5c");
-  await wait(900 * T());
-  fx.innerHTML = "";
-  return twEnd(0, true);
-}
-async function twCash(maxed, offer) {
-  if (!tw || tw.h <= 0 || twSpinning || (twHold && !offer)) return;
-  twHold = true;
-  const amt = offer || twAmount(), h = tw.h;
-  sfx.mission();
-  $("twStage").classList.add("won");
-  twFloat(`+${amt}`, `ausgezahlt bei ${twFmt(twMult(h))}`, "#7ee0c8");
-  addLog(maxed ? "relic" : (tw.floors.at(-1) || "scrap"), `Höhe ${h} · ${twFmt(twMult(h))}`, "+" + amt, "#7ee0c8");
-  return twEnd(amt, false);
-}
-async function twEnd(roundWin, crashed) {
-  const free = tw.free, r = tw;
-  tw = null; twHold = false; busy = true; render();
+async function bdEnd() {
+  const r = rd, free = r.free, msg = $("msg");
+  let roundWin = r.win, paule = 0;
+  if (r.boost && roundWin + r.bonus < r.bet) { paule = r.bet - roundWin - r.bonus; roundWin += paule; }
+  rd = null; busy = true;
+  $("bdTotal").dataset.last = (roundWin + r.bonus).toLocaleString("de-DE");
   netDust(r.dust);
   const prevStreak = streak;
-  if (!free) { if (roundWin > 0) streak++; else streak = 0; }
+  if (!free) { if (roundWin + r.bonus >= r.bet) streak++; else streak = 0; }
   const sMult = free ? 1 : streakMult();
   const win = Math.round(roundWin * sMult);
   if (!free) {
@@ -511,31 +674,29 @@ async function twEnd(roundWin, crashed) {
   if (free) fsWin += win + r.bonus;
   state.best = Math.max(state.best, win);
   state.peak = Math.max(state.peak, state.credits);
-  const msg = $("msg");
-  if (win > 0) { msg.className = "msg win"; msg.textContent = `${r.boost ? "Paule-Boost! " : ""}Ausgezahlt bei Höhe ${r.h - 0}: +${win} Taler${sMult > 1 ? ` · Strähne ×${String(sMult).replace(".", ",")}` : ""}.`; }
-  bipAfterSpin({ win: win + r.bonus, factor: (win + r.bonus) / r.bet, lasered: r.saved > 0, award: r.fsGain, features: 0, prevStreak, streak, free });
-  if (!free && win >= r.bet * 15) setTimeout(() => addDust(1, "großer Bau"), 1200);
-  if (win > 0) { bump("wins"); sess.won += win; sess.best = Math.max(sess.best, win); if (!free) maxStat("maxFactor", win / r.bet); }
+  if (win > 0) { msg.className = free ? "msg fs" : "msg win"; msg.textContent = `${r.boost ? "Paule-Boost! " : ""}Fahrt beendet: +${win} Taler${sMult > 1 ? ` · Strähne ×${String(sMult).replace(".", ",")}` : ""}${paule ? " · Paule hat aufgerundet" : ""}.`; }
+  else { msg.className = "msg"; msg.textContent = "Diese Fahrt brachte nichts. Nächste Runde!"; }
+  bipAfterSpin({ win: win + r.bonus, factor: (win + r.bonus) / r.bet, lasered: false, award: r.fs && !free ? r.fs : 0, features: 0, prevStreak, streak, free });
+  if (!free && win >= r.bet * 15) setTimeout(() => addDust(1, "große Fahrt"), 1200);
+  if (win > 0) { bump("wins"); sess.won += win; sess.best = Math.max(sess.best, win); if (!free) maxStat("maxFactor", (win + r.bonus) / r.bet); }
   maxStat("maxStreak", streak);
-  render();
-  if (win > 0) { await wait(200 * T()); await celebrateWin(win, state.credits); }
-  if (r.fsGain && !free) await simpleBanner({ tier: "Baugenehmigung", color: "var(--lime)", sub: `Freibauten starten auf Etage ${TW_FS_START}` }, `+${r.fsGain} Freibauten`, sfx.fs, ["#c6f06b", "#7ee0c8", "#ffffff"], 2200);
+  render(); bdUi();
+  if (win > 0) { await wait(150 * T()); await celebrateWin(win, state.credits); }
+  if (r.fs && !free) await simpleBanner({ tier: "Rathaus", color: "var(--lime)", sub: "Freifahrten: kostenlos, alle Gewinne ×2" }, `+${r.fs} Freifahrten`, sfx.fs, ["#c6f06b", "#7ee0c8", "#ffffff"], 2200);
   if (inFs()) {
-    busy = false; fsActive = true; render(); twDraw(true); twUi();
-    msg.className = "msg fs"; msg.textContent = `${win ? `+${win} Taler. ` : crashed ? "Eingestürzt. " : ""}Noch ${fsLeft} Freibau${fsLeft === 1 ? "" : "ten"}: Drück „Bauen“, du startest auf Etage ${TW_FS_START}.`;
+    busy = false; fsActive = true; render(); bdUi();
+    msg.className = "msg fs"; msg.textContent = `${win ? `+${win} Taler. ` : ""}Noch ${fsLeft} Freifahrt${fsLeft === 1 ? "" : "en"}: Drück „Würfeln“, alle Gewinne zählen doppelt.`;
     saveGame(); checkAch();
     if (autoLeft > 0) { await wait(500 * T()); spin(); }
     return;
   }
   if (free) {
     fsActive = false;
-    msg.className = "msg win"; msg.textContent = `Freibauten beendet: insgesamt +${fsWin} Taler.`;
-    if (fsWin >= r.bet * 50) setTimeout(() => addDust(2, "starke Freibauten"), 2500);
-    addLog("beacon", "Freibauten gesamt", "+" + fsWin, "#c6f06b");
+    msg.className = "msg win"; msg.textContent = `Freifahrten beendet: insgesamt +${fsWin} Taler.`;
+    if (fsWin >= r.bet * 50) setTimeout(() => addDust(2, "starke Freifahrten"), 2500);
+    addLog("beacon", "Freifahrten gesamt", "+" + fsWin, "#c6f06b");
     await celebrateFsEnd(fsWin, state.credits);
     bip("fsend", 2); fsTotal = 0;
-  } else if (!win && crashed) {
-    if (state.credits < 5) { msg.className = "msg lose"; msg.textContent = "Taler aufgebraucht."; }
   }
   countCredits(state.credits, 0);
   fsActive = false;
@@ -555,91 +716,144 @@ async function twEnd(roundWin, crashed) {
   if (state.credits < 5) { autoLeft = 0; clearAutoMarks(); await handleBankruptcy(); }
   if (!free && Math.random() < 1 / 150) findAlbumItem(curSector().id, "Runde");
   if (!free) {
-    if (win > 0 || r.fsGain || r.bonus) state.luck = 0; else state.luck = (state.luck || 0) + 1;
+    if (win > 0 || r.fs || r.bonus) state.luck = 0; else state.luck = (state.luck || 0) + 1;
     if (r.boost && win > 0) { setTimeout(() => { bipState.last = 0; bip("boostWin", 3); }, 300); }
     if (state.luck >= BOOST_AT && !state.boostReady) await activateBoost();
     else if (state.luck === Math.round(BOOST_AT / 2)) bip("charging", 2);
     renderLuck();
   }
   checkAch(); sessPoint();
-  if (!free && win > 0 && autoLeft === 0 && state.credits >= 5) offerGamble(win);
+  if (!free && win >= r.bet && autoLeft === 0 && state.credits >= 5) offerGamble(win);
   busy = false; boostSpinActive = false;
-  saveGame(); twUi();
+  saveGame(); bdUi();
   if (autoLeft > 0) {
-    if (state.credits >= bet()) { autoLeft--; render(); await wait(450 * T()); if (autoLeft >= 0 && !spinning && !busy && !tw) { if (autoLeft === 0) clearAutoMarks(); spin(); return; } }
+    if (state.credits >= bet()) { autoLeft--; render(); await wait(450 * T()); if (autoLeft >= 0 && !spinning && !busy && !rd) { if (autoLeft === 0) clearAutoMarks(); spin(); return; } }
     else { autoLeft = 0; clearAutoMarks(); }
   }
   render();
 }
-function quickStop() { twFast = true; }
+function quickStop() { bdFast = true; }
 function press() {
   if (!$("bonus").hidden || !$("scratch").hidden) return;
   if (skipCelebration) { skipCelebration(); return; }
   if (twMiniKey) { twMiniKey(); return; }
-  if (twSpinning) { twFast = true; return; }
+  if (rd) { bdFast = true; return; }
   spin();
 }
 function evaluate(board) { return { wins: [], scatters: [], scatterReels: 0, features: [] }; }
 function finish() {}
 
+/* ----- Spielstand: Brett mitspeichern ----- */
+const bdSerializeBase = serialize;
+serialize = function () { const o = bdSerializeBase(); const B = bd(); o.board = { pos: B.pos, plans: B.plans, park: Math.round(B.park * 100) / 100, plots: JSON.parse(JSON.stringify(B.plots)) }; return o; };
+const bdApplyBase = applySave;
+applySave = function (d) {
+  bdApplyBase(d);
+  const B = bdFresh(), x = d && d.board;
+  if (x && typeof x === "object") {
+    if (Number.isInteger(x.pos) && x.pos >= 0 && x.pos < BD_N) B.pos = x.pos;
+    if (typeof x.plans === "number" && isFinite(x.plans)) B.plans = Math.max(0, Math.min(BD_PLANS - 1, x.plans | 0));
+    if (typeof x.park === "number" && isFinite(x.park)) B.park = Math.max(0, x.park);
+    if (x.plots && typeof x.plots === "object") for (const k in x.plots) { const i = +k, p = x.plots[k];
+      if (BD_F[i] && BD_F[i].t === "plot" && p && Number.isInteger(p.l) && p.l >= 1 && p.l <= 4 && typeof p.inv === "number" && isFinite(p.inv) && p.inv > 0) B.plots[i] = { l: p.l, inv: p.inv }; }
+  }
+  state.board = B; bdRender();
+};
+const bdFreshBase = freshState;
+freshState = function () { return { ...bdFreshBase(), board: bdFresh() }; };
+const bdAfterLoadBase = afterLoad;
+afterLoad = function () { bdAfterLoadBase(); bdRender(); };
+const bdGameOverBase = gameOver;
+gameOver = function () { state.board = bdFresh(); bdRender(); return bdGameOverBase(); };
+const bdBankBase = handleBankruptcy;
+handleBankruptcy = async function () {
+  // Bei Pleite verkauft der Makler zuerst Grundstücke (Stufe für Stufe, 50 % zurück), erst danach Ausbauten der Stadt
+  while (state.credits < 5) {
+    let pick = -1;
+    BD_F.forEach((f, i) => { const p = bdPlot(i); if (f.t === "plot" && p.l > 0 && (pick < 0 || p.l > bdPlot(pick).l || (p.l === bdPlot(pick).l && p.inv > bdPlot(pick).inv))) pick = i; });
+    if (pick < 0) break;
+    const p = bdPlot(pick), share = p.inv * BD_PRICE[p.l - 1] / BD_PRICE.slice(0, p.l).reduce((a, b) => a + b, 0), refund = Math.max(1, Math.round(share * .5)), name = BD_F[pick].n, lv = BD_LV[p.l];
+    if (p.l === 1) delete bd().plots[pick]; else bd().plots[pick] = { l: p.l - 1, inv: Math.round((p.inv - share) * 100) / 100 };
+    state.credits += refund; bdRedrawTile(pick, false); bdUi();
+    sfx.scrap(); bip("scrap", 3);
+    addLog(BD_DIST[BD_F[pick].d].sym, `Notverkauf: ${name} (${lv})`, "+" + refund, "#ff6b7a");
+    $("msg").className = "msg lose"; $("msg").textContent = `Pleite! Der Makler kauft ${name} (${lv}) für ${refund} Taler.`;
+    render();
+    await simpleBanner({ tier: "Notverkauf", color: "var(--lose)", sub: `${name}: ${lv} verkauft · 50 % zurück` }, "+" + refund, () => {}, ["#ff6b7a", "#b9a684"], 2200);
+    countCredits(state.credits, 0);
+  }
+  if (state.credits < 5) return bdBankBase();
+  saveGame();
+};
+
+/* ----- Oberfläche ----- */
 const renderBase = render;
 render = function () {
   renderBase();
   const fsMode = inFs() || fsActive, btn = $("spin");
-  $("spinLabel").textContent = twSpinning ? "…" : tw ? "Weiter" : busy ? "Weiter" : fsMode ? "Frei bauen" : "Bauen";
-  btn.setAttribute("aria-label", twSpinning ? "Schneller drehen" : tw ? "Nächste Etage bauen" : busy ? "Feier überspringen" : "Neue Runde: Grundstein legen");
-  btn.disabled = !ready || (!tw && !busy && !twSpinning && !inFs() && state.credits < bet());
-  if (tw) $("betVal").textContent = tw.free ? "frei" : tw.bet;
-  $("fsMult").textContent = TW_FS_START;
-  if ($("twCash")) twUi();
+  $("spinLabel").textContent = bdRolling ? "…" : rd ? "Schneller" : busy ? "Weiter" : fsMode ? "Freifahrt" : "Würfeln";
+  btn.setAttribute("aria-label", bdRolling || rd ? "Schneller fahren" : busy ? "Feier überspringen" : "Neue Runde: würfeln");
+  btn.disabled = !ready || (!rd && !busy && !inFs() && state.credits < bet());
+  if (rd) $("betVal").textContent = rd.free ? "frei" : rd.bet;
+  $("fsMult").textContent = BD_FS_MULT;
+  if ($("bdInfo") && !rd) bdUi();
 };
-$("twCash").addEventListener("click", () => { sfx.click(); twCash(); });
-$("twTarget").addEventListener("click", () => { state.twTarget = ((state.twTarget ?? 1) + 1) % TW_TARGETS.length; sfx.click(); twUi(); try { localStorage.setItem("ns-twtarget", String(state.twTarget)); } catch (e) {} });
-try { const t = localStorage.getItem("ns-twtarget"); if (t !== null) state.twTarget = +t || 0; } catch (e) {}
-document.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === "c" || e.key === "C") && tw && !twSpinning && !e.target.closest("input, textarea, select, button")) { e.preventDefault(); twCash(); } });
+$("bdBoard").addEventListener("click", e => { const t = e.target.closest(".bd-f"); if (!t) return; const i = +t.dataset.i; bdSel = bdSel === i ? -1 : i; sfx.click(); bdUi(); });
+$("bdBuy").addEventListener("click", () => { sfx.click(); bdBuild(bd().pos, false); });
+$("bdAuto").addEventListener("click", () => { state.bdAuto = !state.bdAuto; sfx.click(); bdUi(); try { localStorage.setItem("ns-bdauto", state.bdAuto ? "1" : "0"); } catch (e) {} });
+try { state.bdAuto = localStorage.getItem("ns-bdauto") === "1"; } catch (e) {}
+document.addEventListener("keydown", e => { if ((e.key === "b" || e.key === "B") && !rd && !e.target.closest("input, textarea, select")) { e.preventDefault(); bdBuild(bd().pos, false); } });
+window.addEventListener("resize", () => bdBusTo(bd().pos, true));
+if (window.ResizeObserver) new ResizeObserver(() => bdBusTo(bd().pos, true)).observe($("bdBoard"));
+bdDie($("bdD1"), 3); bdDie($("bdD2"), 4);
+
+/* Boosts aus dem Bauamt passend zur Stadtrundfahrt */
+Object.assign(BOOSTS.find(b => b.id === "drones"), { name: "Bauhilfe", effect: "Kaufen und Ausbauen 25 % günstiger" });
+Object.assign(BOOSTS.find(b => b.id === "signal"), { name: "Eilantrag", effect: "Rathaus gibt 5 statt 3 Freifahrten" });
 
 function buildInfo() {
-  const tot = Object.values(TW_W).reduce((a, b) => a + b, 0), pc = id => (TW_W[id] / tot * 100).toFixed(1).replace(".", ",") + " %";
-  const NOTE = { scrap: "", cell: "", chip: "", core: "", relic: "Selten, sehr hoch", crystal: "Füllt den Wappenmesser", wild: "Kran-Sicherung: fängt eine Abrissbirne ab", capsule: "3 in einer Runde: Bauplanauswahl", beacon: `+${TW_FS_AWARD} Freibauten ab Etage ${TW_FS_START}`, warp: "Sofort: Stadtrundfahrt", crash: "Reißt alles ein" };
-  $("payRows").innerHTML = ["relic", "core", "chip", "cell", "scrap", "crystal", "wild", "capsule", "beacon", "warp", "crash"].map(id => { const s = twSym(id);
-    return `<tr><td>${ICONS[id]}${s.name}</td><td class="pay">${TW_D[id] ? "+" + TW_D[id] : "–"}</td><td class="pay">${pc(id)}</td><td>${NOTE[id]}</td></tr>`; }).join("");
+  $("payRows").innerHTML = BD_DIST.map((D, d) => {
+    const n = BD_F.filter(f => f.t === "plot" && f.d === d).length;
+    return `<tr><td>${ICONS[D.sym]}${D.name}</td><td class="pay">${n}</td><td class="pay">${BD_PRICE.map(p => Math.ceil(p * D.f * bet())).join(" · ")}</td><td class="pay">${BD_RENT.slice(1).map(r => Math.max(1, Math.round(r * D.f * bet() * lineBoost()))).join(" · ")}</td></tr>`;
+  }).join("");
   $("panel-bonus").innerHTML = `
-    <div class="feat" style="--fc:#7ee0c8">${ICONS.core}<div><h3>Hochstapeln</h3><p>Eine Runde kostet einmal den Einsatz. Jeder Dreh der kleinen Walze setzt Etagen auf dein Hochhaus. Nach jedem Dreh entscheidest du: weiterbauen oder auszahlen. Die Abrissbirne reißt alles ein.</p></div></div>
-    <div class="feat" style="--fc:#ffc94a">${ICONS.relic}<div><h3>Richtfest</h3><p>Alle 10 Etagen gibt es sofort einen Bonus, der dir bleibt, auch wenn das Haus danach einstürzt.</p></div></div>
-    <div class="feat" style="--fc:#ff7a59">${ICONS.core}<div><h3>Bauboom</h3><p>Fünf Bausteine in Folge ohne Pause starten den Bauboom: Die nächsten 3 Bausteine bringen je eine Etage extra.</p></div></div>
-    <div class="feat" style="--fc:#7ee0c8">${ICONS.chip}<div><h3>Investor</h3><p>Ab Etage 5 klopft manchmal ein Investor an und bietet 30 % mehr als den aktuellen Wert. Verkaufen oder weiterbauen?</p></div></div>
-    <div class="feat" style="--fc:#4aa8ff">${ICONS.wild}<div><h3>Mini-Events</h3><p>Ab und zu passiert etwas auf der Baustelle: <b>Kran-Timing</b> (tippen, wenn der Block über dem Haus ist: bis +3 Etagen), <b>Ziegelregen</b> (goldene Ziegel fangen: Taler sofort) und <b>Tauben-Alarm</b> (alle Tauben verscheuchen: Etage plus Kran-Sicherung).</p></div></div>
-    <div class="feat" style="--fc:#ffc94a">${ICONS.wild}<div><h3>Kran-Sicherung</h3><p>Landet der Kran, gibt es eine Etage und eine Sicherung. Die nächste Abrissbirne prallt einfach ab.</p></div></div>
-    <div class="feat" style="--fc:#c6f06b">${ICONS.beacon}<div><h3>Baugenehmigung · Freibauten</h3><p>Jede Baugenehmigung bringt ${TW_FS_AWARD} Freibauten. Sie kosten nichts und starten schon auf Etage ${TW_FS_START}.</p></div></div>
-    <div class="feat" style="--fc:#4aa8ff">${ICONS.capsule}<div><h3>Bauplan · Bauplanauswahl</h3><p>Sammle 3 Baupläne in einer Runde: Die Bauplanauswahl startet, der Gewinn gehört dir, auch wenn das Haus danach einstürzt.</p></div></div>
-    <div class="feat" style="--fc:#ff7a59">${ICONS.warp}<div><h3>Stadtbus · Stadtrundfahrt</h3><p>Selten: Der Stadtbus startet sofort die Stadtrundfahrt am Glücksrad, bis zum 300-fachen Einsatz.</p></div></div>
-    <div class="feat" style="--fc:#ffc94a">${ICONS.crystal}<div><h3>Wappen und Bauamt</h3><p>Jede Runde füllt den Wappenmesser ein wenig, jedes Wappen deutlich mehr. Im Bauamt tauschst du Wappen gegen Erlasse für einige Minuten.</p></div></div>
-    <div class="feat" style="--fc:#ffc94a">${ICONS.scrap}<div><h3>Paule-Boost</h3><p>Jede Runde ohne Gewinn füllt Paules Glücksladung. Nach ${BOOST_AT} leeren Runden startet die nächste Runde mit zwei Kran-Sicherungen.</p></div></div>
-    <div class="feat" style="--fc:#ffc94a">${ICONS.ladder}<div><h3>Risikoleiter</h3><p>Nach einem Gewinn: Steig die Leiter hoch, von ×1 bis ×100. Kassieren geht jederzeit.</p></div></div>
-    <div class="feat" style="--fc:#ff7a59">${ICONS.beacon}<div><h3>Signal-Risiko</h3><p>Nach einem Gewinn kannst du ihn verdoppeln: Grün oder Rot raten, genau 50 : 50.</p></div></div>
+    <div class="feat" style="--fc:#ff7a59">${ICONS.warp}<div><h3>Stadtrundfahrt</h3><p>Eine Runde kostet einmal den Einsatz. Du würfelst mit zwei Würfeln, der Stadtbus fährt so viele Felder weiter und das Feld, auf dem er hält, wirkt. Bei einem <b>Pasch</b> würfelst du noch einmal (höchstens 3 Würfe).</p></div></div>
+    <div class="feat" style="--fc:#7ed957">${ICONS.scrap}<div><h3>Grundstücke und Miete</h3><p>Hält der Bus auf freiem Bauland, kannst du es kaufen. Bei jedem weiteren Halt baust du eine Stufe aus: Häuschen, Stadthaus, Wohnblock, Hochhaus. Hält der Bus auf deinem Grundstück, zahlt es Miete. Gehört dir ein ganzes Viertel, gibt es Miete ×1,5.</p></div></div>
+    <div class="feat" style="--fc:#3fd0a0">${ICONS.cell}<div><h3>Auto-Bauen</h3><p>Ist Auto-Bauen an, kauft und baut der Bus von selbst, solange danach noch ${BD_RESERVE} Einsätze in der Kasse bleiben.</p></div></div>
+    <div class="feat" style="--fc:#3fd0a0">${BD_ICON.start}<div><h3>Busbahnhof</h3><p>Jedes Mal, wenn der Bus über den Start fährt: Rundenbonus (${Math.round(BD_PASS * 100)} % vom Einsatz). Genau dort halten: noch mal ${Math.round(BD_LAND * 100)} % extra.</p></div></div>
+    <div class="feat" style="--fc:#4aa8ff">${BD_ICON.news}<div><h3>Stadtanzeiger</h3><p>Drei Zeitungsfelder mit Meldungen: Taler, Bauplan, Umleitung zum Busbahnhof, geschenkter Ausbau, Zahltag für alle Mieter, Wappen oder selten die Stadtlotterie am Glücksrad.</p></div></div>
+    <div class="feat" style="--fc:#4aa8ff">${BD_ICON.plan}<div><h3>Bauamt · Bauplanauswahl</h3><p>Das Bauamt gibt einen Bauplan. Bei ${BD_PLANS} Bauplänen startet die Bauplanauswahl. Die Baupläne bleiben über die Runden hinweg gesammelt.</p></div></div>
+    <div class="feat" style="--fc:#ffc94a">${BD_ICON.mini}<div><h3>Baustelle · Mini-Events</h3><p><b>Kran-Timing</b> (tippen, wenn der Block über der Baugrube ist), <b>Ziegelregen</b> (goldene Ziegel fangen) und <b>Tauben-Alarm</b> (alle Tauben verscheuchen). Bis zu 2,6× Einsatz.</p></div></div>
+    <div class="feat" style="--fc:#7ed957">${BD_ICON.park}<div><h3>Stadtpark</h3><p>Jede Runde wandern ${Math.round(BD_PARK * 100)} % des Einsatzes in die Parkkasse. Wer im Park hält, bekommt alles.</p></div></div>
+    <div class="feat" style="--fc:#c6f06b">${BD_ICON.office}<div><h3>Rathaus · Freifahrten</h3><p>Das Rathaus spendiert ${BD_FS} Freifahrten. Sie kosten nichts und alle Gewinne zählen doppelt.</p></div></div>
+    <div class="feat" style="--fc:#ffc94a">${ICONS.crystal}<div><h3>Wappen und Bauamt</h3><p>Jede Runde füllt den Wappenmesser ein wenig, der Kiosk etwas mehr. Im Bauamt tauschst du Wappen gegen Erlasse für einige Minuten.</p></div></div>
+    <div class="feat" style="--fc:#ffc94a">${ICONS.scrap}<div><h3>Paule-Boost</h3><p>Jede Runde ohne Gewinn füllt Paules Glücksladung. Nach ${BOOST_AT} leeren Runden zahlt die nächste Fahrt doppelt, mindestens einen Einsatz.</p></div></div>
+    <div class="feat" style="--fc:#ffc94a">${ICONS.ladder}<div><h3>Risikoleiter</h3><p>Nach einem Gewinn ab einem Einsatz: Steig die Leiter hoch, von ×1 bis ×100. Kassieren geht jederzeit.</p></div></div>
+    <div class="feat" style="--fc:#ff7a59">${ICONS.beacon}<div><h3>Signal-Risiko</h3><p>Nach einem Gewinn ab einem Einsatz kannst du ihn verdoppeln: Grün oder Rot raten, genau 50 : 50.</p></div></div>
     <div class="feat" style="--fc:#ffd34a">${ICONS.relic}<div><h3>Stadtschatz</h3><p>Jede Runde legt 1,5 % deines Einsatzes in den Topf, der bei 500 Talern startet. Die Chance pro Runde ist Einsatz ÷ 40.000.</p></div></div>
     <div class="feat" style="--fc:#7ee0c8">${ICONS.up_engine}<div><h3>Aktionen, Viertel und Aufträge</h3><p>Starte Aktionen für deine Stadt, erschließe neue Viertel über deinen Rang und erfülle Aufträge für Taler und XP.</p></div></div>`;
-  const rows = [1, 3, 5, 10, 15, 20, 25, 30, 40, 50, 75, 100];
-  $("lines").innerHTML = `<div><b>Wert nach Höhe</b> (× Einsatz, vor Boni):</div><table class="pt"><tbody>${rows.map(h => `<tr><td>Höhe ${h}</td><td class="pay">${twFmt(twMult(h))}</td></tr>`).join("")}</tbody></table><p class="note">Ab Höhe ${TW_MAX} wird automatisch ausgezahlt. Auto-Runden zahlen beim gewählten Auto-Ziel aus.</p>`;
+  const pc = s => { let n = 0; for (let a = 1; a <= 6; a++) for (let b = 1; b <= 6; b++) if (a + b === s) n++; return n; };
+  $("lines").innerHTML = `<div><b>Würfelsummen</b> (zwei Würfel):</div><table class="pt"><tbody>${[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(s => `<tr><td>${s} Felder</td><td class="pay">${(pc(s) / 36 * 100).toFixed(1).replace(".", ",")} %</td></tr>`).join("")}</tbody></table><p class="note">Ein Pasch (zwei gleiche Zahlen) kommt in 1 von 6 Würfen und erlaubt einen weiteren Wurf, höchstens 3 pro Runde. Am häufigsten fährt der Bus 7 Felder.</p>`;
 }
 
-MISSION_TYPES.symwin.text = m => `Baue ${m.goal}-mal ${BY_ID[m.meta].name}`;
-MISSION_TYPES.four.text = () => "Erreiche Höhe 20 in einer Runde";
-Object.assign(SYM_HELP, {
-  beacon: `Baugenehmigung. Bringt ${TW_FS_AWARD} Freibauten nach dieser Runde, sie starten auf Etage ${TW_FS_START}.`,
-  capsule: "Bauplan. 3 in einer Runde starten die Bauplanauswahl.",
-  warp: "Stadtbus. Startet sofort die Stadtrundfahrt am Glücksrad.",
-  wild: "Kran. +1 Etage und eine Sicherung gegen die nächste Abrissbirne.",
-  crash: "Abrissbirne. Reißt das Hochhaus ein, außer eine Kran-Sicherung fängt sie ab.",
-});
+MISSION_TYPES.symwin.text = m => `Halte ${m.goal}-mal im Viertel ${(BD_DIST.find(D => D.sym === m.meta) || BD_DIST[0]).name}`;
+MISSION_TYPES.laser.text = () => "Würfle einen Pasch";
+MISSION_TYPES.four.text = () => "Würfle zwei Pasche in einer Runde";
+MISSION_TYPES.upgrade.text = m => `Kaufe ${m.goal} Ausbau${m.goal > 1 ? "ten" : ""} (Stadtbild oder Grundstück)`;
+MISSION_TYPES.haul.text = m => `Verdiene insgesamt ${m.goal} Taler`;
 HELP_RULES.unshift(
-  [".tw-strip .sym[data-sym], .sym[data-sym]", el => { const id = el.dataset.sym, x = twSym(id); if (!x) return null;
-    return [x.name, TW_D[id] ? `+${TW_D[id]} Etage${TW_D[id] > 1 ? "n" : ""}. ${SYM_HELP[id] || ""}` : (SYM_HELP[id] || "")]; }],
-  ["#twCash", () => ["Auszahlen", tw && tw.h ? `Jetzt kassieren: <b>${twAmount()}</b> Taler (${twFmt(twMult(tw.h))}). Danach beginnt eine neue Runde.` : "Geht, sobald mindestens eine Etage steht."]],
-  ["#twTarget", () => ["Auto-Ziel", `Auto-Runden zahlen automatisch aus, sobald dieser Wert erreicht ist. Gerade ${twFmt(twTarget())}. Antippen wechselt.`]],
-  ["#twStage, #twSvg", () => ["Dein Hochhaus", `Jede Etage erhöht den Wert um 7 %. Höhe ${tw ? tw.h : 0}. Die Abrissbirne reißt alles ein.`]],
-  ["#twReel", () => ["Bauwalze", "Eine kleine Walze, ein Feld zählt: das in der Mitte. Leertaste baut weiter, Enter zahlt aus."]],
-  [".bay, #frame", () => ["Hochstapler", "Stapeln, bis du auszahlst. Oder bis die Abrissbirne kommt."]],
-  ["#fsbar", () => ["Freibauten", `Kostenlose Runden, die schon auf Etage ${TW_FS_START} starten. Noch ${fsLeft}.`]],
+  [".bd-f[data-i]", el => { const i = +el.dataset.i, f = BD_F[i];
+    if (f.t !== "plot") return [BD_SPECIAL[f.t].name, BD_SPECIAL[f.t].text()];
+    const p = bdPlot(i); return [f.n, `${BD_DIST[f.d].name} · ${BD_LV[p.l]}. ${p.l ? `Miete je Halt: <b>${Math.max(1, Math.round(bdRentRaw(i, bet()) * lineBoost()))}</b> Taler. ` : ""}${p.l < 4 ? `${p.l ? "Ausbau" : "Kauf"}: ${bdCost(i)} Taler, wenn der Bus hier hält.` : "Voll ausgebaut."} Antippen zeigt Details.`]; }],
+  ["#bdDice, .die", () => ["Würfel", "Zwei Würfel bestimmen, wie weit der Bus fährt. Pasch: noch einmal würfeln, höchstens 3-mal pro Runde."]],
+  ["#bdBuy", () => ["Kaufen und Ausbauen", "Kauft das Grundstück, auf dem der Bus steht, oder baut es eine Stufe aus. Einmal pro Halt. Taste <b>B</b> geht auch."]],
+  ["#bdAuto", () => ["Auto-Bauen", `Kauft und baut automatisch, wenn der Bus hält, solange danach noch ${BD_RESERVE} Einsätze übrig bleiben. Gerade ${state.bdAuto ? "an" : "aus"}.`]],
+  ["#bdDists", () => ["Deine Viertel", "Jeder Balken ist ein Grundstück, je kräftiger, desto höher ausgebaut. Ein ganzes Viertel zahlt Miete ×1,5."]],
+  ["#bdInfo", () => ["Feld-Info", "Zeigt das Feld, auf dem der Bus steht. Tipp ein anderes Feld an, um es dir anzusehen."]],
+  ["#bdTotal, .bd-total", () => ["Diese Fahrt", "Alles, was der Bus in dieser Runde eingesammelt hat."]],
+  ["#bdPlansBox", () => ["Baupläne", `Bei ${BD_PLANS} Bauplänen startet die Bauplanauswahl. Gerade ${bd().plans}.`]],
+  ["#bdParkBox", () => ["Parkkasse", `Wer im Stadtpark hält, bekommt sie: gerade ${Math.round(bd().park)} Taler.`]],
+  [".bay, #frame", () => ["Stadtrundfahrt", "Würfeln, fahren, Miete kassieren. Kauf Grundstücke, wenn der Bus darauf hält."]],
+  ["#fsbar", () => ["Freifahrten", `Kostenlose Runden, alle Gewinne zählen doppelt. Noch ${fsLeft}.`]],
 );
 '''
