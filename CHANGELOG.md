@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.11.1 · Dritte Welt · 25.10.2026
+- Neue Welt im Welt-Menü: Eisenfront, eine Werkstatt, in der du einen rostigen Panzer wieder flottmachst.
+
 ## Beta 0.11.0 · Welten · 25.10.2026
 - Neuer Knopf „Welt“ oben: Wechsle zu Treibgut, demselben Spiel als Survival auf dem Meer, und wieder zurück.
 - Auch im Startbildschirm gibt es den Weg in die andere Welt.

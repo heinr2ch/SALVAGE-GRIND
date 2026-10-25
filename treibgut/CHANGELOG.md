@@ -2,6 +2,9 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.3.1 · Dritte Welt · 25.10.2026
+- Im Welt-Menü gibt es jetzt auch Eisenfront: eine Werkstatt, in der du einen rostigen Panzer wieder flottmachst.
+
 ## Beta 0.3.0 · Fangnetz · 25.10.2026
 - Neues Grundspiel statt Walzen: ein 6×5-Fangnetz. Ab 5 gleichen Funden, die sich berühren, landet ein Schwarm im Netz.
 - Nachfang: Danach rutscht alles nach unten, neues Treibgut fällt nach, und jede weitere Welle zahlt mehr (×1, ×2, ×3, ×5).

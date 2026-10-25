@@ -1,6 +1,6 @@
 # Sternenwrack · Salvage Slots
 
-**Aktuelle Version: Beta 0.11.0** · [Änderungsprotokoll](CHANGELOG.md)
+**Aktuelle Version: Beta 0.11.1** · [Änderungsprotokoll](CHANGELOG.md)
 
 Ein Sci-Fi-Spielautomat im Browser – **nur mit Spielgeld**, es geht um kein echtes Geld.
 
@@ -22,8 +22,16 @@ Das ganze Spiel steckt in einer einzigen Datei: `index.html`.
 
 ### Treibgut · Survival Slots
 
-**Aktuelle Version: Beta 0.3.0** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
+**Aktuelle Version: Beta 0.3.1** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
 
 Meeres-Survival mit eigenem Grundspiel: Statt Walzen ein Fangnetz mit Schwärmen und Nachfang-Kaskaden. Floß statt Raumschiff, Inseln statt Sektoren, Papagei Koko statt Bip. Eigener Spielstand.
 
 **Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/treibgut/
+
+### Eisenfront · Werkstatt-Slots
+
+**Aktuelle Version: Beta 0.1.0** · [Änderungsprotokoll](eisenfront/CHANGELOG.md)
+
+Werkstatt an der Front: Ein rostiger Panzer wird Stück für Stück wieder flottgemacht. Grundspiel wie bei Treibgut (Ersatzteillager mit Sätzen und Nachschub-Kaskaden), dazu Werkstatthund Rex, Brieftaube, Fallschirmkisten, vier Fronten, eigene Musik und Geräusche. Fiktives Szenario ohne echte Armeen oder Abzeichen. Eigener Spielstand.
+
+**Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/eisenfront/
