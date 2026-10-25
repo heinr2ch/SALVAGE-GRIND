@@ -414,6 +414,18 @@ html[data-sector="xeltar"] { --s1: #5dffa8; --s2: #1fbf8f; --s3: #c6f36b; }
 @keyframes boostedPulse { to { box-shadow: 0 0 60px rgba(255,201,74,.8), 0 0 110px rgba(255,79,216,.5), inset 0 0 40px rgba(0,0,0,.6); } }
 .frame.boosted::before, .frame.boosted::after { border-color: #ffc94a; }
 
+/* ---------- Version ---------- */
+.betatag { font: 700 .66rem var(--f-mono); letter-spacing: .2em; text-transform: uppercase; color: #06070f; background: linear-gradient(90deg, var(--s1), var(--s3)); padding: 3px 10px; border-radius: 999px; animation: fadeIn .8s 1.2s both; }
+.ver { color: var(--s1); font-family: var(--f-mono); letter-spacing: .08em; }
+.news { display: grid; gap: 12px; margin-top: 10px; }
+.news article { display: grid; gap: 4px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); }
+.news article.cur { border-color: color-mix(in srgb, var(--s1) 45%, transparent); }
+.news h4 { margin: 0; font: 700 .8rem var(--f-body); display: flex; justify-content: space-between; gap: 8px; }
+.news h4 span { font: 600 .68rem var(--f-mono); color: var(--ink-soft); }
+.news h4 b { color: var(--s1); font-family: var(--f-mono); }
+.news h4 em { font-style: normal; }
+.news ul { margin: 0; padding-left: 18px; font-size: .76rem; color: var(--ink-soft); line-height: 1.45; }
+
 /* ---------- Signatur ---------- */
 .intro-by { margin-top: 18px; font: 600 .72rem var(--f-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--ink-soft); opacity: .8; animation: fadeIn .8s 1.9s both; }
 .intro-by b { color: var(--ink); font-weight: 700; background: linear-gradient(90deg, var(--s1), var(--s3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -963,6 +975,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
         </svg>
     <h1 class="intro-title" id="introTitle" aria-label="Sternenwrack">STERNENWRACK</h1>
     <p class="intro-sub">Salvage Slots · Bergen. Ausbauen. Überleben.</p>
+    <span class="betatag" id="introVer">Beta</span>
     <button type="button" class="intro-btn" id="introBtn">Andocken</button>
     <small class="intro-hint">Startet Musik und Sound. Beides lässt sich oben jederzeit umschalten.</small>
     <small class="intro-by">ein Spiel von <b>heinr2ch</b></small>
@@ -1007,7 +1020,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
         </svg>
         <div>
           <h1>Sternenwrack</h1>
-          <small>Salvage Slots · nur Spielcredits</small>
+          <small>Salvage Slots · nur Spielcredits · <span class="ver" id="topVer">Beta</span></small>
         </div>
       </div>
       <div class="toggles">
@@ -1226,6 +1239,10 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
         <label class="setrow" for="lowFx"><span>Weniger Effekte (für langsame Rechner)</span><input type="checkbox" id="lowFx"></label>
         <div class="coderow"><button type="button" class="ghost danger" id="resetBtn">Spielstand zurücksetzen</button></div>
       </div>
+      <details class="psec rules" id="newsBox">
+        <summary>Was ist neu · <span id="newsVer"></span></summary>
+        <div class="news" id="newsList"></div>
+      </details>
       <details class="psec rules">
         <summary>Spielregeln und Gewinne</summary>
         <div class="tabs" role="tablist">
@@ -1263,7 +1280,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
   </div>
 </div>
 
-<footer class="credit"><span>Sternenwrack</span><i aria-hidden="true"></i>ein Spiel von <a href="https://github.com/heinr2ch" target="_blank" rel="noopener">heinr2ch</a></footer>
+<footer class="credit"><span>Sternenwrack</span><i aria-hidden="true"></i>ein Spiel von <a href="https://github.com/heinr2ch" target="_blank" rel="noopener">heinr2ch</a><i aria-hidden="true"></i><span id="footVer">Beta</span></footer>
 
 <div class="bonus" id="focus" hidden>
   <div class="bonus-card glass focus-card" style="--bc: var(--cyan)" role="dialog" aria-modal="true" aria-labelledby="focusTitle">
@@ -4018,6 +4035,38 @@ function forceWin(results) {
   }
 }
 
+/* ---------- Version und Änderungsprotokoll ---------- */
+// Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
+const GAME_VERSION = "0.7.1";
+const CHANGELOG = [
+  { v: "0.7.1", date: "25.10.2026", title: "Korrektur", items: ["Die goldene Statuszeile legt sich nach Bonus-Ereignissen nicht mehr als dunkle Ebene über den Automaten.", "Versionsnummer und „Was ist neu“ im Bordbuch."] },
+  { v: "0.7.0", date: "25.10.2026", title: "Bip-Boost", items: ["Bips Glücksladung füllt sich bei Scans ohne Gewinn.", "Nach 12 Scans ohne Gewinn garantiert Bip den nächsten Gewinn, mit eigener Animation."] },
+  { v: "0.6.1", date: "25.10.2026", title: "Online", items: ["Sternenwrack läuft auf GitHub Pages.", "Dezentes heinr2ch-Branding im Intro, in der Fußzeile und als Werftstempel.", "Titel im Intro bricht nicht mehr um."] },
+  { v: "0.6.0", date: "25.10.2026", title: "Kommandopult", items: ["Neue Übersicht mit Reitern: Schiff, Crew, Karte, Sammlung, Bordbuch.", "Crew, Lackierungen, Abzeichen, Schiffsname und Expeditionen.", "Sternenkarte mit vier Sektoren, Erfolge und Sammelalbum.", "Signal-Risiko, Tägliche Bergung, Sitzungsstatistik, Bestenliste, Spielstand-Codes und Einstellungen.", "Drei Musiktitel zur Auswahl."] },
+  { v: "0.5.0", date: "24.10.2026", title: "Bip und Rubbellose", items: ["Bordroboter Bip mit Sprüchen zu allem, was passiert.", "Rubbellos-Kiosk mit drei Losen zum Freirubbeln.", "Spielereien und neun Entdeckungen am Schiff."] },
+  { v: "0.4.0", date: "24.10.2026", title: "Mehr Tiefe", items: ["Bergungslaser mit Wild-Kristall.", "Detailreicheres Schiff mit Inspektionsansicht.", "Glückssträhne, Bergungsaufträge, Pilotenrang und Sternenschatz-Jackpot."] },
+  { v: "0.3.0", date: "24.10.2026", title: "Hangar", items: ["Bergungsschiff mit fünf Upgrade-Bereichen, Notverkauf und Schiffsverlust.", "Spielstand wird gespeichert.", "Intro, Synthwave-Musik und neues Markenzeichen."] },
+  { v: "0.2.0", date: "24.10.2026", title: "Sternenwrack", items: ["Fünf Walzen, fünf Gewinnlinien, Freispiele und Sound.", "Zwei Bonusspiele: Kapselbergung und Hyperraumsprung.", "Neues Sci-Fi-Design, Turbo und Autospin."] },
+  { v: "0.1.0", date: "24.10.2026", title: "Erste Walzen", items: ["Die Glückswalze: ein Spielautomat mit Spielgeld."] },
+];
+function renderVersion() {
+  const label = "Beta " + GAME_VERSION;
+  ["introVer", "topVer", "footVer", "newsVer"].forEach(id => { const el = $(id); if (el) el.textContent = label; });
+  $("newsList").innerHTML = CHANGELOG.map((c, i) => `<article class="${i === 0 ? "cur" : ""}"><h4><em><b>Beta ${c.v}</b> · ${c.title}</em><span>${c.date}</span></h4><ul>${c.items.map(x => `<li>${x}</li>`).join("")}</ul></article>`).join("");
+}
+function announceVersion() {
+  let seen = null;
+  try { seen = localStorage.getItem("sw-ver"); localStorage.setItem("sw-ver", GAME_VERSION); } catch (e) {}
+  if (seen && seen !== GAME_VERSION) {
+    const c = CHANGELOG[0];
+    setTimeout(() => {
+      radio(`Funk: Sternenwrack wurde auf Beta ${GAME_VERSION} aktualisiert. Neu: ${c.title}. Details im Bordbuch.`, true, 12000);
+      toast(`Update: Beta ${GAME_VERSION} · ${c.title}`, "#4fe3ff");
+      pvDot("log");
+    }, 2500);
+  }
+}
+
 /* ---------- Spielablauf ---------- */
 let reelRuns = [], tickTimer = null, slammed = false;
 
@@ -4364,6 +4413,7 @@ function closeIntro() {
   startMusic();
   flashScreen();
   setTimeout(() => bip("hello", 3), 1600);
+  announceVersion();
   bipActivity();
   el.classList.add("out");
   setTimeout(() => { el.hidden = true; }, 650);
@@ -4393,7 +4443,7 @@ function start(saved) {
   buildKiosk();
   bindScratch();
   bindBig();
-  applySector(true); applyName(); renderExped(); renderDaily();
+  applySector(true); applyName(); renderExped(); renderDaily(); renderVersion();
   bindShipFx($("shipsvg"), $("shipFx"), $("shipG"), $("shipview"), () => mainSky);
   bindShipFx(document.querySelector(".focus-view svg"), $("focusFx"), $("focusShip"), $("focusView"), () => focusSky || mainSky);
   renderFound();
