@@ -129,6 +129,7 @@ STAR_REPS = [
 ]
 
 CHANGELOG_NEW = r'''const CHANGELOG = [
+  { v: "0.5.0", date: "25.10.2026", title: "Sprachen", items: ["Neue Sprachauswahl oben neben „Ton“ und im Startbildschirm: Deutsch, Englisch, Spanisch, Japanisch, Russisch, Niederländisch und Griechisch. Die Wahl gilt für alle vier Welten.", "Übersetzt sind bisher Knöpfe, Menüs, Überschriften und kurze Hinweise. Regeln, Hilfe und Sprüche folgen.", "Eigenes Symbol im Browser-Tab für jede Welt."] },
   { v: "0.4.2", date: "25.10.2026", title: "Welt-Menü", items: ["Im Welt-Menü steht bei Neustadt jetzt das neue Grundspiel: die Stadtrundfahrt mit Würfeln, Stadtbus und Grundstücken."] },
   { v: "0.4.1", date: "25.10.2026", title: "Vierte Welt", items: ["Im Welt-Menü gibt es jetzt auch Neustadt, ein Städtebau-Spiel mit eigenem Grundspiel zum Hochstapeln."] },
   { v: "0.4.0", date: "25.10.2026", title: "Drei Fahrzeuge", items: ["Neue Fahrzeugklassen: Floß, Katamaran und Schoner, jedes mit eigenem Aussehen.", "Umsteigen geht, wenn das aktuelle Fahrzeug voll ausgebaut ist (45/45) und du den Rang erreicht hast: Rang 8 für den Katamaran, Rang 14 für den Schoner.", "Das neue Fahrzeug startet als Wrack mit teureren Teilen. Seine Wirkung baut auf dem alten auf, nichts geht verloren.", "Höhere Einsätze: bis 250 mit dem Katamaran, bis 1.000 mit dem Schoner.", "Handy: Muscheln, Einsatz und Start-Knopf bleiben unten immer sichtbar, alles ist kompakter, und schnelles Tippen zoomt nicht mehr hinein."] },

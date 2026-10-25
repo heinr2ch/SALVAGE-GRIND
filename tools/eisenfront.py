@@ -4,6 +4,8 @@ import re, sys
 
 SRC, OUT = sys.argv[1], sys.argv[2]
 s = open(SRC, encoding="utf-8").read()
+from i18n import strip as i18n_strip, inject as i18n_inject
+s = i18n_strip(s)  # Sprachdaten der Vorstufe raus, sonst stören sie die Ankertexte
 WORLDS_RE = re.compile(r"const WORLDS = \[.*?\n\];\n", re.S)
 WORLDS_ORIG = WORLDS_RE.search(s).group(0)
 MISSING = []
@@ -134,13 +136,16 @@ s = s.replace("/* ---------- Treibgut: Fangnetz", "/* ---------- Eisenfront: Ers
 s = re.sub(r"const VEHICLES = \[\n.*?\n\];\n", lambda m: VEHICLES_EF, s, count=1, flags=re.S)
 
 # 10. Version und Protokoll
-s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.3.2";', s)
+s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.4.0";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_EF)
 
 # 11. Welten
 s = WORLDS_RE.sub(lambda m: WORLDS_ORIG, s, count=1)
 rep('const WORLD_ID = "treibgut";', 'const WORLD_ID = "eisenfront";')
 
+from favicons import set_favicon
+s, _n = i18n_inject(s); print("Sprachdaten:", _n, "Einträge")
+s = set_favicon(s, "ef")
 open(OUT, "w", encoding="utf-8").write(s)
 print("Eisenfront erzeugt:", OUT, len(s), "Zeichen")
 for m in MISSING: print("FEHLT:", m[:110])

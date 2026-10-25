@@ -5,6 +5,8 @@ import re, sys
 
 SRC, OUT = sys.argv[1], sys.argv[2]
 s = open(SRC, encoding="utf-8").read()
+from i18n import strip as i18n_strip, inject as i18n_inject
+s = i18n_strip(s)  # Sprachdaten der Vorstufe raus, sonst stören sie die Ankertexte
 WORLDS_RE = re.compile(r"const WORLDS = \[.*?\n\];\n", re.S)
 WORLDS_ORIG = WORLDS_RE.search(s).group(0)
 MISSING = []
@@ -106,13 +108,16 @@ for a, b in POST_NS:
 
 # 11. Fahrzeuge werden Stadtstufen, Version, Protokoll
 s = re.sub(r"const VEHICLES = \[\n.*?\n\];\n", lambda m: VEHICLES_NS, s, count=1, flags=re.S)
-s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.4.0";', s)
+s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.5.0";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_NS)
 
 # 12. Welten
 s = WORLDS_RE.sub(lambda m: WORLDS_ORIG, s, count=1)
 rep('const WORLD_ID = "eisenfront";', 'const WORLD_ID = "neustadt";')
 
+from favicons import set_favicon
+s, _n = i18n_inject(s); print("Sprachdaten:", _n, "Einträge")
+s = set_favicon(s, "ns")
 open(OUT, "w", encoding="utf-8").write(s)
 print("Neustadt erzeugt:", OUT, len(s), "Zeichen")
 for m in MISSING: print("FEHLT:", m[:110])

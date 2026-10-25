@@ -2,6 +2,11 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.4.0 · Sprachen · 25.10.2026
+- Neue Sprachauswahl oben neben „Ton“ und im Startbildschirm: Deutsch, Englisch, Spanisch, Japanisch, Russisch, Niederländisch und Griechisch. Die Wahl gilt für alle vier Welten.
+- Übersetzt sind bisher Knöpfe, Menüs, Überschriften und kurze Hinweise. Regeln, Hilfe und Sprüche folgen.
+- Eigenes Symbol im Browser-Tab für jede Welt.
+
 ## Beta 0.3.2 · Welt-Menü · 25.10.2026
 - Im Welt-Menü steht bei Neustadt jetzt das neue Grundspiel: die Stadtrundfahrt mit Würfeln, Stadtbus und Grundstücken.
 

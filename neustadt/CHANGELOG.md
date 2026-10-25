@@ -2,6 +2,11 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.5.0 · Sprachen · 25.10.2026
+- Neue Sprachauswahl oben neben „Ton“ und im Startbildschirm: Deutsch, Englisch, Spanisch, Japanisch, Russisch, Niederländisch und Griechisch. Die Wahl gilt für alle vier Welten.
+- Übersetzt sind bisher Knöpfe, Menüs, Überschriften und kurze Hinweise. Regeln, Hilfe und Sprüche folgen.
+- Eigenes Symbol im Browser-Tab für jede Welt.
+
 ## Beta 0.4.0 · Skyline-Walzen und Pixel-Stadt · 25.10.2026
 - Neues Grundspiel: Skyline-Walzen. Sechs Walzen stehen als sechs Hochhäuser nebeneinander, jedes ist bei jedem Dreh 2 bis 7 Felder hoch. Die Gewinnwege ergeben sich aus den Höhen, bis zu 117.649.
 - Gewinne: gleiche Symbole auf mindestens 3 Häusern nebeneinander, von links. Der Kran ersetzt jedes Symbol.

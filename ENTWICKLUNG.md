@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.12.2**, Treibgut 0.4.2, Eisenfront 0.3.2, Neustadt 0.4.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.13.0**, Treibgut 0.5.0, Eisenfront 0.4.0, Neustadt 0.5.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -91,3 +91,7 @@ Stand: Sternenwrack **Beta 0.12.2**, Treibgut 0.4.2, Eisenfront 0.3.2, Neustadt 
   - Erlasse wirken wie früher: `drones` Kran ×3, `signal` Baugenehmigung ×2,5. Paule-Boost: würfelt die Skyline neu, bis sie gewinnt.
   - Balance: `tools/sim/skyline.js`, Auszahlung ~113 %, Treffer ~54 % (viele kleine), Freibauten ~1/124 mit im Mittel ~60×.
 - **Neustadt 0.4.0 – Pixel-Stadt:** `CITY_SVG` in `tools/neustadt_parts1.py` neu: alles als Rechtecke auf 2er-Raster (`pr`, `pxHouse`, `pxLights`), gleiche Schnittstellen (`GEO`, `cityX`, `partAnchors`, `shipSVG`, `vehLayers`, Klickzonen `data-part`). `GY` ist jetzt 116. Der Himmel (`sizeSkyObj`) malt in 1/3 Auflösung, `#sky` mit `image-rendering: pixelated`.
+- **Sprachen (SW 0.13.0, TG 0.5.0, EF 0.4.0, NS 0.5.0):** Laufzeit-Übersetzung in der Sternenwrack-Quelle (`LANGS`, `I18N`, `trText`, `trTree`, `MutationObserver` `trObs`, `setLang`). Wahl `#langSel` (oben) und `#introLang` (Start), gespeichert als `welten-lang` (gilt für alle Welten, absichtlich ohne `sw-`-Präfix). Jeder Textknoten und `title`/`aria-label`/`placeholder` wird mit dem Wörterbuch verglichen, Zahlen werden dabei zu `#`. Was fehlt, bleibt Deutsch.
+  - Daten: `tools/i18n/ui_*.tsv` (Spalten de, en, es, ja, ru, nl, el; `#` in allen Spalten gleich oft). `tools/i18n.py` setzt sie zwischen `/*I18N-START*/` und `/*I18N-END*/` ein, nur Einträge, deren Wörter (ab 4 Buchstaben) in der Welt vorkommen. Sternenwrack: `python3 tools/i18n.py index.html` nach jeder Textänderung. Die Welt-Skripte entfernen die Daten der Vorstufe am Anfang (sonst stören sie die Ankertexte) und setzen ihre eigenen am Ende ein.
+  - Fehlende Texte finden: per Playwright sichtbare Textknoten prüfen, die nicht übersetzt wurden (`trState.get(n)`: `src === out`). Stand: Bedienung übersetzt; Regeln, Hilfe-Blasen, Sprüche der Begleiter, Funkzeilen und Protokoll noch Deutsch.
+- **Tab-Symbole:** `tools/favicons.py` (`FAVICONS` je Welt, SVG als data-URL). Sternenwrack: `python3 tools/favicons.py index.html sw`, die Welt-Skripte setzen ihres am Ende.
