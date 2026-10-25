@@ -2,6 +2,13 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.8.0 · Sternenstaub · 25.10.2026
+- Neue, seltene Zweitwährung: Sternenstaub. Jeder Scan füllt den Staubmesser, jeder Sternenkristall auf den Walzen bringt extra.
+- Zusätzlich Sternenstaub für große Bergungen, Bonusspiele und den Sternenschatz.
+- Boost-Labor in der Bordzentrale mit fünf zeitlich begrenzten Verstärkern: Überladener Scanner, Drohnenschwarm, Signalverstärker, Gildenlizenz und Schatzpeilung.
+- Aktive Boosts laufen mit Countdown über den Walzen; erneut kaufen verlängert die Zeit.
+- Zwei neue Erfolge.
+
 ## Beta 0.7.2 · Mehr Gewinne · 25.10.2026
 - Etwa jeder dritte Scan gewinnt jetzt, vorher nur jeder fünfte.
 - Der Automat zahlt im Schnitt mehr aus, als man einsetzt: Man kommt langsam voran, statt Credits zu verlieren.

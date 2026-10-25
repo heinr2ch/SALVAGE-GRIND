@@ -399,6 +399,39 @@ html[data-sector="xeltar"] { --s1: #5dffa8; --s2: #1fbf8f; --s3: #c6f36b; }
 .gladder span.on { border-color: var(--win); color: var(--win); }
 .lowfx .aurora, .lowfx #stars, .lowfx .sheen, .lowfx .scanline { display: none; }
 
+/* ---------- Sternenstaub und Boost-Labor ---------- */
+.stat.dust b { display: flex; align-items: center; gap: 5px; color: #d9ccff; }
+.stat.dust b #dustNum { font: inherit; letter-spacing: 0; text-transform: none; color: inherit; }
+.stat.dust b svg { width: 18px; height: 18px; flex: none; filter: drop-shadow(0 0 6px #b49cff); }
+.stat.dust b.pop { animation: dustPop .6s cubic-bezier(.2,1.6,.4,1); }
+@keyframes dustPop { 40% { transform: scale(1.35); color: #fff; text-shadow: 0 0 14px #b49cff; } }
+.dustbar { display: block; height: 4px; border-radius: 99px; background: rgba(255,255,255,.08); overflow: hidden; margin-top: 2px; }
+.dustbar i { display: block; height: 100%; width: var(--df, 0%); background: linear-gradient(90deg, #b49cff, #4fe3ff); box-shadow: 0 0 6px #b49cff; transition: width .5s ease; }
+.dustfly { position: fixed; z-index: 105; width: 12px; height: 12px; pointer-events: none; transition: transform .8s cubic-bezier(.5,0,.4,1), opacity .8s; }
+.dustfly svg { width: 100%; height: 100%; filter: drop-shadow(0 0 6px #b49cff); }
+.boostbar { display: flex; gap: 8px; flex-wrap: wrap; }
+.bchip { --bc: #b49cff; display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px 5px 6px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--bc) 60%, transparent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--bc) 22%, transparent), rgba(0,0,0,.2)); font: 700 .72rem var(--f-body); box-shadow: 0 0 14px color-mix(in srgb, var(--bc) 30%, transparent); animation: cIn .35s ease-out; }
+.bchip svg { width: 20px; height: 20px; }
+.bchip b { font: 700 .72rem var(--f-mono); color: var(--bc); }
+.bchip.low { animation: blink 1s ease-in-out infinite; }
+.lab { display: grid; gap: 8px; margin-top: 4px; padding-top: 12px; border-top: 1px solid var(--line); }
+.lab h3 { margin: 0; font: 700 .66rem var(--f-display); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.lab h3 span { font: 600 .62rem var(--f-body); letter-spacing: .06em; text-transform: none; color: #b49cff; }
+.labgrid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 760px) { .labgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.boost { --bc: #b49cff; position: relative; display: grid; justify-items: center; gap: 3px; padding: 10px 6px 8px; border-radius: 12px; cursor: pointer; text-align: center; color: var(--ink); font: inherit;
+  border: 1px solid color-mix(in srgb, var(--bc) 40%, transparent); background: radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--bc) 18%, transparent), transparent 70%), #0b0d1c; transition: transform .15s, box-shadow .2s; }
+.boost:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px color-mix(in srgb, var(--bc) 30%, transparent); }
+.boost:disabled { opacity: .42; cursor: default; }
+.boost.on { border-color: var(--bc); box-shadow: 0 0 16px color-mix(in srgb, var(--bc) 45%, transparent); }
+.boost svg { width: 30px; height: 30px; }
+.boost b { font: 800 .66rem var(--f-display); color: var(--bc); line-height: 1.15; }
+.boost small { font-size: .62rem; color: var(--ink-soft); line-height: 1.25; }
+.boost .cost { display: inline-flex; align-items: center; gap: 3px; font: 700 .74rem var(--f-mono); color: #d9ccff; }
+.boost .cost svg { width: 12px; height: 12px; }
+.boost .left { position: absolute; top: 5px; right: 6px; font: 700 .58rem var(--f-mono); color: var(--bc); }
+
 /* ---------- Bip-Boost ---------- */
 .bip-charge { pointer-events: auto; align-self: flex-end; margin: 0 0 10px -6px; width: 7px; height: 50px; border-radius: 99px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); position: relative; overflow: hidden; }
 .bip-charge i { position: absolute; left: 0; right: 0; bottom: 0; height: var(--lv, 0%); background: linear-gradient(0deg, #ff4fd8, #ffc94a); box-shadow: 0 0 8px #ffc94a; transition: height .5s ease; }
@@ -615,7 +648,7 @@ html[data-sector="xeltar"] { --s1: #5dffa8; --s2: #1fbf8f; --s3: #c6f36b; }
 @media (max-width: 560px) {
   .deck { grid-template-columns: 1fr 1fr; grid-template-areas: "wallet wallet" "bets spin"; }
 }
-.wallet { grid-area: wallet; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-width: 0; }
+.wallet { grid-area: wallet; display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 10px; min-width: 0; }
 .stat { display: grid; gap: 3px; min-width: 0; }
 .stat span { font: 700 .62rem var(--f-body); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
 .stat b { font: 700 clamp(1.15rem, 4.5vw, 1.5rem) var(--f-mono); color: var(--ink); font-variant-numeric: tabular-nums; overflow: hidden; text-overflow: ellipsis; }
@@ -953,11 +986,11 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
   #wheel { transition-duration: .3s; }
   .pod, .pod.open { animation: none; }
-  .bip-charge.full, .bip.boost .bip-bot, .boostbeam.go, .frame.boosted, .intro-by, .daily.ready svg, .warpfx.go, .gamble, .pdot, .mapship, .ach.new, .bip-bot svg, .bip-thrust, .bip-ant, .bip-eyes, .bip-arm, .bip-heart, .bip-tear, #shipG.roll, #focusShip.roll, .ship.boost .flame, .bubble, .sonar, .dent, .peek, .jackpot::after, .streak svg, .frame.heat3, .contract, .contract.done::after, .hsheen, .fire, .cable, .nav, .strobe, .chase, .diamond, .ripple, .cone, .focus-view svg.cam, .scanline, .callout i, .sym.lasered svg, .sym.lasered::before, .sym.grow svg, .sym.wildborn::before, .aurora i, .emb-ring, .emb-ring2, .emb-star, .brand h1, .sheen, .spinwrap.idle::after, .intro-title span, .emblem.big, .intro-btn, .banner.mega::after, .banner .b-amt.glitch, .radio i, .sym.hit svg, .reel.tease, .banner::before, .frame.shake, .strip.land, .spinwrap.go .spinring, .sym.feature::after, .ship, .flame, .dish, .ping, .pulse, .flick, .blink, .energy, .shipview.damage { animation: none; }
+  .stat.dust b.pop, .bchip.low, .bip-charge.full, .bip.boost .bip-bot, .boostbeam.go, .frame.boosted, .intro-by, .daily.ready svg, .warpfx.go, .gamble, .pdot, .mapship, .ach.new, .bip-bot svg, .bip-thrust, .bip-ant, .bip-eyes, .bip-arm, .bip-heart, .bip-tear, #shipG.roll, #focusShip.roll, .ship.boost .flame, .bubble, .sonar, .dent, .peek, .jackpot::after, .streak svg, .frame.heat3, .contract, .contract.done::after, .hsheen, .fire, .cable, .nav, .strobe, .chase, .diamond, .ripple, .cone, .focus-view svg.cam, .scanline, .callout i, .sym.lasered svg, .sym.lasered::before, .sym.grow svg, .sym.wildborn::before, .aurora i, .emb-ring, .emb-ring2, .emb-star, .brand h1, .sheen, .spinwrap.idle::after, .intro-title span, .emblem.big, .intro-btn, .banner.mega::after, .banner .b-amt.glitch, .radio i, .sym.hit svg, .reel.tease, .banner::before, .frame.shake, .strip.land, .spinwrap.go .spinring, .sym.feature::after, .ship, .flame, .dish, .ping, .pulse, .flick, .blink, .energy, .shipview.damage { animation: none; }
 }
 </style>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="emb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fe3ff"/><stop offset=".5" stop-color="#8b6cff"/><stop offset="1" stop-color="#ff4fd8"/></linearGradient><linearGradient id="shadeG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".35" stop-color="#ffffff" stop-opacity="0"/><stop offset=".7" stop-color="#000000" stop-opacity=".15"/><stop offset="1" stop-color="#000000" stop-opacity=".5"/></linearGradient><linearGradient id="sheenG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset=".5" stop-color="#ffffff" stop-opacity=".28"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><linearGradient id="coneG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4fe3ff" stop-opacity=".35"/><stop offset="1" stop-color="#4fe3ff" stop-opacity="0"/></linearGradient><linearGradient id="wildG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".3" stop-color="#4fe3ff"/><stop offset=".65" stop-color="#b49cff"/><stop offset="1" stop-color="#ff4fd8"/></linearGradient></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="emb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4fe3ff"/><stop offset=".5" stop-color="#8b6cff"/><stop offset="1" stop-color="#ff4fd8"/></linearGradient><linearGradient id="shadeG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".35" stop-color="#ffffff" stop-opacity="0"/><stop offset=".7" stop-color="#000000" stop-opacity=".15"/><stop offset="1" stop-color="#000000" stop-opacity=".5"/></linearGradient><linearGradient id="sheenG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset=".5" stop-color="#ffffff" stop-opacity=".28"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient><linearGradient id="coneG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4fe3ff" stop-opacity=".35"/><stop offset="1" stop-color="#4fe3ff" stop-opacity="0"/></linearGradient><linearGradient id="dustG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#b49cff"/><stop offset="1" stop-color="#4fe3ff"/></linearGradient><linearGradient id="wildG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".3" stop-color="#4fe3ff"/><stop offset=".65" stop-color="#b49cff"/><stop offset="1" stop-color="#ff4fd8"/></linearGradient></defs></svg>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
 <canvas id="stars" aria-hidden="true"></canvas>
 <div id="flash" aria-hidden="true"></div>
@@ -1056,6 +1089,8 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
       </div>
     </div>
 
+    <div class="boostbar" id="boostBar" hidden></div>
+
     <div class="fsbar" id="fsbar" hidden>
       <strong>Freispiele</strong>
       <span><b id="fsLeft">0</b> übrig · Gewinne ×2 · bisher <b id="fsWin">0</b></span>
@@ -1097,6 +1132,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
       <div class="wallet">
         <div class="stat"><span>Credits</span><b id="credits">500</b></div>
         <div class="stat"><span>Gewinn</span><b id="lastWin">0</b><button type="button" class="gamble" id="gambleBtn" hidden>Risiko ×2</button></div>
+        <div class="stat dust" title="Sternenstaub: füllt sich mit jedem Scan, jeder Sternenkristall auf den Walzen bringt extra"><span>Sternenstaub</span><b id="dustVal"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1 L12.2 7.8 L19 10 L12.2 12.2 L10 19 L7.8 12.2 L1 10 L7.8 7.8 Z" fill="url(#dustG)"/></svg><span id="dustNum">0</span></b><i class="dustbar" aria-hidden="true"><i id="dustFill"></i></i></div>
       </div>
       <div class="spinwrap" id="spinwrap">
         <div class="spinring"></div>
@@ -1135,6 +1171,10 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
         <b>Tägliche Bergung</b><small id="dailyTxt">Bereit!</small>
       </button>
       <div class="tickets" id="tickets"></div>
+    </div>
+    <div class="lab">
+      <h3>Boost-Labor <span>bezahlt mit Sternenstaub · zeitlich begrenzt</span></h3>
+      <div class="labgrid" id="labGrid"></div>
     </div>
   </section>
 
@@ -1374,7 +1414,7 @@ const LINE_BETS = [1, 2, 5, 10, 20];
 const FS_AWARD = { 3: 8, 4: 12, 5: 20 };
 const FS_MULT = 2;
 const START = 500;
-const pick = i => { const set = REEL_SETS[i]; let r = Math.random() * set.total; for (const x of set.list) { if ((r -= x.w) < 0) return x; } return set.list[0]; };
+const pick = i => { const set = (typeof boostOn === "function" && boostOn("signal") ? REEL_SETS_SIGNAL : REEL_SETS)[i]; let r = Math.random() * set.total; for (const x of set.list) { if ((r -= x.w) < 0) return x._orig || x; } return set.list[0]._orig || set.list[0]; };
 const pick3 = i => [pick(i), pick(i), pick(i)];
 
 const $ = id => document.getElementById(id);
@@ -1382,7 +1422,7 @@ const reels = [...document.querySelectorAll(".reel")];
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
-let state = { credits: START, lineIdx: 1, spins: 0, best: 0, peak: START, fsRounds: 0, bonusCount: 0, shipsLost: 0, xp: 0, level: 1, pot: 500, missions: [], found: [], sound: true, bip: true, luck: 0, boostReady: 0, track: "neon", crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: [], musicVol: 1, sfxVol: 1, lowfx: false, music: true, turbo: false, ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 } };
+let state = { credits: START, lineIdx: 1, spins: 0, best: 0, peak: START, fsRounds: 0, bonusCount: 0, shipsLost: 0, xp: 0, level: 1, pot: 500, missions: [], found: [], sound: true, bip: true, luck: 0, boostReady: 0, dust: 0, dustMeter: 0, boosts: {}, track: "neon", crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: [], musicVol: 1, sfxVol: 1, lowfx: false, music: true, turbo: false, ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 } };
 let faces = null, spinning = false, fsLeft = 0, fsWin = 0, fsTotal = 0, fsActive = false;
 let busy = false, shownCredits = START, autoLeft = 0;
 const logItems = [];
@@ -1636,6 +1676,7 @@ const sfx = {
   mission() { [784, 1047, 1319].forEach((f, i) => tone(f, .2, { type: "triangle", vol: .12, at: i * .07 })); tone(1568, .5, { type: "sine", vol: .1, at: .22 }); noise(.08, .1, 0, 5000); },
   rankUp() { tone(196, .8, { type: "sawtooth", vol: .1, slide: 4 }); [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, .28, { type: "square", vol: .07, at: .3 + i * .07 })); [784, 1047, 1319].forEach(f => tone(f, 1.4, { type: "triangle", vol: .12, at: .75 })); },
   jackpot() { tone(80, 1.6, { type: "sawtooth", vol: .14, slide: 12 }); noise(1.4, .12, 0, 600); [392, 523, 659, 784, 1047, 1319, 1568, 2093].forEach((f, i) => tone(f, .35, { type: "square", vol: .08, at: .9 + i * .08 })); [523, 659, 784, 1047].forEach(f => tone(f, 2.4, { type: "triangle", vol: .13, at: 1.6 })); },
+  dust() { [1568, 2093, 2637].forEach((f, i) => tone(f, .25, { type: "sine", vol: .07, at: i * .05 })); },
   powerUp() { tone(220, 1.4, { type: "sawtooth", vol: .1, slide: 6 }); tone(330, 1.4, { type: "square", vol: .04, slide: 6 }); [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, .22, { type: "triangle", vol: .1, at: .9 + i * .06 })); noise(.6, .06, 1, 5000); },
   boostSpin() { [784, 1047, 1319].forEach((f, i) => tone(f, .18, { type: "square", vol: .06, at: i * .05 })); },
   jump() { tone(90, 1.6, { type: "sawtooth", vol: .14, slide: 10 }); noise(1.5, .14, 0, 400); tone(1600, .6, { vol: .06, at: 1, slide: .3 }); [523, 784, 1047].forEach((f, i) => tone(f, .7, { type: "triangle", vol: .1, at: 1.1 + i * .07 })); },
@@ -1818,6 +1859,7 @@ function buildInfo() {
     `<tr><td>${ICONS[x.id]}${x.name}</td>${x.pay.map(p => `<td class="pay">${p}</td>`).join("")}</tr>`).join("");
   $("panel-bonus").innerHTML = `
     <div class="feat" style="--fc:#b8ff5c">${ICONS.beacon}<div><h3>Notsignal · Freispiele</h3><p>Zählt auf jeder Position. 3, 4 oder 5 Notsignale bringen 8, 12 oder 20 Freispiele. Alle Gewinne darin zählen doppelt, neue Notsignale verlängern die Runde.</p></div></div>
+    <div class="feat" style="--fc:#b49cff">${ICONS.crystal}<div><h3>Sternenstaub und Boost-Labor</h3><p>Jeder Scan füllt den Staubmesser ein wenig, jeder Sternenkristall auf den Walzen deutlich mehr. Ist er voll, gibt es 1 Sternenstaub, extra auch für große Bergungen, Bonusspiele und den Sternenschatz. Im Boost-Labor tauschst du ihn gegen Verstärker für einige Minuten. Mehrfach kaufen verlängert die Zeit.</p></div></div>
     <div class="feat" style="--fc:#ffc94a">${ICONS.wild}<div><h3>Bip-Boost</h3><p>Jeder Scan ohne Gewinn füllt Bips Glücksladung, den Balken neben ihm. Nach ${12} Scans ohne Gewinn ist sie voll: Bip schießt Glück in die Walzen, und der nächste Scan gewinnt garantiert.</p></div></div>
     <div class="feat" style="--fc:#ff4fd8">${ICONS.beacon}<div><h3>Signal-Risiko</h3><p>Nach einem normalen Gewinn kannst du ihn verdoppeln: Cyan oder Magenta raten, die Chance ist genau 50 : 50, höchstens fünf Runden.</p></div></div>
     <div class="feat" style="--fc:#4fe3ff">${ICONS.up_engine}<div><h3>Expeditionen und Sektoren</h3><p>Schick dein Schiff in Echtzeit auf Expedition. Die Belohnung wächst mit dem Ausbau und dem Sektor. Neue Sektoren schaltest du über deinen Rang frei. Jeder hat eigene Farben, Musikstimmung und drei Sammelstücke.</p></div></div>
@@ -2214,7 +2256,7 @@ const CLASS_NAMES = [[1, "Wrack", "#ff6b7a"], [4, "Schrottschlepper", "#ff9a3c"]
 const tierOfCat = id => Math.floor(state.ship[id] / 3);
 const maxLineIdx = () => [1, 1, 1, 2, 2, 2, 3, 3, 3, 4][state.ship.reactor];
 const unlocked = what => ({ auto10: 1, turbo: 2, auto25: 4, auto50: 7 })[what] <= state.ship.engine;
-const lineBoost = () => 1 + 0.002 * state.ship.scanner;
+const lineBoost = () => (1 + 0.002 * state.ship.scanner) * (typeof boostOn === "function" && boostOn("scanner") ? 1.25 : 1);
 const bonusBoost = () => 1 + 0.006 * state.ship.cargo;
 const totalSteps = () => CATS.reduce((a, c) => a + state.ship[c.id], 0);
 
@@ -2649,12 +2691,12 @@ function gameOver() {
 
 /* ---------- Spielstand (privat pro Spieler) ---------- */
 let ready = false, saveRef = null, saveTimer = null, saving = false, saveDirty = false, localApi = false;
-const SAVE_KEYS = ["credits", "lineIdx", "spins", "best", "peak", "fsRounds", "bonusCount", "shipsLost", "xp", "level", "pot", "luck", "boostReady"];
+const SAVE_KEYS = ["credits", "lineIdx", "spins", "best", "peak", "fsRounds", "bonusCount", "shipsLost", "xp", "level", "pot", "luck", "boostReady", "dust", "dustMeter"];
 function serialize() {
   const o = { v: 1, ship: { ...state.ship }, missions: state.missions.map(m => ({ ...m })), found: [...(state.found || [])],
     crew: [...(state.crew || [])], paint: state.paint || "std", decal: state.decal || "none", shipName: state.shipName || "Rostkrähe", exped: state.exped || null,
     sector: state.sector || "orion", visited: [...(state.visited || ["orion"])], album: [...(state.album || [])], ach: [...(state.ach || [])], stats: { ...(state.stats || {}) },
-    daily: state.daily || null, friends: (state.friends || []).map(f => ({ ...f })), savedAt: new Date().toISOString() };
+    daily: state.daily || null, friends: (state.friends || []).map(f => ({ ...f })), boosts: { ...(state.boosts || {}) }, savedAt: new Date().toISOString() };
   SAVE_KEYS.forEach(k => o[k] = state[k] || 0);
   return o;
 }
@@ -2675,6 +2717,7 @@ function applySave(d) {
   if (d.stats && typeof d.stats === "object") state.stats = { ...d.stats };
   if (d.daily && typeof d.daily.last === "string") state.daily = d.daily;
   if (Array.isArray(d.friends)) state.friends = d.friends.slice(-30);
+  if (d.boosts && typeof d.boosts === "object") { state.boosts = {}; BOOSTS.forEach(b => { if (typeof d.boosts[b.id] === "number") state.boosts[b.id] = d.boosts[b.id]; }); }
   if (Array.isArray(d.missions)) state.missions = d.missions.filter(m => m && MISSION_TYPES[m.type] && typeof m.goal === "number").map(m => ({ ...m }));
   state.level = Math.max(1, state.level | 0);
   if (!(state.pot >= JP_SEED)) state.pot = JP_SEED;
@@ -2858,7 +2901,7 @@ const xpNeed = L => Math.round(500 * Math.pow(L, 1.6));
 const rankReward = L => 20 * L;
 let pendingLevels = [];
 function addXP(n) {
-  state.xp = (state.xp || 0) + n * (hasCrew("broesel") ? 1.1 : 1);
+  state.xp = (state.xp || 0) + n * (hasCrew("broesel") ? 1.1 : 1) * (typeof boostOn === "function" && boostOn("guild") ? 2 : 1);
   while (state.xp >= xpNeed(state.level)) { state.xp -= xpNeed(state.level); state.level++; pendingLevels.push(state.level); }
   renderMeta();
 }
@@ -3355,6 +3398,9 @@ const BIP = {
   daily: [["happy", "Tagesbonus abgeholt! Schön, dass du wieder da bist."]],
   gambleWin: [["wow", "Mutig! Und es hat sich gelohnt!"], ["excited", "Richtig geraten! Meine Antenne glüht."]],
   gambleLoss: [["sad", "Oh je. Das Risiko war echt 50 zu 50, diesmal leider gegen uns."]],
+  dustFirst: [["wow", "Oh! Dein erster <b>Sternenstaub</b>! Der ist super selten. Im Boost-Labor kannst du ihn eintauschen."]],
+  boostOn: [["excited", "Boost läuft! Jetzt aber schnell scannen, die Uhr tickt!"], ["happy", "Ui, das kribbelt in den Schaltkreisen. Boost aktiv!"]],
+  boostEnd: [["normal", "Der Boost ist abgelaufen. War schön, solange er hielt."]],
   charging: [["normal", "Ich lade schon mal Glück für dich auf. Siehst du den Balken neben mir?"], ["happy", "Halbe Glücksladung! Ich summe extra laut."]],
   boostReady: [["wow", "BIP-BOOST! Volle Glücksladung! Der nächste Scan gewinnt garantiert!"], ["excited", "Genug Pech gehabt! Ich hab dir Glück in die Walzen geschossen. Nächster Scan gewinnt!"]],
   boostWin: [["excited", "Siehste! Auf Bip ist Verlass!"], ["happy", "Bip-Boost geliefert! Gern geschehen, Kapitän."]],
@@ -3712,6 +3758,8 @@ const ACH = [
   A("paint", "Neuer Anstrich", "Ändere Lackierung oder Abzeichen.", "up_hull", 25, () => (st().paints || 0) >= 1),
   A("phoenix", "Phönix", "Verliere ein Schiff und mach weiter.", "up_hull", 100, () => (state.shipsLost || 0) >= 1),
   A("loyal", "Treuer Kapitän", "Hol dir 7-mal die tägliche Bergung.", "crystal", 200, () => (st().daily || 0) >= 7),
+  A("dust", "Staubsammler", "Sammle insgesamt 10 Sternenstaub.", "crystal", 150, () => (st().dustTotal || 0) >= 10),
+  A("booster", "Aufgeladen", "Aktiviere deinen ersten Boost.", "up_scanner", 50, () => (st().boostsUsed || 0) >= 1),
 ];
 function checkAch() {
   state.ach = Array.isArray(state.ach) ? state.ach : [];
@@ -3898,7 +3946,7 @@ async function copyText(text, msgId) {
 }
 function freshState() {
   return { credits: START, lineIdx: 1, spins: 0, best: 0, peak: START, fsRounds: 0, bonusCount: 0, shipsLost: 0, xp: 0, level: 1, pot: JP_SEED, missions: [], found: [],
-    ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 }, crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: state.friends || [] };
+    ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 }, crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: state.friends || [], dust: 0, dustMeter: 0, boosts: {}, luck: 0, boostReady: 0 };
 }
 function applyVolumes() {
   if (master) master.gain.value = 0.35 * (state.sfxVol ?? 1);
@@ -3978,7 +4026,7 @@ function bindBig() {
   $("lowFx").addEventListener("change", e => { state.lowfx = e.target.checked; document.body.classList.toggle("lowfx", state.lowfx); try { localStorage.setItem("sw-lowfx", state.lowfx ? "1" : "0"); } catch (er) {} });
 }
 function afterLoad() {
-  ensureMissions(); renderMissions(true); renderMeta(); renderFound(); applySector(true); applyName(); renderLuck();
+  ensureMissions(); renderMissions(true); renderMeta(); renderFound(); applySector(true); applyName(); renderLuck(); renderDust(false); renderLab(); renderBoostBar();
   lastShipKey = ""; renderExped(); renderDaily(); render();
   if (currentPv !== "ship") switchPv(currentPv);
 }
@@ -4037,8 +4085,9 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "0.7.2";
+const GAME_VERSION = "0.8.0";
 const CHANGELOG = [
+  { v: "0.8.0", date: "25.10.2026", title: "Sternenstaub", items: ["Neue, seltene Zweitwährung: Sternenstaub. Jeder Scan füllt den Staubmesser, jeder Sternenkristall auf den Walzen bringt extra.", "Boost-Labor in der Bordzentrale mit fünf zeitlich begrenzten Verstärkern: Überladener Scanner, Drohnenschwarm, Signalverstärker, Gildenlizenz und Schatzpeilung.", "Aktive Boosts laufen mit Countdown über den Walzen.", "Zwei neue Erfolge."] },
   { v: "0.7.2", date: "25.10.2026", title: "Mehr Gewinne", items: ["Etwa jeder dritte Scan gewinnt jetzt, vorher nur jeder fünfte.", "Der Automat zahlt im Schnitt mehr aus, als man einsetzt: Man kommt langsam voran, statt Credits zu verlieren.", "Gewinntabelle angepasst: häufigere kleine Funde, seltene Funde bleiben wertvoll."] },
   { v: "0.7.1", date: "25.10.2026", title: "Korrektur", items: ["Die goldene Statuszeile legt sich nach Bonus-Ereignissen nicht mehr als dunkle Ebene über den Automaten.", "Versionsnummer und „Was ist neu“ im Bordbuch."] },
   { v: "0.7.0", date: "25.10.2026", title: "Bip-Boost", items: ["Bips Glücksladung füllt sich bei Scans ohne Gewinn.", "Nach 12 Scans ohne Gewinn garantiert Bip den nächsten Gewinn, mit eigener Animation."] },
@@ -4067,6 +4116,96 @@ function announceVersion() {
     }, 2500);
   }
 }
+
+/* ---------- Sternenstaub und zeitlich begrenzte Boosts ---------- */
+// Jeder Scan füllt den Staubmesser um 2 Punkte, jeder sichtbare Sternenkristall um 8 Punkte. Bei 100 gibt es 1 Sternenstaub.
+// Extra: große Gewinne +1, Bonusspiele +1, Sternenschatz +5. Etwa 1 Sternenstaub alle 12 bis 15 Scans.
+const DUST_ICON = `<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1 L12.2 7.8 L19 10 L12.2 12.2 L10 19 L7.8 12.2 L1 10 L7.8 7.8 Z" fill="url(#dustG)"/></svg>`;
+const BOOSTS = [
+  { id: "scanner", name: "Überladener Scanner", icon: "up_scanner", color: "#4fe3ff", cost: 4, min: 3, effect: "Liniengewinne +25 %" },
+  { id: "drones", name: "Drohnenschwarm", icon: "wild", color: "#b49cff", cost: 5, min: 3, effect: "Bergungslaser 4× so oft" },
+  { id: "signal", name: "Signalverstärker", icon: "beacon", color: "#b8ff5c", cost: 6, min: 3, effect: "Notsignale 2,5× so häufig" },
+  { id: "guild", name: "Gildenlizenz", icon: "up_reactor", color: "#ffc94a", cost: 3, min: 5, effect: "Doppelte XP" },
+  { id: "treasure", name: "Schatzpeilung", icon: "crystal", color: "#ff4fd8", cost: 8, min: 2, effect: "Sternenschatz-Chance ×5" },
+];
+const boostOn = id => !!(state.boosts && state.boosts[id] && state.boosts[id] > Date.now());
+const REEL_SETS_SIGNAL = [0, 1, 2, 3, 4].map(i => {
+  const list = SYMBOLS.filter(x => !x.reels || x.reels.includes(i)).map(x => x.id === "beacon" ? { ...x, w: x.w * 2.5, _orig: x } : x);
+  return { list, total: list.reduce((a, x) => a + x.w, 0) };
+});
+function renderDust(pop) {
+  $("dustNum").textContent = state.dust || 0;
+  $("dustFill").style.setProperty("--df", Math.min(100, state.dustMeter || 0) + "%");
+  if (pop) { const b = $("dustVal"); b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); }
+}
+function addDust(n, why) {
+  if (!n) return;
+  state.dust = (state.dust || 0) + n; bump("dustTotal", n);
+  renderDust(true); sfx.dust();
+  if (why) toast(`+${n} Sternenstaub · ${why}`, "#b49cff");
+  if ((st().dustTotal || 0) === n) setTimeout(() => { bipState.last = 0; bip("dustFirst", 3); }, 600);
+  renderLab();
+}
+function flyDust(fromEl) {
+  if (reduced || state.lowfx || !fromEl) return;
+  const a = fromEl.getBoundingClientRect(), t = $("dustVal").getBoundingClientRect();
+  const el = document.createElement("div"); el.className = "dustfly"; el.innerHTML = DUST_ICON;
+  el.style.left = (a.left + a.width / 2 - 6) + "px"; el.style.top = (a.top + a.height / 2 - 6) + "px";
+  document.body.appendChild(el);
+  requestAnimationFrame(() => { el.style.transform = `translate(${t.left + 10 - a.left - a.width / 2}px, ${t.top + 8 - a.top - a.height / 2}px) scale(.6)`; el.style.opacity = ".2"; });
+  setTimeout(() => el.remove(), 850);
+}
+function gainDustFromSpin(grid) {
+  let pts = 2, crystals = [];
+  reels.forEach((reel, c) => grid[c].forEach((x, r) => { if (x.id === "crystal") { pts += 8; crystals.push(reel.firstElementChild.children[r]); } }));
+  crystals.forEach((el, i) => setTimeout(() => flyDust(el), i * 90));
+  state.dustMeter = (state.dustMeter || 0) + pts;
+  let whole = 0;
+  while (state.dustMeter >= 100) { state.dustMeter -= 100; whole++; }
+  if (whole) addDust(whole, null); else renderDust(false);
+}
+function renderLab() {
+  const box = $("labGrid"); if (!box) return;
+  const now = Date.now();
+  box.innerHTML = BOOSTS.map(b => {
+    const on = boostOn(b.id), left = on ? state.boosts[b.id] - now : 0;
+    return `<button type="button" class="boost${on ? " on" : ""}" data-boost="${b.id}" style="--bc:${b.color}" ${(state.dust || 0) < b.cost ? "disabled" : ""} title="${b.effect} für ${b.min} Minuten${on ? ". Erneut kaufen verlängert die Zeit." : ""}">
+      ${on ? `<span class="left">${fmtTime(left)}</span>` : ""}${ICONS[b.icon]}<b>${b.name}</b><small>${b.effect} · ${b.min} min</small><span class="cost">${DUST_ICON}${b.cost}</span></button>`;
+  }).join("");
+}
+function renderBoostBar() {
+  const bar = $("boostBar"), now = Date.now();
+  const act = BOOSTS.filter(b => boostOn(b.id));
+  bar.hidden = !act.length;
+  bar.innerHTML = act.map(b => { const left = state.boosts[b.id] - now; return `<span class="bchip${left < 20000 ? " low" : ""}" style="--bc:${b.color}" title="${b.effect}">${ICONS[b.icon]}${b.name}<b>${fmtTime(left)}</b></span>`; }).join("");
+}
+function buyBoost(id) {
+  const b = BOOSTS.find(x => x.id === id);
+  if (!b || (state.dust || 0) < b.cost) return;
+  state.dust -= b.cost;
+  state.boosts = state.boosts || {};
+  const base = boostOn(id) ? state.boosts[id] : Date.now();
+  state.boosts[id] = base + b.min * 60000;
+  bump("boostsUsed");
+  sfx.powerUp(); flashScreen(); burstAt($("boostBar").hidden ? $("bay") : $("boostBar"), 60, [b.color, "#ffffff", "#b49cff"], 1);
+  toast(`${b.name} aktiv: ${b.effect}`, b.color);
+  addLog(b.icon, `Boost: ${b.name}`, `−${b.cost} Staub`, b.color);
+  radio(`Funk: ${b.name} läuft. ${b.effect} für ${b.min} Minuten.`, true);
+  bipState.last = 0; bip("boostOn", 3);
+  renderDust(true); renderLab(); renderBoostBar(); checkAch(); saveGame();
+}
+let lastBoostSet = "";
+setInterval(() => {
+  if (!state.boosts) return;
+  const now = Date.now(), active = BOOSTS.filter(b => state.boosts[b.id] > now).map(b => b.id).join(",");
+  if (active !== lastBoostSet) {
+    const ended = lastBoostSet.split(",").filter(x => x && !active.split(",").includes(x));
+    ended.forEach(id => { const b = BOOSTS.find(x => x.id === id); if (b) { radio(`Funk: ${b.name} ist abgelaufen.`, false, 5000); bip("boostEnd", 2); } });
+    lastBoostSet = active; renderLab(); saveGame();
+  }
+  renderBoostBar();
+  if (active) renderLab();
+}, 1000);
 
 /* ---------- Spielablauf ---------- */
 let reelRuns = [], tickTimer = null, slammed = false;
@@ -4174,7 +4313,7 @@ async function finish(grid, free) {
   faces = grid;
   spinning = false;
   let ev = evaluate(grid), lasered = null;
-  if (!ev.wins.length && Math.random() < LASER_P) {
+  if (!ev.wins.length && Math.random() < LASER_P * (boostOn("drones") ? 4 : 1)) {
     const target = findLaserTarget(grid);
     if (target) {
       busy = true; render();
@@ -4187,6 +4326,7 @@ async function finish(grid, free) {
     }
   }
   const { wins, scatters, scatterReels, features } = ev;
+  gainDustFromSpin(grid);
   const mult = free ? FS_MULT : 1;
   const rawWin = wins.reduce((a, w) => a + w.factor, 0) * lineBet() * mult * lineBoost();
   const prevStreak = streak;
@@ -4233,6 +4373,7 @@ async function finish(grid, free) {
     if (lasered) parts.length < 400 && radio(`Funk: Wild-Kristall geborgen. ${top.sym.name} auf Linie gebracht.`, true);
   }
   bipAfterSpin({ win, factor: win / bet(), lasered: !!lasered, award, features: features.length, prevStreak, streak, free });
+  if (!free && win >= bet() * 15) setTimeout(() => addDust(1, "große Bergung"), 1200);
   if (win > 0) { bump("wins"); sess.won += win; sess.best = Math.max(sess.best, win); if (!free) maxStat("maxFactor", win / bet()); }
   if (lasered) bump("lasers");
   if (award && !free) bump("fs");
@@ -4258,6 +4399,7 @@ async function finish(grid, free) {
     state.peak = Math.max(state.peak, state.credits);
     state.bonusCount = (state.bonusCount || 0) + 1;
     track("haul", amount); sess.won += amount; sess.best = Math.max(sess.best, amount);
+    addDust(1, f.title);
     addLog(f.id, f.title, "+" + amount, f.color);
     render();
     if (amount > 0) await celebrateWin(amount, state.credits);
@@ -4295,7 +4437,7 @@ async function finish(grid, free) {
   }
   countCredits(state.credits, 0);
   fsActive = false;
-  if (!free && Math.random() < bet() / JP_DIV) {
+  if (!free && Math.random() < bet() / JP_DIV * (boostOn("treasure") ? 5 : 1)) {
     const amount = Math.floor(state.pot);
     state.pot = JP_SEED; state.credits += amount;
     state.best = Math.max(state.best, amount); state.peak = Math.max(state.peak, state.credits);
@@ -4303,7 +4445,7 @@ async function finish(grid, free) {
     addLog("crystal", "STERNENSCHATZ", "+" + amount, "#ffc94a");
     radio(`Funk: STERNENSCHATZ GEBORGEN! ${amount} Credits. Die ganze Galaxie spricht davon.`, true, 15000);
     renderMeta();
-    bump("jackpots"); sess.won += amount;
+    bump("jackpots"); sess.won += amount; setTimeout(() => addDust(5, "Sternenschatz"), 5000);
     await celebrateJackpot(amount, state.credits);
     bip("jackpot", 3);
     msg.className = "msg gold"; msg.textContent = `Sternenschatz geborgen: +${amount} Credits!`;
@@ -4444,6 +4586,8 @@ function start(saved) {
   buildKiosk();
   bindScratch();
   bindBig();
+  $("labGrid").addEventListener("click", e => { const b = e.target.closest("[data-boost]"); if (b) buyBoost(b.dataset.boost); });
+  renderDust(false); renderLab(); renderBoostBar();
   applySector(true); applyName(); renderExped(); renderDaily(); renderVersion();
   bindShipFx($("shipsvg"), $("shipFx"), $("shipG"), $("shipview"), () => mainSky);
   bindShipFx(document.querySelector(".focus-view svg"), $("focusFx"), $("focusShip"), $("focusView"), () => focusSky || mainSky);
