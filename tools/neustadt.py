@@ -1,4 +1,4 @@
-# Erzeugt "Neustadt" (Städte wieder aufbauen, Grundspiel Stadtrundfahrt) aus der fertigen Eisenfront-Datei.
+# Erzeugt "Neustadt" (Städte wieder aufbauen, Grundspiel Skyline-Walzen) aus der fertigen Eisenfront-Datei.
 # Aufruf: python3 neustadt.py <eisenfront_src.html> <ausgabe.html>
 # Reihenfolge der Welten: Sternenwrack → treibgut.py → eisenfront.py → neustadt.py
 import re, sys
@@ -83,15 +83,15 @@ for a, b in PHRASES_NS:
     if a not in s: MISSING.append(a); continue
     s = s.replace(a, b)
 
-# 8. Eigenes Grundspiel: Stadtrundfahrt (Brettspiel)
-for a, b in BOARD_HTML: rep(a, b)
-block("/* ===================== Eisenfront: Rex sammelt", "/* ---------- Eisenfront: Werkstatt-Geräusche", BOARD_JS + "\n")
+# 8. Eigenes Grundspiel: Skyline-Walzen
+for a, b in SKY_HTML: rep(a, b)
+block("/* ===================== Eisenfront: Rex sammelt", "/* ---------- Eisenfront: Werkstatt-Geräusche", SKY_JS + "\n")
 
 # 9. Look, Musik, Geräusche
-block("/* ---------- Eisenfront: Werkstatt-Look", "</style>", CITY_CSS + BOARD_CSS + "\n")
+block("/* ---------- Eisenfront: Werkstatt-Look", "</style>", CITY_CSS + SKY_CSS + "\n")
 block("/* Eigene Eisenfront-Musik", "TRACKS.forEach(tr =>", MUSIC_NS)
 block("/* ---------- Eisenfront: Werkstatt-Geräusche", "\ncolFill(colBoard(false), false);", SFX_NS)
-rep("\ncolFill(colBoard(false), false);\n", "\nbdRender();\n")
+rep("\ncolFill(colBoard(false), false);\n", "\nskSetup();\n")
 
 for a, b in COLOR_MAP_NS:
     s = re.sub(re.escape(a), b, s, flags=re.I)
@@ -104,12 +104,9 @@ for a, b in POST_NS:
     s, n = re.subn(a, b, s)
     if not n: MISSING.append('POST ' + a)
 
-# Freirunden heißen in der Stadtrundfahrt Freifahrten (vor dem Protokoll, damit alte Einträge bleiben)
-s = s.replace("Freibauten", "Freifahrten").replace("Freibau", "Freifahrt")
-
 # 11. Fahrzeuge werden Stadtstufen, Version, Protokoll
 s = re.sub(r"const VEHICLES = \[\n.*?\n\];\n", lambda m: VEHICLES_NS, s, count=1, flags=re.S)
-s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.3.0";', s)
+s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.4.0";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_NS)
 
 # 12. Welten

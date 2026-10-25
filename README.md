@@ -38,8 +38,8 @@ Düstere Werkstatt an der Front: Ein rostiger Panzer wird Stück für Stück wie
 
 ### Neustadt · Aufbau-Slots
 
-**Aktuelle Version: Beta 0.3.0** · [Änderungsprotokoll](neustadt/CHANGELOG.md)
+**Aktuelle Version: Beta 0.4.0** · [Änderungsprotokoll](neustadt/CHANGELOG.md)
 
-Städtebau: Aus einem Trümmerfeld wird Schritt für Schritt eine Stadt (Wohnviertel, Verkehr, Funkturm, Handel, Energie; Dorf, Kleinstadt, Metropole). Eigenes Grundspiel „Stadtrundfahrt“: ein Brettspiel mit zwei Würfeln. Der Stadtbus fährt über 20 Felder, du kaufst Grundstücke in vier Vierteln, baust sie bis zum Hochhaus aus und kassierst Miete, wenn der Bus dort hält. Dazu Stadtanzeiger, Parkkasse, Mini-Events und Freifahrten im Rathaus. Mit Waschbär Paule. Eigener Spielstand.
+Städtebau: Aus einem Trümmerfeld wird Schritt für Schritt eine Stadt (Wohnviertel, Verkehr, Funkturm, Handel, Energie; Dorf, Kleinstadt, Metropole). Eigenes Grundspiel „Skyline-Walzen“: sechs Walzen als Hochhäuser, jedes pro Dreh 2 bis 7 Felder hoch, bis zu 117.649 Gewinnwege, Nachbau-Kaskaden und Freibauten mit wachsendem Multiplikator. Das Stadtbild ist in Pixeloptik gezeichnet. Mit Waschbär Paule. Eigener Spielstand.
 
 **Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/neustadt/

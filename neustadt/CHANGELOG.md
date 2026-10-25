@@ -2,6 +2,15 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.4.0 · Skyline-Walzen und Pixel-Stadt · 25.10.2026
+- Neues Grundspiel: Skyline-Walzen. Sechs Walzen stehen als sechs Hochhäuser nebeneinander, jedes ist bei jedem Dreh 2 bis 7 Felder hoch. Die Gewinnwege ergeben sich aus den Höhen, bis zu 117.649.
+- Gewinne: gleiche Symbole auf mindestens 3 Häusern nebeneinander, von links. Der Kran ersetzt jedes Symbol.
+- Nachbau: Gewinnfelder verschwinden, Neues rutscht nach, so lange es weiter gewinnt.
+- Freibauten: 4 oder mehr Baugenehmigungen bringen 10 Freibauten. Der Multiplikator wächst mit jedem Nachbau bis ×15 und bleibt bis zum Ende.
+- 3 Stadtbusse starten die Stadtlotterie. Neue Symbole: Baum und Laterne.
+- Das Stadtbild ist komplett neu gezeichnet, in Pixeloptik: Häuser, Rathaus, Funkturm, Handel, Energie, Verkehr und auch der Himmel. Alle Ausbaustufen und Stadtstufen sind neu.
+- Die Stadtrundfahrt ist wieder raus. Neue Erfolge: Wegebauer, Dauerbaustelle und Skyline.
+
 ## Beta 0.3.0 · Stadtrundfahrt statt Hochstapler · 25.10.2026
 - Neues Grundspiel: die Stadtrundfahrt. Du würfelst mit zwei Würfeln, der Stadtbus fährt über 20 Felder rund um die Stadt. Bei einem Pasch würfelst du noch einmal (höchstens 3-mal pro Runde).
 - Grundstücke: Hält der Bus auf freiem Bauland, kannst du es kaufen und bei jedem weiteren Halt ausbauen (Häuschen, Stadthaus, Wohnblock, Hochhaus). Hält der Bus auf deinem Grundstück, zahlt es Miete. Ein ganzes Viertel zahlt ×1,5.

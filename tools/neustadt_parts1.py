@@ -48,132 +48,155 @@ RACCOON_SVG = '''    <svg viewBox="0 0 80 92" data-mood="normal" id="bipSvg" ari
 '''
 
 # Stadtbild: fünf Bereiche mit je vier Ausbaustufen, Boden bei y = 126 (Straße), Gehweg bei y = 117
-CITY_SVG = r'''/* Stadtbild: jede Kategorie hat 4 sichtbare Ausbaustufen, Zwischenstufen zeigen kleine Lichter. Straße bei y = 119 bis 126. */
+CITY_SVG = r'''/* Stadtbild in Pixeloptik (seit Neustadt 0.4.0): alles aus Rechtecken auf einem 2er-Raster. Jede Kategorie hat 4 sichtbare Ausbaustufen,
+   Zwischenstufen zeigen kleine blinkende Lichter. Straße bei y = 117 bis 126. */
 const VB = { x: 48, y: 2, w: 304, h: 152 };
 const WL = 126;
 const GEO = [{ l: 108, t: 92, b: 126, n: 292 }, { l: 100, t: 86, b: 126, n: 300 }, { l: 92, t: 80, b: 126, n: 310 }, { l: 84, t: 74, b: 126, n: 320 }];
-const GY = 117;
-function hullPath(H, g) { return `M${g.l + 18},${GY} V${g.t + 8} H${Math.round(g.l + (g.n - g.l) * .46)} V${GY} Z`; }
-function cityX(g) { const w = g.n - g.l; return { res0: g.l + 18, res1: Math.round(g.l + w * .46), hall: Math.round(g.l + w * .56), tower: Math.round(g.l + w * .74), mk0: g.n - 52, pw: g.l - 14 }; }
+const GY = 116;
+const PXS = 2, pq = v => Math.round(v / PXS) * PXS;
+const pr = (x, y, w, h, f, cls) => `<rect x="${pq(x)}" y="${pq(y)}" width="${Math.max(PXS, pq(w))}" height="${Math.max(PXS, pq(h))}" fill="${f}"${cls ? ` class="${cls}"` : ""}/>`;
+function hullPath(H, g) { return `M${g.l + 16},${GY} V${g.t - 30} H${Math.round(g.l + (g.n - g.l) * .48)} V${GY} Z`; }
+function cityX(g) { const w = g.n - g.l; return { res0: pq(g.l + 18), res1: pq(g.l + w * .46), hall: pq(g.l + w * .57), tower: pq(g.l + w * .74), mk0: pq(g.n - 52), pw: pq(g.l - 14) }; }
 function partAnchors(L) {
   const H = Math.min(3, Math.floor(L.hull / 3)), g = GEO[H], X = cityX(g);
-  return { hull: [(X.res0 + X.res1) / 2, g.t + 4], engine: [X.res0 + 20, 123], scanner: [X.tower, g.t - 40], cargo: [X.mk0 + 26, g.t + 6], reactor: [X.pw + 6, g.t + 2] };
+  return { hull: [(X.res0 + X.res1) / 2, g.t + 4], engine: [X.res0 + 20, 122], scanner: [X.tower, g.t - 40], cargo: [X.mk0 + 26, g.t + 6], reactor: [X.pw + 6, g.t + 2] };
 }
+/* Pixel-Haus: Umriss, Körper, Licht links, Schatten rechts, Fensterraster, Tür */
+function pxHouse(x, top, w, body, o = {}) {
+  const dark = o.dark || "#1c1a24", lit = o.lit ?? .5, ww = o.ww || 4, wh = o.wh || 4, gx = o.gx || 8, gy = o.gy || 8, seed = o.seed || 0;
+  let s = pr(x - 2, top - 2, w + 4, GY - top + 2, dark) + pr(x, top, w, GY - top, body) + pr(x, top, 2, GY - top, "rgba(255,255,255,.18)") + pr(x + w - 2, top, 2, GY - top, "rgba(0,0,0,.22)");
+  if (!o.noWin) for (let y = top + 4, r = 0; y < GY - 10; y += gy, r++) for (let xx = x + 4, c = 0; xx + ww <= x + w - 3; xx += gx, c++) {
+    const on = ((r * 7 + c * 3 + seed) % 10) / 10 < lit;
+    s += pr(xx, y, ww, wh, on ? (o.wc || "#ffd27a") : "#2a3448");
+  }
+  if (!o.noDoor) s += pr(x + Math.floor(w / 2 / PXS) * PXS - 2, GY - 8, 4, 8, "#3a2418");
+  return s;
+}
+const pxLights = (x, y, cnt, col, dx = 6) => Array.from({ length: cnt }, (_, i) => pr(x + i * dx, y, 2, 2, col, `blink d${i + 1}`)).join("");
 function shipSVG(L, k = "a") {
   const T = id => Math.min(3, Math.floor(L[id] / 3)), lo = id => L[id] >= 9 ? 3 : L[id] % 3;
   const H = T("hull"), E = T("engine"), S = T("scanner"), C = T("cargo"), R = T("reactor");
   const g = GEO[H], { l, t, b, n } = g, X = cityX(g), hp = hullPath(H, g);
-  const lights = (x, y, cnt, col, dx = 7) => Array.from({ length: cnt }, (_, i) => `<circle class="blink d${i + 1}" cx="${x + i * dx}" cy="${y}" r="1.9" fill="${col}"/>`).join("");
-  const win = (x, y, w, h, lit) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${lit ? "#ffd27a" : "#2a3a4a"}" opacity="${lit ? .9 : .8}"/>`;
-  let back = "", hull = "", det = "", front = "";
+  let back = "", hull = "", front = "";
+  const L0 = l - 60, LW = n - l + 120;
 
-  /* ----- Boden: Gehweg und Straße (Verkehr) ----- */
-  back += `<rect x="${l - 60}" y="${GY}" width="${n - l + 120}" height="3" fill="${["#5a5448", "#8a8a84", "#9a9a94", "#a8aab0"][E]}"/>`;
-  if (E === 0) back += `<rect x="${l - 60}" y="${GY + 3}" width="${n - l + 120}" height="${b - GY - 3}" fill="#6a5a44"/>${[l + 10, l + 80, n - 40].map(x => `<ellipse cx="${x}" cy="${GY + 7}" rx="7" ry="1.8" fill="#3a3020"/>`).join("")}
-    <g transform="translate(${l + 40} ${GY + 2}) rotate(-12)"><rect x="0" y="-6" width="16" height="6" fill="#7a5a3a" stroke="#3a2a1a" stroke-width=".8"/><circle cx="3" cy="1" r="2.4" fill="none" stroke="#3a2a1a" stroke-width="1"/></g>`;
-  else back += `<rect x="${l - 60}" y="${GY + 3}" width="${n - l + 120}" height="${b - GY - 3}" fill="#3a3f46"/><path class="lane" d="M${l - 60},${GY + 6.5} H${n + 60}" stroke="#e8e4d4" stroke-width=".9" stroke-dasharray="6 6" opacity=".7"/>`;
-  if (E === 1) front += `<g class="car" style="--d:9s"><rect x="${l + 30}" y="${GY + 1}" width="16" height="5" rx="2" fill="#ff7a59"/><rect x="${l + 33}" y="${GY - 2}" width="9" height="4" rx="1.5" fill="#ff9a7a"/><rect x="${l + 34}" y="${GY - 1.4}" width="3" height="2.4" fill="#9ad4ff"/><circle cx="${l + 34}" cy="${GY + 6}" r="1.6" fill="#1a1a1a"/><circle cx="${l + 43}" cy="${GY + 6}" r="1.6" fill="#1a1a1a"/></g>`;
+  /* ----- Boden und Verkehr ----- */
+  back += pr(L0, GY, LW, 2, ["#6a5a44", "#9a9a94", "#a8aab0", "#c0c4cc"][E]);
+  if (E === 0) {
+    back += pr(L0, GY + 2, LW, b - GY, "#5a4a36") + [l + 6, l + 50, l + 120, n - 40].map((x, i) => pr(x, GY + 4 + (i % 2) * 2, 8, 2, "#3a3024") + pr(x + 2, GY + 2 + (i % 2) * 2, 4, 2, "#7a6a54")).join("");
+    back += pr(l + 34, GY - 4, 14, 4, "#7a5a3a") + pr(l + 36, GY - 6, 6, 2, "#5a4028") + pr(l + 36, GY, 4, 4, "#2a2018");
+  } else {
+    back += pr(L0, GY + 2, LW, b - GY, "#3a3d46") + Array.from({ length: Math.ceil(LW / 16) }, (_, i) => pr(L0 + i * 16, GY + 6, 8, 2, "#e8e4d4", "lane")).join("");
+  }
+  const pxCar = (x, y, c, d) => `<g class="car" style="--d:${d}s">${pr(x, y + 2, 16, 4, c)}${pr(x + 4, y - 2, 8, 4, c)}${pr(x + 6, y, 4, 2, "#9ad4ff")}${pr(x + 2, y + 6, 4, 2, "#1a1a1a")}${pr(x + 10, y + 6, 4, 2, "#1a1a1a")}</g>`;
+  if (E === 1) front += pxCar(l + 30, GY - 4, "#ff7a59", 9);
   if (E === 2) {
-    back += `<path d="M${l - 60},${GY + 4.5} H${n + 60} M${l - 60},${GY + 7.5} H${n + 60}" stroke="#9aa0a8" stroke-width=".8"/>${[l - 10, l + 60, X.hall + 30, n + 20].map(x => `<path d="M${x},${GY} V${GY - 26} h6" stroke="#5a6068" stroke-width="1.2" fill="none"/>`).join("")}<path d="M${l - 60},${GY - 25} H${n + 60}" stroke="#5a6068" stroke-width=".5"/>`;
-    front += `<g class="car" style="--d:14s"><rect x="${l + 20}" y="${GY - 9}" width="44" height="13" rx="3" fill="#ffc94a" stroke="#7a5608" stroke-width="1"/>${[0, 1, 2, 3, 4].map(i => `<rect x="${l + 23 + i * 8}" y="${GY - 7}" width="6" height="5" rx="1" fill="#9ad4ff"/>`).join("")}<path d="M${l + 20},${GY - 1} h44" stroke="#ff7a59" stroke-width="1.6"/><path d="M${l + 40},${GY - 9} l4 -6 h6" stroke="#3a3d42" stroke-width=".9" fill="none"/></g>`;
+    back += pr(L0, GY + 4, LW, 2, "#9aa0a8") + pr(L0, GY - 26, LW, 2, "#5a6068") + [l - 10, l + 60, X.hall + 30, n + 20].map(x => pr(x, GY - 26, 2, 26, "#5a6068")).join("");
+    front += `<g class="car" style="--d:14s">${pr(l + 20, GY - 12, 44, 14, "#7a5608")}${pr(l + 22, GY - 10, 40, 10, "#ffc94a")}${[0, 1, 2, 3, 4].map(i => pr(l + 24 + i * 8, GY - 8, 6, 4, "#9ad4ff")).join("")}${pr(l + 22, GY - 2, 40, 2, "#ff7a59")}${pr(l + 40, GY - 18, 2, 6, "#3a3d42")}${pr(l + 40, GY - 20, 8, 2, "#3a3d42")}</g>`;
   }
   if (E === 3) {
-    front += `<path d="M${l - 60},${GY - 30} H${n + 60}" stroke="#c9d3e0" stroke-width="3"/><path d="M${l - 60},${GY - 28} H${n + 60}" stroke="#7a8a9a" stroke-width="1"/>${[l - 20, l + 70, X.hall + 20, n + 10].map(x => `<rect x="${x}" y="${GY - 29}" width="4" height="${29}" fill="#9aa4b0"/>`).join("")}
-      <g class="car" style="--d:7s"><path d="M${l + 10},${GY - 31} h52 q8 0 10 -6 q-2 -6 -10 -6 h-52z" fill="#ffffff" stroke="#4aa8ff" stroke-width="1.2"/>${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${l + 14 + i * 8}" y="${GY - 41}" width="6" height="4" rx="1" fill="#4aa8ff"/>`).join("")}<path d="M${l + 10},${GY - 33} h56" stroke="#3fd0b0" stroke-width="1.4"/></g>`;
+    front += pr(L0, GY - 32, LW, 4, "#c9d3e0") + pr(L0, GY - 28, LW, 2, "#7a8a9a") + [l - 20, l + 70, X.hall + 20, n + 10].map(x => pr(x, GY - 28, 4, 28, "#9aa4b0")).join("");
+    front += `<g class="car" style="--d:7s">${pr(l + 10, GY - 44, 62, 12, "#4aa8ff")}${pr(l + 12, GY - 42, 58, 8, "#ffffff")}${[0, 1, 2, 3, 4, 5].map(i => pr(l + 14 + i * 9, GY - 41, 6, 4, "#4aa8ff")).join("")}${pr(l + 70, GY - 40, 4, 6, "#3fd0b0")}</g>`;
   }
-  front += lights(X.res0 + 2, b - 2, lo("engine"), "#ffc94a");
+  front += pxLights(X.res0 + 2, b - 4, lo("engine"), "#ffc94a");
 
   /* ----- Energie (links) ----- */
   const pw = X.pw;
-  if (R === 0) back += `<rect x="${pw - 8}" y="${GY - 12}" width="20" height="12" fill="#4a4038" stroke="#2a2018" stroke-width="1"/><path d="M${pw - 4},${GY - 12} l3 -4 l4 3" stroke="#2a2018" stroke-width="1.4" fill="none"/><circle class="flick" cx="${pw + 6}" cy="${GY - 14}" r="1.6" fill="#ff9a3c"/>`;
-  if (R === 1) back += `<path d="M${pw},${GY} L${pw + 1.5},${GY - 46} L${pw + 3},${GY}" fill="#e8ecf0" stroke="#8a9098" stroke-width=".6"/><g class="rotor" style="transform-origin:${pw + 1.5}px ${GY - 46}px">${[0, 120, 240].map(a => `<path d="M${pw + 1.5},${GY - 46} l-1.4,-18 l1.4,-2 l1.4,2z" fill="#ffffff" stroke="#8a9098" stroke-width=".5" transform="rotate(${a} ${pw + 1.5} ${GY - 46})"/>`).join("")}</g><circle cx="${pw + 1.5}" cy="${GY - 46}" r="1.6" fill="#c9ccd1"/>`;
-  if (R >= 2) back += `<path d="M${pw - 16},${GY} L${pw - 12},${GY - 30} Q${pw - 4},${GY - 34} ${pw + 4},${GY - 30} L${pw + 8},${GY} Z" fill="#9aa4ae" stroke="#5a6068" stroke-width="1"/><rect x="${pw + 10}" y="${GY - 18}" width="16" height="18" fill="#6a7480" stroke="#3a4048" stroke-width="1"/><rect x="${pw + 20}" y="${GY - 40}" width="4" height="22" fill="#8a2a2a"/><path d="M${pw + 20},${GY - 36} h4 M${pw + 20},${GY - 30} h4" stroke="#ffffff" stroke-width="1"/>${win(pw + 12, GY - 14, 4, 3, true)}${win(pw + 19, GY - 14, 4, 3, true)}`;
-  if (R === 3) back += `${[0, 1, 2].map(i => `<path d="M${pw - 40 + i * 9},${GY} l3,-6 h7 l-3,6z" fill="#2a5aa8" stroke="#9ad4ff" stroke-width=".6"/>`).join("")}<circle class="pulse" cx="${pw - 4}" cy="${GY - 36}" r="5" fill="#9ad4ff" opacity=".35"/>`;
-  front += lights(pw - 6, GY + 6, lo("reactor"), "#3fd0b0", 6);
+  if (R === 0) back += pr(pw - 8, GY - 12, 20, 12, "#2a2018") + pr(pw - 6, GY - 10, 16, 10, "#4a4038") + pr(pw - 4, GY - 16, 2, 4, "#2a2018") + pr(pw + 4, GY - 14, 2, 2, "#ff9a3c", "flick");
+  if (R === 1) back += pr(pw, GY - 46, 4, 46, "#e8ecf0") + pr(pw + 2, GY - 46, 2, 46, "#b8c0c8") + `<g class="rotor" style="transform-origin:${pw + 2}px ${GY - 46}px">${[0, 120, 240].map(a => `<g transform="rotate(${a} ${pw + 2} ${GY - 46})">${pr(pw, GY - 66, 4, 20, "#ffffff")}</g>`).join("")}</g>` + pr(pw, GY - 48, 4, 4, "#8a9098");
+  if (R >= 2) {
+    back += pr(pw - 18, GY - 30, 26, 30, "#5a6068") + pr(pw - 16, GY - 28, 22, 28, "#9aa4ae") + pr(pw + 8, GY - 20, 20, 20, "#3a4048") + pr(pw + 10, GY - 18, 16, 18, "#6a7480");
+    back += pr(pw + 18, GY - 46, 6, 26, "#8a2a2a") + pr(pw + 18, GY - 40, 6, 2, "#ffffff") + pr(pw + 18, GY - 32, 6, 2, "#ffffff") + pr(pw + 12, GY - 14, 4, 4, "#ffd27a") + pr(pw + 20, GY - 14, 4, 4, "#ffd27a");
+    back += pr(pw + 16, GY - 54, 4, 4, "rgba(200,200,210,.5)", "pulse") + pr(pw + 22, GY - 60, 6, 4, "rgba(200,200,210,.35)", "pulse");
+  }
+  if (R === 3) back += [0, 1, 2].map(i => pr(pw - 44 + i * 10, GY - 6, 8, 4, "#2a5aa8") + pr(pw - 44 + i * 10, GY - 6, 8, 2, "#9ad4ff") + pr(pw - 42 + i * 10, GY - 2, 2, 2, "#5a6068")).join("") + pr(pw - 6, GY - 40, 6, 6, "#9ad4ff", "pulse");
+  front += pxLights(pw - 6, GY + 6, lo("reactor"), "#3fd0b0");
 
-  /* ----- Wohnviertel (Rumpf) ----- */
+  /* ----- Wohnviertel ----- */
   hull += `<clipPath id="hc-${k}"><path d="${hp}"/></clipPath><g style="filter:${paintFilter()}">`;
   const r0 = X.res0, r1 = X.res1, rw = r1 - r0;
   if (H === 0) {
-    hull += `<path d="M${r0},${GY} V${t + 18} l6,-6 l4,8 l6,-10 V${GY} Z M${r0 + 24},${GY} V${t + 10} l8,4 l4,-6 l6,10 V${GY} Z M${r0 + 54},${GY} V${t + 22} l10,-4 l6,6 V${GY} Z" fill="#7a6a5a" stroke="#3a3028" stroke-width="1.2"/>
-      ${[[r0 + 4, t + 24], [r0 + 30, t + 18], [r0 + 58, t + 28]].map(([x, y]) => `<rect x="${x}" y="${y}" width="6" height="7" fill="#1a1410"/>`).join("")}
-      <path d="M${r0 - 4},${GY} q10,-8 20,0 q8,-6 16,0 q12,-9 24,0 q10,-6 20,0z" fill="#5a4a3a"/>`;
+    [[r0, 20, 10], [r0 + 22, 30, 14], [r0 + 52, 14, 12]].forEach(([x, hh, w], i) => {
+      hull += pr(x - 2, GY - hh - 2, w + 4, hh + 2, "#2a2420") + pr(x, GY - hh, w, hh, "#7a6a5a") + pr(x + w - 4, GY - hh - 4, 4, 4, "#7a6a5a") + pr(x + 2, GY - hh + 6, 4, 4, "#1a1410");
+    });
+    hull += pr(r0 - 4, GY - 4, rw + 10, 4, "#5a4a3a") + pr(r0 + 10, GY - 6, 8, 2, "#6a5a48") + pr(r0 + 40, GY - 6, 10, 2, "#6a5a48");
   } else {
-    const houses = H === 1 ? 4 : H === 2 ? 5 : 3, hw = rw / houses;
+    const houses = H === 1 ? 4 : H === 2 ? 5 : 3, hw = pq(rw / houses);
     for (let i = 0; i < houses; i++) {
-      const x = r0 + i * hw, w = hw - 3;
+      const x = r0 + i * hw, w = hw - 4;
       if (H === 1) { const top = t + 18 + (i % 2) * 4, col = ["#d8c8a8", "#c8b898", "#e0d0b0", "#c0b090"][i % 4];
-        hull += `<rect x="${x}" y="${top}" width="${w}" height="${GY - top}" fill="${col}" stroke="#5a5040" stroke-width="1"/><path d="M${x - 2},${top} L${x + w / 2},${top - 9} L${x + w + 2},${top} Z" fill="#a85a3a" stroke="#5a2a1a" stroke-width="1"/>${win(x + 3, top + 4, 5, 5, i % 2)}<rect x="${x + w - 8}" y="${GY - 9}" width="5" height="9" fill="#7a5a3a"/>`; }
-      if (H === 2) { const top = t + 6 + (i % 3) * 5, col = ["#e8a87a", "#8ac8a8", "#e8d07a", "#a8b8e8", "#e88a8a"][i];
-        hull += `<rect x="${x}" y="${top}" width="${w}" height="${GY - top}" fill="${col}" stroke="#3a3a3a" stroke-width="1"/><path d="M${x - 1},${top} H${x + w + 1} V${top - 3} H${x - 1}z" fill="#5a5a5a"/>${[0, 1, 2].map(r => [0, 1].map(c => win(x + 3 + c * (w / 2), top + 5 + r * 9, 4, 5, (r + c + i) % 2)).join("")).join("")}`; }
-      if (H === 3) { const top = t - 2 + (i % 2) * 8, col = ["#e8eef4", "#dce8e4", "#ece4dc"][i];
-        hull += `<rect x="${x}" y="${top}" width="${w}" height="${GY - top}" fill="${col}" stroke="#5a6068" stroke-width="1"/><path d="M${x - 2},${top} H${x + w + 2}" stroke="#3fd0b0" stroke-width="3"/>${[0, 1, 2, 3, 4].map(r => [0, 1, 2].map(c => win(x + 3 + c * ((w - 6) / 3), top + 5 + r * 7.2, (w - 12) / 3, 4, (r * 3 + c + i) % 3 !== 0)).join("")).join("")}${[0, 1, 2, 3].map(r => `<path d="M${x},${top + 10 + r * 7.2} h${w}" stroke="#9aa4ae" stroke-width=".6"/>`).join("")}<circle cx="${x + 6}" cy="${top - 3}" r="3" fill="#5aa860"/><circle cx="${x + w - 6}" cy="${top - 3}" r="3.4" fill="#4a9850"/>`; }
+        hull += pxHouse(x, top, w, col, { lit: .4, seed: i, gy: 10 }) + pr(x - 2, top - 4, w + 4, 4, "#8a3a28") + pr(x + 2, top - 8, w - 4, 4, "#a8443a") + pr(x + 6, top - 12, w - 12, 4, "#c8553d"); }
+      if (H === 2) { const top = t + 4 + (i % 3) * 6, col = ["#e8a87a", "#8ac8a8", "#e8d07a", "#a8b8e8", "#e88a8a"][i];
+        hull += pxHouse(x, top, w, col, { lit: .55, seed: i * 3 }) + pr(x - 2, top - 4, w + 4, 2, "#4a4a52") + pr(x + 2, top - 6, 4, 2, "#4a4a52"); }
+      if (H === 3) { const top = t - 6 + (i % 2) * 8, col = ["#e8eef4", "#dce8e4", "#ece4dc"][i];
+        hull += pxHouse(x, top, w, col, { lit: .7, seed: i * 5, ww: 6, gx: 8, gy: 7, wc: "#9ad4ff" }) + pr(x - 2, top - 2, w + 4, 2, "#3fd0b0") + pr(x + 2, top - 6, 4, 4, "#4a9850") + pr(x + w - 6, top - 8, 6, 6, "#5aa860"); }
     }
   }
   hull += `<g clip-path="url(#hc-${k})">${decalSVG(g)}</g></g>`;
-  front += lights(r0 + 4, GY + 6, lo("hull"), "#7ed957");
+  front += pxLights(r0 + 4, GY + 6, lo("hull"), "#7ed957");
 
-  /* ----- Rathaus (Mitte, Kommandostand) ----- */
-  const hx = X.hall, hw2 = 22 + H * 2, ht = t - 4 - H * 3;
-  back += `<rect x="${hx - hw2}" y="${ht + 14}" width="${hw2 * 2}" height="${GY - ht - 14}" fill="${["#8a7a6a", "#d8ccb4", "#e8dcc4", "#f0e8d8"][H]}" stroke="#5a5040" stroke-width="1.2"/>
-    <path d="M${hx - hw2 - 3},${ht + 14} L${hx},${ht + 2} L${hx + hw2 + 3},${ht + 14} Z" fill="${["#5a4a3a", "#7a8a9a", "#3a6a8a", "#2a5a7a"][H]}" stroke="#2a2a2a" stroke-width="1"/>
-    ${H >= 1 ? [-1, 1].map(s => [0, 1].map(r => win(hx + s * (hw2 - 9) - 3, ht + 20 + r * 10, 6, 6, r === 0)).join("")).join("") : `<path d="M${hx - 10},${ht + 20} l6,8 l-4,6" stroke="#2a2018" stroke-width="1.6" fill="none"/>`}
-    <rect x="${hx - 5}" y="${GY - 12}" width="10" height="12" rx="5" fill="#5a3a2a"/>`;
-  if (H >= 2) back += `<rect x="${hx - 6}" y="${ht - 16}" width="12" height="18" fill="${["#8a7a6a", "#d8ccb4", "#e8dcc4", "#f0e8d8"][H]}" stroke="#5a5040" stroke-width="1"/><circle cx="${hx}" cy="${ht - 8}" r="4" fill="#ffffff" stroke="#3a3a3a" stroke-width=".8"/><path d="M${hx},${ht - 8} v-3 M${hx},${ht - 8} h2.4" stroke="#1a1a1a" stroke-width=".8"/><path d="M${hx - 8},${ht - 16} L${hx},${ht - 26} L${hx + 8},${ht - 16} Z" fill="#2a5a7a"/>`;
-  if (H >= 1) back += `<path d="M${hx},${ht + (H >= 2 ? -26 : 2)} v-12" stroke="#5a5a5a" stroke-width=".9"/><path class="sail" d="M${hx},${ht + (H >= 2 ? -38 : -10)} l10,2.5 l-10,2.5z" fill="${["#888", "#3fd0b0", "#4aa8ff", "#ff7a59"][H]}"/>`;
-  const px = hx - hw2 + 9, py = ht + 26;
-  front += `<circle cx="${px}" cy="${py - 4}" r="2.6" fill="#e0a878"/><path d="M${px - 3},${py + 1} q3,-3 6,0" fill="#3a5a8a"/><path d="M${px - 3},${py - 6} q3,-3 6,0" fill="${["#5a3a1a", "#8a3a2a", "#2a2a2a", "#c9a24a"][H]}"/>`;
+  /* ----- Rathaus (Mitte) ----- */
+  const hx = X.hall, hw2 = pq(22 + H * 2), ht = pq(t - 4 - H * 3), hcol = ["#8a7a6a", "#d8ccb4", "#e8dcc4", "#f0e8d8"][H], roof = ["#5a4a3a", "#7a8a9a", "#3a6a8a", "#2a5a7a"][H];
+  back += pxHouse(hx - hw2, ht + 14, hw2 * 2, hcol, { lit: H ? .6 : 0, gx: 10, gy: 10, seed: 2 });
+  back += pr(hx - hw2 - 4, ht + 10, hw2 * 2 + 8, 4, roof) + pr(hx - hw2 + 4, ht + 6, hw2 * 2 - 8, 4, roof) + pr(hx - hw2 + 12, ht + 2, hw2 * 2 - 24, 4, roof);
+  if (H >= 1) back += [-1, 1].map(s => pr(hx + s * (hw2 - 6) - 2, ht + 16, 4, GY - ht - 16, "rgba(255,255,255,.35)")).join("");
+  if (H >= 2) back += pr(hx - 8, ht - 18, 16, 22, "#2a2420") + pr(hx - 6, ht - 16, 12, 20, hcol) + pr(hx - 4, ht - 12, 8, 8, "#ffffff") + pr(hx, ht - 10, 2, 4, "#1a1a1a") + pr(hx - 6, ht - 22, 12, 4, "#2a5a7a") + pr(hx - 2, ht - 26, 4, 4, "#2a5a7a");
+  if (H >= 1) { const fy = ht + (H >= 2 ? -40 : -12); back += pr(hx, fy, 2, 14, "#5a5a5a") + `<g class="sail">${pr(hx + 2, fy, 10, 6, ["#888", "#3fd0b0", "#4aa8ff", "#ff7a59"][H])}</g>`; }
+  const mx = hx - hw2 + 8, my = GY - 12;
+  front += pr(mx, my, 4, 4, "#e0a878") + pr(mx, my - 2, 4, 2, ["#5a3a1a", "#8a3a2a", "#2a2a2a", "#c9a24a"][H]) + pr(mx - 2, my + 4, 8, 6, "#3a5a8a") + pr(mx, my + 10, 2, 2, "#1a1a1a") + pr(mx + 2, my + 10, 2, 2, "#1a1a1a");
 
-  /* ----- Funkturm (Scanner) ----- */
+  /* ----- Funkturm ----- */
   const sx = X.tower, sb = GY;
-  if (S === 0) front += `<path d="M${sx},${sb} L${sx + 2},${sb - 22} L${sx + 14},${sb - 30}" stroke="#7a7f86" stroke-width="1.6" fill="none"/><path d="M${sx - 3},${sb} L${sx + 3},${sb}" stroke="#5a5f66" stroke-width="2"/>`;
-  if (S === 1) front += `<path d="M${sx - 5},${sb} L${sx},${sb - 46} L${sx + 5},${sb} M${sx - 4},${sb - 10} L${sx + 4},${sb - 20} M${sx + 4},${sb - 10} L${sx - 4},${sb - 20} M${sx - 2},${sb - 26} L${sx + 2},${sb - 34}" stroke="#a8aeb6" stroke-width="1" fill="none"/><circle class="blink" cx="${sx}" cy="${sb - 47}" r="1.6" fill="#ff4b5c"/>`;
-  if (S === 2) front += `<path d="M${sx - 6},${sb} L${sx - 1.5},${sb - 62} M${sx + 6},${sb} L${sx + 1.5},${sb - 62}" stroke="#d8dce0" stroke-width="2"/>${[12, 24, 36, 48].map(y => `<path d="M${sx - 5 + y * .07},${sb - y} H${sx + 5 - y * .07}" stroke="#d8dce0" stroke-width="1"/>`).join("")}<g class="dish"><path d="M${sx + 2},${sb - 44} q8,-2 10,6 z" fill="#e8ecf0" stroke="#8a9098" stroke-width=".8"/></g><circle class="blink" cx="${sx}" cy="${sb - 64}" r="1.8" fill="#ff4b5c"/>`;
-  if (S === 3) front += `<path d="M${sx - 4},${sb} L${sx - 2},${sb - 56} H${sx + 2} L${sx + 4},${sb}" fill="#e8ecf0" stroke="#8a9098" stroke-width=".8"/><circle cx="${sx}" cy="${sb - 62}" r="8" fill="#c9d3e0" stroke="#5a6068" stroke-width="1"/><path d="M${sx - 8},${sb - 62} h16" stroke="#4aa8ff" stroke-width="2"/><path d="M${sx},${sb - 70} V${sb - 88}" stroke="#d8dce0" stroke-width="1.4"/><circle class="blink" cx="${sx}" cy="${sb - 89}" r="1.8" fill="#ff4b5c"/><circle class="ping" cx="${sx}" cy="${sb - 88}" r="5" fill="none" stroke="#9ad4ff" stroke-width=".8"/>`;
-  front += lights(sx - 6, sb + 6, lo("scanner"), "#4aa8ff", 6);
+  if (S === 0) front += pr(sx, sb - 22, 2, 22, "#7a7f86") + pr(sx + 2, sb - 26, 6, 2, "#7a7f86") + pr(sx + 8, sb - 30, 6, 2, "#7a7f86") + pr(sx - 2, sb - 2, 6, 2, "#5a5f66");
+  if (S === 1) front += pr(sx - 4, sb - 46, 2, 46, "#a8aeb6") + pr(sx + 2, sb - 46, 2, 46, "#a8aeb6") + [6, 14, 22, 30, 38].map(y => pr(sx - 2, sb - y, 4, 2, "#a8aeb6")).join("") + pr(sx - 2, sb - 50, 4, 4, "#ff4b5c", "blink");
+  if (S === 2) front += pr(sx - 6, sb - 62, 2, 62, "#d8dce0") + pr(sx + 4, sb - 62, 2, 62, "#d8dce0") + [10, 22, 34, 46, 58].map(y => pr(sx - 4, sb - y, 8, 2, "#d8dce0")).join("") + `<g class="dish">${pr(sx + 6, sb - 46, 8, 2, "#e8ecf0")}${pr(sx + 8, sb - 48, 6, 2, "#e8ecf0")}${pr(sx + 12, sb - 52, 2, 4, "#8a9098")}</g>` + pr(sx - 2, sb - 66, 4, 4, "#ff4b5c", "blink");
+  if (S === 3) front += pr(sx - 4, sb - 56, 8, 56, "#8a9098") + pr(sx - 2, sb - 56, 4, 56, "#e8ecf0") + pr(sx - 6, sb - 70, 12, 2, "#5a6068") + pr(sx - 8, sb - 68, 16, 10, "#c9d3e0") + pr(sx - 6, sb - 58, 12, 2, "#5a6068") + pr(sx - 8, sb - 64, 16, 2, "#4aa8ff") + pr(sx - 1, sb - 88, 2, 18, "#d8dce0") + pr(sx - 2, sb - 92, 4, 4, "#ff4b5c", "blink") + `<circle class="ping" cx="${sx}" cy="${sb - 90}" r="5" fill="none" stroke="#9ad4ff" stroke-width="1"/>`;
+  front += pxLights(sx - 6, sb + 6, lo("scanner"), "#4aa8ff");
 
-  /* ----- Markt / Handel (Lager) ----- */
+  /* ----- Handel ----- */
   const mk = X.mk0;
-  if (C === 0) front += `<g transform="rotate(14 ${mk + 20} ${GY})"><rect x="${mk + 8}" y="${GY - 10}" width="24" height="10" fill="#7a5a3a" stroke="#3a2a1a" stroke-width="1"/><path d="M${mk + 6},${GY - 10} l4,-8 h20 l4,8" fill="#8a7a6a" opacity=".7"/></g><rect x="${mk + 30}" y="${GY - 6}" width="6" height="6" fill="#6a4a2a" transform="rotate(-20 ${mk + 33} ${GY - 3})"/>`;
-  if (C === 1) front += `<rect x="${mk + 6}" y="${GY - 12}" width="30" height="12" fill="#a8743f" stroke="#5a3a1a" stroke-width="1"/><path d="M${mk + 3},${GY - 12} l3,-8 h30 l3,8z" fill="#ff7a59"/><path d="M${mk + 3},${GY - 12} q3,3 6.6,0 q3,3 6.6,0 q3,3 6.6,0 q3,3 6.6,0 q3,3 6.6,0" fill="#ffffff" stroke="#ff7a59" stroke-width=".6"/>${[0, 1, 2].map(i => `<circle cx="${mk + 12 + i * 8}" cy="${GY - 9}" r="2.2" fill="${["#ff4b5c", "#ffc94a", "#7ed957"][i]}"/>`).join("")}`;
-  if (C === 2) front += `<rect x="${mk}" y="${t + 10}" width="44" height="${GY - t - 10}" fill="#dce6f0" stroke="#4a5a6a" stroke-width="1"/><rect x="${mk - 2}" y="${t + 6}" width="48" height="7" fill="#4aa8ff"/><text x="${mk + 22}" y="${t + 11.4}" text-anchor="middle" font-family="Rubik, sans-serif" font-weight="700" font-size="5" fill="#ffffff">LADEN</text><rect x="${mk + 4}" y="${GY - 16}" width="22" height="13" fill="#9ad4ff"/><rect x="${mk + 30}" y="${GY - 16}" width="9" height="16" fill="#5a6a7a"/>`;
-  if (C === 3) front += `<rect x="${mk - 4}" y="${t - 6}" width="52" height="${GY - t + 6}" fill="#c9d8e8" stroke="#3a4a5a" stroke-width="1"/>${[0, 1, 2, 3, 4].map(r => `<rect x="${mk}" y="${t + r * 9}" width="44" height="6" fill="#4aa8ff" opacity="${.55 + r * .08}"/>`).join("")}<rect x="${mk - 6}" y="${t - 12}" width="56" height="7" fill="#ff7a59"/><text x="${mk + 22}" y="${t - 6.8}" text-anchor="middle" font-family="Rubik, sans-serif" font-weight="700" font-size="5" fill="#ffffff">KAUFHAUS</text><rect x="${mk + 14}" y="${GY - 10}" width="16" height="10" fill="#2a3a4a"/>`;
-  front += lights(mk + 6, GY + 6, lo("cargo"), "#ffc94a");
+  if (C === 0) front += pr(mk + 8, GY - 10, 24, 10, "#3a2a1a") + pr(mk + 10, GY - 8, 20, 8, "#7a5a3a") + pr(mk + 6, GY - 14, 12, 4, "#8a7a6a") + pr(mk + 30, GY - 6, 6, 6, "#6a4a2a") + pr(mk + 12, GY, 4, 2, "#2a2018");
+  if (C === 1) front += pr(mk + 6, GY - 12, 30, 12, "#5a3a1a") + pr(mk + 8, GY - 10, 26, 10, "#a8743f") + Array.from({ length: 8 }, (_, i) => pr(mk + 4 + i * 4, GY - 20, 4, 6, i % 2 ? "#ffffff" : "#ff7a59")).join("") + ["#ff4b5c", "#ffc94a", "#7ed957"].map((c, i) => pr(mk + 12 + i * 8, GY - 10, 4, 4, c)).join("");
+  if (C === 2) front += pxHouse(mk, t + 10, 44, "#dce6f0", { lit: .6, seed: 4, noDoor: true, gy: 9 }) + pr(mk - 2, t + 6, 48, 6, "#4aa8ff") + [0, 1, 2, 3, 4].map(i => pr(mk + 8 + i * 6, t + 8, 4, 2, "#ffffff")).join("") + pr(mk + 4, GY - 16, 22, 14, "#9ad4ff") + pr(mk + 30, GY - 16, 8, 16, "#5a6a7a");
+  if (C === 3) front += pxHouse(mk - 4, t - 6, 52, "#c9d8e8", { noWin: true, noDoor: true }) + [0, 1, 2, 3, 4, 5].map(r => pr(mk, t + r * 10, 44, 6, r % 2 ? "#6ab8ff" : "#4aa8ff")).join("") + pr(mk - 6, t - 12, 56, 6, "#ff7a59") + [0, 1, 2, 3, 4, 5].map(i => pr(mk + 2 + i * 8, t - 10, 4, 2, "#ffffff")).join("") + pr(mk + 14, GY - 10, 16, 10, "#2a3a4a");
+  front += pxLights(mk + 6, GY + 6, lo("cargo"), "#ffc94a");
 
   // unsichtbare Klickzonen
-  const z = (part, shape) => shape.replace(/^<(\w+)/, `<$1 class="zone" data-part="${part}" fill="#ffffff" fill-opacity="0"`);
+  const z = (part, x, y, w, h) => `<rect class="zone" data-part="${part}" fill="#ffffff" fill-opacity="0" x="${x}" y="${y}" width="${w}" height="${h}"/>`;
   const zones = [
-    z("cargo", `<rect x="${mk - 6}" y="${t - 14}" width="58" height="${GY - t + 14}"/>`),
-    z("hull", `<rect x="${r0 - 4}" y="${t - 4}" width="${rw + 8}" height="${GY - t + 4}"/>`),
-    z("engine", `<rect x="${l - 50}" y="${GY}" width="${n - l + 100}" height="${b - GY + 2}"/>`),
-    z("cockpit", `<rect x="${hx - hw2}" y="${ht}" width="${hw2 * 2}" height="${GY - ht}"/>`),
-    z("reactor", `<rect x="${pw - 20}" y="${GY - 50}" width="44" height="50"/>`),
-    z("scanner", `<rect x="${sx - 10}" y="${GY - 90}" width="22" height="90"/>`),
+    z("cargo", mk - 6, t - 14, 58, GY - t + 14), z("hull", r0 - 4, t - 14, rw + 8, GY - t + 14), z("engine", l - 50, GY, n - l + 100, b - GY + 2),
+    z("cockpit", hx - hw2, ht, hw2 * 2, GY - ht), z("reactor", pw - 20, GY - 50, 44, 50), z("scanner", sx - 10, GY - 90, 22, 90),
   ].join("");
-  return `<g class="ship t${H}">${back}${hull}${front}${zones}</g>`;
+  return `<g class="ship pixel t${H}" shape-rendering="crispEdges">${back}${hull}${front}${zones}</g>`;
 }
 
-/* Stadtstufen: Kleinstadt (Kirche, zweite Häuserreihe) und Metropole (Hochhauskulisse, Brücke). */
+/* Stadtstufen in Pixeloptik: Kleinstadt (zweite Häuserreihe, Kirchturm) und Metropole (Hochhauskulisse, Brücke). */
 function vehLayers(L, k) {
   const V = veh(); if (!V) return ["", ""];
-  const H = Math.min(3, Math.floor(L.hull / 3)), g = GEO[H], { l, t, n } = g;
-  const col = ["#5a5a5a", "#7a8a9a", "#8a9aae", "#9aaac0"][H], pf = `style="filter:${paintFilter()}"`;
+  const H = Math.min(3, Math.floor(L.hull / 3)), g = GEO[H], { l, n } = g;
+  const col = ["#4a4a52", "#5a6a7a", "#6a7a8e", "#7a8aa0"][H], pf = `style="filter:${paintFilter()}" shape-rendering="crispEdges"`;
   let back = "";
-  const row = Array.from({ length: 9 }, (_, i) => { const x = l - 30 + i * ((n - l + 70) / 9), h = 22 + ((i * 37) % 18), w = (n - l + 70) / 9 - 3;
-    return `<rect x="${x}" y="${GY - 8 - h - 14}" width="${w}" height="${h + 14}" fill="${col}" opacity=".55"/>${H ? `<rect x="${x + 3}" y="${GY - h - 16}" width="${w - 6}" height="2" fill="#ffd27a" opacity=".5"/>` : ""}`; }).join("");
-  back += `<g ${pf}>${row}<path d="M${l + 30},${GY - 30} V${GY - 72} l6,-12 l6,12 V${GY - 30}" fill="${col}" opacity=".7"/><circle cx="${l + 36}" cy="${GY - 62}" r="3" fill="${H ? "#ffd27a" : "#2a2a2a"}" opacity=".7"/></g>`;
+  const span = n - l + 70, cw = pq(span / 9);
+  const row = Array.from({ length: 9 }, (_, i) => { const x = pq(l - 30 + i * cw), h = pq(24 + ((i * 37) % 18)), top = GY - 8 - h;
+    return pr(x, top, cw - 2, h + 8, col) + pr(x + 2, top - 2, cw - 6, 2, col) + (H ? Array.from({ length: Math.floor(h / 8) }, (_, r) => pr(x + 4, top + 4 + r * 8, cw - 10, 2, (r + i) % 3 ? "#ffd27a" : "#2a3448")).join("") : ""); }).join("");
+  const cx = pq(l + 30);
+  back += `<g ${pf} opacity=".75">${row}${pr(cx, GY - 76, 12, 46, col)}${pr(cx + 2, GY - 82, 8, 6, col)}${pr(cx + 4, GY - 88, 4, 6, col)}${pr(cx + 5, GY - 94, 2, 6, "#c9a24a")}${pr(cx + 4, GY - 66, 4, 6, H ? "#ffd27a" : "#2a2a2a")}</g>`;
   if (V >= 2) {
-    const sky = Array.from({ length: 7 }, (_, i) => { const x = l - 20 + i * ((n - l + 40) / 7), h = 60 + ((i * 53) % 46), w = 16 + (i % 3) * 6;
-      return `<rect x="${x}" y="${GY - h - 20}" width="${w}" height="${h}" fill="${H ? "#2a4a6a" : "#3a3a3a"}" opacity=".75"/>${H ? Array.from({ length: Math.floor(h / 8) }, (_, r) => `<rect x="${x + 3}" y="${GY - h - 16 + r * 8}" width="${w - 6}" height="2" fill="#9ad4ff" opacity="${.25 + ((r + i) % 3) * .15}"/>`).join("") : ""}${i === 3 ? `<path d="M${x + w / 2},${GY - h - 20} v-14" stroke="#c9d3e0" stroke-width="1"/><circle class="blink" cx="${x + w / 2}" cy="${GY - h - 35}" r="1.6" fill="#ff4b5c"/>` : ""}`; }).join("");
-    back = `<g ${pf}>${sky}</g>` + back;
-    back += `<path d="M${n - 10},${GY - 20} Q${n + 30},${GY - 50} ${n + 70},${GY - 20}" stroke="${H ? "#ff7a59" : "#6a5a4a"}" stroke-width="2.4" fill="none"/>${[0, 1, 2, 3, 4].map(i => `<path d="M${n + i * 16},${GY - 20 - Math.sin((i + .5) / 5 * Math.PI) * 24} V${GY - 20}" stroke="${H ? "#ff7a59" : "#6a5a4a"}" stroke-width=".8"/>`).join("")}<path d="M${n - 14},${GY - 20} H${n + 74}" stroke="#5a6068" stroke-width="2"/>`;
+    const sky = Array.from({ length: 7 }, (_, i) => { const w = pq(16 + (i % 3) * 6), x = pq(l - 20 + i * ((n - l + 40) / 7)), h = pq(60 + ((i * 53) % 46)), top = GY - h - 20;
+      return pr(x, top, w, h, H ? "#2a4a6a" : "#3a3a3a") + (H ? Array.from({ length: Math.floor(h / 6) }, (_, r) => Array.from({ length: Math.floor((w - 4) / 4) }, (_, c) => (r * 5 + c * 3 + i) % 4 ? pr(x + 2 + c * 4, top + 4 + r * 6, 2, 2, "#9ad4ff") : "").join("")).join("") : "") +
+        (i === 3 ? pr(x + w / 2 - 1, top - 14, 2, 14, "#c9d3e0") + pr(x + w / 2 - 2, top - 18, 4, 4, "#ff4b5c", "blink") : ""); }).join("");
+    back = `<g ${pf} opacity=".85">${sky}</g>` + back;
+    const bc = H ? "#ff7a59" : "#6a5a4a";
+    back += `<g shape-rendering="crispEdges">${Array.from({ length: 21 }, (_, i) => { const x = n - 10 + i * 4, y = GY - 22 - Math.round(Math.sin(i / 20 * Math.PI) * 26 / 2) * 2; return pr(x, y, 4, 2, bc) + (i % 4 === 2 ? pr(x + 1, y, 2, GY - 20 - y, bc) : ""); }).join("")}${pr(n - 14, GY - 22, 92, 4, "#5a6068")}</g>`;
   }
   return [back, ""];
 }
 '''
 
 CITY_SKY = r'''function sizeSkyObj(o) {
-  const r = o.host.getBoundingClientRect(), d = devicePixelRatio || 1;
+  // Pixeloptik: der Himmel wird in grober Auflösung gemalt und hochskaliert (CSS image-rendering: pixelated)
+  const r = o.host.getBoundingClientRect(), d = 1 / 3;
   o.w = r.width; o.h = r.height;
   if (!o.w) return;
   o.canvas.width = o.w * d; o.canvas.height = o.h * d; o.cx.setTransform(d, 0, 0, d, 0, 0);

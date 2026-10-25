@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.12.2**, Treibgut 0.4.2, Eisenfront 0.3.2, Neustadt 0.3.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.12.2**, Treibgut 0.4.2, Eisenfront 0.3.2, Neustadt 0.4.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -83,11 +83,11 @@ Stand: Sternenwrack **Beta 0.12.2**, Treibgut 0.4.2, Eisenfront 0.3.2, Neustadt 
   Inhalte: `neustadt_parts1.py` (Symbole, Waschbär Paule, Stadtbild `CITY_SVG` mit `vehLayers` für Dorf/Kleinstadt/Metropole, Himmel `CITY_SKY`), `parts2` (Texte, Viertel, Wortliste `WORDS_NS`, Nachkorrekturen `POST_NS`), `parts3` (Grundspiel), `parts4` (Look, Musik, Geräusche, Klicks ins Stadtbild). Speicher `ns-`, Codes `NSS1-`/`NSK1-`.
   Erzeugen der ganzen Kette: Sternenwrack-Quelltext = `index.html` ab `<title>` bis vor `</body></html>`; die Hülle davor/danach wird für die anderen Welten wiederverwendet (Titel tauschen die Skripte selbst).
 - **Neustadt 0.1/0.2 (Hochstapler):** frühere Grundspiele, seit 0.3.0 ersetzt. Alte Fassung im Git-Verlauf (`tools/neustadt_parts3.py` vor 0.3.0, Simulation `tools/sim/hochstapler.js`).
-- **Neustadt 0.3.0 – Stadtrundfahrt:** Brettspiel in `tools/neustadt_parts3.py` (`BOARD_HTML`, `BOARD_CSS`, `BOARD_JS`). Ersetzt den Rex-Block aus Eisenfront (wie vorher der Hochstapler), überschreibt `spin`, `press`, `quickStop`, `evaluate`, `finish`, `buildInfo`, `render` (umhüllt).
-  - 20 Felder (`BD_F`) auf einem 6×6-Raster (`bdRC`), Start unten rechts, Bus fährt gegen den Uhrzeigersinn. Feldtypen: start, plot (11 Grundstücke in 4 Vierteln `BD_DIST`), news (Karten `BD_CARDS`), plan (Baupläne, 5 → Bauplanauswahl), mini (Mini-Events `mgCrane/mgBricks/mgPigeons`), park (Parkkasse), kiosk, office (Rathaus, Freifahrten ×2).
-  - Zwei Würfel, Pasch → noch mal (max. `BD_MAX_ROLLS` = 3). Gewinne sammeln sich in `rd.win` (jeder Einzelgewinn gerundet, mindestens 1), Auszahlung am Ende in `bdEnd` (Strähne nur für Runden ab 1× Einsatz, Risikospiel ebenso).
-  - Grundstücke: `state.board = { pos, plots: { i: { l, inv } }, plans, park }`, gespeichert über umhülltes `serialize`/`applySave`. Preis `BD_PRICE[l] × Viertelfaktor × Einsatz`, Miete `BD_RENT[l] × Faktor × min(Einsatz, inv/Preiseinheiten)`, ganzes Viertel ×1,5. Kaufen nur auf dem Feld, wo der Bus steht, einmal pro Halt (`bdBuilt`). Auto-Bauen (`state.bdAuto`, localStorage `ns-bdauto`) behält 50 Einsätze Reserve.
-  - Pleite: `handleBankruptcy` umhüllt, verkauft erst Grundstücke stufenweise (50 %), dann die Stadt-Ausbauten. `gameOver` setzt das Brett zurück.
-  - Erlasse: `drones` = Bauhilfe (−25 % beim Kaufen), `signal` = Eilantrag (Rathaus 5 statt 3 Freifahrten). Paule-Boost: Fahrt zahlt doppelt, mindestens 1× Einsatz.
-  - Balance: `tools/sim/stadtrundfahrt.js`, leere Stadt ~110 %, alles Stufe 1 ~130 %, alles Stufe 4 ~177 %. Ein erstes Häuschen zahlt sich nach etwa 200 Runden aus.
-  - Freirunden heißen in Neustadt „Freifahrten“ (Ersetzung in `neustadt.py` nach der Wortliste, vor dem Protokoll). Das Glücksrad-Bonusspiel heißt „Stadtlotterie“.
+- **Neustadt 0.3.0 (Stadtrundfahrt, Brettspiel):** in 0.4.0 wieder ersetzt, Code im Git-Verlauf (Commit 8965bff, `tools/neustadt_parts3.py`), Simulation `tools/sim/stadtrundfahrt.js`.
+- **Neustadt 0.4.0 – Skyline-Walzen:** `tools/neustadt_parts3.py` (`SKY_HTML`, `SKY_CSS`, `SKY_JS`), ersetzt den Rex-Block aus Eisenfront. Überschreibt `spin`, `press`, `quickStop`, `evaluate`, `finish`, `buildInfo`, `render` (umhüllt).
+  - 6 Walzen (`skCols`, `skGrid[r]` von unten nach oben), Höhe je Dreh nach `SK_HW` (2 bis 7), Wege = Produkt der Treffer je Walze (`skEvaluate`). Symbole `SK_W`, Auszahlung `SK_PAY × SK_SCALE × Einsatz` je Weg. Neue Symbole `tree` (Baum) und `lamp` (Laterne) mit eigenen `ICONS`.
+  - Kran (`wild`) nur Walze 2 bis 5. Nachbau (`skCascade`): Gewinnfelder raus, Rest rutscht, oben neu. Freibauten: 4+ `beacon` → 10 (+2 je weitere), in Freibauten 3+ → +5. Multiplikator `skM` +1 pro Nachbau bis 15, gilt nur in Freibauten. 3+ `warp` → Stadtlotterie (Glücksrad).
+  - Zellgröße per `--skc` (`skSize`), Positionen über `bottom: calc(var(--skc) * Reihe)`. Dächer in Pixeloptik je Höhe (`skRoof`).
+  - Erlasse wirken wie früher: `drones` Kran ×3, `signal` Baugenehmigung ×2,5. Paule-Boost: würfelt die Skyline neu, bis sie gewinnt.
+  - Balance: `tools/sim/skyline.js`, Auszahlung ~113 %, Treffer ~54 % (viele kleine), Freibauten ~1/124 mit im Mittel ~60×.
+- **Neustadt 0.4.0 – Pixel-Stadt:** `CITY_SVG` in `tools/neustadt_parts1.py` neu: alles als Rechtecke auf 2er-Raster (`pr`, `pxHouse`, `pxLights`), gleiche Schnittstellen (`GEO`, `cityX`, `partAnchors`, `shipSVG`, `vehLayers`, Klickzonen `data-part`). `GY` ist jetzt 116. Der Himmel (`sizeSkyObj`) malt in 1/3 Auflösung, `#sky` mit `image-rendering: pixelated`.
