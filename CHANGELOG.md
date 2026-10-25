@@ -2,6 +2,13 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.9.0 · Freispiele, die krachen · 25.10.2026
+- Freispiele: Der Multiplikator startet bei ×2 und steigt mit jedem Gewinn bis ×5.
+- Kristalldrohnen setzen in Freispielen feste Wild-Kristalle auf Walze 2 bis 4, die bis zum Rundenende liegen bleiben (bis zu 3).
+- Im Schnitt bringen Freispiele jetzt etwa viermal so viel wie vorher. Starke Runden (ab 50× Einsatz) geben zusätzlich 2 Sternenstaub.
+- Sternschnuppen fliegen ab und zu durch den Hangar. Anklicken, und der Bordlaser holt sie runter: +1 Sternenstaub, goldene +3.
+- Neuer Erfolg: Sternenjäger.
+
 ## Beta 0.8.2 · Schiffsregister · 25.10.2026
 - Beim Start trägst du deinen Kapitänsnamen ein und taufst dein Schiff. Das „KSV-7“ steht fest, den Rest wählst du.
 - Zufällige, passende Vorschläge sind schon eingetragen und lassen sich überschreiben oder neu würfeln.

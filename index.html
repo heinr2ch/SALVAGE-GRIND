@@ -532,6 +532,23 @@ html[data-sector="xeltar"] { --s1: #5dffa8; --s2: #1fbf8f; --s3: #c6f36b; }
   border: 1px solid rgba(184,255,92,.45); background: linear-gradient(90deg, rgba(184,255,92,.14), rgba(184,255,92,.04));
   color: var(--lime); padding: 9px 14px; border-radius: 12px; font-family: var(--f-mono); font-size: .9rem;
 }
+.fsmult { font-style: normal; display: inline-block; padding: 1px 8px; border-radius: 99px; background: rgba(184,255,92,.18); border: 1px solid rgba(184,255,92,.5); color: #eaffc9; }
+.fsmult.pop { animation: fsPop .7s cubic-bezier(.2,1.6,.4,1); }
+@keyframes fsPop { 40% { transform: scale(1.6); background: #b8ff5c; color: #10200a; box-shadow: 0 0 22px #b8ff5c; } }
+.sstar { cursor: crosshair; }
+.sstar .core { transform-box: fill-box; transform-origin: center; animation: sstarTw .5s ease-in-out infinite alternate; }
+@keyframes sstarTw { to { transform: scale(1.35) rotate(25deg); } }
+.sstar .hit { fill: transparent; }
+.lockwild { position: absolute; z-index: 4; pointer-events: none; display: grid; place-items: center; border-radius: 12px;
+  border: 2px solid #ffffff; background: radial-gradient(circle, rgba(79,227,255,.35), rgba(180,156,255,.18) 60%, rgba(10,12,30,.6));
+  box-shadow: 0 0 18px rgba(79,227,255,.7), inset 0 0 18px rgba(255,255,255,.25); animation: lockIn .5s cubic-bezier(.2,1.5,.4,1), lockGlow 1.6s ease-in-out .5s infinite; }
+.lockwild svg { width: 74%; height: 74%; filter: drop-shadow(0 0 8px #4fe3ff); }
+.lockwild::after { content: "FEST"; position: absolute; top: 3px; font: 800 .5rem var(--f-display); letter-spacing: .14em; color: #fff; text-shadow: 0 0 6px #4fe3ff; }
+@keyframes lockIn { from { transform: scale(1.5); opacity: 0; } }
+@keyframes lockGlow { 50% { box-shadow: 0 0 28px rgba(79,227,255,.95), inset 0 0 24px rgba(255,255,255,.35); } }
+.multfloat { position: absolute; z-index: 6; left: 50%; top: 42%; transform: translate(-50%, -50%); pointer-events: none; font: 900 clamp(2.4rem, 9vw, 4.4rem) var(--f-display); color: #b8ff5c;
+  text-shadow: 0 0 24px #b8ff5c, 0 4px 0 #2a4a10; animation: multFloat 1.1s ease-out forwards; }
+@keyframes multFloat { 0% { opacity: 0; transform: translate(-50%, -30%) scale(.4); } 25% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); } 100% { opacity: 0; transform: translate(-50%, -90%) scale(1); } }
 .fsbar strong { font: 700 .8rem var(--f-display); letter-spacing: .12em; text-transform: uppercase; }
 
 /* ---------- Walzenrahmen ---------- */
@@ -1131,7 +1148,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 
     <div class="fsbar" id="fsbar" hidden>
       <strong>Freispiele</strong>
-      <span><b id="fsLeft">0</b> übrig · Gewinne ×2 · bisher <b id="fsWin">0</b></span>
+      <span><b id="fsLeft">0</b> übrig · <em class="fsmult" id="fsMultBox">×<b id="fsMult">2</b></em> · Kristalle <b id="fsStick">0</b>/3 · bisher <b id="fsWin">0</b></span>
     </div>
 
     <div class="stage">
@@ -1243,6 +1260,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
         </defs>
         <g id="shipG"></g>
         <g id="shipFx"></g>
+        <g id="starLayer"></g>
       </svg>
       <span class="tag" id="shipTag">Zustand 0 %</span>
       <span class="tag tag2" id="lostTag">Verlorene Schiffe: 0</span>
@@ -1472,7 +1490,10 @@ const LINES = [[1,1,1,1,1], [0,0,0,0,0], [2,2,2,2,2], [0,1,2,1,0], [2,1,0,1,2]];
 const LINE_COLORS = ["#4fe3ff", "#ffc94a", "#a48cff", "#5dffa8", "#ff6b9a"];
 const LINE_BETS = [1, 2, 5, 10, 20];
 const FS_AWARD = { 3: 8, 4: 12, 5: 20 };
-const FS_MULT = 2;
+const FS_MULT = 2;          // Startmultiplikator der Freispiele
+const FS_MULT_MAX = 5;      // jeder Gewinn-Freispiel erhöht um 1, bis maximal ×5
+const FS_WILD_P = 0.3;      // Chance je Freispiel auf einen klebrigen Wild-Kristall (Walze 2 bis 4)
+const FS_STICKY_MAX = 3;
 const START = 500;
 const pick = i => { const set = (typeof boostOn === "function" && boostOn("signal") ? REEL_SETS_SIGNAL : REEL_SETS)[i]; let r = Math.random() * set.total; for (const x of set.list) { if ((r -= x.w) < 0) return x._orig || x; } return set.list[0]._orig || set.list[0]; };
 const pick3 = i => [pick(i), pick(i), pick(i)];
@@ -1483,7 +1504,7 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
 let state = { credits: START, lineIdx: 1, spins: 0, best: 0, peak: START, fsRounds: 0, bonusCount: 0, shipsLost: 0, xp: 0, level: 1, pot: 500, missions: [], found: [], sound: true, bip: true, luck: 0, boostReady: 0, dust: 0, dustMeter: 0, boosts: {}, track: "neon", crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", captain: "", shipNamed: false, exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: [], musicVol: 1, sfxVol: 1, lowfx: false, music: true, turbo: false, ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 } };
-let faces = null, spinning = false, fsLeft = 0, fsWin = 0, fsTotal = 0, fsActive = false;
+let faces = null, spinning = false, fsLeft = 0, fsWin = 0, fsTotal = 0, fsActive = false, fsMult = FS_MULT, fsSticky = [];
 let busy = false, shownCredits = START, autoLeft = 0;
 const logItems = [];
 try {
@@ -1888,6 +1909,7 @@ function render() {
   $("fsbar").hidden = !fsMode;
   $("fsLeft").textContent = fsLeft;
   $("fsWin").textContent = fsWin;
+  $("fsMult").textContent = fsMult; $("fsStick").textContent = fsSticky.length;
   const btn = $("spin"), wrap = $("spinwrap");
   btn.classList.toggle("stop", spinning);
   wrap.classList.toggle("go", spinning);
@@ -1918,7 +1940,7 @@ function buildInfo() {
   $("payRows").innerHTML = SYMBOLS.filter(x => x.pay).reverse().map(x =>
     `<tr><td>${ICONS[x.id]}${x.name}</td>${x.pay.map(p => `<td class="pay">${p}</td>`).join("")}</tr>`).join("");
   $("panel-bonus").innerHTML = `
-    <div class="feat" style="--fc:#b8ff5c">${ICONS.beacon}<div><h3>Notsignal · Freispiele</h3><p>Zählt auf jeder Position. 3, 4 oder 5 Notsignale bringen 8, 12 oder 20 Freispiele. Alle Gewinne darin zählen doppelt, neue Notsignale verlängern die Runde.</p></div></div>
+    <div class="feat" style="--fc:#b8ff5c">${ICONS.beacon}<div><h3>Notsignal · Freispiele</h3><p>Zählt auf jeder Position. 3, 4 oder 5 Notsignale bringen 8, 12 oder 20 Freispiele. Der Multiplikator startet bei ×2 und steigt mit jedem Gewinn bis ×5. Kristalldrohnen setzen feste Wild-Kristalle auf Walze 2 bis 4, die bis zum Ende liegen bleiben (bis zu 3). Neue Notsignale verlängern die Runde.</p></div></div>
     <div class="feat" style="--fc:#b49cff">${ICONS.crystal}<div><h3>Sternenstaub und Boost-Labor</h3><p>Jeder Scan füllt den Staubmesser ein wenig, jeder Sternenkristall auf den Walzen deutlich mehr. Ist er voll, gibt es 1 Sternenstaub, extra auch für große Bergungen, Bonusspiele und den Sternenschatz. Im Boost-Labor tauschst du ihn gegen Verstärker für einige Minuten. Mehrfach kaufen verlängert die Zeit.</p></div></div>
     <div class="feat" style="--fc:#ffc94a">${ICONS.wild}<div><h3>Bip-Boost</h3><p>Jeder Scan ohne Gewinn füllt Bips Glücksladung, den Balken neben ihm. Nach ${12} Scans ohne Gewinn ist sie voll: Bip schießt Glück in die Walzen, und der nächste Scan gewinnt garantiert.</p></div></div>
     <div class="feat" style="--fc:#ff4fd8">${ICONS.beacon}<div><h3>Signal-Risiko</h3><p>Nach einem normalen Gewinn kannst du ihn verdoppeln: Cyan oder Magenta raten, die Chance ist genau 50 : 50, höchstens fünf Runden.</p></div></div>
@@ -2083,7 +2105,7 @@ function simpleBanner(opts, amtText, sound, colors, ms) {
   });
 }
 const celebrateFs = (count, retrigger) => (radio(retrigger ? "Funk: Weiteres Notsignal geortet. Kurs gehalten." : "Funk: Notsignal geortet. Freie Bergungsfahrten genehmigt.", true), simpleBanner(
-  { tier: retrigger ? "Erneutes Notsignal" : "Notsignal empfangen", color: "var(--lime)", sub: "Gewinne zählen doppelt" },
+  { tier: retrigger ? "Erneutes Notsignal" : "Notsignal empfangen", color: "var(--lime)", sub: retrigger ? "Multiplikator und Kristalle bleiben" : "Start ×2 · jeder Gewinn erhöht · Kristalldrohnen" },
   `+${count} Freispiele`, sfx.fs, ["#b8ff5c", "#5dffa8", "#e9ecff"], 2300));
 const celebrateFeature = f => (flashScreen(), radio(`Funk: ${f.title} eingeleitet. Viel Glück, Bergungsteam.`, true), simpleBanner(
   { tier: f.title, color: f.color, sub: "Bonusspiel startet" }, "Bonus!", sfx.bonusStart, [f.color, "#ffffff", "#e9ecff"], 2000));
@@ -3440,6 +3462,9 @@ const BIP = {
   broke: [["normal", "Strähne vorbei. War trotzdem schön, solange sie lief."], ["normal", "Na ja, Strähnen kommen und gehen. Wie Kometen."]],
   dry: [["sad", "Gerade läuft's zäh, ich weiß. Glück hat leider kein Gedächtnis, aber ich bin trotzdem hier."], ["sad", "Puh, eine Durststrecke. Wenn du magst, schau doch mal ins Schiff. Da gibt's lustige Sachen."], ["normal", "Kopf hoch, Kapitän. Credits sind nur Zahlen, Spaß ist das, was zählt."], ["sad", "Pech gehabt. Ich halt dir die Hand. Also, den Greifer."]],
   fs: [["excited", "Freispiele! Ich schnall mich an!"], ["excited", "Notsignal empfangen! Jetzt wird's spannend!"]],
+  starFirst: [["wow", "Eine <b>Sternschnuppe</b> im Hangar! Schnell, klick drauf, dann holt der Laser sie runter. Gibt Sternenstaub!"]],
+  star: [["excited", "Sternschnuppe! Ziel erfassen!"], ["happy", "Da fliegt Staub vorbei! Schnapp sie dir!"]],
+  sticky: [["wow", "Ein fester Kristall! Der bleibt die ganze Runde liegen!"], ["excited", "Kristalldrohne! Jetzt wird's richtig gut."]],
   fsend: [["happy", "Freispiele vorbei. Hat Spaß gemacht!"], ["happy", "Das war eine schöne Freifahrt!"]],
   bonusGood: [["excited", "Bonus geschafft! Das war Teamarbeit. Ich hab moralisch unterstützt."], ["happy", "Gut gemacht im Bonusspiel!"]],
   bonusMeh: [["normal", "Nicht der große Wurf, aber Bonusspiele sind immer ein kleines Abenteuer."]],
@@ -3827,6 +3852,7 @@ const ACH = [
   A("phoenix", "Phönix", "Verliere ein Schiff und mach weiter.", "up_hull", 100, () => (state.shipsLost || 0) >= 1),
   A("loyal", "Treuer Kapitän", "Hol dir 7-mal die tägliche Bergung.", "crystal", 200, () => (st().daily || 0) >= 7),
   A("dust", "Staubsammler", "Sammle insgesamt 10 Sternenstaub.", "crystal", 150, () => (st().dustTotal || 0) >= 10),
+  A("hunter", "Sternenjäger", "Schieß 10 Sternschnuppen ab.", "crystal", 120, () => (st().starsShot || 0) >= 10),
   A("booster", "Aufgeladen", "Aktiviere deinen ersten Boost.", "up_scanner", 50, () => (st().boostsUsed || 0) >= 1),
 ];
 function checkAch() {
@@ -4167,8 +4193,9 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "0.8.2";
+const GAME_VERSION = "0.9.0";
 const CHANGELOG = [
+  { v: "0.9.0", date: "25.10.2026", title: "Freispiele, die krachen", items: ["Freispiele: Der Multiplikator startet bei ×2 und steigt mit jedem Gewinn bis ×5.", "Kristalldrohnen setzen in Freispielen feste Wild-Kristalle auf Walze 2 bis 4, die bis zum Rundenende liegen bleiben (bis zu 3).", "Im Schnitt bringen Freispiele jetzt etwa viermal so viel wie vorher. Starke Runden geben zusätzlich Sternenstaub.", "Sternschnuppen fliegen ab und zu durch den Hangar. Anklicken, und der Bordlaser holt sie runter: +1 Sternenstaub, goldene +3.", "Neuer Erfolg: Sternenjäger."] },
   { v: "0.8.2", date: "25.10.2026", title: "Schiffsregister", items: ["Beim Start trägst du deinen Kapitänsnamen ein und taufst dein Schiff. Das „KSV-7“ steht fest, den Rest wählst du.", "Zufällige, passende Vorschläge sind schon eingetragen und lassen sich überschreiben oder neu würfeln.", "Geht ein Schiff verloren, taufst du das neue Wrack.", "Der Kapitänsname erscheint im Rang, im Funk, bei Bip und auf der Bestenliste.", "Leertaste in Eingabefeldern startet keinen Scan mehr.", "Fix: Aktive Boosts über den Walzen ploppen nicht mehr jede Sekunde neu auf."] },
   { v: "0.8.1", date: "25.10.2026", title: "Bip erklärt", items: ["Hilfemodus: Das „?“ neben Bip (oder Taste H) schaltet ihn ein. Bip erklärt dann alles, worüber du mit der Maus fährst, mit aktuellen Werten wie Symbolgewinnen beim jetzigen Einsatz.", "Auf dem Handy zeigt der erste Tipp die Erklärung, der zweite löst die Aktion aus.", "Beenden mit „?“ oder Esc."] },
   { v: "0.8.0", date: "25.10.2026", title: "Sternenstaub", items: ["Neue, seltene Zweitwährung: Sternenstaub. Jeder Scan füllt den Staubmesser, jeder Sternenkristall auf den Walzen bringt extra.", "Boost-Labor in der Bordzentrale mit fünf zeitlich begrenzten Verstärkern: Überladener Scanner, Drohnenschwarm, Signalverstärker, Gildenlizenz und Schatzpeilung.", "Aktive Boosts laufen mit Countdown über den Walzen.", "Zwei neue Erfolge."] },
@@ -4367,13 +4394,79 @@ function submitNaming(e) {
 }
 const needsNaming = () => !state.captain || !state.shipNamed;
 
+/* ---------- Sternschnuppen im Hangar: abschießen für Sternenstaub ---------- */
+let starTimer = null, starLive = null;
+function scheduleStar(delay) { clearTimeout(starTimer); starTimer = setTimeout(spawnStar, delay ?? 35000 + Math.random() * 40000); }
+function spawnStar() {
+  scheduleStar();
+  if (starLive || document.hidden || currentPv !== "ship" || !ready || !$("intro").hidden) return;
+  const NSs = "http://www.w3.org/2000/svg", layer = $("starLayer"), gold = Math.random() < .15;
+  const x0 = VB.x + VB.w + 20, y0 = VB.y + 8 + Math.random() * 60, x1 = VB.x - 25, y1 = y0 + 50 + Math.random() * 70;
+  const len = Math.hypot(x1 - x0, y1 - y0), ux = (x0 - x1) / len, uy = (y0 - y1) / len;
+  const col = gold ? "#ffd34a" : "#ffffff", tail = gold ? "#ffb02e" : "#9fdcff";
+  const g = document.createElementNS(NSs, "g"); g.setAttribute("class", "sstar" + (gold ? " gold" : ""));
+  g.innerHTML = `<line x1="0" y1="0" x2="${ux * 36}" y2="${uy * 36}" stroke="${tail}" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+    <line x1="0" y1="0" x2="${ux * 18}" y2="${uy * 18}" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>
+    <circle class="hit" r="15"/><circle r="6" fill="${col}" opacity=".35" filter="url(#glow)"/>
+    <path class="core" d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8Z" fill="${col}"/>`;
+  layer.appendChild(g);
+  const dur = gold ? 5200 : 7000, t0 = performance.now();
+  const st = starLive = { g, gold, x: x0, y: y0, dead: false };
+  if (!localStorage.getItem("sw-star")) { try { localStorage.setItem("sw-star", "1"); } catch (e) {} bipState.last = 0; bip("starFirst", 3); }
+  else bip("star", 1);
+  sfx.blips && state.sound && tone(1760, .12, { type: "sine", vol: .04 });
+  const step = now => {
+    if (st.dead) return;
+    const k = (now - t0) / dur;
+    if (k >= 1) { g.remove(); starLive = null; return; }
+    st.x = x0 + (x1 - x0) * k; st.y = y0 + (y1 - y0) * k + Math.sin(k * 6) * 3;
+    g.setAttribute("transform", `translate(${st.x} ${st.y})`);
+    requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+  const shoot = e => { e.preventDefault(); e.stopPropagation(); shootStar(st); };
+  g.addEventListener("pointerdown", shoot);
+  g.addEventListener("click", e => e.stopPropagation());
+}
+function shootStar(st) {
+  if (st.dead) return;
+  st.dead = true; starLive = null;
+  const svg = $("shipsvg"), fxG = $("shipFx"), H = tierOfCat("hull"), g = GEO[H];
+  const away = state.exped && Date.now() < state.exped.end;
+  const ln = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  ln.setAttribute("x1", away ? VB.x + VB.w / 2 : g.n - 4); ln.setAttribute("y1", away ? VB.y + VB.h : 106); ln.setAttribute("x2", st.x); ln.setAttribute("y2", st.y);
+  ln.setAttribute("stroke", st.gold ? "#ffd34a" : "#ff4fd8"); ln.setAttribute("stroke-width", 2.5); ln.setAttribute("stroke-linecap", "round"); ln.setAttribute("filter", "url(#glow)");
+  fxG.appendChild(ln);
+  let o = 1; const fade = () => { o -= .1; ln.setAttribute("opacity", o); if (o > 0) requestAnimationFrame(fade); else ln.remove(); }; requestAnimationFrame(fade);
+  sfx.pew(); setTimeout(() => sfx.shatter(), 90);
+  skySparks(mainSky, st.x, st.y, 26, [], 1.5);
+  const pt = svg.createSVGPoint(); pt.x = st.x; pt.y = st.y; const sp = pt.matrixTransform(svg.getScreenCTM());
+  if (!reduced && !state.lowfx) sparkAt(sp.x, sp.y, 30, st.gold ? ["#ffd34a", "#ffffff", "#ffb02e"] : ["#ffffff", "#b49cff", "#4fe3ff"], 1.4);
+  st.g.remove();
+  const n = st.gold ? 3 : 1;
+  for (let i = 0; i < n; i++) setTimeout(() => flyDustXY(sp.x, sp.y), i * 120);
+  setTimeout(() => addDust(n, st.gold ? "goldene Sternschnuppe" : "Sternschnuppe"), 700);
+  bump("starsShot"); checkAch();
+  bubbleAt(svg, $("shipview"), Math.max(VB.x + 30, Math.min(VB.x + VB.w - 30, st.x)), st.y - 6, st.gold ? "Gold! +3 Staub" : "Treffer! +1 Staub");
+}
+function flyDustXY(x, y) {
+  if (reduced || state.lowfx) return;
+  const t = $("dustVal").getBoundingClientRect();
+  const el = document.createElement("div"); el.className = "dustfly"; el.innerHTML = DUST_ICON;
+  el.style.left = (x - 6) + "px"; el.style.top = (y - 6) + "px";
+  document.body.appendChild(el);
+  requestAnimationFrame(() => { el.style.transform = `translate(${t.left + 10 - x}px, ${t.top + 8 - y}px) scale(.6)`; el.style.opacity = ".2"; });
+  setTimeout(() => el.remove(), 850);
+}
+scheduleStar(15000 + Math.random() * 10000);
+
 /* ---------- Bip-Hilfemodus ---------- */
 // "?" neben Bip (oder Taste H) schaltet den Hilfemodus an. Bip erklärt dann alles, worüber die Maus fährt.
 // Auf Touchgeräten zeigt der erste Tipp die Hilfe, der zweite Tipp auf dasselbe Element löst es aus.
 let helpMode = false, helpEl = null, helpTimer = null, lastPointer = "mouse";
 const hx = n => Math.round(n * lineBet() * lineBoost()).toLocaleString("de-DE");
 const SYM_HELP = {
-  beacon: "Notsignal. Landen 3 oder mehr irgendwo, startet der Notruf mit Freispielen (3 = 8, 4 = 12, 5 = 20). In Freispielen zählt jeder Gewinn doppelt.",
+  beacon: "Notsignal. Landen 3 oder mehr irgendwo, startet der Notruf mit Freispielen (3 = 8, 4 = 12, 5 = 20). In den Freispielen steigt der Multiplikator von ×2 bis ×5, und Kristalldrohnen setzen feste Wild-Kristalle.",
   capsule: "Frachtkapsel, nur auf Walze 1, 3 und 5. Alle drei gleichzeitig starten die Kapselbergung: Du öffnest Kapseln mit Credits drin.",
   warp: "Sprungkern, nur auf Walze 2, 3 und 4. Alle drei gleichzeitig starten den Hyperraumsprung mit Multiplikator.",
   wild: "Wild-Kristall. Den erschafft nur der Bergungslaser. Er ersetzt jedes normale Symbol auf einer Linie.",
@@ -4394,7 +4487,9 @@ const HELP_RULES = [
   ["#jackpot", () => ["Sternenschatz", `Wächst mit jedem Scan. Kann bei jedem Scan zufällig fallen, mit höherem Einsatz öfter.${boostOn("treasure") ? " <b>Schatzpeilung aktiv: Chance ×5!</b>" : ""}`]],
   [".rank", () => ["Rang", `Kapitän ${state.captain || "?"}, Stufe ${state.level}. XP gibt es für Scans, Gewinne und Aufträge. Neue Stufen bringen Belohnungen und Titel.`]],
   [".bchip", el => { const b = BOOSTS.find(x => el.title === x.effect); return b ? [b.name, `${b.effect}. Läuft noch ${fmtTime(state.boosts[b.id] - Date.now())}. Im Boost-Labor verlängerbar.`] : null; }],
-  ["#fsbar", () => ["Freispiele", "Kostenlose Scans, jeder Gewinn zählt doppelt."]],
+  ["#fsbar", () => ["Freispiele", `Kostenlose Scans. Multiplikator gerade ×${fsMult}, jeder Gewinn erhöht ihn bis ×5. Feste Wild-Kristalle: ${fsSticky.length} von 3. Sie bleiben bis zum Ende liegen.`]],
+  [".lockwild", () => ["Fester Wild-Kristall", "Bleibt bis zum Ende der Freispiele an dieser Stelle und ersetzt jedes normale Symbol."]],
+  [".sstar", () => ["Sternschnuppe", "Schnell anklicken! Der Bordlaser holt sie runter und du bekommst Sternenstaub. Goldene bringen mehr."]],
   ["#streak", () => ["Strähne", "Gewinne in Folge erhöhen den Multiplikator bis ×1,5. Ein Scan ohne Gewinn setzt ihn zurück."]],
   [".radio", () => ["Funk", "Meldungen aus dem All: Ereignisse, Boosts, Neuigkeiten."]],
   ["#bipToggle", () => ["Bip", "Blendet mich aus oder ein. Aber wer will das schon?"]],
@@ -4488,6 +4583,39 @@ document.addEventListener("keydown", e => {
   else if (e.key === "Escape" && helpMode) setHelp(false);
 });
 
+/* ---------- Freispiel-Extras: klebrige Wild-Kristalle und steigender Multiplikator ---------- */
+function renderSticky() {
+  const bay = $("bay"); bay.querySelectorAll(".lockwild").forEach(e => e.remove());
+  if (!fsSticky.length) return;
+  const h = cellH();
+  fsSticky.forEach(([c, r]) => {
+    const reel = reels[c], el = document.createElement("div");
+    el.className = "lockwild";
+    el.style.cssText = `left:${reel.offsetLeft}px;top:${reel.offsetTop + r * h}px;width:${reel.offsetWidth}px;height:${h}px`;
+    el.innerHTML = ICONS.wild; bay.appendChild(el);
+  });
+}
+function multUp() {
+  const box = $("fsMultBox"); box.classList.remove("pop"); void box.offsetWidth; box.classList.add("pop");
+  const f = document.createElement("div"); f.className = "multfloat"; f.textContent = "×" + fsMult; $("bay").appendChild(f); setTimeout(() => f.remove(), 1150);
+  sfx.streakUp(Math.min(4, fsMult - 1)); render();
+}
+async function crystalDrone(grid) {
+  // Freispiele: Kristalldrohne verwandelt ein normales Symbol auf Walze 2 bis 4 in einen Wild-Kristall, der bis zum Rundenende liegen bleibt
+  if (fsSticky.length >= FS_STICKY_MAX || Math.random() >= FS_WILD_P) return false;
+  const cands = [];
+  for (let c = 1; c <= 3; c++) for (let r = 0; r < 3; r++) if (grid[c][r].pay) cands.push({ c, r, victim: grid[c][r] });
+  if (!cands.length) return false;
+  const t = cands[(Math.random() * cands.length) | 0];
+  busy = true; render();
+  $("msg").className = "msg fs"; $("msg").textContent = "Kristalldrohne! Dieser Wild-Kristall bleibt bis zum Ende der Freispiele liegen.";
+  radio("Funk: Kristalldrohne setzt einen festen Wild-Kristall.", true);
+  await laserStrike(t);
+  grid[t.c][t.r] = WILD; fsSticky.push([t.c, t.r]); renderSticky(); render();
+  bip("sticky", 2);
+  return true;
+}
+
 /* ---------- Spielablauf ---------- */
 let reelRuns = [], tickTimer = null, slammed = false;
 
@@ -4514,6 +4642,7 @@ function spin(auto) {
 
   const h = cellH();
   const results = reels.map((_, i) => pick3(i));
+  if (free) fsSticky.forEach(([c, r]) => { results[c][r] = WILD; });
   boostSpinActive = false;
   if (!free && state.boostReady) { forceWin(results); boostSpinActive = true; state.boostReady = 0; state.luck = 0; sfx.boostSpin(); }
   const has = id => results.map(col => col.some(s => s.id === id));
@@ -4594,7 +4723,8 @@ async function finish(grid, free) {
   faces = grid;
   spinning = false;
   let ev = evaluate(grid), lasered = null;
-  if (!ev.wins.length && Math.random() < LASER_P * (boostOn("drones") ? 4 : 1)) {
+  if (free && await crystalDrone(grid)) ev = evaluate(grid);
+  if (!free && !ev.wins.length && Math.random() < LASER_P * (boostOn("drones") ? 4 : 1)) {
     const target = findLaserTarget(grid);
     if (target) {
       busy = true; render();
@@ -4608,12 +4738,14 @@ async function finish(grid, free) {
   }
   const { wins, scatters, scatterReels, features } = ev;
   gainDustFromSpin(grid);
-  const mult = free ? FS_MULT : 1;
+  const mult = free ? fsMult : 1;
   const rawWin = wins.reduce((a, w) => a + w.factor, 0) * lineBet() * mult * lineBoost();
   const prevStreak = streak;
   if (!free) { if (rawWin > 0) streak++; else streak = 0; }
   const sMult = free ? 1 : streakMult();
   const win = Math.round(rawWin * sMult);
+  const multRaised = free && win > 0 && fsMult < FS_MULT_MAX;
+  if (multRaised) fsMult++;
   if (!free) {
     if (streak >= 2 && streak > prevStreak) { sfx.streakUp(streak); renderStreak(true); }
     else if (prevStreak >= 2 && streak === 0) { sfx.streakBreak(); renderStreak(false); radio("Funk: Strähne gerissen. Neuer Anlauf.", false, 4000); }
@@ -4649,8 +4781,8 @@ async function finish(grid, free) {
   const parts = [];
   if (win > 0) {
     const top = wins.slice().sort((a, b) => b.factor - a.factor)[0];
-    parts.push(`${boostSpinActive ? "Bip-Boost! " : ""}${lasered ? "Wild-Kristall! " : ""}${top.count}× ${top.sym.name}${wins.length > 1 ? ` und ${wins.length - 1} weitere Linie${wins.length > 2 ? "n" : ""}` : ""}: +${win} Credits${free ? " (×2)" : ""}${sMult > 1 ? ` · Strähne ×${String(sMult).replace(".", ",")}` : ""}.`);
-    addLog(lasered ? "wild" : top.sym.id, `${lasered ? "Laser · " : ""}${top.count}× ${top.sym.name}${wins.length > 1 ? ` +${wins.length - 1}` : ""}${free ? " · ×2" : ""}`, "+" + win, lasered ? "#ffffff" : top.sym.color);
+    parts.push(`${boostSpinActive ? "Bip-Boost! " : ""}${lasered ? "Wild-Kristall! " : ""}${top.count}× ${top.sym.name}${wins.length > 1 ? ` und ${wins.length - 1} weitere Linie${wins.length > 2 ? "n" : ""}` : ""}: +${win} Credits${free ? ` (×${mult})` : ""}${sMult > 1 ? ` · Strähne ×${String(sMult).replace(".", ",")}` : ""}.`);
+    addLog(lasered ? "wild" : top.sym.id, `${lasered ? "Laser · " : ""}${top.count}× ${top.sym.name}${wins.length > 1 ? ` +${wins.length - 1}` : ""}${free ? ` · ×${mult}` : ""}`, "+" + win, lasered ? "#ffffff" : top.sym.color);
     if (lasered) parts.length < 400 && radio(`Funk: Wild-Kristall geborgen. ${top.sym.name} auf Linie gebracht.`, true);
   }
   bipAfterSpin({ win, factor: win / bet(), lasered: !!lasered, award, features: features.length, prevStreak, streak, free });
@@ -4672,6 +4804,7 @@ async function finish(grid, free) {
 
   busy = true; render();
   if (win > 0) { await wait(wins.length ? 350 * T() : 0); await celebrateWin(win, state.credits); }
+  if (multRaised) { multUp(); radio(`Funk: Bergungsmultiplikator steigt auf ×${fsMult}.`, true); await wait(700 * T()); }
   for (const f of features) {
     await celebrateFeature(f);
     const amount = Math.round((await runBonus(f)) * bonusBoost());
@@ -4689,7 +4822,7 @@ async function finish(grid, free) {
   }
   if (award) {
     fsLeft += award; fsTotal += award;
-    if (!free) { state.fsRounds++; fsWin = 0; }
+    if (!free) { state.fsRounds++; fsWin = 0; fsMult = FS_MULT; fsSticky = []; renderSticky(); }
     render();
     await celebrateFs(award, free);
   }
@@ -4705,7 +4838,9 @@ async function finish(grid, free) {
   if (free) {
     fsActive = false;
     msg.className = "msg win";
-    msg.textContent = `Freispiele beendet: insgesamt +${fsWin} Credits.`;
+    msg.textContent = `Freispiele beendet: insgesamt +${fsWin} Credits, Multiplikator bis ×${fsMult}.`;
+    if (fsWin >= bet() * 50) setTimeout(() => addDust(2, "starke Freispiele"), 2500);
+    fsSticky = []; renderSticky(); fsMult = FS_MULT;
     addLog("beacon", "Freispiele gesamt", "+" + fsWin, "#b8ff5c");
     render();
     await celebrateFsEnd(fsWin, state.credits);
@@ -4854,7 +4989,7 @@ document.addEventListener("keydown", e => {
   if (!$("scratch").hidden) return;
   press();
 });
-addEventListener("resize", () => { if ($("linesvg").innerHTML) clearLines(); });
+addEventListener("resize", () => { if ($("linesvg").innerHTML) clearLines(); renderSticky(); });
 
 function start(saved) {
   if (saved && typeof saved.credits === "number") {
