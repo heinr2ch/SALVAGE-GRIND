@@ -319,6 +319,27 @@ html[data-sector="xeltar"] { --s1: #5dffa8; --s2: #1fbf8f; --s3: #c6f36b; }
 @keyframes warp { 0% { opacity: 0; transform: scale(.6) rotate(0); } 25% { opacity: 1; } 70% { opacity: 1; transform: scale(2.4) rotate(8deg); } 100% { opacity: 0; transform: scale(3) rotate(10deg); } }
 
 .namerow { display: flex; gap: 8px; align-items: center; }
+.naming { z-index: 150; }
+.naming .bonus-card { grid-template-columns: minmax(0, 1fr); }
+.naming .bonus-card > * { min-width: 0; }
+.naming .bonus-foot { flex-wrap: wrap; gap: 10px; }
+.naming .bonus-foot .note { white-space: normal; flex: 1 1 180px; }
+.nfield { display: grid; gap: 6px; }
+.nfield label { font: 700 .66rem var(--f-display); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+.nrow { display: flex; gap: 8px; align-items: center; }
+.nrow .reg { font: 800 .95rem var(--f-mono); color: var(--cyan); padding: 10px 12px; border-radius: 10px; background: rgba(79,227,255,.1); border: 1px solid rgba(79,227,255,.35); }
+.nrow input { flex: 1; min-width: 0; width: 0; background: rgba(0,0,0,.4); border: 1px solid var(--line); border-radius: 10px; color: var(--ink); padding: 10px 12px; font: 700 1rem var(--f-body); }
+.nrow input:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(79,227,255,.2); }
+.dice { width: 42px; height: 42px; flex: none; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,.05); font-size: 1.15rem; cursor: pointer; transition: transform .2s; }
+.dice:hover { transform: rotate(-12deg) scale(1.08); }
+.dice.roll { animation: diceRoll .45s ease-out; }
+@keyframes diceRoll { 50% { transform: rotate(200deg) scale(1.15); } 100% { transform: rotate(360deg); } }
+.nplate { display: grid; justify-items: center; gap: 2px; padding: 12px; border-radius: 12px; border: 1px dashed rgba(79,227,255,.4); background: radial-gradient(circle at 50% 0, rgba(79,227,255,.12), transparent 70%); }
+.nplate small { font: 700 .6rem var(--f-display); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+.nplate b { font: 800 clamp(1.1rem, 5vw, 1.45rem) var(--f-display); color: var(--ink); text-align: center; word-break: break-word; }
+.nplate span { font-size: .78rem; color: var(--ink-soft); }
+.capshow { margin: 0; font-size: .86rem; color: var(--ink-soft); }
+.capshow b { color: var(--ink); }
 .namerow .reg { font: 700 .8rem var(--f-mono); color: var(--ink-soft); }
 .namerow input, .coderow input, .psec textarea { flex: 1; min-width: 0; background: rgba(0,0,0,.35); border: 1px solid var(--line); border-radius: 10px; color: var(--ink); padding: 9px 11px; font: 600 .84rem var(--f-body); }
 .psec textarea { font: 500 .72rem var(--f-mono); resize: vertical; width: 100%; }
@@ -1240,6 +1261,8 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
       <div class="psec">
         <h3>Schiffsname</h3>
         <form class="namerow" id="nameForm"><span class="reg">KSV-7</span><input id="nameInput" maxlength="20" autocomplete="off" aria-label="Schiffsname"><button type="submit" class="ghost">Taufen</button></form>
+        <h3 style="margin-top:12px">Kapitän</h3>
+        <form class="namerow" id="capForm"><input id="capEdit" maxlength="20" autocomplete="off" aria-label="Kapitänsname"><button type="submit" class="ghost">Ändern</button></form>
       </div>
       <div class="psec"><h3>Crew anheuern</h3><div class="crewgrid" id="crewGrid"></div></div>
       <div class="psec"><h3>Lackierung</h3><div class="swatches" id="paintList"></div></div>
@@ -1368,6 +1391,26 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
   </div>
 </div>
 
+<div class="bonus naming" id="naming" hidden>
+  <form class="bonus-card glass" id="namingForm" style="--bc: var(--cyan)" role="dialog" aria-modal="true" aria-labelledby="namingTitle" autocomplete="off">
+    <header>
+      <span><svg viewBox="0 0 40 40" width="52" height="52" aria-hidden="true"><rect x="1.5" y="1.5" width="37" height="37" rx="9" fill="#071a26" stroke="#4fe3ff" stroke-width="2"/><path d="M11 12h18M11 18h18M11 24h11" stroke="#4fe3ff" stroke-width="2" stroke-linecap="round"/><path d="M24 30l3 -8 5 5 -8 3z" fill="#ffc94a"/></svg></span>
+      <div><h2 id="namingTitle">Schiffsregister</h2><p id="namingInfo">Die Bergungsgilde braucht deinen Namen und den Namen deines Schiffs.</p></div>
+    </header>
+    <div class="nfield" id="capField">
+      <label for="capInput">Kapitän</label>
+      <div class="nrow"><input id="capInput" maxlength="20" required spellcheck="false"><button type="button" class="dice" data-roll="cap" aria-label="Zufälliger Kapitänsname" title="Würfeln">🎲</button></div>
+    </div>
+    <p class="capshow" id="capShow" hidden></p>
+    <div class="nfield">
+      <label for="shipInput">Schiffsname</label>
+      <div class="nrow"><span class="reg">KSV-7</span><input id="shipInput" maxlength="20" required spellcheck="false"><button type="button" class="dice" data-roll="ship" aria-label="Zufälliger Schiffsname" title="Würfeln">🎲</button></div>
+    </div>
+    <div class="nplate" aria-hidden="true"><small>Registriert als</small><b id="namingPreview">KSV-7 Rostkrähe</b><span id="namingCap"></span></div>
+    <div class="bonus-foot"><div class="note">Vorschläge einfach überschreiben oder neu würfeln.</div><button type="submit" class="bbtn" id="namingBtn" style="--bc:var(--cyan)">Eintragen</button></div>
+  </form>
+</div>
+
 <div class="bonus" id="wreck" hidden>
   <div class="bonus-card glass" style="--bc: var(--lose)" role="dialog" aria-modal="true" aria-labelledby="wreckTitle">
     <header>
@@ -1439,7 +1482,7 @@ const reels = [...document.querySelectorAll(".reel")];
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
-let state = { credits: START, lineIdx: 1, spins: 0, best: 0, peak: START, fsRounds: 0, bonusCount: 0, shipsLost: 0, xp: 0, level: 1, pot: 500, missions: [], found: [], sound: true, bip: true, luck: 0, boostReady: 0, dust: 0, dustMeter: 0, boosts: {}, track: "neon", crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: [], musicVol: 1, sfxVol: 1, lowfx: false, music: true, turbo: false, ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 } };
+let state = { credits: START, lineIdx: 1, spins: 0, best: 0, peak: START, fsRounds: 0, bonusCount: 0, shipsLost: 0, xp: 0, level: 1, pot: 500, missions: [], found: [], sound: true, bip: true, luck: 0, boostReady: 0, dust: 0, dustMeter: 0, boosts: {}, track: "neon", crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", captain: "", shipNamed: false, exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: [], musicVol: 1, sfxVol: 1, lowfx: false, music: true, turbo: false, ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 } };
 let faces = null, spinning = false, fsLeft = 0, fsWin = 0, fsTotal = 0, fsActive = false;
 let busy = false, shownCredits = START, autoLeft = 0;
 const logItems = [];
@@ -2688,19 +2731,24 @@ async function handleBankruptcy() {
 function gameOver() {
   return new Promise(resolve => {
     state.shipsLost = (state.shipsLost || 0) + 1;
+    BIP.lost = [["sad", `Die ${escapeHTML(state.shipName || "Rostkrähe")} ist weg ... Aber du hast ein neues Wrack und mich. Wir schaffen das zusammen.`]];
     $("wsSpins").textContent = state.spins; $("wsBest").textContent = state.best; $("wsPeak").textContent = state.peak; $("wsLost").textContent = state.shipsLost;
     sfx.lost();
     $("wreck").hidden = false;
     $("wreckBtn").focus({ preventScroll: true });
-    $("wreckBtn").addEventListener("click", () => {
+    $("wreckBtn").addEventListener("click", async () => {
       sfx.click();
+      $("wreck").hidden = true;
+      bip("lost", 3);
+      state.shipNamed = false;
+      await openNaming("lost");
       state.credits = START; state.lineIdx = 1;
       state.ship = { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 }; state.exped = null;
       shownCredits = START; countCredits(START, 0);
       $("wreck").hidden = true;
       addLog("up_hull", "Neues Wrack übernommen", "500", "#9fb3ff");
       $("msg").className = "msg"; $("msg").textContent = "Neues Wrack, neues Glück. Bau es diesmal stärker aus.";
-      setTimeout(() => bip("lost", 3), 500); setTimeout(checkAch, 2500); renderExped();
+      setTimeout(checkAch, 2500); renderExped();
       render(); saveGame(); resolve();
     }, { once: true });
   });
@@ -2711,7 +2759,7 @@ let ready = false, saveRef = null, saveTimer = null, saving = false, saveDirty =
 const SAVE_KEYS = ["credits", "lineIdx", "spins", "best", "peak", "fsRounds", "bonusCount", "shipsLost", "xp", "level", "pot", "luck", "boostReady", "dust", "dustMeter"];
 function serialize() {
   const o = { v: 1, ship: { ...state.ship }, missions: state.missions.map(m => ({ ...m })), found: [...(state.found || [])],
-    crew: [...(state.crew || [])], paint: state.paint || "std", decal: state.decal || "none", shipName: state.shipName || "Rostkrähe", exped: state.exped || null,
+    crew: [...(state.crew || [])], paint: state.paint || "std", decal: state.decal || "none", shipName: state.shipName || "Rostkrähe", captain: state.captain || "", shipNamed: !!state.shipNamed, exped: state.exped || null,
     sector: state.sector || "orion", visited: [...(state.visited || ["orion"])], album: [...(state.album || [])], ach: [...(state.ach || [])], stats: { ...(state.stats || {}) },
     daily: state.daily || null, friends: (state.friends || []).map(f => ({ ...f })), boosts: { ...(state.boosts || {}) }, savedAt: new Date().toISOString() };
   SAVE_KEYS.forEach(k => o[k] = state[k] || 0);
@@ -2726,6 +2774,8 @@ function applySave(d) {
   if (typeof d.paint === "string" && PAINTS.some(x => x.id === d.paint)) state.paint = d.paint;
   if (typeof d.decal === "string" && DECALS.some(x => x.id === d.decal)) state.decal = d.decal;
   if (typeof d.shipName === "string" && d.shipName.trim()) state.shipName = d.shipName.replace(/[<>]/g, "").slice(0, 20);
+  state.captain = typeof d.captain === "string" ? cleanName(d.captain) : "";
+  state.shipNamed = typeof d.shipNamed === "boolean" ? d.shipNamed : !!(state.shipName && state.shipName !== "Rostkrähe");
   if (d.exped && typeof d.exped.end === "number") state.exped = d.exped; else if ("exped" in d) state.exped = null;
   if (typeof d.sector === "string" && SECTORS.some(x => x.id === d.sector)) state.sector = d.sector;
   if (Array.isArray(d.visited)) state.visited = d.visited.filter(k => SECTORS.some(x => x.id === k));
@@ -3013,7 +3063,7 @@ async function processProgress() {
 }
 function renderMeta() {
   $("lvl").textContent = state.level;
-  $("rankTitle").textContent = rankTitle(state.level);
+  $("rankTitle").textContent = rankTitle(state.level) + (state.captain ? " " + state.captain : "");
   const need = xpNeed(state.level);
   $("xpBar").style.width = Math.min(100, (state.xp || 0) / need * 100) + "%";
   $("xpTxt").textContent = `${Math.floor(state.xp || 0)} / ${need} XP`;
@@ -3499,6 +3549,7 @@ const shipLabel = () => `KSV-7 ${state.shipName || "Rostkrähe"}`;
 function applyName() {
   $("shipName").textContent = shipLabel();
   const inp = $("nameInput"); if (document.activeElement !== inp) inp.value = state.shipName || "Rostkrähe";
+  const ce = $("capEdit"); if (ce && document.activeElement !== ce) ce.value = state.captain || "";
 }
 
 /* ---------- Crew ---------- */
@@ -3947,12 +3998,12 @@ function readCode(prefix, code) {
   if (hashStr(prefix + j + "sternenwrack") !== sum) throw new Error("Der Code ist beschädigt oder unvollständig.");
   return JSON.parse(j);
 }
-function myCardObj() { return { n: (state.shipName || "Rostkrähe").slice(0, 20), r: state.level, p: state.peak, b: state.best, c: $("shipClass").textContent, a: (state.ach || []).length, t: todayKey() }; }
+function myCardObj() { return { n: (state.shipName || "Rostkrähe").slice(0, 20), k: (state.captain || "").slice(0, 20), r: state.level, p: state.peak, b: state.best, c: $("shipClass").textContent, a: (state.ach || []).length, t: todayKey() }; }
 function renderBoard() {
   $("myCard").value = makeCode("SWK1-", myCardObj());
   const me = { ...myCardObj(), me: true };
   const rows = [me, ...(state.friends || [])].sort((x, y) => y.p - x.p);
-  $("boardRows").innerHTML = rows.map((r, i) => `<tr class="${r.me ? "me" : ""}"><td>${i + 1}. ${escapeHTML(r.n)}${r.me ? " (du)" : ""}</td><td class="pay">${r.r}</td><td class="pay">${Number(r.p).toLocaleString("de-DE")} ${r.me ? "" : `<button type="button" class="rm" data-rm="${i}" aria-label="Entfernen">×</button>`}</td></tr>`).join("");
+  $("boardRows").innerHTML = rows.map((r, i) => `<tr class="${r.me ? "me" : ""}"><td>${i + 1}. ${escapeHTML(r.n)}${r.k ? ` <small class="note">· ${escapeHTML(String(r.k).slice(0, 20))}</small>` : ""}${r.me ? " (du)" : ""}</td><td class="pay">${r.r}</td><td class="pay">${Number(r.p).toLocaleString("de-DE")} ${r.me ? "" : `<button type="button" class="rm" data-rm="${i}" aria-label="Entfernen">×</button>`}</td></tr>`).join("");
   $("boardRows").querySelectorAll("[data-rm]").forEach(b => b.addEventListener("click", () => { const name = rows[+b.dataset.rm].n; state.friends = (state.friends || []).filter(f => f.n !== name); renderBoard(); saveGame(); }));
 }
 const escapeHTML = t => String(t).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
@@ -3963,7 +4014,7 @@ async function copyText(text, msgId) {
 }
 function freshState() {
   return { credits: START, lineIdx: 1, spins: 0, best: 0, peak: START, fsRounds: 0, bonusCount: 0, shipsLost: 0, xp: 0, level: 1, pot: JP_SEED, missions: [], found: [],
-    ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 }, crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: state.friends || [], dust: 0, dustMeter: 0, boosts: {}, luck: 0, boostReady: 0 };
+    ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 }, crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", captain: "", shipNamed: false, exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: state.friends || [], dust: 0, dustMeter: 0, boosts: {}, luck: 0, boostReady: 0 };
 }
 function applyVolumes() {
   if (master) master.gain.value = 0.35 * (state.sfxVol ?? 1);
@@ -3973,11 +4024,24 @@ const musicLevel = () => .6 * (state.musicVol ?? 1);
 
 function bindBig() {
   document.querySelectorAll(".ptabs button").forEach(b => b.addEventListener("click", () => { sfx.click(); switchPv(b.dataset.pv); }));
+  $("namingForm").addEventListener("submit", submitNaming);
+  $("namingForm").addEventListener("input", namingPreview);
+  $("namingForm").addEventListener("click", e => {
+    const b = e.target.closest("[data-roll]"); if (!b) return;
+    sfx.click(); b.classList.remove("roll"); void b.offsetWidth; b.classList.add("roll");
+    if (b.dataset.roll === "cap") $("capInput").value = randomCaptain(); else $("shipInput").value = randomShip(cleanName($("shipInput").value));
+    namingPreview();
+  });
+  $("capForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const v = cleanName($("capEdit").value); if (!v) return;
+    state.captain = v; applyName(); renderMeta(); sfx.upgrade(); toast(`Kapitän ${v}`, "#4fe3ff"); saveGame();
+  });
   $("nameForm").addEventListener("submit", e => {
     e.preventDefault();
     const v = $("nameInput").value.replace(/[<>]/g, "").trim().slice(0, 20);
     if (!v) return;
-    state.shipName = v; applyName(); sfx.upgrade(); toast(`Getauft: ${shipLabel()}`, "#4fe3ff");
+    state.shipName = v; state.shipNamed = true; applyName(); sfx.upgrade(); toast(`Getauft: ${shipLabel()}`, "#4fe3ff");
     radio(`Funk: Die Gilde trägt die ${v} ins Schiffsregister ein.`, true); saveGame();
   });
   $("crewGrid").addEventListener("click", e => { const h = e.target.closest("[data-hire]"), p = e.target.closest("[data-crew]"); if (h) hireCrew(h.dataset.hire); else if (p) crewSay(p.dataset.crew); });
@@ -4032,6 +4096,7 @@ function bindBig() {
     resetArmed = false; $("resetBtn").textContent = "Spielstand zurücksetzen"; $("resetBtn").classList.remove("armed");
     Object.assign(state, freshState()); shownCredits = state.credits; countCredits(state.credits, 0);
     afterLoad(); saveGame(); toast("Neuer Anfang. Viel Glück, Kapitän!", "#4fe3ff");
+    setTimeout(() => openNaming("start"), 500);
   });
   $("volMusic").value = Math.round((state.musicVol ?? 1) * 100);
   $("volSfx").value = Math.round((state.sfxVol ?? 1) * 100);
@@ -4102,8 +4167,9 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "0.8.1";
+const GAME_VERSION = "0.8.2";
 const CHANGELOG = [
+  { v: "0.8.2", date: "25.10.2026", title: "Schiffsregister", items: ["Beim Start trägst du deinen Kapitänsnamen ein und taufst dein Schiff. Das „KSV-7“ steht fest, den Rest wählst du.", "Zufällige, passende Vorschläge sind schon eingetragen und lassen sich überschreiben oder neu würfeln.", "Geht ein Schiff verloren, taufst du das neue Wrack.", "Der Kapitänsname erscheint im Rang, im Funk, bei Bip und auf der Bestenliste.", "Leertaste in Eingabefeldern startet keinen Scan mehr.", "Fix: Aktive Boosts über den Walzen ploppen nicht mehr jede Sekunde neu auf."] },
   { v: "0.8.1", date: "25.10.2026", title: "Bip erklärt", items: ["Hilfemodus: Das „?“ neben Bip (oder Taste H) schaltet ihn ein. Bip erklärt dann alles, worüber du mit der Maus fährst, mit aktuellen Werten wie Symbolgewinnen beim jetzigen Einsatz.", "Auf dem Handy zeigt der erste Tipp die Erklärung, der zweite löst die Aktion aus.", "Beenden mit „?“ oder Esc."] },
   { v: "0.8.0", date: "25.10.2026", title: "Sternenstaub", items: ["Neue, seltene Zweitwährung: Sternenstaub. Jeder Scan füllt den Staubmesser, jeder Sternenkristall auf den Walzen bringt extra.", "Boost-Labor in der Bordzentrale mit fünf zeitlich begrenzten Verstärkern: Überladener Scanner, Drohnenschwarm, Signalverstärker, Gildenlizenz und Schatzpeilung.", "Aktive Boosts laufen mit Countdown über den Walzen.", "Zwei neue Erfolge."] },
   { v: "0.7.2", date: "25.10.2026", title: "Mehr Gewinne", items: ["Etwa jeder dritte Scan gewinnt jetzt, vorher nur jeder fünfte.", "Der Automat zahlt im Schnitt mehr aus, als man einsetzt: Man kommt langsam voran, statt Credits zu verlieren.", "Gewinntabelle angepasst: häufigere kleine Funde, seltene Funde bleiben wertvoll."] },
@@ -4192,10 +4258,20 @@ function renderLab() {
   }).join("");
 }
 function renderBoostBar() {
+  // Chips nur neu bauen, wenn sich die Menge aktiver Boosts ändert, sonst nur die Zeit aktualisieren (sonst startet die Einblend-Animation jede Sekunde neu)
   const bar = $("boostBar"), now = Date.now();
-  const act = BOOSTS.filter(b => boostOn(b.id));
+  const act = BOOSTS.filter(b => boostOn(b.id)), key = act.map(b => b.id).join(",");
   bar.hidden = !act.length;
-  bar.innerHTML = act.map(b => { const left = state.boosts[b.id] - now; return `<span class="bchip${left < 20000 ? " low" : ""}" style="--bc:${b.color}" title="${b.effect}">${ICONS[b.icon]}${b.name}<b>${fmtTime(left)}</b></span>`; }).join("");
+  if (bar.dataset.key !== key) {
+    bar.dataset.key = key;
+    bar.innerHTML = act.map(b => `<span class="bchip" data-bid="${b.id}" style="--bc:${b.color}" title="${b.effect}">${ICONS[b.icon]}${b.name}<b></b></span>`).join("");
+  }
+  act.forEach(b => {
+    const el = bar.querySelector(`[data-bid="${b.id}"]`); if (!el) return;
+    const left = state.boosts[b.id] - now;
+    el.querySelector("b").textContent = fmtTime(left);
+    el.classList.toggle("low", left < 20000);
+  });
 }
 function buyBoost(id) {
   const b = BOOSTS.find(x => x.id === id);
@@ -4222,8 +4298,74 @@ setInterval(() => {
     lastBoostSet = active; renderLab(); saveGame();
   }
   renderBoostBar();
-  if (active) renderLab();
+  if (active) tickLab();
 }, 1000);
+function tickLab() {
+  const now = Date.now();
+  document.querySelectorAll("#labGrid [data-boost]").forEach(el => {
+    const id = el.dataset.boost, on = boostOn(id); let t = el.querySelector(".left");
+    if (on) { if (!t) { t = document.createElement("span"); t.className = "left"; el.prepend(t); } t.textContent = fmtTime(state.boosts[id] - now); }
+    else if (t) t.remove();
+    el.classList.toggle("on", on);
+  });
+}
+
+/* ---------- Schiffsregister: Kapitäns- und Schiffsname ---------- */
+const CAP_FIRST = ["Mara", "Juri", "Nova", "Kalle", "Ilka", "Tamo", "Lio", "Sina", "Ben", "Ada", "Rune", "Jola", "Fenn", "Kira", "Oskar", "Zoe", "Milo", "Tess", "Bo", "Edda", "Nils", "Vera", "Ari", "Lumi"];
+const CAP_LAST = ["Stern", "Falk", "Kessler", "Brandt", "Rost", "Kovač", "Reyes", "Hartmann", "Okafor", "Wren", "Lindqvist", "Funke", "Nebel", "Sato", "Morrow", "Blech", "Vogt", "Amari", "Kranich", "Eisner"];
+const SHIP_A = ["Rost", "Schrott", "Sternen", "Nebel", "Funken", "Blech", "Glut", "Eisen", "Nacht", "Kometen", "Staub", "Plasma", "Mond", "Polar", "Donner", "Flicken", "Nieten", "Asche"];
+const SHIP_B = ["krähe", "möwe", "falke", "fuchs", "käfer", "wal", "biene", "otter", "dachs", "hummel", "elster", "motte", "eule", "katze", "ratte", "spatz", "hai", "rabe"];
+const SHIP_FIX = ["Zweite Chance", "Letzter Funke", "Glückspilz", "Alte Liebe", "Klapperkiste", "Hoffnungsschimmer", "Tante Erna", "Unsinkbar II", "Lucky Strike", "Halbe Miete", "Sternschnuppe", "Nimmermüde"];
+const rndOf = a => a[(Math.random() * a.length) | 0];
+const cleanName = v => String(v || "").replace(/[<>]/g, "").replace(/\s+/g, " ").trim().slice(0, 20);
+function randomCaptain() { return `${rndOf(CAP_FIRST)} ${rndOf(CAP_LAST)}`; }
+function randomShip(avoid) {
+  let n;
+  for (let i = 0; i < 8; i++) { n = Math.random() < .2 ? rndOf(SHIP_FIX) : rndOf(SHIP_A) + rndOf(SHIP_B); if (n !== avoid) break; }
+  return n;
+}
+let namingDone = null, namingMode = "start";
+function namingPreview() {
+  $("namingPreview").textContent = `KSV-7 ${cleanName($("shipInput").value) || "…"}`;
+  const cap = namingMode === "start" ? cleanName($("capInput").value) : state.captain;
+  $("namingCap").textContent = cap ? `Kapitän ${cap}` : "";
+}
+function openNaming(mode) {
+  // mode: "start" (Kapitän und Schiff) oder "lost" (nur neues Schiff)
+  namingMode = mode;
+  const needCap = mode === "start";
+  $("capField").hidden = !needCap;
+  $("capShow").hidden = needCap;
+  if (needCap) $("capInput").value = state.captain || randomCaptain();
+  else $("capShow").innerHTML = `Willkommen zurück, Kapitän <b>${escapeHTML(state.captain || "")}</b>. Dein neues Wrack braucht einen Namen.`;
+  $("shipInput").value = mode === "start" && state.shipNamed ? state.shipName : randomShip(state.shipName);
+  $("namingTitle").textContent = mode === "lost" ? "Neues Wrack registrieren" : "Schiffsregister";
+  $("namingInfo").textContent = mode === "lost" ? `Die ${state.shipName || "Rostkrähe"} ist verloren. Der Schrotthändler trägt dein neues Schiff ins Register ein.` : "Die Bergungsgilde braucht deinen Namen und den Namen deines Schiffs.";
+  namingPreview();
+  $("naming").hidden = false;
+  setTimeout(() => { const f = needCap ? $("capInput") : $("shipInput"); f.focus({ preventScroll: true }); f.select(); }, 350);
+  return new Promise(res => { namingDone = res; });
+}
+function submitNaming(e) {
+  e.preventDefault();
+  const ship = cleanName($("shipInput").value);
+  const cap = namingMode === "start" ? cleanName($("capInput").value) : state.captain;
+  if (!ship) { $("shipInput").focus(); return; }
+  if (!cap) { $("capInput").focus(); return; }
+  const first = !state.captain;
+  state.captain = cap; state.shipName = ship; state.shipNamed = true;
+  $("naming").hidden = true;
+  applyName(); renderMeta(); sfx.upgrade(); flashScreen();
+  burstAt($("shipview"), 70, ["#4fe3ff", "#ffffff", "#ffc94a"], 1);
+  toast(`Registriert: ${shipLabel()}`, "#4fe3ff");
+  radio(`Funk: Die Gilde trägt die ${ship} unter Kapitän ${cap} ins Register ein.`, true);
+  addLog("up_hull", `Getauft: ${shipLabel()}`, "", "#4fe3ff");
+  BIP.named = [["excited", namingMode === "lost" ? `Die <b>${escapeHTML(ship)}</b>! Schöner Name. Diesmal halten wir sie zusammen, ${escapeHTML(cap)}.` : first ? `Willkommen an Bord, Kapitän <b>${escapeHTML(cap)}</b>! Die <b>${escapeHTML(ship)}</b> ist zwar ein Wrack, aber unser Wrack.` : `Aye, Kapitän <b>${escapeHTML(cap)}</b>! Die <b>${escapeHTML(ship)}</b> ist startklar.`]];
+  setTimeout(() => { bipState.last = 0; bip("named", 3); }, 700);
+  saveGame();
+  const done = namingDone; namingDone = null; if (done) done();
+}
+const needsNaming = () => !state.captain || !state.shipNamed;
 
 /* ---------- Bip-Hilfemodus ---------- */
 // "?" neben Bip (oder Taste H) schaltet den Hilfemodus an. Bip erklärt dann alles, worüber die Maus fährt.
@@ -4250,7 +4392,7 @@ const HELP_RULES = [
   ["#betCap", () => ["Einsatzgrenze", "Der Reaktor deines Schiffs bestimmt den Höchsteinsatz. Rüste ihn im Hangar aus."]],
   [".auto, #auto10, #auto25, #auto50", () => ["Auto-Scan", "Scannt mehrmals hintereinander. Freigeschaltet über den Antrieb. Ein Klick auf Scan bricht ab."]],
   ["#jackpot", () => ["Sternenschatz", `Wächst mit jedem Scan. Kann bei jedem Scan zufällig fallen, mit höherem Einsatz öfter.${boostOn("treasure") ? " <b>Schatzpeilung aktiv: Chance ×5!</b>" : ""}`]],
-  [".rank", () => ["Rang", `Stufe ${state.level}. XP gibt es für Scans, Gewinne und Aufträge. Neue Stufen bringen Belohnungen und Titel.`]],
+  [".rank", () => ["Rang", `Kapitän ${state.captain || "?"}, Stufe ${state.level}. XP gibt es für Scans, Gewinne und Aufträge. Neue Stufen bringen Belohnungen und Titel.`]],
   [".bchip", el => { const b = BOOSTS.find(x => el.title === x.effect); return b ? [b.name, `${b.effect}. Läuft noch ${fmtTime(state.boosts[b.id] - Date.now())}. Im Boost-Labor verlängerbar.`] : null; }],
   ["#fsbar", () => ["Freispiele", "Kostenlose Scans, jeder Gewinn zählt doppelt."]],
   ["#streak", () => ["Strähne", "Gewinne in Folge erhöhen den Multiplikator bis ×1,5. Ein Scan ohne Gewinn setzt ihn zurück."]],
@@ -4277,7 +4419,8 @@ const HELP_RULES = [
   [".portrait, #crewGrid", () => ["Crew", "Crewmitglieder geben kleine Boni. Anklicken, um mit ihnen zu reden."]],
   ["#paintList", () => ["Lackierung", "Farben für dein Schiff."]],
   ["#decalList", () => ["Abzeichen", "Embleme für den Rumpf."]],
-  ["#nameForm", () => ["Schiffsname", "Gib deinem Schiff einen eigenen Namen."]],
+  ["#nameForm", () => ["Schiffsname", "Gib deinem Schiff einen eigenen Namen. Das KSV-7 ist die Gildenregistrierung und bleibt."]],
+  ["#capForm", () => ["Kapitän", "Dein Name als Kapitän. Taucht im Rang, im Funk und auf der Bestenliste auf."]],
   ["#mapSvg, #sectorInfo", () => ["Sternenkarte", "Klick auf einen freigeschalteten Sektor, um dorthin zu springen."]],
   ["#achGrid", () => ["Erfolge", "Aufgaben mit Belohnung. Grau heißt: noch offen."]],
   ["#albumGrid", () => ["Album", "Seltene Funde aus Sektoren. Manchmal fallen sie beim Scannen ab."]],
@@ -4349,7 +4492,7 @@ document.addEventListener("keydown", e => {
 let reelRuns = [], tickTimer = null, slammed = false;
 
 function spin(auto) {
-  if (spinning || busy || !ready || !$("scratch").hidden || !$("bonus").hidden) return;
+  if (spinning || busy || !ready || !$("scratch").hidden || !$("bonus").hidden || !$("naming").hidden) return;
   const free = inFs();
   if (free && auto !== true) return;
   if (!free && state.credits < bet()) return;
@@ -4693,7 +4836,8 @@ function closeIntro() {
   if (state.sound) { tone(110, 1.1, { type: "sawtooth", vol: .1, slide: 7 }); [523, 784, 1047].forEach((f, i) => tone(f, .9, { type: "triangle", vol: .1, at: .35 + i * .08 })); }
   startMusic();
   flashScreen();
-  setTimeout(() => bip("hello", 3), 1600);
+  if (needsNaming()) setTimeout(() => openNaming("start"), 900);
+  else setTimeout(() => bip("hello", 3), 1600);
   announceVersion();
   bipActivity();
   el.classList.add("out");
@@ -4703,6 +4847,7 @@ $("introBtn").addEventListener("click", closeIntro);
 setTimeout(() => $("introBtn").focus({ preventScroll: true }), 300);
 document.addEventListener("keydown", e => {
   if (!$("intro").hidden && !$("intro").classList.contains("out") && (e.code === "Space" || e.code === "Enter")) { e.preventDefault(); closeIntro(); return; }
+  if (e.target.closest && e.target.closest("input, textarea, select")) return;
   if (e.code !== "Space" || e.repeat || e.target instanceof HTMLButtonElement) return;
   e.preventDefault();
   if (!$("bonus").hidden) { const bb = $("bonusBtn"); if (!bb.hidden && !bb.disabled) bb.click(); return; }

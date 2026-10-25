@@ -2,6 +2,14 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.8.2 · Schiffsregister · 25.10.2026
+- Beim Start trägst du deinen Kapitänsnamen ein und taufst dein Schiff. Das „KSV-7“ steht fest, den Rest wählst du.
+- Zufällige, passende Vorschläge sind schon eingetragen und lassen sich überschreiben oder neu würfeln.
+- Geht ein Schiff verloren, taufst du das neue Wrack.
+- Der Kapitänsname erscheint im Rang, im Funk, bei Bip und auf der Bestenliste.
+- Fix: Aktive Boosts über den Walzen ploppen nicht mehr jede Sekunde neu auf.
+- Fix: Die Leertaste in Eingabefeldern startet keinen Scan mehr.
+
 ## Beta 0.8.1 · Bip erklärt · 25.10.2026
 - Hilfemodus: Das „?“ neben Bip (oder Taste H) schaltet ihn ein. Bip erklärt dann alles, worüber du mit der Maus fährst, mit aktuellen Werten wie Symbolgewinnen beim jetzigen Einsatz.
 - Auf dem Handy zeigt der erste Tipp die Erklärung, der zweite löst die Aktion aus.
