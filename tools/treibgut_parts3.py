@@ -129,6 +129,7 @@ STAR_REPS = [
 ]
 
 CHANGELOG_NEW = r'''const CHANGELOG = [
+  { v: "0.5.1", date: "25.10.2026", title: "Neuer Start-Knopf", items: ["Der Start-Knopf ist moderner und gibt mehr Rückmeldung: Er federt beim Drücken ein und schickt eine Lichtwelle los, beim Drehen läuft ein Lichtbogen um ihn herum und das Symbol dreht sich mit.", "Bei einem Gewinn leuchtet der Knopf golden auf. Geht gerade nichts, zum Beispiel weil der Einsatz zu hoch ist, schüttelt er kurz den Kopf.", "Am Knopf steht jetzt, wie viele Auto-Drehs oder Freispiele noch übrig sind. Auf dem Handy vibriert er beim Drücken leicht."] },
   { v: "0.5.0", date: "25.10.2026", title: "Sprachen", items: ["Neue Sprachauswahl oben neben „Ton“ und im Startbildschirm: Deutsch, Englisch, Spanisch, Japanisch, Russisch, Niederländisch und Griechisch. Die Wahl gilt für alle vier Welten.", "Übersetzt sind bisher Knöpfe, Menüs, Überschriften und kurze Hinweise. Regeln, Hilfe und Sprüche folgen.", "Eigenes Symbol im Browser-Tab für jede Welt."] },
   { v: "0.4.2", date: "25.10.2026", title: "Welt-Menü", items: ["Im Welt-Menü steht bei Neustadt jetzt das neue Grundspiel: die Stadtrundfahrt mit Würfeln, Stadtbus und Grundstücken."] },
   { v: "0.4.1", date: "25.10.2026", title: "Vierte Welt", items: ["Im Welt-Menü gibt es jetzt auch Neustadt, ein Städtebau-Spiel mit eigenem Grundspiel zum Hochstapeln."] },

@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.13.0**, Treibgut 0.5.0, Eisenfront 0.4.0, Neustadt 0.5.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.13.1**, Treibgut 0.5.1, Eisenfront 0.4.1, Neustadt 0.5.1 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -95,3 +95,6 @@ Stand: Sternenwrack **Beta 0.13.0**, Treibgut 0.5.0, Eisenfront 0.4.0, Neustadt 
   - Daten: `tools/i18n/ui_*.tsv` (Spalten de, en, es, ja, ru, nl, el; `#` in allen Spalten gleich oft). `tools/i18n.py` setzt sie zwischen `/*I18N-START*/` und `/*I18N-END*/` ein, nur Einträge, deren Wörter (ab 4 Buchstaben) in der Welt vorkommen. Sternenwrack: `python3 tools/i18n.py index.html` nach jeder Textänderung. Die Welt-Skripte entfernen die Daten der Vorstufe am Anfang (sonst stören sie die Ankertexte) und setzen ihre eigenen am Ende ein.
   - Fehlende Texte finden: per Playwright sichtbare Textknoten prüfen, die nicht übersetzt wurden (`trState.get(n)`: `src === out`). Stand: Bedienung übersetzt; Regeln, Hilfe-Blasen, Sprüche der Begleiter, Funkzeilen und Protokoll noch Deutsch.
 - **Tab-Symbole:** `tools/favicons.py` (`FAVICONS` je Welt, SVG als data-URL). Sternenwrack: `python3 tools/favicons.py index.html sw`, die Welt-Skripte setzen ihres am Ende.
+- **Start-Knopf (SW 0.13.1 usw.):** CSS-Block `Start-Knopf mit Feedback` direkt nach `.spin.stop`, JS-Block `Start-Knopf: Feedback` vor `window.claude?.hot?.snapshot`. Klassen am `#spinwrap`: `pressed` (Einfedern + `.sp-ripple`), `go` (Lichtbogen `.sp-arc`, drehendes Symbol), `won` (über umhülltes `celebrateWin`), `nope` (Kopfschütteln, wenn der Knopf gesperrt ist). Zähler `#spBadge` zeigt Auto-Drehs bzw. Freispiele. Farbe über `--sp-glow` (Standard `--cyan`, in Freispielen `--lime`), also passt er sich jeder Welt an.
+- **Versionen für alle Welten auf einmal:** `python3 tools/bump.py "Titel" "Punkt 1" ...` (PATCH) bzw. mit `--minor`. Trägt Version, Protokoll im Spiel, CHANGELOG.md und README ein. Danach Welten neu erzeugen.
+- **Sprachen Teil 2 (in Arbeit):** `trFull` übersetzt ganze HTML-Texte (Sprechblasen in `bip`, Hilfe in `helpShow`, Funk in `radio`), Namen werden dabei zu `{C}`/`{S}`. `trRich` übersetzt Absätze mit Fettdruck als Ganzes. Texte gesammelt in `tools/i18n/p2_keys.json` (nummeriert).
