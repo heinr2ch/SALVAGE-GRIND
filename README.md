@@ -1,6 +1,6 @@
 # Sternenwrack · Salvage Slots
 
-**Aktuelle Version: Beta 0.12.0** · [Änderungsprotokoll](CHANGELOG.md)
+**Aktuelle Version: Beta 0.12.1** · [Änderungsprotokoll](CHANGELOG.md)
 
 Ein Sci-Fi-Spielautomat im Browser – **nur mit Spielgeld**, es geht um kein echtes Geld.
 
@@ -22,7 +22,7 @@ Das ganze Spiel steckt in einer einzigen Datei: `index.html`.
 
 ### Treibgut · Survival Slots
 
-**Aktuelle Version: Beta 0.4.0** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
+**Aktuelle Version: Beta 0.4.1** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
 
 Meeres-Survival mit eigenem Grundspiel: Statt Walzen ein Fangnetz mit Schwärmen und Nachfang-Kaskaden. Floß statt Raumschiff, Inseln statt Sektoren, Papagei Koko statt Bip. Eigener Spielstand.
 
@@ -30,8 +30,16 @@ Meeres-Survival mit eigenem Grundspiel: Statt Walzen ein Fangnetz mit Schwärmen
 
 ### Eisenfront · Werkstatt-Slots
 
-**Aktuelle Version: Beta 0.3.0** · [Änderungsprotokoll](eisenfront/CHANGELOG.md)
+**Aktuelle Version: Beta 0.3.1** · [Änderungsprotokoll](eisenfront/CHANGELOG.md)
 
 Düstere Werkstatt an der Front: Ein rostiger Panzer wird Stück für Stück wieder flottgemacht. Eigenes Grundspiel als Sammler-Slot: 5 Walzen, 243 Wege, Schraubenkisten mit Beträgen, die Werkstatthund Rex einsammelt. Dazu Brieftaube, Fallschirmkisten, vier Fronten, eigene Musik und Geräusche. Fiktives Szenario ohne echte Armeen oder Abzeichen. Eigener Spielstand.
 
 **Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/eisenfront/
+
+### Neustadt · Aufbau-Slots
+
+**Aktuelle Version: Beta 0.1.0** · [Änderungsprotokoll](neustadt/CHANGELOG.md)
+
+Städtebau: Aus einem Trümmerfeld wird Schritt für Schritt eine Stadt (Wohnviertel, Verkehr, Funkturm, Handel, Energie; Dorf, Kleinstadt, Metropole). Eigenes Grundspiel „Hochstapler“: Eine kleine Walze setzt Etagen auf dein Hochhaus, der Wert steigt mit jeder Etage. Auszahlen, bevor die Abrissbirne kommt. Mit Waschbär Paule. Eigener Spielstand.
+
+**Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/neustadt/

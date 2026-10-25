@@ -2,6 +2,9 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.3.1 · Vierte Welt · 25.10.2026
+- Im Welt-Menü gibt es jetzt auch Neustadt, ein Städtebau-Spiel mit eigenem Grundspiel zum Hochstapeln.
+
 ## Beta 0.3.0 · Drei Fahrzeuge · 25.10.2026
 - Neue Fahrzeugklassen: Panzer, Schwerer Panzer und Mammut, jedes mit eigenem Aussehen.
 - Umsteigen geht, wenn das aktuelle Fahrzeug voll ausgebaut ist (45/45) und du den Rang erreicht hast: Rang 8 für den schweren Panzer, Rang 14 für das Mammut.

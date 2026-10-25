@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.12.1 · Vierte Welt · 25.10.2026
+- Im Welt-Menü gibt es jetzt auch Neustadt, ein Städtebau-Spiel mit eigenem Grundspiel zum Hochstapeln.
+
 ## Beta 0.12.0 · Drei Fahrzeuge · 25.10.2026
 - Neue Fahrzeugklassen: Bergungsschlepper, Frachtkreuzer und Sternenträger, jedes mit eigenem Aussehen.
 - Umsteigen geht, wenn das aktuelle Fahrzeug voll ausgebaut ist (45/45) und du den Rang erreicht hast: Rang 8 für den Kreuzer, Rang 14 für den Träger.
