@@ -2,7 +2,7 @@
 
 Ein Sci-Fi-Spielautomat im Browser – **nur mit Spielgeld**, es geht um kein echtes Geld.
 
-**Jetzt spielen:** https://heinr2ch.github.io/sternenwrack/
+**Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/
 
 ## Was dich erwartet
 
