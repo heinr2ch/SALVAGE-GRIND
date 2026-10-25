@@ -591,7 +591,7 @@ html[data-sector="xeltar"] { --s1: #5dffa8; --s2: #1fbf8f; --s3: #c6f36b; }
 .msg.win { color: var(--win); } .msg.win::before { background: var(--win); box-shadow: 0 0 8px var(--win); }
 .msg.lose { color: var(--lose); } .msg.lose::before { background: var(--lose); }
 .msg.fs { color: var(--lime); } .msg.fs::before { background: var(--lime); box-shadow: 0 0 8px var(--lime); }
-.msg.bonus { color: var(--gold); } .msg.bonus::before { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+.msg.gold { color: var(--gold); } .msg.gold::before { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
 
 /* ---------- Steuerdeck ---------- */
 .deck {
@@ -3998,7 +3998,7 @@ async function activateBoost() {
   await wait(450);
   flashScreen(); burstAt($("bay"), 120, ["#ffc94a", "#ff4fd8", "#ffffff"], 1.2);
   renderLuck();
-  $("msg").className = "msg bonus"; $("msg").textContent = "Bip-Boost aktiv: Der nächste Scan gewinnt garantiert!";
+  $("msg").className = "msg gold"; $("msg").textContent = "Bip-Boost aktiv: Der nächste Scan gewinnt garantiert!";
   radio("Funk: Bordroboter Bip meldet volle Glücksladung.", true);
   addLog("wild", "Bip-Boost geladen", "100 %", "#ffc94a");
   await wait(700);
@@ -4128,7 +4128,7 @@ async function finish(grid, free) {
     const target = findLaserTarget(grid);
     if (target) {
       busy = true; render();
-      $("msg").className = "msg bonus"; $("msg").textContent = "Bergungslaser! Störendes Symbol wird abgebaut …";
+      $("msg").className = "msg gold"; $("msg").textContent = "Bergungslaser! Störendes Symbol wird abgebaut …";
       radio("Funk: Bergungsdrohne im Anflug. Laser frei.", true);
       await laserStrike(target);
       grid[target.c][target.r] = WILD;
@@ -4195,7 +4195,7 @@ async function finish(grid, free) {
     addLog("beacon", free ? "Freispiele verlängert" : "Freispiele ausgelöst", `${award} FS`, "#b8ff5c");
   }
   features.forEach(f => parts.push(`Bonus: ${f.title}!`));
-  if (parts.length) { msg.className = features.length ? "msg bonus" : award ? "msg fs" : "msg win"; msg.textContent = parts.join(" "); }
+  if (parts.length) { msg.className = features.length ? "msg gold" : award ? "msg fs" : "msg win"; msg.textContent = parts.join(" "); }
   if (features.length && autoLeft > 0) { autoLeft = 0; clearAutoMarks(); }
 
   busy = true; render();
@@ -4211,7 +4211,7 @@ async function finish(grid, free) {
     addLog(f.id, f.title, "+" + amount, f.color);
     render();
     if (amount > 0) await celebrateWin(amount, state.credits);
-    msg.className = "msg bonus"; msg.textContent = `${f.title} abgeschlossen: +${amount} Credits.`;
+    msg.className = "msg gold"; msg.textContent = `${f.title} abgeschlossen: +${amount} Credits.`;
     bip(amount >= bet() * 10 ? "bonusGood" : "bonusMeh", 3);
   }
   if (award) {
@@ -4256,7 +4256,7 @@ async function finish(grid, free) {
     bump("jackpots"); sess.won += amount;
     await celebrateJackpot(amount, state.credits);
     bip("jackpot", 3);
-    msg.className = "msg bonus"; msg.textContent = `Sternenschatz geborgen: +${amount} Credits!`;
+    msg.className = "msg gold"; msg.textContent = `Sternenschatz geborgen: +${amount} Credits!`;
   }
   await processProgress();
   if (state.credits < 5) { autoLeft = 0; clearAutoMarks(); await handleBankruptcy(); }
