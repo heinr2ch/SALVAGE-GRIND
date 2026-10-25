@@ -38,8 +38,8 @@ Düstere Werkstatt an der Front: Ein rostiger Panzer wird Stück für Stück wie
 
 ### Neustadt · Aufbau-Slots
 
-**Aktuelle Version: Beta 0.1.0** · [Änderungsprotokoll](neustadt/CHANGELOG.md)
+**Aktuelle Version: Beta 0.2.0** · [Änderungsprotokoll](neustadt/CHANGELOG.md)
 
-Städtebau: Aus einem Trümmerfeld wird Schritt für Schritt eine Stadt (Wohnviertel, Verkehr, Funkturm, Handel, Energie; Dorf, Kleinstadt, Metropole). Eigenes Grundspiel „Hochstapler“: Eine kleine Walze setzt Etagen auf dein Hochhaus, der Wert steigt mit jeder Etage. Auszahlen, bevor die Abrissbirne kommt. Mit Waschbär Paule. Eigener Spielstand.
+Städtebau: Aus einem Trümmerfeld wird Schritt für Schritt eine Stadt (Wohnviertel, Verkehr, Funkturm, Handel, Energie; Dorf, Kleinstadt, Metropole). Eigenes Grundspiel „Hochstapler“: Eine kleine Walze setzt Etagen auf dein Hochhaus, der Wert steigt mit jeder Etage. Auszahlen, bevor die Abrissbirne kommt. Dazu Richtfest, Bauboom, Investoren und Mini-Events mit Geschicklichkeit. Mit Waschbär Paule. Eigener Spielstand.
 
 **Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/neustadt/

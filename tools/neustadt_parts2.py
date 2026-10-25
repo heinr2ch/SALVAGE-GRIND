@@ -49,6 +49,10 @@ BIP_NS = r'''const BIP = {
   charging: [["normal", "Ich sammle schon mal Glück für dich. Siehst du den Balken neben mir?"], ["happy", "Halbe Glücksladung! Ich wedel extra doll."]],
   boostReady: [["wow", "PAULE-BOOST! Die nächste Runde startet mit zwei Kran-Sicherungen!"], ["excited", "Genug Pech gehabt! Ich hab dir zwei Kräne bestellt."]],
   boostWin: [["excited", "Siehste! Auf Paule ist Verlass!"], ["happy", "Paule-Boost geliefert! Gern geschehen, Bürgermeister."]],
+  mini: [["excited", "Achtung, auf der Baustelle ist was los! Schnell!"], ["wow", "Mini-Event! Zeig, was du kannst!"]],
+  investor: [["wow", "Ein Investor! Der Anzug sieht teuer aus. Verkaufen oder weiterbauen?"], ["excited", "Da will jemand dein Haus kaufen! Du entscheidest."]],
+  richtfest: [["excited", "Richtfest! Ich hab den Kranz schon aufgehängt!"], ["happy", "Wieder zehn Etagen! Das wird gefeiert."]],
+  boom: [["excited", "BAUBOOM! Jetzt geht's richtig ab!"], ["wow", "Fünf in Folge! Die Bagger glühen!"]],
   pet: [["happy", "Hihi! Das kitzelt!"], ["happy", "Danke! Du riechst nach Baustelle."], ["excited", "Noch mal! Noch mal!"], ["happy", "Ich mag dich auch, Bürgermeister."], ["wow", "Hinter den Ohren! Genau da!"]],
 };
 '''
@@ -270,6 +274,7 @@ VEHICLES_NS = '''const VEHICLES = [
 '''
 
 CHANGELOG_NS = r'''const CHANGELOG = [
+  { v: "0.2.0", date: "25.10.2026", title: "Mehr Action auf der Baustelle", items: ["Der Kran steht jetzt richtig: neben dem Haus auf dem Boden, der Mast wächst mit, die Last hängt über dem Dach.", "Mini-Events mit Geschicklichkeit: Kran-Timing (im richtigen Moment tippen, bis +3 Etagen), Ziegelregen (goldene Ziegel fangen, Taler sofort) und Tauben-Alarm (alle Tauben verscheuchen, Etage plus Kran-Sicherung).", "Richtfest alle 10 Etagen: Sofortbonus, der auch bei einem Abriss bleibt.", "Bauboom: Fünf Bausteine in Folge, dann bringen die nächsten 3 je eine Etage extra.", "Investor: Ab Etage 5 bietet manchmal jemand 30 % über Wert. Verkaufen oder weiterbauen?", "Balance angepasst, damit die neuen Boni fair bleiben: Die Abrissbirne kommt etwas öfter, der Wert startet etwas höher."] },
   { v: "0.1.0", date: "25.10.2026", title: "Erste Fassung", items: ["Neustadt ist da: Aufbau-Slots, in denen du eine zerstörte Stadt Stück für Stück wieder aufbaust.", "Fünf Ausbaubereiche in je vier sichtbaren Stufen: Wohnviertel, Verkehr, Funkturm, Handel und Energie. Drei Stadtstufen: Dorf, Kleinstadt, Metropole.", "Eigenes Grundspiel „Hochstapler“: Eine kleine Walze setzt Etagen auf dein Hochhaus, der Wert steigt mit jeder Etage. Du entscheidest, wann du auszahlst, bevor die Abrissbirne kommt.", "Kran-Sicherung fängt eine Abrissbirne ab, Baupläne starten die Bauplanauswahl, der Stadtbus die Stadtrundfahrt, Baugenehmigungen bringen Freibauten ab Etage 3.", "Waschbär Paule begleitet dich, Ballons schweben über die Stadt, ein Klick in den Himmel zündet ein Feuerwerk.", "Eigener Look im Stil eines Städtebauspiels, eigene Musik (Stadtpark, Pendlerjazz, Baustellenfunk) und eigene Geräusche.", "Wie alle Welten: nur Spielgeld, eigener Spielstand, über „Welt“ jederzeit wechselbar."] },
 '''
 
