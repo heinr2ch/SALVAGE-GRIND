@@ -229,6 +229,22 @@ body.hot .aurora i { opacity: .7; }
 /* ---------- Bip, der Bordroboter ---------- */
 .bip { position: fixed; z-index: 90; left: max(12px, env(safe-area-inset-left, 0px)); bottom: max(12px, env(safe-area-inset-bottom, 0px)); display: flex; align-items: flex-end; gap: 8px; pointer-events: none; }
 .bip[hidden] { display: none !important; }
+.bip-help { pointer-events: auto; position: absolute; left: 50px; top: -8px; z-index: 2; width: 24px; height: 24px; border-radius: 50%; padding: 0; cursor: pointer;
+  border: 1.5px solid #8b6cff; background: #12152e; color: #d9ccff; font: 800 .8rem/1 var(--f-display); box-shadow: 0 0 10px rgba(139,108,255,.45); opacity: .8; transition: transform .2s, opacity .2s, background .2s; }
+.bip-help:hover { opacity: 1; transform: scale(1.12); }
+.bip-help[aria-pressed="true"] { opacity: 1; background: #8b6cff; color: #fff; box-shadow: 0 0 0 4px rgba(139,108,255,.3), 0 0 18px #8b6cff; animation: helpPulse 1.6s ease-in-out infinite; }
+@keyframes helpPulse { 50% { box-shadow: 0 0 0 7px rgba(139,108,255,.12), 0 0 22px #8b6cff; } }
+@media (max-width: 560px) { .bip-help { left: 38px; top: -10px; } }
+body.helpmode { cursor: help; }
+body.helpmode button, body.helpmode [role="tab"] { cursor: help; }
+.helpfocus { outline: 2px dashed #b49cff !important; outline-offset: 3px; border-radius: 8px; }
+.sym.helpfocus, .bay.helpfocus, .up.helpfocus { outline-offset: -3px; }
+.bip.helping .bip-bubble { pointer-events: none; }
+.bip.helping .bip-x { display: none; }
+.bip.helping .bip-bubble { max-width: min(320px, calc(100vw - 110px)); border-radius: 14px 14px 14px 4px; box-shadow: 0 10px 28px rgba(0,0,0,.45), 0 0 0 2px #8b6cff; }
+.bip-bubble .htitle { display: block; font: 800 .74rem var(--f-display); letter-spacing: .06em; text-transform: uppercase; color: #6a4cff; margin-bottom: 3px; }
+.bip-bubble .hsmall { display: block; margin-top: 5px; font-size: .7rem; color: #6b7099; }
+@media (prefers-reduced-motion: reduce) { .bip-help[aria-pressed="true"] { animation: none; } }
 .bip-bot { pointer-events: auto; width: 62px; height: 72px; padding: 0; border: 0; background: none; cursor: pointer; opacity: .72; transition: opacity .3s, transform .3s; filter: drop-shadow(0 6px 14px rgba(0,0,0,.45)) drop-shadow(0 0 10px rgba(139,108,255,.35)); }
 .bip-bot:hover, .bip.talking .bip-bot { opacity: 1; }
 .bip.talking .bip-bot { transform: scale(1.08); }
@@ -1036,6 +1052,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
       <g class="m m-wow"><circle cx="31" cy="35" r="5" fill="none" stroke="#ff4fd8" stroke-width="2.4"/><circle cx="49" cy="35" r="5" fill="none" stroke="#ff4fd8" stroke-width="2.4"/><circle cx="31" cy="35" r="1.8" fill="#ff4fd8"/><circle cx="49" cy="35" r="1.8" fill="#ff4fd8"/><ellipse cx="40" cy="46.5" rx="3" ry="3.4" fill="#ff4fd8"/></g>
     </svg>
   </button>
+  <button type="button" class="bip-help" id="bipHelp" aria-pressed="false" aria-label="Hilfemodus: Bip erklärt, worüber du mit der Maus fährst (Taste H)">?</button>
   <div class="bip-charge" id="bipCharge" title="Glücksladung: füllt sich bei Scans ohne Gewinn" hidden><i id="bipChargeFill"></i></div>
   <div class="bip-bubble" id="bipBubble" hidden><span id="bipText"></span><button type="button" class="bip-x" id="bipX" aria-label="Sprechblase schließen">×</button></div>
 </div>
@@ -1771,7 +1788,7 @@ function stepFx() {
 const cellH = () => reels[0].clientHeight / 3;
 function symEl(x) {
   const d = document.createElement("div");
-  d.className = "sym"; d.innerHTML = ICONS[x.id]; d.setAttribute("aria-label", x.name);
+  d.className = "sym"; d.dataset.sym = x.id; d.innerHTML = ICONS[x.id]; d.setAttribute("aria-label", x.name);
   if (x.special && x.id !== "beacon") { d.classList.add("feature"); d.style.setProperty("--fc", x.special); }
   if (x.id === "beacon") { d.classList.add("feature"); d.style.setProperty("--fc", x.special); }
   return d;
@@ -3387,7 +3404,7 @@ const BIP = {
   scratchLoss: [["normal", "Diesmal nix. Aber das Rubbeln selbst macht schon Spaß, oder?"], ["sad", "Leer. Das Los wollte wohl nicht teilen."]],
   found: [["happy", "Oh, was entdeckt! Du kennst dein Schiff immer besser."], ["wow", "Huch! Das wusste nicht mal ich."]],
   session: [["normal", "Wir sind schon eine ganze Weile unterwegs. Kurz strecken und was trinken? Ich warte hier."], ["normal", "Kleine Erinnerung von Bip: Pausen sind auch Teil jeder guten Expedition."]],
-  idle: [["normal", "Ich polier solange die Linsen."], ["happy", "Psst ... klick mal auf das Triebwerk."], ["normal", "Ich zähle Sterne. Bin bei 4.812."]],
+  idle: [["normal", "Ich polier solange die Linsen."], ["happy", "Psst ... klick mal auf das Triebwerk."], ["happy", "Unsicher, was etwas macht? Klick auf das <b>?</b> neben mir, dann erkläre ich alles, worüber du fährst."], ["normal", "Ich zähle Sterne. Bin bei 4.812."]],
   crew: [["excited", "Neue Crew! Endlich jemand zum Quatschen außer mir."], ["happy", "Willkommen an Bord! Ich hab schon Platz im Regal gemacht."]],
   paint: [["happy", "Ooh, schicke Farbe! Steht dem Schiff richtig gut."]],
   expedGo: [["normal", "Gute Reise, Schiff! Ich pass hier solange auf."], ["happy", "Expedition gestartet. Ich zähle die Sekunden. Laut."]],
@@ -3408,7 +3425,7 @@ const BIP = {
 };
 const bipState = { last: 0, hideTimer: null, petCount: 0, dry: 0, idleTimer: null, lastSession: 0 };
 function bip(kind, prio = 1) {
-  if (!state.bip || !BIP[kind]) return;
+  if (!state.bip || !BIP[kind] || (typeof helpMode !== "undefined" && helpMode)) return;
   const now = Date.now(), since = now - bipState.last;
   // Prio 3 immer, Prio 2 nach kurzer Pause, Prio 1 nur selten
   if (prio === 2 && since < 7000) return;
@@ -3425,7 +3442,7 @@ function bip(kind, prio = 1) {
   bipState.hideTimer = setTimeout(hideBip, Math.min(7500, 3200 + text.length * 35));
 }
 function hideBip() {
-  const bub = $("bipBubble"); if (bub.hidden) return;
+  const bub = $("bipBubble"); if (bub.hidden || (typeof helpMode !== "undefined" && helpMode)) return;
   bub.classList.add("out");
   setTimeout(() => { bub.hidden = true; bub.classList.remove("out"); $("bip").classList.remove("talking"); $("bipSvg").dataset.mood = "normal"; }, 340);
 }
@@ -4085,8 +4102,9 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "0.8.0";
+const GAME_VERSION = "0.8.1";
 const CHANGELOG = [
+  { v: "0.8.1", date: "25.10.2026", title: "Bip erklärt", items: ["Hilfemodus: Das „?“ neben Bip (oder Taste H) schaltet ihn ein. Bip erklärt dann alles, worüber du mit der Maus fährst, mit aktuellen Werten wie Symbolgewinnen beim jetzigen Einsatz.", "Auf dem Handy zeigt der erste Tipp die Erklärung, der zweite löst die Aktion aus.", "Beenden mit „?“ oder Esc."] },
   { v: "0.8.0", date: "25.10.2026", title: "Sternenstaub", items: ["Neue, seltene Zweitwährung: Sternenstaub. Jeder Scan füllt den Staubmesser, jeder Sternenkristall auf den Walzen bringt extra.", "Boost-Labor in der Bordzentrale mit fünf zeitlich begrenzten Verstärkern: Überladener Scanner, Drohnenschwarm, Signalverstärker, Gildenlizenz und Schatzpeilung.", "Aktive Boosts laufen mit Countdown über den Walzen.", "Zwei neue Erfolge."] },
   { v: "0.7.2", date: "25.10.2026", title: "Mehr Gewinne", items: ["Etwa jeder dritte Scan gewinnt jetzt, vorher nur jeder fünfte.", "Der Automat zahlt im Schnitt mehr aus, als man einsetzt: Man kommt langsam voran, statt Credits zu verlieren.", "Gewinntabelle angepasst: häufigere kleine Funde, seltene Funde bleiben wertvoll."] },
   { v: "0.7.1", date: "25.10.2026", title: "Korrektur", items: ["Die goldene Statuszeile legt sich nach Bonus-Ereignissen nicht mehr als dunkle Ebene über den Automaten.", "Versionsnummer und „Was ist neu“ im Bordbuch."] },
@@ -4206,6 +4224,126 @@ setInterval(() => {
   renderBoostBar();
   if (active) renderLab();
 }, 1000);
+
+/* ---------- Bip-Hilfemodus ---------- */
+// "?" neben Bip (oder Taste H) schaltet den Hilfemodus an. Bip erklärt dann alles, worüber die Maus fährt.
+// Auf Touchgeräten zeigt der erste Tipp die Hilfe, der zweite Tipp auf dasselbe Element löst es aus.
+let helpMode = false, helpEl = null, helpTimer = null, lastPointer = "mouse";
+const hx = n => Math.round(n * lineBet() * lineBoost()).toLocaleString("de-DE");
+const SYM_HELP = {
+  beacon: "Notsignal. Landen 3 oder mehr irgendwo, startet der Notruf mit Freispielen (3 = 8, 4 = 12, 5 = 20). In Freispielen zählt jeder Gewinn doppelt.",
+  capsule: "Frachtkapsel, nur auf Walze 1, 3 und 5. Alle drei gleichzeitig starten die Kapselbergung: Du öffnest Kapseln mit Credits drin.",
+  warp: "Sprungkern, nur auf Walze 2, 3 und 4. Alle drei gleichzeitig starten den Hyperraumsprung mit Multiplikator.",
+  wild: "Wild-Kristall. Den erschafft nur der Bergungslaser. Er ersetzt jedes normale Symbol auf einer Linie.",
+};
+const HELP_RULES = [
+  [".sym[data-sym]", el => { const id = el.dataset.sym, x = id === "wild" ? WILD : BY_ID[id]; if (!x) return null;
+    if (x.pay) return [x.name, `Auf einer Gewinnlinie von links: 3× = <b>${hx(x.pay[0])}</b>, 4× = <b>${hx(x.pay[1])}</b>, 5× = <b>${hx(x.pay[2])}</b> Credits beim aktuellen Einsatz.${id === "crystal" ? " Jeder sichtbare Sternenkristall füllt außerdem den Sternenstaub-Messer." : ""}`];
+    return [x.name, SYM_HELP[id]]; }],
+  [".bay, #frame", () => ["Walzen", "Fünf Walzen, drei Reihen, 5 Gewinnlinien. Gleiche Symbole von links zählen. Ohne Gewinn kann manchmal der Bergungslaser einen blockierenden Brocken wegschießen und einen Wild-Kristall erschaffen."]],
+  [".lp", () => ["Gewinnlinien", "Die Nummern zeigen, wo die 5 Linien starten und enden. Alle Linien im Bordbuch unter „Linien“."]],
+  ["#spin, #spinwrap", () => ["Scan", `Startet einen Scan. Kostet ${bet()} Credits (5 Linien × ${lineBet()}). <b>Leertaste</b> geht auch, erneut drücken stoppt die Walzen sofort.`]],
+  ["#gambleBtn", () => ["Risiko ×2", "Signal-Risiko: Errate die Farbe des nächsten Signals. Richtig verdoppelt den Gewinn (bis ×32), falsch verliert ihn. Genau 50 : 50, du kannst jederzeit einsacken."]],
+  [".stat.dust", () => ["Sternenstaub", `Seltene Zweitwährung, du hast <b>${state.dust || 0}</b>. Der Balken füllt sich mit jedem Scan, Sternenkristalle bringen extra. Ausgeben im Boost-Labor unten.`]],
+  [".stat", el => el.querySelector("#credits") ? ["Credits", "Dein Spielgeld. Für Scans, Schiffs-Upgrades, Rubbellose. Kein echtes Geld."] : el.querySelector("#lastWin") ? ["Gewinn", "Was der letzte Scan eingebracht hat."] : null],
+  ["#betDown, #betUp, #betShow, .stepper", () => ["Einsatz", `Einsatz pro Linie: <b>${lineBet()}</b>, also ${bet()} Credits pro Scan. Höhere Einsätze schaltet der Reaktor frei.`]],
+  ["#betCap", () => ["Einsatzgrenze", "Der Reaktor deines Schiffs bestimmt den Höchsteinsatz. Rüste ihn im Hangar aus."]],
+  [".auto, #auto10, #auto25, #auto50", () => ["Auto-Scan", "Scannt mehrmals hintereinander. Freigeschaltet über den Antrieb. Ein Klick auf Scan bricht ab."]],
+  ["#jackpot", () => ["Sternenschatz", `Wächst mit jedem Scan. Kann bei jedem Scan zufällig fallen, mit höherem Einsatz öfter.${boostOn("treasure") ? " <b>Schatzpeilung aktiv: Chance ×5!</b>" : ""}`]],
+  [".rank", () => ["Rang", `Stufe ${state.level}. XP gibt es für Scans, Gewinne und Aufträge. Neue Stufen bringen Belohnungen und Titel.`]],
+  [".bchip", el => { const b = BOOSTS.find(x => el.title === x.effect); return b ? [b.name, `${b.effect}. Läuft noch ${fmtTime(state.boosts[b.id] - Date.now())}. Im Boost-Labor verlängerbar.`] : null; }],
+  ["#fsbar", () => ["Freispiele", "Kostenlose Scans, jeder Gewinn zählt doppelt."]],
+  ["#streak", () => ["Strähne", "Gewinne in Folge erhöhen den Multiplikator bis ×1,5. Ein Scan ohne Gewinn setzt ihn zurück."]],
+  [".radio", () => ["Funk", "Meldungen aus dem All: Ereignisse, Boosts, Neuigkeiten."]],
+  ["#bipToggle", () => ["Bip", "Blendet mich aus oder ein. Aber wer will das schon?"]],
+  ["#music", () => ["Musik", "Schaltet die Hintergrundmusik an oder aus. Sie reagiert auf das Spiel."]],
+  [".trackchip, #trackSel", () => ["Musiktitel", "Wählt einen von drei Titeln."]],
+  ["#turbo", () => ["Turbo", "Schnellere Walzen. Wird vom Antrieb freigeschaltet."]],
+  ["#sound", () => ["Ton", "Soundeffekte an oder aus."]],
+  [".contract", () => ["Bergungsauftrag", "Erfülle die Aufgabe für Credits und XP. Erledigte Aufträge werden durch neue ersetzt."]],
+  ["#dailyBtn", () => ["Tägliche Bergung", "Einmal am Tag gratis Credits. An mehreren Tagen in Folge steigt die Belohnung, bis zu 7 Tage."]],
+  [".ticket", () => ["Rubbellos", "Drei Preisklassen mit je einem eigenen Mini-Spiel. Kaufen und mit der Maus freirubbeln."]],
+  [".boost[data-boost]", el => { const b = BOOSTS.find(x => x.id === el.dataset.boost); return [b.name, `${b.effect} für ${b.min} Minuten. Kostet <b>${b.cost} Sternenstaub</b>, du hast ${state.dust || 0}. Erneut kaufen verlängert die Zeit, verschiedene Boosts wirken zusammen.`]; }],
+  [".lab", () => ["Boost-Labor", "Hier tauschst du Sternenstaub gegen zeitlich begrenzte Verstärker."]],
+  ['.ptabs [data-pv="ship"]', () => ["Schiff", "Dein Bergungsschiff und seine Upgrades."]],
+  ['.ptabs [data-pv="crew"]', () => ["Crew", "Name, Lackierung, Abzeichen und Crewmitglieder mit kleinen Boni."]],
+  ['.ptabs [data-pv="map"]', () => ["Karte", "Sektoren mit eigenen Farben und Musikstimmung. Neue Sektoren schaltest du mit Stufen frei."]],
+  ['.ptabs [data-pv="col"]', () => ["Sammlung", "Erfolge und Funde für dein Album."]],
+  ['.ptabs [data-pv="log"]', () => ["Bordbuch", "Statistik, Verlauf, Freunde, Spielstand, Einstellungen und Regeln."]],
+  [".up", el => { const c = CATS.find(x => el.id === "up-" + x.id); return c ? [c.name, `${CATS_HELP[c.id]} Jetzt: ${c.effect(state.ship[c.id])}`] : null; }],
+  [".expbtn, #expCard", () => ["Expedition", "Schick dein Schiff los. Es kommt nach der angegebenen Zeit mit Credits zurück, auch wenn das Spiel zu ist."]],
+  ["#focusBtn", () => ["Inspektion", "Zeigt dein Schiff groß."]],
+  ["#shipview", () => ["Hangar", "Dein Schiff. Klick auf Bauteile oder ins All, da gibt es was zu entdecken. Mit Upgrades wird es vom Wrack zum Kreuzer."]],
+  [".portrait, #crewGrid", () => ["Crew", "Crewmitglieder geben kleine Boni. Anklicken, um mit ihnen zu reden."]],
+  ["#paintList", () => ["Lackierung", "Farben für dein Schiff."]],
+  ["#decalList", () => ["Abzeichen", "Embleme für den Rumpf."]],
+  ["#nameForm", () => ["Schiffsname", "Gib deinem Schiff einen eigenen Namen."]],
+  ["#mapSvg, #sectorInfo", () => ["Sternenkarte", "Klick auf einen freigeschalteten Sektor, um dorthin zu springen."]],
+  ["#achGrid", () => ["Erfolge", "Aufgaben mit Belohnung. Grau heißt: noch offen."]],
+  ["#albumGrid", () => ["Album", "Seltene Funde aus Sektoren. Manchmal fallen sie beim Scannen ab."]],
+  ["#sessGrid, #sessChart", () => ["Sitzung", "Wie diese Spielsitzung läuft."]],
+  ["#log", () => ["Verlauf", "Die letzten Ereignisse und Gewinne."]],
+  ["#myCard, #friendCode, #addFriend, #copyCard, #boardRows", () => ["Freunde", "Tausche Codes mit Freunden und vergleicht euch auf der Bestenliste."]],
+  ["#exportBtn, #importBtn, #exportBox, #importBox, #copyExport, #dlExport", () => ["Spielstand", "Exportiere deinen Spielstand als Code oder Datei, um ihn woanders weiterzuspielen."]],
+  ["#volMusic, #volSfx, #lowFx", () => ["Einstellungen", "Lautstärke und weniger Effekte für langsamere Geräte."]],
+  ["#resetBtn", () => ["Neustart", "Löscht deinen Fortschritt. Vorsicht!"]],
+  [".ver, .brand", () => ["Sternenwrack", `Beta ${GAME_VERSION}. Neuigkeiten stehen im Bordbuch.`]],
+  ["#bipBot", () => ["Bip", "Das bin ich! Streicheln erlaubt."]],
+  ["#bipCharge", () => ["Glücksladung", "Füllt sich bei Scans ohne Gewinn. Ist sie voll, garantiere ich dir den nächsten Gewinn."]],
+  ["#bipHelp", () => ["Hilfemodus", "Klick hier oder drück <b>H</b>, um mich wieder normal plaudern zu lassen."]],
+];
+const CATS_HELP = { hull: "Rumpf: schützt beim Bankrott, du bekommst mehr zurück.", engine: "Antrieb: schaltet Auto-Scans und Turbo frei.", scanner: "Sensorik: erhöht alle Liniengewinne ein bisschen.", cargo: "Frachtraum: mehr Gewinn in Bonusspielen.", reactor: "Reaktor: höhere Einsätze." };
+function resolveHelp(t) {
+  for (let el = t; el && el !== document.body; el = el.parentElement) {
+    if (el.id === "bipBubble") return null;
+    for (const [sel, fn] of HELP_RULES) if (el.matches(sel)) { const r = fn(el); if (r) return { el, r }; }
+  }
+  for (let el = t; el && el !== document.body; el = el.parentElement) {
+    const tip = el.getAttribute && (el.getAttribute("title") || (el.tagName === "BUTTON" && el.getAttribute("aria-label")));
+    if (tip) return { el, r: [el.textContent.trim().split("\n")[0].slice(0, 40) || "Info", tip] };
+  }
+  return null;
+}
+function helpSay(html, mood = "happy") {
+  clearTimeout(bipState.hideTimer);
+  const bub = $("bipBubble"); $("bipText").innerHTML = html; $("bipSvg").dataset.mood = mood;
+  bub.classList.remove("out"); bub.hidden = false; $("bip").classList.add("talking");
+}
+function helpShow(hit) {
+  if (helpEl) helpEl.classList.remove("helpfocus");
+  helpEl = hit ? hit.el : null;
+  if (!hit) return helpSay(`<span class="htitle">Hilfemodus</span>Fahr mit der Maus über etwas, dann erkläre ich es dir.<span class="hsmall">Beenden: ? oder Esc</span>`, "normal");
+  helpEl.classList.add("helpfocus");
+  helpSay(`<span class="htitle">${hit.r[0]}</span>${hit.r[1]}`);
+}
+function setHelp(on) {
+  if (on && !state.bip) return;
+  helpMode = on;
+  document.body.classList.toggle("helpmode", on);
+  $("bip").classList.toggle("helping", on);
+  $("bipHelp").setAttribute("aria-pressed", String(on));
+  sfx.click();
+  if (on) { helpShow(null); try { localStorage.setItem("sw-help", "1"); } catch (e) {} }
+  else { if (helpEl) helpEl.classList.remove("helpfocus"); helpEl = null; hideBip(); }
+}
+$("bipHelp").addEventListener("click", e => { e.stopPropagation(); setHelp(!helpMode); });
+document.addEventListener("pointerdown", e => { lastPointer = e.pointerType || "mouse"; }, true);
+document.addEventListener("mouseover", e => {
+  if (!helpMode || lastPointer === "touch") return;
+  if (e.target.closest && e.target.closest("#bipBubble")) return;
+  clearTimeout(helpTimer);
+  helpTimer = setTimeout(() => { const hit = resolveHelp(e.target); if ((hit && hit.el) !== helpEl || hit) helpShow(hit); }, 90);
+});
+document.addEventListener("click", e => {
+  if (!helpMode || lastPointer !== "touch" || e.target.closest("#bip")) return;
+  const hit = resolveHelp(e.target);
+  if (hit && hit.el !== helpEl) { e.preventDefault(); e.stopPropagation(); helpShow(hit); }
+}, true);
+document.addEventListener("keydown", e => {
+  if (e.target.closest && e.target.closest("input, textarea, select")) return;
+  if (e.key === "h" || e.key === "H") { if (!e.ctrlKey && !e.metaKey && !e.altKey) setHelp(!helpMode); }
+  else if (e.key === "Escape" && helpMode) setHelp(false);
+});
 
 /* ---------- Spielablauf ---------- */
 let reelRuns = [], tickTimer = null, slammed = false;
@@ -4510,7 +4648,7 @@ $("trackSel").addEventListener("change", e => {
   if (!state.music) { state.music = true; try { localStorage.setItem("sw-music", "1"); } catch (err) {} startMusic(); render(); }
 });
 $("bipToggle").addEventListener("click", () => {
-  state.bip = !state.bip; sfx.click();
+  state.bip = !state.bip; sfx.click(); if (!state.bip && helpMode) setHelp(false);
   try { localStorage.setItem("sw-bip", state.bip ? "1" : "0"); } catch (e) {}
   render();
   if (state.bip) { bipState.last = 0; bip("hello", 3); }

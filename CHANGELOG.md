@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.8.1 · Bip erklärt · 25.10.2026
+- Hilfemodus: Das „?“ neben Bip (oder Taste H) schaltet ihn ein. Bip erklärt dann alles, worüber du mit der Maus fährst, mit aktuellen Werten wie Symbolgewinnen beim jetzigen Einsatz.
+- Auf dem Handy zeigt der erste Tipp die Erklärung, der zweite löst die Aktion aus.
+- Beenden mit „?“ oder Esc.
+
 ## Beta 0.8.0 · Sternenstaub · 25.10.2026
 - Neue, seltene Zweitwährung: Sternenstaub. Jeder Scan füllt den Staubmesser, jeder Sternenkristall auf den Walzen bringt extra.
 - Zusätzlich Sternenstaub für große Bergungen, Bonusspiele und den Sternenschatz.
