@@ -399,6 +399,21 @@ html[data-sector="xeltar"] { --s1: #5dffa8; --s2: #1fbf8f; --s3: #c6f36b; }
 .gladder span.on { border-color: var(--win); color: var(--win); }
 .lowfx .aurora, .lowfx #stars, .lowfx .sheen, .lowfx .scanline { display: none; }
 
+/* ---------- Bip-Boost ---------- */
+.bip-charge { pointer-events: auto; align-self: flex-end; margin: 0 0 10px -6px; width: 7px; height: 50px; border-radius: 99px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); position: relative; overflow: hidden; }
+.bip-charge i { position: absolute; left: 0; right: 0; bottom: 0; height: var(--lv, 0%); background: linear-gradient(0deg, #ff4fd8, #ffc94a); box-shadow: 0 0 8px #ffc94a; transition: height .5s ease; }
+.bip-charge.full { box-shadow: 0 0 14px #ffc94a, 0 0 26px #ff4fd8; animation: chargeFull .8s ease-in-out infinite alternate; }
+@keyframes chargeFull { to { box-shadow: 0 0 22px #ffc94a, 0 0 40px #ff4fd8; } }
+.bip.boost .bip-bot { opacity: 1; animation: bipBoost 2.4s cubic-bezier(.3,1.2,.4,1); filter: drop-shadow(0 0 16px #ffc94a) drop-shadow(0 0 30px #ff4fd8); }
+@keyframes bipBoost { 0% { transform: none; } 20% { transform: translate(30px, -60px) scale(1.7) rotate(-10deg); } 45% { transform: translate(40px, -80px) scale(1.9) rotate(360deg); } 75% { transform: translate(30px, -60px) scale(1.7) rotate(370deg); } 100% { transform: none; } }
+.boostbeam { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 95; pointer-events: none; overflow: visible; opacity: 0; }
+.boostbeam.go { animation: beamGo 1.3s ease-out; }
+@keyframes beamGo { 0% { opacity: 0; } 15% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
+.boostbeam path { filter: drop-shadow(0 0 8px #ffc94a); }
+.frame.boosted { box-shadow: 0 0 40px rgba(255,201,74,.55), 0 0 80px rgba(255,79,216,.35), inset 0 0 40px rgba(0,0,0,.6); animation: boostedPulse 1.1s ease-in-out infinite alternate; }
+@keyframes boostedPulse { to { box-shadow: 0 0 60px rgba(255,201,74,.8), 0 0 110px rgba(255,79,216,.5), inset 0 0 40px rgba(0,0,0,.6); } }
+.frame.boosted::before, .frame.boosted::after { border-color: #ffc94a; }
+
 /* ---------- Signatur ---------- */
 .intro-by { margin-top: 18px; font: 600 .72rem var(--f-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--ink-soft); opacity: .8; animation: fadeIn .8s 1.9s both; }
 .intro-by b { color: var(--ink); font-weight: 700; background: linear-gradient(90deg, var(--s1), var(--s3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -926,7 +941,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
   #wheel { transition-duration: .3s; }
   .pod, .pod.open { animation: none; }
-  .intro-by, .daily.ready svg, .warpfx.go, .gamble, .pdot, .mapship, .ach.new, .bip-bot svg, .bip-thrust, .bip-ant, .bip-eyes, .bip-arm, .bip-heart, .bip-tear, #shipG.roll, #focusShip.roll, .ship.boost .flame, .bubble, .sonar, .dent, .peek, .jackpot::after, .streak svg, .frame.heat3, .contract, .contract.done::after, .hsheen, .fire, .cable, .nav, .strobe, .chase, .diamond, .ripple, .cone, .focus-view svg.cam, .scanline, .callout i, .sym.lasered svg, .sym.lasered::before, .sym.grow svg, .sym.wildborn::before, .aurora i, .emb-ring, .emb-ring2, .emb-star, .brand h1, .sheen, .spinwrap.idle::after, .intro-title span, .emblem.big, .intro-btn, .banner.mega::after, .banner .b-amt.glitch, .radio i, .sym.hit svg, .reel.tease, .banner::before, .frame.shake, .strip.land, .spinwrap.go .spinring, .sym.feature::after, .ship, .flame, .dish, .ping, .pulse, .flick, .blink, .energy, .shipview.damage { animation: none; }
+  .bip-charge.full, .bip.boost .bip-bot, .boostbeam.go, .frame.boosted, .intro-by, .daily.ready svg, .warpfx.go, .gamble, .pdot, .mapship, .ach.new, .bip-bot svg, .bip-thrust, .bip-ant, .bip-eyes, .bip-arm, .bip-heart, .bip-tear, #shipG.roll, #focusShip.roll, .ship.boost .flame, .bubble, .sonar, .dent, .peek, .jackpot::after, .streak svg, .frame.heat3, .contract, .contract.done::after, .hsheen, .fire, .cable, .nav, .strobe, .chase, .diamond, .ripple, .cone, .focus-view svg.cam, .scanline, .callout i, .sym.lasered svg, .sym.lasered::before, .sym.grow svg, .sym.wildborn::before, .aurora i, .emb-ring, .emb-ring2, .emb-star, .brand h1, .sheen, .spinwrap.idle::after, .intro-title span, .emblem.big, .intro-btn, .banner.mega::after, .banner .b-amt.glitch, .radio i, .sym.hit svg, .reel.tease, .banner::before, .frame.shake, .strip.land, .spinwrap.go .spinring, .sym.feature::after, .ship, .flame, .dish, .ping, .pulse, .flick, .blink, .energy, .shipview.damage { animation: none; }
 }
 </style>
 
@@ -936,6 +951,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 <div id="flash" aria-hidden="true"></div>
 <div class="comet" id="comet" aria-hidden="true"></div>
 <div class="warpfx" id="warpfx" aria-hidden="true"></div>
+<svg class="boostbeam" id="boostBeam" aria-hidden="true"><defs><linearGradient id="beamG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff4fd8"/><stop offset=".5" stop-color="#ffc94a"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs><path id="beamPath" fill="none" stroke="url(#beamG)" stroke-width="6" stroke-linecap="round"/><path id="beamCore" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/></svg>
 <div class="intro" id="intro">
   <div class="intro-inner">
     <svg viewBox="0 0 64 64" aria-hidden="true" class="emblem big">
@@ -974,6 +990,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
       <g class="m m-wow"><circle cx="31" cy="35" r="5" fill="none" stroke="#ff4fd8" stroke-width="2.4"/><circle cx="49" cy="35" r="5" fill="none" stroke="#ff4fd8" stroke-width="2.4"/><circle cx="31" cy="35" r="1.8" fill="#ff4fd8"/><circle cx="49" cy="35" r="1.8" fill="#ff4fd8"/><ellipse cx="40" cy="46.5" rx="3" ry="3.4" fill="#ff4fd8"/></g>
     </svg>
   </button>
+  <div class="bip-charge" id="bipCharge" title="Glücksladung: füllt sich bei Scans ohne Gewinn" hidden><i id="bipChargeFill"></i></div>
   <div class="bip-bubble" id="bipBubble" hidden><span id="bipText"></span><button type="button" class="bip-x" id="bipX" aria-label="Sprechblase schließen">×</button></div>
 </div>
 
@@ -1348,7 +1365,7 @@ const reels = [...document.querySelectorAll(".reel")];
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
-let state = { credits: START, lineIdx: 1, spins: 0, best: 0, peak: START, fsRounds: 0, bonusCount: 0, shipsLost: 0, xp: 0, level: 1, pot: 500, missions: [], found: [], sound: true, bip: true, track: "neon", crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: [], musicVol: 1, sfxVol: 1, lowfx: false, music: true, turbo: false, ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 } };
+let state = { credits: START, lineIdx: 1, spins: 0, best: 0, peak: START, fsRounds: 0, bonusCount: 0, shipsLost: 0, xp: 0, level: 1, pot: 500, missions: [], found: [], sound: true, bip: true, luck: 0, boostReady: 0, track: "neon", crew: [], paint: "std", decal: "none", shipName: "Rostkrähe", exped: null, sector: "orion", visited: ["orion"], album: [], ach: [], stats: {}, daily: null, friends: [], musicVol: 1, sfxVol: 1, lowfx: false, music: true, turbo: false, ship: { hull: 0, engine: 0, scanner: 0, cargo: 0, reactor: 0 } };
 let faces = null, spinning = false, fsLeft = 0, fsWin = 0, fsTotal = 0, fsActive = false;
 let busy = false, shownCredits = START, autoLeft = 0;
 const logItems = [];
@@ -1602,6 +1619,8 @@ const sfx = {
   mission() { [784, 1047, 1319].forEach((f, i) => tone(f, .2, { type: "triangle", vol: .12, at: i * .07 })); tone(1568, .5, { type: "sine", vol: .1, at: .22 }); noise(.08, .1, 0, 5000); },
   rankUp() { tone(196, .8, { type: "sawtooth", vol: .1, slide: 4 }); [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, .28, { type: "square", vol: .07, at: .3 + i * .07 })); [784, 1047, 1319].forEach(f => tone(f, 1.4, { type: "triangle", vol: .12, at: .75 })); },
   jackpot() { tone(80, 1.6, { type: "sawtooth", vol: .14, slide: 12 }); noise(1.4, .12, 0, 600); [392, 523, 659, 784, 1047, 1319, 1568, 2093].forEach((f, i) => tone(f, .35, { type: "square", vol: .08, at: .9 + i * .08 })); [523, 659, 784, 1047].forEach(f => tone(f, 2.4, { type: "triangle", vol: .13, at: 1.6 })); },
+  powerUp() { tone(220, 1.4, { type: "sawtooth", vol: .1, slide: 6 }); tone(330, 1.4, { type: "square", vol: .04, slide: 6 }); [523, 659, 784, 1047, 1319, 1568].forEach((f, i) => tone(f, .22, { type: "triangle", vol: .1, at: .9 + i * .06 })); noise(.6, .06, 1, 5000); },
+  boostSpin() { [784, 1047, 1319].forEach((f, i) => tone(f, .18, { type: "square", vol: .06, at: i * .05 })); },
   jump() { tone(90, 1.6, { type: "sawtooth", vol: .14, slide: 10 }); noise(1.5, .14, 0, 400); tone(1600, .6, { vol: .06, at: 1, slide: .3 }); [523, 784, 1047].forEach((f, i) => tone(f, .7, { type: "triangle", vol: .1, at: 1.1 + i * .07 })); },
   droneIn() { tone(600, .5, { type: "sawtooth", vol: .04, slide: .5 }); noise(.4, .05, 0, 2500); },
   laser(dur) { tone(196, dur, { type: "sawtooth", vol: .09, slide: 1.1 }); tone(392, dur, { type: "square", vol: .03, slide: 1.2 }); tone(1568, dur, { vol: .025, slide: .9 }); noise(dur, .06, 0, 3500); },
@@ -1763,6 +1782,7 @@ function render() {
   $("music").setAttribute("aria-pressed", String(state.music));
   $("bipToggle").setAttribute("aria-pressed", String(state.bip));
   $("bip").hidden = !state.bip;
+  renderLuck();
   if ($("bonus").hidden) mus.mode = fsMode ? "fs" : "base";
   wrap.classList.toggle("idle", !btn.disabled && !spinning && !busy);
   const turboOk = unlocked("turbo");
@@ -1781,6 +1801,7 @@ function buildInfo() {
     `<tr><td>${ICONS[x.id]}${x.name}</td>${x.pay.map(p => `<td class="pay">${p}</td>`).join("")}</tr>`).join("");
   $("panel-bonus").innerHTML = `
     <div class="feat" style="--fc:#b8ff5c">${ICONS.beacon}<div><h3>Notsignal · Freispiele</h3><p>Zählt auf jeder Position. 3, 4 oder 5 Notsignale bringen 8, 12 oder 20 Freispiele. Alle Gewinne darin zählen doppelt, neue Notsignale verlängern die Runde.</p></div></div>
+    <div class="feat" style="--fc:#ffc94a">${ICONS.wild}<div><h3>Bip-Boost</h3><p>Jeder Scan ohne Gewinn füllt Bips Glücksladung, den Balken neben ihm. Nach ${12} Scans ohne Gewinn ist sie voll: Bip schießt Glück in die Walzen, und der nächste Scan gewinnt garantiert.</p></div></div>
     <div class="feat" style="--fc:#ff4fd8">${ICONS.beacon}<div><h3>Signal-Risiko</h3><p>Nach einem normalen Gewinn kannst du ihn verdoppeln: Cyan oder Magenta raten, die Chance ist genau 50 : 50, höchstens fünf Runden.</p></div></div>
     <div class="feat" style="--fc:#4fe3ff">${ICONS.up_engine}<div><h3>Expeditionen und Sektoren</h3><p>Schick dein Schiff in Echtzeit auf Expedition. Die Belohnung wächst mit dem Ausbau und dem Sektor. Neue Sektoren schaltest du über deinen Rang frei. Jeder hat eigene Farben, Musikstimmung und drei Sammelstücke.</p></div></div>
     <div class="feat" style="--fc:#ffc94a">${ICONS.scrap}<div><h3>Rubbellose</h3><p>Drei Lose im Kiosk: Schrottfund (20), Kristallfieber (100) und Hyperraum-Jackpot (500). Das Ergebnis steht beim Kauf fest, die Auszahlungsquote liegt bei jedem Los bei rund 95 %.</p></div></div>
@@ -2611,7 +2632,7 @@ function gameOver() {
 
 /* ---------- Spielstand (privat pro Spieler) ---------- */
 let ready = false, saveRef = null, saveTimer = null, saving = false, saveDirty = false, localApi = false;
-const SAVE_KEYS = ["credits", "lineIdx", "spins", "best", "peak", "fsRounds", "bonusCount", "shipsLost", "xp", "level", "pot"];
+const SAVE_KEYS = ["credits", "lineIdx", "spins", "best", "peak", "fsRounds", "bonusCount", "shipsLost", "xp", "level", "pot", "luck", "boostReady"];
 function serialize() {
   const o = { v: 1, ship: { ...state.ship }, missions: state.missions.map(m => ({ ...m })), found: [...(state.found || [])],
     crew: [...(state.crew || [])], paint: state.paint || "std", decal: state.decal || "none", shipName: state.shipName || "Rostkrähe", exped: state.exped || null,
@@ -3317,6 +3338,9 @@ const BIP = {
   daily: [["happy", "Tagesbonus abgeholt! Schön, dass du wieder da bist."]],
   gambleWin: [["wow", "Mutig! Und es hat sich gelohnt!"], ["excited", "Richtig geraten! Meine Antenne glüht."]],
   gambleLoss: [["sad", "Oh je. Das Risiko war echt 50 zu 50, diesmal leider gegen uns."]],
+  charging: [["normal", "Ich lade schon mal Glück für dich auf. Siehst du den Balken neben mir?"], ["happy", "Halbe Glücksladung! Ich summe extra laut."]],
+  boostReady: [["wow", "BIP-BOOST! Volle Glücksladung! Der nächste Scan gewinnt garantiert!"], ["excited", "Genug Pech gehabt! Ich hab dir Glück in die Walzen geschossen. Nächster Scan gewinnt!"]],
+  boostWin: [["excited", "Siehste! Auf Bip ist Verlass!"], ["happy", "Bip-Boost geliefert! Gern geschehen, Kapitän."]],
   pet: [["happy", "Hihi! Das kitzelt!"], ["happy", "Piep! Danke!"], ["excited", "Noch mal! Noch mal!"], ["happy", "Ich mag dich auch, Kapitän."], ["wow", "Vorsicht, frisch poliert!"]],
 };
 const bipState = { last: 0, hideTimer: null, petCount: 0, dry: 0, idleTimer: null, lastSession: 0 };
@@ -3359,7 +3383,7 @@ function bipAfterSpin(info) {
   if (info.streak === 3) return bip("streak3", 2);
   if (info.prevStreak >= 3 && info.streak === 0) return bip("broke", 2);
   if (info.factor >= 5) return bip("good", 2);
-  if (bipState.dry > 0 && bipState.dry % 12 === 0) return bip("dry", 2);
+  if (bipState.dry === 8) return bip("dry", 2);
   if (info.win > 0) return bip("small", 1);
 }
 
@@ -3937,9 +3961,61 @@ function bindBig() {
   $("lowFx").addEventListener("change", e => { state.lowfx = e.target.checked; document.body.classList.toggle("lowfx", state.lowfx); try { localStorage.setItem("sw-lowfx", state.lowfx ? "1" : "0"); } catch (er) {} });
 }
 function afterLoad() {
-  ensureMissions(); renderMissions(true); renderMeta(); renderFound(); applySector(true); applyName();
+  ensureMissions(); renderMissions(true); renderMeta(); renderFound(); applySector(true); applyName(); renderLuck();
   lastShipKey = ""; renderExped(); renderDaily(); render();
   if (currentPv !== "ship") switchPv(currentPv);
+}
+
+/* ---------- Bip-Boost: Frustschutz ---------- */
+// Nach BOOST_AT Scans ohne jeden Gewinn lädt Bip auf und garantiert beim nächsten Scan einen Liniengewinn.
+const BOOST_AT = 12;
+let boostSpinActive = false;
+function renderLuck() {
+  const el = $("bipCharge"), lv = Math.min(1, (state.luck || 0) / BOOST_AT);
+  el.hidden = !state.bip || (!(state.luck >= 3) && !state.boostReady);
+  el.style.setProperty("--lv", (state.boostReady ? 100 : lv * 100) + "%");
+  el.classList.toggle("full", !!state.boostReady);
+  el.title = state.boostReady ? "Bip-Boost bereit: der nächste Scan gewinnt garantiert" : `Glücksladung ${state.luck || 0} / ${BOOST_AT}: füllt sich bei Scans ohne Gewinn`;
+  $("frame").classList.toggle("boosted", !!state.boostReady);
+}
+async function activateBoost() {
+  state.boostReady = 1; state.luck = 0;
+  sfx.powerUp(); duckMusic(2200);
+  const box = $("bip");
+  if (state.bip) {
+    box.classList.remove("boost"); void box.offsetWidth; box.classList.add("boost");
+    setTimeout(() => box.classList.remove("boost"), 2500);
+    bipState.last = 0; bip("boostReady", 3);
+  }
+  await wait(900);
+  // Strahl von Bip in die Walzen
+  const from = (state.bip ? $("bipBot") : $("spinwrap")).getBoundingClientRect(), to = $("bay").getBoundingClientRect();
+  const x1 = from.left + from.width / 2 + (state.bip ? 40 : 0), y1 = from.top + from.height / 2 - (state.bip ? 70 : 0), x2 = to.left + to.width / 2, y2 = to.top + to.height / 2;
+  const mx = (x1 + x2) / 2 - 80, my = Math.min(y1, y2) - 120;
+  const d = `M${x1},${y1} Q${mx},${my} ${x2},${y2}`;
+  $("beamPath").setAttribute("d", d); $("beamCore").setAttribute("d", d);
+  const beam = $("boostBeam"); beam.classList.remove("go"); void beam.getBoundingClientRect(); beam.classList.add("go");
+  await wait(450);
+  flashScreen(); burstAt($("bay"), 120, ["#ffc94a", "#ff4fd8", "#ffffff"], 1.2);
+  renderLuck();
+  $("msg").className = "msg bonus"; $("msg").textContent = "Bip-Boost aktiv: Der nächste Scan gewinnt garantiert!";
+  radio("Funk: Bordroboter Bip meldet volle Glücksladung.", true);
+  addLog("wild", "Bip-Boost geladen", "100 %", "#ffc94a");
+  await wait(700);
+  saveGame();
+}
+function forceWin(results) {
+  const L = LINES[(Math.random() * LINES.length) | 0];
+  // bewusst kleine bis mittlere Gewinne: der Boost soll trösten, nicht das Spiel kippen (per Simulation geprüft)
+  const pool = [["scrap", 50], ["cell", 35], ["chip", 12], ["core", 3]];
+  let r = Math.random() * 100, id = "scrap";
+  for (const [k, w] of pool) { if ((r -= w) < 0) { id = k; break; } }
+  const sym = BY_ID[id], n = Math.random() < .9 ? 3 : 4;
+  for (let c = 0; c < n; c++) results[c][L[c]] = sym;
+  if (n < 5 && results[n][L[n]] === sym) {
+    const alt = REEL_SETS[n].list.filter(x => x.pay && x !== sym);
+    results[n][L[n]] = alt[(Math.random() * alt.length) | 0];
+  }
 }
 
 /* ---------- Spielablauf ---------- */
@@ -3968,6 +4044,8 @@ function spin(auto) {
 
   const h = cellH();
   const results = reels.map((_, i) => pick3(i));
+  boostSpinActive = false;
+  if (!free && state.boostReady) { forceWin(results); boostSpinActive = true; state.boostReady = 0; state.luck = 0; sfx.boostSpin(); }
   const has = id => results.map(col => col.some(s => s.id === id));
   const hasBeacon = has("beacon"), hasCap = has("capsule"), hasWarp = has("warp");
   const tf = T();
@@ -4100,7 +4178,7 @@ async function finish(grid, free) {
   const parts = [];
   if (win > 0) {
     const top = wins.slice().sort((a, b) => b.factor - a.factor)[0];
-    parts.push(`${lasered ? "Wild-Kristall! " : ""}${top.count}× ${top.sym.name}${wins.length > 1 ? ` und ${wins.length - 1} weitere Linie${wins.length > 2 ? "n" : ""}` : ""}: +${win} Credits${free ? " (×2)" : ""}${sMult > 1 ? ` · Strähne ×${String(sMult).replace(".", ",")}` : ""}.`);
+    parts.push(`${boostSpinActive ? "Bip-Boost! " : ""}${lasered ? "Wild-Kristall! " : ""}${top.count}× ${top.sym.name}${wins.length > 1 ? ` und ${wins.length - 1} weitere Linie${wins.length > 2 ? "n" : ""}` : ""}: +${win} Credits${free ? " (×2)" : ""}${sMult > 1 ? ` · Strähne ×${String(sMult).replace(".", ",")}` : ""}.`);
     addLog(lasered ? "wild" : top.sym.id, `${lasered ? "Laser · " : ""}${top.count}× ${top.sym.name}${wins.length > 1 ? ` +${wins.length - 1}` : ""}${free ? " · ×2" : ""}`, "+" + win, lasered ? "#ffffff" : top.sym.color);
     if (lasered) parts.length < 400 && radio(`Funk: Wild-Kristall geborgen. ${top.sym.name} auf Linie gebracht.`, true);
   }
@@ -4183,6 +4261,13 @@ async function finish(grid, free) {
   await processProgress();
   if (state.credits < 5) { autoLeft = 0; clearAutoMarks(); await handleBankruptcy(); }
   if (!free && Math.random() < 1 / 150) findAlbumItem(curSector().id, "Scan");
+  if (!free) {
+    if (win > 0 || features.length || award) state.luck = 0; else state.luck = (state.luck || 0) + 1;
+    if (boostSpinActive && win > 0) { setTimeout(() => { bipState.last = 0; bip("boostWin", 3); }, 300); boostSpinActive = false; }
+    if (state.luck >= BOOST_AT && !state.boostReady) await activateBoost();
+    else if (state.luck === Math.round(BOOST_AT / 2)) bip("charging", 2);
+    renderLuck();
+  }
   checkAch(); sessPoint();
   if (!free && win > 0 && autoLeft === 0 && !features.length && state.credits >= 5) offerGamble(win);
   busy = false;
