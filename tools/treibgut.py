@@ -27,6 +27,10 @@ def block(start, end, new, keep_end=True):
 
 from treibgut_parts import *   # Inhalte (Grafiken, Texte)
 from treibgut_parts4 import *  # rustikaler Look und eigene Musik
+from treibgut_parts5 import *  # Fangnetz-Kaskaden, rustikale Geräusche, Wurfhaken
+for _a, _b in SKY_SLOW:
+    assert _a in OCEAN_SKY, ("SKY_SLOW", _a[:60])
+    OCEAN_SKY = OCEAN_SKY.replace(_a, _b)
 
 # ---------- 1. Speicher und Codes trennen ----------
 s = re.sub(r'(["`])sw-', r'\1tg-', s)
@@ -64,6 +68,8 @@ block("function decalSVG(g) {", "function choosePaint(id) {", DECAL_NEW)
 block("const PAINTS = [", "const DECALS = [", PAINTS_NEW)
 block("const DECALS = [", "const unlockedCos", DECALS_NEW)
 block("const DRONE = `", "function sparkAt(", GULL_NEW)
+rep(HOOK_OLD, HOOK_NEW)
+rep(COUGH_OLD, COUGH_NEW)
 
 # ---------- 8. Hintergrund: Luftblasen statt Sterne ----------
 block("function drawStars(dt) {", "let lastT = performance.now();", BUBBLES)
@@ -104,8 +110,20 @@ rep("\n</style>", "\n" + RUSTIC_CSS + EXTRA_CSS)
 rep_all("Fredoka, sans-serif", "'Patua One', serif")
 
 # ---------- 13. Version und Änderungsprotokoll ----------
-s = re.sub(r'const GAME_VERSION = "[^"]+";', f'const GAME_VERSION = "{TG_VERSION_RUSTIC}";', s)
+s = re.sub(r'const GAME_VERSION = "[^"]+";', f'const GAME_VERSION = "{TG_VERSION_NET}";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_NEW)
+
+# ---------- 15. Fangnetz statt Walzen ----------
+rep(FRAME_OLD, FRAME_NEW)
+rep(FRAME_OLD2, FRAME_NEW2)
+for a, b in HTML_NET:
+    if "Kristalle <b id=\"fsStick\">" in a: a = a.replace("· Kristalle <b", "· Ringe <b")
+    rep(a, b)
+rep("\n</style>", "\n" + NET_CSS + "</style>")
+# vor dem Spielstart einfügen, damit alle Konstanten schon stehen, wenn start() läuft
+anchor = "window.claude?.hot?.ready ? window.claude.hot.ready(start)"
+i = s.index(anchor)
+s = s[:i] + NET_JS + SFX_JS + "\nnetFill(netNewBoard(), false);\n\n" + s[i:]
 
 # ---------- 14. Welten: Liste unverändert, nur die eigene Welt austauschen ----------
 s = WORLDS_RE.sub(lambda m: WORLDS_ORIG, s, count=1)

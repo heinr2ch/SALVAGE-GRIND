@@ -22,8 +22,8 @@ Das ganze Spiel steckt in einer einzigen Datei: `index.html`.
 
 ### Treibgut · Survival Slots
 
-**Aktuelle Version: Beta 0.2.0** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
+**Aktuelle Version: Beta 0.3.0** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
 
-Dasselbe Spielsystem im Meeres-Survival-Stil: Floß statt Raumschiff, Inseln statt Sektoren, Papagei Koko statt Bip. Eigener Spielstand.
+Meeres-Survival mit eigenem Grundspiel: Statt Walzen ein Fangnetz mit Schwärmen und Nachfang-Kaskaden. Floß statt Raumschiff, Inseln statt Sektoren, Papagei Koko statt Bip. Eigener Spielstand.
 
 **Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/treibgut/
