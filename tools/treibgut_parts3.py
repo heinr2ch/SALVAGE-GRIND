@@ -129,6 +129,7 @@ STAR_REPS = [
 ]
 
 CHANGELOG_NEW = r'''const CHANGELOG = [
+  { v: "0.2.0", date: "25.10.2026", title: "Rustikal", items: ["Neuer Look: Holzplanken, Messingnägel, Taurahmen um die Walzen und Funkmeldungen auf Papier.", "Neue Schriften mit Seefahrer-Charme.", "Eigene Musik: Seemannslied mit Akkordeon im 6/8-Takt, ruhige Lagerfeuer-Gitarre und ein fröhliches Inselfest mit Steeldrum.", "Neuer Knopf „Welt“: Wechsel zu Sternenwrack und zurück, auch vom Startbildschirm aus."] },
   { v: "0.1.0", date: "25.10.2026", title: "Erste Fassung", items: ["Treibgut ist da: Survival auf dem Meer mit Floß, Inseln und Treibgut.", "Basiert auf dem Spielsystem von Sternenwrack (Beta 0.10.0): Freifahrten mit steigendem Multiplikator, Risikoleiter, Bernstein und Kräutertränke, Expeditionen und vieles mehr.", "Eigenes Floß mit fünf Ausbaubereichen: Floß, Segel, Ausguck, Lager und Feuerstelle.", "Papagei Koko begleitet dich und erklärt im Hilfemodus alles.", "Treibfässer ziehen an der Lagune vorbei und lassen sich mit dem Haken an Bord holen."] },
 '''
 

@@ -1,6 +1,6 @@
 # Sternenwrack · Salvage Slots
 
-**Aktuelle Version: Beta 0.10.0** · [Änderungsprotokoll](CHANGELOG.md)
+**Aktuelle Version: Beta 0.11.0** · [Änderungsprotokoll](CHANGELOG.md)
 
 Ein Sci-Fi-Spielautomat im Browser – **nur mit Spielgeld**, es geht um kein echtes Geld.
 
@@ -22,7 +22,7 @@ Das ganze Spiel steckt in einer einzigen Datei: `index.html`.
 
 ### Treibgut · Survival Slots
 
-**Aktuelle Version: Beta 0.1.0** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
+**Aktuelle Version: Beta 0.2.0** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
 
 Dasselbe Spielsystem im Meeres-Survival-Stil: Floß statt Raumschiff, Inseln statt Sektoren, Papagei Koko statt Bip. Eigener Spielstand.
 

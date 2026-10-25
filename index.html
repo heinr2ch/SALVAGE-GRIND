@@ -320,6 +320,20 @@ html[data-sector="xeltar"] { --s1: #5dffa8; --s2: #1fbf8f; --s3: #c6f36b; }
 
 .namerow { display: flex; gap: 8px; align-items: center; }
 .naming { z-index: 150; }
+.worlds { z-index: 160; }
+.worldgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.world { --wc: var(--cyan); position: relative; display: grid; gap: 6px; padding: 14px; border-radius: 14px; text-decoration: none; color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--wc) 45%, transparent); background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--wc) 22%, transparent), transparent 70%), rgba(0,0,0,.3); transition: transform .15s, box-shadow .2s; }
+.world:hover { transform: translateY(-3px); box-shadow: 0 10px 26px color-mix(in srgb, var(--wc) 30%, transparent); }
+.world svg { width: 100%; height: 86px; border-radius: 10px; display: block; }
+.world b { font: 800 1rem var(--f-display); color: var(--wc); }
+.world small { font-size: .78rem; color: var(--ink-soft); line-height: 1.35; }
+.world .here { position: absolute; top: 10px; right: 10px; font: 700 .58rem var(--f-body); letter-spacing: .12em; text-transform: uppercase; padding: 3px 8px; border-radius: 99px; background: var(--wc); color: #06070f; }
+.world.cur { cursor: default; }
+.world.cur:hover { transform: none; box-shadow: none; }
+.intro-worlds { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; animation: fadeIn .6s 1.8s both; }
+.intro-worlds a { font: 700 .74rem var(--f-body); color: var(--ink-soft); text-decoration: none; padding: 6px 12px; border-radius: 99px; border: 1px solid var(--line); background: rgba(255,255,255,.04); }
+.intro-worlds a:hover { color: var(--ink); border-color: var(--gold); }
 .naming .bonus-card { grid-template-columns: minmax(0, 1fr); }
 .naming .bonus-card > * { min-width: 0; }
 .naming .bonus-foot { flex-wrap: wrap; gap: 10px; }
@@ -1092,6 +1106,7 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
     <span class="betatag" id="introVer">Beta</span>
     <button type="button" class="intro-btn" id="introBtn">Andocken</button>
     <small class="intro-hint">Startet Musik und Sound. Beides lässt sich oben jederzeit umschalten.</small>
+    <div class="intro-worlds" id="introWorlds"></div>
     <small class="intro-by">ein Spiel von <b>heinr2ch</b></small>
   </div>
 </div>
@@ -1151,6 +1166,9 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
         </label>
         <button type="button" class="chip" id="turbo" aria-pressed="false">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9 1 3 9h4l-1 6 6-8H8z" fill="currentColor"/></svg>Turbo
+        </button>
+        <button type="button" class="chip" id="worldBtn" aria-haspopup="dialog">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1.8 8h12.4M8 1.8c2.2 2.2 2.2 10.2 0 12.4M8 1.8c-2.2 2.2-2.2 10.2 0 12.4" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>Welt
         </button>
         <button type="button" class="chip" id="sound" aria-pressed="true">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="currentColor"/><path id="waves" d="M11 5.5c1 .8 1 4.2 0 5M13 3.5c2 1.8 2 7.2 0 9" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
@@ -1433,6 +1451,17 @@ button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
         <button type="button" class="bbtn" id="scAgain">Neues Los</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="bonus worlds" id="worlds" hidden>
+  <div class="bonus-card glass" style="--bc: var(--gold)" role="dialog" aria-modal="true" aria-labelledby="worldsTitle">
+    <header>
+      <span><svg viewBox="0 0 40 40" width="52" height="52" aria-hidden="true"><rect x="1.5" y="1.5" width="37" height="37" rx="9" fill="#241a05" stroke="#ffc94a" stroke-width="2"/><circle cx="20" cy="20" r="11" fill="none" stroke="#ffc94a" stroke-width="2"/><path d="M9 20h22M20 9c5 5 5 17 0 22M20 9c-5 5-5 17 0 22" fill="none" stroke="#ffe08a" stroke-width="1.5"/></svg></span>
+      <div><h2 id="worldsTitle">Welt wählen</h2><p>Dasselbe Spiel in verschiedenen Welten. Jede Welt hat ihren eigenen Spielstand, du kannst jederzeit zurück.</p></div>
+    </header>
+    <div class="worldgrid" id="worldGrid"></div>
+    <div class="bonus-foot"><div></div><button type="button" class="ghost" id="worldsClose">Schließen</button></div>
   </div>
 </div>
 
@@ -4320,8 +4349,9 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "0.10.0";
+const GAME_VERSION = "0.11.0";
 const CHANGELOG = [
+  { v: "0.11.0", date: "25.10.2026", title: "Welten", items: ["Neuer Knopf „Welt“ oben: Wechsle zu Treibgut, demselben Spiel als Survival auf dem Meer, und wieder zurück.", "Auch im Startbildschirm gibt es den Weg in die andere Welt.", "Jede Welt hat ihren eigenen Spielstand."] },
   { v: "0.10.0", date: "25.10.2026", title: "Risikoleiter", items: ["Neue Risikoleiter nach normalen Gewinnen, neben „Risiko ×2“: von ×1 bis ×100 hochsteigen.", "Das Licht springt zwischen Ziel und Absturz, du drückst Stopp (oder Leertaste).", "Eine oder zwei Sprossen auf einmal, jede Chance wird angezeigt und ist fair. Kassieren jederzeit.", "Ganz oben gibt es 2 Sternenstaub extra. Neuer Erfolg: Höhenluft."] },
   { v: "0.9.0", date: "25.10.2026", title: "Freispiele, die krachen", items: ["Freispiele: Der Multiplikator startet bei ×2 und steigt mit jedem Gewinn bis ×5.", "Kristalldrohnen setzen in Freispielen feste Wild-Kristalle auf Walze 2 bis 4, die bis zum Rundenende liegen bleiben (bis zu 3).", "Im Schnitt bringen Freispiele jetzt etwa viermal so viel wie vorher. Starke Runden geben zusätzlich Sternenstaub.", "Sternschnuppen fliegen ab und zu durch den Hangar. Anklicken, und der Bordlaser holt sie runter: +1 Sternenstaub, goldene +3.", "Neuer Erfolg: Sternenjäger."] },
   { v: "0.8.2", date: "25.10.2026", title: "Schiffsregister", items: ["Beim Start trägst du deinen Kapitänsnamen ein und taufst dein Schiff. Das „KSV-7“ steht fest, den Rest wählst du.", "Zufällige, passende Vorschläge sind schon eingetragen und lassen sich überschreiben oder neu würfeln.", "Geht ein Schiff verloren, taufst du das neue Wrack.", "Der Kapitänsname erscheint im Rang, im Funk, bei Bip und auf der Bestenliste.", "Leertaste in Eingabefeldern startet keinen Scan mehr.", "Fix: Aktive Boosts über den Walzen ploppen nicht mehr jede Sekunde neu auf."] },
@@ -4588,6 +4618,32 @@ function flyDustXY(x, y) {
 }
 scheduleStar(15000 + Math.random() * 10000);
 
+/* ---------- Welten: dasselbe Spiel in verschiedenen Stilen ---------- */
+// WORLDS bleibt bei der Erzeugung anderer Stile unverändert erhalten, nur WORLD_ID wird ausgetauscht.
+const WORLD_ID = "sternenwrack";
+const WORLDS = [
+  { id: "sternenwrack", name: "Sternenwrack", sub: "Sci-Fi-Bergung im All: Raumschiff, Sektoren und Bordroboter Bip.", url: "https://heinr2ch.github.io/STERNENWRACK/", color: "#4fe3ff",
+    art: `<svg viewBox="0 0 200 86" preserveAspectRatio="xMidYMid slice"><rect width="200" height="86" fill="#070a1c"/><circle cx="160" cy="70" r="38" fill="#3d2470"/><ellipse cx="160" cy="70" rx="60" ry="9" fill="none" stroke="#ff4fd8" stroke-opacity=".5" stroke-width="1.5" transform="rotate(-12 160 70)"/>${[[20,12],[60,30],[110,10],[140,22],[30,60],[90,70],[180,14]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1" fill="#fff" opacity=".7"/>`).join("")}<path d="M48 44 L70 36 L120 36 L138 44 L120 52 L70 52 Z" fill="#4a5262" stroke="#9fb3ff" stroke-width="1.5"/><path d="M118 40 L132 44 L118 48 Z" fill="#4fe3ff"/><path d="M48 40 Q30 44 48 48 Z" fill="#ff9a3c"/></svg>` },
+  { id: "treibgut", name: "Treibgut", sub: "Survival auf dem Meer: Floß, Inseln und Papagei Koko.", url: "https://heinr2ch.github.io/STERNENWRACK/treibgut/", color: "#ffb36b",
+    art: `<svg viewBox="0 0 200 86" preserveAspectRatio="xMidYMid slice"><rect width="200" height="50" fill="#2c7fab"/><rect y="40" width="200" height="10" fill="#ffc98a" opacity=".6"/><circle cx="160" cy="26" r="11" fill="#fff2c4"/><rect y="50" width="200" height="36" fill="#1f6f8a"/><path d="M0 56 q10 -4 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="#fff" stroke-opacity=".4" fill="none"/><ellipse cx="40" cy="50" rx="30" ry="6" fill="#0f3a44"/><path d="M40 46 q3 -12 0 -18" stroke="#0f3a44" stroke-width="2.5" fill="none"/><path d="M80 52 h60 l-4 6 h-52z" fill="#8a5e34" stroke="#4a3018" stroke-width="1.2"/><path d="M100 52 V20" stroke="#6e4f30" stroke-width="2"/><path d="M101 22 Q120 34 122 50 H101 Z" fill="#f4ecd8"/></svg>` },
+];
+const worldUrl = w => w.url;
+const worldTarget = () => /github\.io$/.test(location.hostname) ? "_self" : "_blank";
+function renderWorlds() {
+  const tgt = worldTarget();
+  $("worldGrid").innerHTML = WORLDS.map(w => w.id === WORLD_ID
+    ? `<div class="world cur" style="--wc:${w.color}">${w.art}<span class="here">Du bist hier</span><b>${w.name}</b><small>${w.sub}</small></div>`
+    : `<a class="world" style="--wc:${w.color}" href="${worldUrl(w)}" target="${tgt}" rel="noopener">${w.art}<b>${w.name}</b><small>${w.sub}</small></a>`).join("");
+  $("introWorlds").innerHTML = WORLDS.filter(w => w.id !== WORLD_ID).map(w => `<a href="${worldUrl(w)}" target="${tgt}" rel="noopener">Andere Welt: ${w.name} →</a>`).join("");
+}
+function openWorlds() { renderWorlds(); $("worlds").hidden = false; sfx.click(); $("worldsClose").focus({ preventScroll: true }); }
+function closeWorlds() { $("worlds").hidden = true; sfx.click(); }
+renderWorlds();
+$("worldBtn").addEventListener("click", openWorlds);
+$("worldsClose").addEventListener("click", closeWorlds);
+$("worlds").addEventListener("click", e => { if (e.target.id === "worlds") closeWorlds(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("worlds").hidden) closeWorlds(); });
+
 /* ---------- Bip-Hilfemodus ---------- */
 // "?" neben Bip (oder Taste H) schaltet den Hilfemodus an. Bip erklärt dann alles, worüber die Maus fährt.
 // Auf Touchgeräten zeigt der erste Tipp die Hilfe, der zweite Tipp auf dasselbe Element löst es aus.
@@ -4629,6 +4685,8 @@ const HELP_RULES = [
   [".trackchip, #trackSel", () => ["Musiktitel", "Wählt einen von drei Titeln."]],
   ["#turbo", () => ["Turbo", "Schnellere Walzen. Wird vom Antrieb freigeschaltet."]],
   ["#sound", () => ["Ton", "Soundeffekte an oder aus."]],
+  ["#worldBtn", () => ["Welt", "Wechsle in eine andere Welt mit eigenem Stil, zum Beispiel Treibgut auf dem Meer. Jede Welt hat ihren eigenen Spielstand."]],
+  [".world", el => el.classList.contains("cur") ? ["Diese Welt", "Hier spielst du gerade."] : ["Andere Welt", "Öffnet diese Welt. Dein Spielstand hier bleibt erhalten."]],
   [".contract", () => ["Bergungsauftrag", "Erfülle die Aufgabe für Credits und XP. Erledigte Aufträge werden durch neue ersetzt."]],
   ["#dailyBtn", () => ["Tägliche Bergung", "Einmal am Tag gratis Credits. An mehreren Tagen in Folge steigt die Belohnung, bis zu 7 Tage."]],
   [".ticket", () => ["Rubbellos", "Drei Preisklassen mit je einem eigenen Mini-Spiel. Kaufen und mit der Maus freirubbeln."]],
@@ -4752,7 +4810,7 @@ async function crystalDrone(grid) {
 let reelRuns = [], tickTimer = null, slammed = false;
 
 function spin(auto) {
-  if (spinning || busy || !ready || !$("scratch").hidden || !$("bonus").hidden || !$("naming").hidden) return;
+  if (spinning || busy || !ready || !$("scratch").hidden || !$("bonus").hidden || !$("naming").hidden || !$("worlds").hidden) return;
   const free = inFs();
   if (free && auto !== true) return;
   if (!free && state.credits < bet()) return;
@@ -5115,6 +5173,7 @@ setTimeout(() => $("introBtn").focus({ preventScroll: true }), 300);
 document.addEventListener("keydown", e => {
   if (!$("intro").hidden && !$("intro").classList.contains("out") && (e.code === "Space" || e.code === "Enter")) { e.preventDefault(); closeIntro(); return; }
   if (e.target.closest && e.target.closest("input, textarea, select")) return;
+  if (!$("worlds").hidden) return;
   if (e.code !== "Space" || e.repeat || e.target instanceof HTMLButtonElement) return;
   e.preventDefault();
   if (!$("bonus").hidden) { const rs = $("rStop"); if (rs && !rs.hidden) { if (!rs.disabled) rs.click(); return; } const bb = $("bonusBtn"); if (!bb.hidden && !bb.disabled) bb.click(); return; }

@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.11.0 · Welten · 25.10.2026
+- Neuer Knopf „Welt“ oben: Wechsle zu Treibgut, demselben Spiel als Survival auf dem Meer, und wieder zurück.
+- Auch im Startbildschirm gibt es den Weg in die andere Welt.
+- Jede Welt hat ihren eigenen Spielstand.
+
 ## Beta 0.10.0 · Risikoleiter · 25.10.2026
 - Neue Risikoleiter nach normalen Gewinnen, neben „Risiko ×2“: von ×1 bis ×100 hochsteigen.
 - Das Licht springt zwischen Ziel und Absturz, du drückst Stopp (oder Leertaste).

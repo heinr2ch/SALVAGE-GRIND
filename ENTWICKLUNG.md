@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: **Beta 0.10.0** (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: **Beta 0.11.0** (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -69,3 +69,5 @@ Stand: **Beta 0.10.0** (25.10.2026). Diese Datei dient als Übergabe für neue C
 - Das Skript bricht ab, wenn ein Ankertext fehlt. Nach Sternenwrack-Änderungen also neu laufen lassen und fehlende Anker in den Parts anpassen.
 - Getrennte Speicherschlüssel (`tg-` statt `sw-`, Codes `TGS1-`/`TGK1-`), damit sich die Spielstände auf derselben Domain nicht mischen.
 - WORDS-Ersetzungen nie auf Bezeichner im Code loslassen (z. B. `countCredits`), daher Lookbehind `(?<![A-Za-z])`.
+- **Welten (Sternenwrack 0.11.0):** `WORLD_ID` und `WORLDS` (Name, Text, URL, Vorschaubild). Knopf „Welt“ (`#worldBtn`, Dialog `#worlds`) und Links im Intro. Das Treibgut-Skript lässt `WORLDS` unverändert und tauscht nur `WORLD_ID`. Ein neuer Stil braucht einen Eintrag in `WORLDS`.
+- **Treibgut 0.2.0:** rustikaler Look als CSS-Block `RUSTIC_CSS` am Ende, Schriften Patua One, Alegreya Sans und Courier Prime, eigene Musik `MUSIC_NEW` (Seemannslied, Lagerfeuer, Inselfest) in `tools/treibgut_parts4.py`.

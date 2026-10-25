@@ -4,6 +4,8 @@ import re, sys
 
 SRC, OUT = sys.argv[1], sys.argv[2]
 s = open(SRC, encoding="utf-8").read()
+WORLDS_RE = re.compile(r"const WORLDS = \[.*?\n\];\n", re.S)
+WORLDS_ORIG = WORLDS_RE.search(s).group(0)
 
 def rep(a, b, cnt=1):
     global s
@@ -24,15 +26,17 @@ def block(start, end, new, keep_end=True):
     s = s[:i] + new + s[j:]
 
 from treibgut_parts import *   # Inhalte (Grafiken, Texte)
+from treibgut_parts4 import *  # rustikaler Look und eigene Musik
 
 # ---------- 1. Speicher und Codes trennen ----------
 s = re.sub(r'(["`])sw-', r'\1tg-', s)
 rep_all("SWS1-", "TGS1-"); rep_all("SWK1-", "TGK1-")
 
 # ---------- 3. Schrift ----------
-rep('family=Unbounded:wght@500;700;800', 'family=Fredoka:wght@500;600;700')
+rep('family=Unbounded:wght@500;700;800&family=Manrope:wght@400;600;700&family=JetBrains+Mono:wght@500;700', FONT_LINK_NEW)
 rep_all('"Unbounded", "Segoe UI"', '"Fredoka", "Segoe UI"')
 rep_all('Unbounded, sans-serif', 'Fredoka, sans-serif')
+rep(ROOT_OLD, ROOT_NEW)
 
 # ---------- 4. Hintergrund, Kopf, Intro ----------
 for a, b in CSS_REPS:
@@ -86,18 +90,26 @@ for a, b in PHRASES:
     s = s.replace(a, b)
 
 # ---------- 2. Farben: Weltall-Palette auf Meer-Palette ----------
-for a, b in COLOR_MAP:
+# Musik erst nach den Texten ersetzen (dort stehen noch die alten Titelnamen)
+block("const TRACKS = [", "TRACKS.forEach(tr =>", MUSIC_NEW)
+
+for a, b in COLOR_MAP_RUSTIC:
     s = re.sub(re.escape(a), b, s, flags=re.I)
 
 # ---------- 12. Allgemeine Wortliste (nur in Texten, Groß-/Kleinschreibung beachtet) ----------
 for a, b in WORDS:
     s = re.sub(a, b, s)
 
-rep("\n</style>", EXTRA_CSS)
+rep("\n</style>", "\n" + RUSTIC_CSS + EXTRA_CSS)
+rep_all("Fredoka, sans-serif", "'Patua One', serif")
 
 # ---------- 13. Version und Änderungsprotokoll ----------
-s = re.sub(r'const GAME_VERSION = "[^"]+";', f'const GAME_VERSION = "{TG_VERSION}";', s)
+s = re.sub(r'const GAME_VERSION = "[^"]+";', f'const GAME_VERSION = "{TG_VERSION_RUSTIC}";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_NEW)
+
+# ---------- 14. Welten: Liste unverändert, nur die eigene Welt austauschen ----------
+s = WORLDS_RE.sub(lambda m: WORLDS_ORIG, s, count=1)
+rep('const WORLD_ID = "sternenwrack";', 'const WORLD_ID = "treibgut";')
 
 open(OUT, "w", encoding="utf-8").write(s)
 print("Treibgut erzeugt:", OUT, len(s), "Zeichen")
