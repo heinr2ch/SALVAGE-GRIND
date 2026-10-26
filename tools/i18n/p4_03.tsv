@@ -1,0 +1,37 @@
+#Nr	en	es	ja	ru	nl	el
+173	Salvage Slots	Slots de chatarra	サルベージ・スロット	Слоты спасателя	Salvage-slots	Κουλοχέρηδες διάσωσης
+174	Survival Slots	Slots de supervivencia	サバイバル・スロット	Слоты выживания	Survival-slots	Κουλοχέρηδες επιβίωσης
+175	Workshop Slots	Slots de taller	ワークショップ・スロット	Слоты мастерской	Werkplaats-slots	Κουλοχέρηδες συνεργείου
+176	Salvage. Upgrade. Survive.	Rescata. Mejora. Sobrevive.	回収。強化。生き残れ。	Спасай. Улучшай. Выживай.	Bergen. Uitbouwen. Overleven.	Διάσωσε. Αναβάθμισε. Επίζησε.
+177	Fish. Build. Survive.	Pesca. Construye. Sobrevive.	釣る。作る。生き残れ。	Лови. Строй. Выживай.	Vissen. Bouwen. Overleven.	Ψάρεψε. Χτίσε. Επίζησε.
+178	Salvage. Repair. Hold out.	Rescata. Repara. Resiste.	回収。修理。耐え抜け。	Спасай. Чини. Держись.	Bergen. Repareren. Volhouden.	Διάσωσε. Επισκεύασε. Άντεξε.
+179	Spin. Build. Grow.	Gira. Construye. Crece.	回す。建てる。育てる。	Крути. Строй. Расти.	Draaien. Bouwen. Groeien.	Γύρνα. Χτίσε. Μεγάλωσε.
+180	Guess the colour of the next card: § or §. Right doubles, wrong loses. Exactly # : #, you can collect any time.	Adivina el color de la siguiente carta: § o §. Acertar duplica, fallar pierde. Exactamente # : #, puedes cobrar cuando quieras.	次のカードの色を当てよう：§ か §。当たれば倍、外れれば没収。確率はちょうど # : #、いつでも回収できる。	Угадай цвет следующей карты: § или §. Угадал — удвоение, ошибся — потеря. Ровно # : #, забрать можно в любой момент.	Raad de kleur van de volgende kaart: § of §. Goed verdubbelt, fout verliest. Precies # : #, innen kan altijd.	Μάντεψε το χρώμα της επόμενης κάρτας: § ή §. Σωστό διπλασιάζει, λάθος χάνει. Ακριβώς # : #, μπορείς να εισπράξεις όποτε θες.
+181	Cyan	Cian	シアン	Циан	Cyaan	Κυανό
+182	Magenta	Magenta	マゼンタ	Маджента	Magenta	Ματζέντα
+183	Turquoise	Turquesa	ターコイズ	Бирюзовый	Turkoois	Τιρκουάζ
+184	Coral	Coral	コーラル	Коралловый	Koraal	Κοραλλί
+185	Olive	Oliva	オリーブ	Оливковый	Olijf	Λαδί
+186	Signal red	Rojo señal	シグナルレッド	Сигнальный красный	Signaalrood	Κόκκινο σήματος
+187	Green	Verde	緑	Зелёный	Groen	Πράσινο
+188	Red	Rojo	赤	Красный	Rood	Κόκκινο
+189	Key ← or #	Tecla ← o #	キー ← または #	Клавиша ← или #	Toets ← of #	Πλήκτρο ← ή #
+190	Key → or #	Tecla → o #	キー → または #	Клавиша → или #	Toets → of #	Πλήκτρο → ή #
+191	Collect · #	Cobrar · #	回収 · #	Забрать · #	Innen · #	Είσπραξη · #
+192	Enter key	Tecla Enter	Enterキー	Клавиша Enter	Enter-toets	Πλήκτρο Enter
+193	Missed. # § lost.	Fallaste. # § perdidos.	ハズレ。# § を失った。	Мимо. Потеряно # §.	Mis. # § verloren.	Αστόχησες. Χάθηκαν # §.
+194	Climb as high as you dare. The light jumps between target and crash, you press stop. The bigger the jump, the smaller the chance. You can cash out any time.	Sube tan alto como te atrevas. La luz salta entre meta y caída, tú pulsas parar. Cuanto mayor el salto, menor la probabilidad. Puedes cobrar cuando quieras.	勇気の限り登ろう。光が目標と転落の間を跳ね、君がストップを押す。跳躍が大きいほど確率は下がる。いつでも換金できる。	Поднимайся так высоко, как осмелишься. Свет прыгает между целью и падением, ты жмёшь «Стоп». Чем больше прыжок, тем меньше шанс. Забрать можно в любой момент.	Klim zo hoog als je durft. Het licht springt tussen doel en val, jij drukt op stop. Hoe groter de sprong, hoe kleiner de kans. Innen kan altijd.	Ανέβα όσο ψηλά τολμάς. Το φως πηδά ανάμεσα σε στόχο και πτώση, εσύ πατάς στοπ. Όσο μεγαλύτερο το άλμα, τόσο μικρότερη η πιθανότητα. Μπορείς να εισπράξεις όποτε θες.
+195	Crash	Caída	転落	Падение	Val	Πτώση
+196	▲ # rung · # %	▲ # peldaño · # %	▲ # 段 · # %	▲ # ступень · # %	▲ # sport · # %	▲ # σκαλί · # %
+197	▲▲ # rungs · # %	▲▲ # peldaños · # %	▲▲ # 段 · # %	▲▲ # ступени · # %	▲▲ # sporten · # %	▲▲ # σκαλιά · # %
+198	to # · key ↑ or space	a # · tecla ↑ o espacio	# へ · キー ↑ またはスペース	до # · клавиша ↑ или пробел	naar # · toets ↑ of spatie	στα # · πλήκτρο ↑ ή κενό
+199	to # · key #	a # · tecla #	# へ · キー #	до # · клавиша #	naar # · toets #	στα # · πλήκτρο #
+200	Stop!	¡Para!	ストップ！	Стоп!	Stop!	Στοπ!
+201	Space	Espacio	スペース	Пробел	Spatie	Κενό
+202	Crash! # § lost.	¡Caída! # § perdidos.	転落！# § を失った。	Падение! Потеряно # §.	Val! # § verloren.	Πτώση! Χάθηκαν # §.
+203	Cash out · #	Cobrar · #	換金 · #	Забрать · #	Innen · #	Είσπραξη · #
+204	World # of # · §	Mundo # de # · §	ワールド # / # · §	Мир # из # · §	Wereld # van # · §	Κόσμος # από # · §
+205	Correct! Now # § at stake.	¡Correcto! Ahora # § en juego.	正解！いま # § が懸かっている。	Верно! Теперь на кону # §.	Goed! Nu # § in het spel.	Σωστό! Τώρα παίζονται # §.
+206	Collected: # §.	Cobrado: # §.	回収：# §。	Забрано: # §.	Geïnd: # §.	Εισπράχθηκαν: # §.
+207	Made it! # §.	¡Lo lograste! # §.	やった！# §。	Получилось! # §.	Gelukt! # §.	Τα κατάφερες! # §.
+208	Cashed out: # §.	Cobrado: # §.	換金：# §。	Забрано: # §.	Geïnd: # §.	Εισπράχθηκαν: # §.

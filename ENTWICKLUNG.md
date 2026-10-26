@@ -1,13 +1,19 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.16.0**, Treibgut 0.8.0, Eisenfront 0.7.0, Neustadt 0.8.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.17.0**, Treibgut 0.9.0, Eisenfront 0.8.0, Neustadt 0.9.0 (26.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
 - Komplett eigene Grafiken (SVG inline), keine fremden Assets (Warframe-Assets wurden bewusst abgelehnt).
 - Eine einzige Datei: `index.html` mit HTML, CSS und JS inline. Kein Build-System, keine Abhängigkeiten außer Google Fonts.
 - Gehostet über GitHub Pages: https://heinr2ch.github.io/STERNENWRACK/ (Repo `heinr2ch/STERNENWRACK`, Branch `main`, Root). Jeder Push auf `main` deployt automatisch (1–2 Minuten).
+- Sammlungsname: **Salvage & Grind**. Umbenennung des Repos in `salvage-and-grind` ist gewünscht, kann aber nur der Nutzer in den GitHub-Einstellungen machen (Proxy sperrt Repo-Einstellungen). `worldUrl()` baut die Welt-Links auf GitHub Pages aus dem aktuellen Pfad, funktioniert also mit altem und neuem Namen. Nach der Umbenennung: Remote, README-Links und Deploy-Befehl anpassen.
 - Dezentes Branding „heinr2ch“ (Intro, Fußzeile, Werftstempel am Schiff).
+
+## Hauptmenü und Risikospiele (0.17.0)
+- Menü: Schriftzug `.mm-brand` „SALVAGE & GRIND“, darunter „Welt N von 4 · Name“, Leiste `.mm-strip` mit allen vier Welten (Feld `motto` in WORLDS). Titel des Tabs: „Salvage & Grind · Welt“.
+- Risikospiele neu in `extra_parts.py` (RISK_CSS/RISK_JS): `playGamble`/`playLadder` überschreiben die alten Funktionen. Karten: Tasten ←/1, →/2, Enter; Eingaben werden gepuffert. Leiter: Leertaste/↑/1 = 1 Sprosse bzw. Stopp, 2 = zwei Sprossen, Enter = kassieren. Wahrscheinlichkeiten und Gewinne unverändert.
+- Ultrawide: ab 1680 px und 2300 px dreispaltiges Layout (Dock · Automat · Hangar).
 
 ## Arbeitsweise mit dem Nutzer
 - Der Nutzer (heinr2ch) schreibt auf Deutsch, oft per Spracheingabe. Antworten auf Deutsch, knapp, ohne Fachjargon.

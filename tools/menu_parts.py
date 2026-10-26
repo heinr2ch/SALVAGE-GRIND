@@ -5,6 +5,26 @@ MENU_CSS = r'''
 /* ---------- Hauptmenü, Einstellungen, Pech-Walze, Freispiel-Kauf (seit SW 0.15.0) ---------- */
 .intro { overflow-y: auto; align-items: flex-start; }
 .intro-inner { margin: auto; padding: 28px 16px 36px; max-width: 980px; width: 100%; box-sizing: border-box; }
+.mm-brand { display: flex; align-items: baseline; justify-content: center; gap: .28em; font: 800 clamp(1.5rem, 5.4vw, 3.4rem)/1 var(--f-display, system-ui); letter-spacing: .12em; margin: 0 0 4px; white-space: nowrap; animation: mmBrand .9s .1s both; }
+.mm-brand .mmb-a, .mm-brand .mmb-b { background: linear-gradient(180deg, #fff 10%, #d6dbe8 55%, #8a93a8); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 2px 0 rgba(0,0,0,.45)) drop-shadow(0 0 18px rgba(255,201,74,.18)); }
+.mm-brand .mmb-amp { color: var(--gold, #ffc94a); font-size: .82em; letter-spacing: 0; text-shadow: 0 0 14px rgba(255,201,74,.55); transform: translateY(-.04em) rotate(-8deg); display: inline-block; }
+@keyframes mmBrand { from { opacity: 0; letter-spacing: .5em; filter: blur(6px); } to { opacity: 1; letter-spacing: .12em; filter: none; } }
+.intro .intro-title { font-size: clamp(1.1rem, 4.2vw, 2.4rem); }
+.mm-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: min(980px, 100%); margin: 14px auto 4px; }
+.mms { position: relative; display: flex; gap: 10px; align-items: flex-start; text-align: left; padding: 10px 12px 11px; border-radius: 12px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.25)); border: 1px solid rgba(255,255,255,.12); border-top: 2px solid var(--wc); color: #fff; text-decoration: none; font: inherit; cursor: pointer; transition: transform .16s, border-color .16s, background .16s; overflow: hidden; }
+.mms::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--wc) 22%, transparent), transparent 60%); pointer-events: none; }
+.mms:hover, .mms:focus-visible { transform: translateY(-2px); border-color: color-mix(in srgb, var(--wc) 60%, transparent); outline: none; }
+.mms.cur { background: linear-gradient(180deg, color-mix(in srgb, var(--wc) 20%, transparent), rgba(0,0,0,.3)); border-color: color-mix(in srgb, var(--wc) 55%, transparent); box-shadow: 0 0 22px color-mix(in srgb, var(--wc) 25%, transparent); }
+.mms .mms-n { font: 800 20px/1 var(--f-mono, monospace); color: var(--wc); opacity: .9; }
+.mms .mms-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mms b { font-size: 15px; letter-spacing: .03em; }
+.mms .mms-k { font: 700 10px/1.2 var(--f-mono, monospace); letter-spacing: .14em; text-transform: uppercase; color: var(--wc); }
+.mms .mms-m { font-size: 12px; color: rgba(255,255,255,.82); line-height: 1.3; }
+.mms .mms-here { position: absolute; top: 6px; right: 8px; font: 700 9px/1 var(--f-mono, monospace); letter-spacing: .1em; text-transform: uppercase; color: #0b0d14; background: var(--wc); padding: 3px 6px; border-radius: 99px; }
+.intro.ingame .mm-brand { animation: none; }
+@media (max-width: 900px) { .mm-strip { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .mm-brand { letter-spacing: .06em; } .mms { padding: 8px 9px; gap: 7px; } .mms .mms-n { font-size: 15px; } .mms b { font-size: 13px; } .mms .mms-m { font-size: 11px; } .mms .mms-here { display: none; } }
+@media (prefers-reduced-motion: reduce) { .mm-brand { animation: none; } }
 .mm-eyebrow { display: inline-flex; align-items: center; gap: 8px; font: 700 12px/1 var(--f-mono, monospace); letter-spacing: .28em; text-transform: uppercase; color: rgba(255,255,255,.75); padding: 7px 12px; border: 1px solid rgba(255,255,255,.18); border-radius: 99px; background: rgba(0,0,0,.25); margin-bottom: 10px; }
 .mm-eyebrow i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold, #ffc94a); box-shadow: 0 0 10px var(--gold, #ffc94a); }
 .mm-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 14px 0 4px; }
@@ -140,7 +160,17 @@ function renderWorlds() {
   const intro = $("intro"), inner = intro.querySelector(".intro-inner");
   $("introBtn").textContent = "Spielen";
   const idx = WORLDS.findIndex(w => w.id === WORLD_ID);
-  inner.insertAdjacentHTML("afterbegin", `<div class="mm-eyebrow"><i></i>${COLLECTION.replace("&", "&amp;")} · Welt ${idx + 1} von ${WORLDS.length}</div>`);
+  inner.insertAdjacentHTML("afterbegin", `<div class="mm-brand" role="img" aria-label="Salvage &amp; Grind"><span class="mmb-a">SALVAGE</span><span class="mmb-amp">&amp;</span><span class="mmb-b">GRIND</span></div><div class="mm-eyebrow"><i></i>Welt ${idx + 1} von ${WORLDS.length} · ${WORLDS[idx] ? WORLDS[idx].name : ""}</div>`);
+  // Die vier Welten mit ihren Untertiteln als Leiste unter dem Start-Knopf
+  const strip = WORLDS.map((w, i) => {
+    const m = w.motto || ["", ""], cur = w.id === WORLD_ID;
+    const body = `<span class="mms-n">0${i + 1}</span><span class="mms-t"><b>${w.name}</b><span class="mms-k">${m[0]}</span><span class="mms-m">${m[1]}</span></span>${cur ? `<span class="mms-here">Du bist hier</span>` : ""}`;
+    return cur ? `<button type="button" class="mms cur" style="--wc:${w.color}">${body}</button>`
+      : `<a class="mms" style="--wc:${w.color}" href="${worldUrl(w)}" target="${worldTarget()}" rel="noopener">${body}</a>`;
+  }).join("");
+  $("introBtn").insertAdjacentHTML("beforebegin", `<div class="mm-strip">${strip}</div>`);
+  inner.querySelector(".mm-strip").addEventListener("click", e => { if (e.target.closest(".mms.cur")) { e.preventDefault(); $("introBtn").click(); } });
+  try { document.title = COLLECTION + " · " + (WORLDS[idx] ? WORLDS[idx].name : ""); } catch (e) {}
   const gear = `<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M12.6 3.4l-1.4 1.4M4.8 11.2l-1.4 1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
   $("introBtn").insertAdjacentHTML("afterend", `<div class="mm-row"><button type="button" id="mmSettings">${gear}Einstellungen</button><button type="button" id="mmWorldsJump"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1.8 8h12.4M8 1.8c2.2 2.2 2.2 10.2 0 12.4M8 1.8c-2.2 2.2-2.2 10.2 0 12.4" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>Welt wählen</button></div>`);
   $("introWorlds").insertAdjacentHTML("beforebegin", `<div class="mm-head" id="mmWorldsHead">${COLLECTION.replace("&", "&amp;")} · Welten</div>`);

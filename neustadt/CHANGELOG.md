@@ -2,6 +2,12 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.9.0 · Salvage & Grind: neues Hauptmenü und schnellere Risikospiele · 25.10.2026
+- Hauptmenü mit Schriftzug „Salvage & Grind“ und allen vier Welten samt Untertitel
+- Risikokarten neu: Karte dreht sich, schnelle Eingaben, Tasten ← → und Enter
+- Risikoleiter neu: läuft flüssiger und schneller, Stopp mit Leertaste, zwei Sprossen mit Taste 2
+- Besseres Layout für Ultrawide und große Bildschirme
+
 ## Beta 0.8.0 · Training, Plinko und bessere Lesbarkeit · 25.10.2026
 - Neues Minispiel in der Bordzentrale: Spielgeld in XP umwandeln. Jede Welt hat ihr eigenes Training (Flugsimulator, Knotenschule, Schießstand, Bauakademie). Du stoppst dreimal eine Markierung, je genauer, desto mehr XP: 0,5 bis 3 XP pro eingesetztem Spielgeld.
 - Neuer Spielmodus Plinko, in jeder Welt passend gestaltet (Meteorschauer, Kokosnuss-Fall, Kugellager, Baustellen-Plinko): Ein Ball fällt durch zwölf Reihen Hindernisse in Felder mit Multiplikatoren. Drei Risikostufen (außen bis 10×, 33× oder 170×), Einsatz wie im Hauptspiel, Auto mit 10 Bällen. Gewinne, XP, Sternenstaub und Statistik laufen ins normale Spiel.

@@ -2,6 +2,18 @@
 # Wird von tools/menu_apply.py zusammen mit menu_parts.py in index.html eingesetzt.
 
 EXTRA_CSS = r'''
+
+/* ---------- Breite Bildschirme (Ultrawide, 1440p, 4K): drei Spalten, größere Walzen ---------- */
+@media (min-width: 1680px) {
+  .app { max-width: 1900px; grid-template-columns: 360px minmax(0, 1fr) 470px; grid-template-rows: auto; grid-template-areas: "dock machine hangar"; }
+  .dock .dockgrid, .dock .xtiles { grid-template-columns: 1fr; }
+  .frame { --cell: min(140px, calc((100cqw - 124px) / 5), max(100px, calc((100vh - 600px) / 3))); }
+}
+@media (min-width: 2300px) {
+  .app { max-width: 2520px; grid-template-columns: 440px minmax(0, 1fr) 560px; gap: 24px; }
+  .frame { --cell: min(172px, calc((100cqw - 124px) / 5), max(110px, calc((100vh - 620px) / 3))); }
+  .dock .labgrid { grid-template-columns: 1fr 1fr; }
+}
 /* ---------- Lesbarkeit: deaktivierte Knöpfe bleiben gut lesbar (seit SW 0.16.0) ---------- */
 html body .bbtn:disabled, html body button.bbtn[disabled] { opacity: 1; background: rgba(255,255,255,.07); color: rgba(255,255,255,.86); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.3); text-shadow: none; filter: none; cursor: not-allowed; }
 html body .vehcard .bbtn:disabled { opacity: 1; }
@@ -365,3 +377,261 @@ HELP_RULES.unshift(
   ["#plTile, #mmPlinko", () => ["Plinko", "Ein Ball fällt durch zwölf Reihen Hindernisse und landet in einem Feld mit Multiplikator. Drei Risikostufen, außen bis 170×."]],
 );
 '''
+
+RISK_CSS = r'''
+/* ---------- Risikospiele neu: Kartenrisiko und Leiter (seit SW 0.17.0) ---------- */
+.rk { display: grid; gap: 14px; }
+.rk-steps { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.rk-steps span { min-width: 54px; padding: 7px 10px; border-radius: 99px; text-align: center; font: 800 13px/1 var(--f-mono, monospace); background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16); color: rgba(255,255,255,.7); transition: all .2s; }
+.rk-steps span.on { background: var(--gold, #ffc94a); color: #0a0c14; border-color: transparent; box-shadow: 0 0 14px color-mix(in srgb, var(--gold, #ffc94a) 50%, transparent); }
+.rk-steps span.next { border-color: var(--gold, #ffc94a); color: #fff; }
+.rk-table { display: grid; place-items: center; perspective: 900px; padding: 4px 0; }
+.rk-card { width: 138px; height: 190px; position: relative; }
+.rk-in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .28s cubic-bezier(.3,1.4,.5,1); }
+.rk-card.flip .rk-in { transform: rotateY(180deg); }
+.rk-card.quick .rk-in { transition-duration: .14s; }
+.rk-face { position: absolute; inset: 0; border-radius: 14px; backface-visibility: hidden; display: grid; place-items: center; border: 2px solid rgba(255,255,255,.25); box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+.rk-back { background: repeating-linear-gradient(45deg, rgba(255,255,255,.07) 0 8px, transparent 8px 16px), linear-gradient(160deg, var(--ga), var(--gb)); }
+.rk-back i { width: 54px; height: 54px; border-radius: 50%; border: 3px solid rgba(255,255,255,.75); box-shadow: inset 0 0 0 6px rgba(0,0,0,.25); }
+.rk-front { transform: rotateY(180deg); background: #0b0d18; }
+.rk-front svg { width: 92px; height: 92px; }
+.rk-card.win .rk-front { border-color: #5dffa8; box-shadow: 0 0 30px rgba(93,255,168,.5); }
+.rk-card.lose .rk-front { border-color: #ff5a6a; box-shadow: 0 0 30px rgba(255,90,106,.5); }
+.rk-hist { display: flex; gap: 6px; justify-content: center; min-height: 14px; }
+.rk-hist i { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 6px currentColor; }
+.rk-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rk-pick button { padding: 16px 10px 12px; border-radius: 14px; border: 2px solid var(--gc); background: color-mix(in srgb, var(--gc) 18%, rgba(0,0,0,.3)); color: #fff; font: 800 16px/1.1 var(--f-display, inherit); letter-spacing: .04em; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: transform .1s, background .15s, box-shadow .15s; }
+.rk-pick button:hover { background: color-mix(in srgb, var(--gc) 32%, rgba(0,0,0,.3)); box-shadow: 0 0 22px color-mix(in srgb, var(--gc) 45%, transparent); }
+.rk-pick button:active { transform: scale(.97); }
+.rk-pick button i { width: 22px; height: 22px; border-radius: 50%; background: var(--gc); box-shadow: 0 0 12px var(--gc); }
+.rk-pick button small, .rk-btn small, .rk-take small { font: 600 10.5px/1 var(--f-mono, monospace); letter-spacing: .08em; opacity: .7; text-transform: uppercase; }
+.rk-take { padding: 12px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,.3); background: rgba(255,255,255,.07); color: #fff; font: 800 14px/1.2 var(--f-body, inherit); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.rk-take:hover { background: rgba(255,255,255,.14); }
+.rk button:disabled { opacity: .5; cursor: default; }
+.rk-ladder { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
+.rk-rungs { display: grid; gap: 4px; padding: 8px; border-radius: 14px; background: linear-gradient(90deg, rgba(255,201,74,.08), transparent 30%, transparent 70%, rgba(255,201,74,.08)), rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.12); position: relative; }
+.rk-rung { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 9px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); font-size: 13px; transition: background .12s, border-color .12s, transform .12s, box-shadow .12s; }
+.rk-rung .m { font: 800 12px/1 var(--f-mono, monospace); color: var(--gold, #ffc94a); }
+.rk-rung b { font: 800 14px/1 var(--f-display, inherit); }
+.rk-rung .c { font: 700 10.5px/1 var(--f-mono, monospace); opacity: .75; }
+.rk-rung.past { opacity: .45; }
+.rk-rung.cur { background: color-mix(in srgb, var(--gold, #ffc94a) 22%, transparent); border-color: var(--gold, #ffc94a); box-shadow: 0 0 16px color-mix(in srgb, var(--gold, #ffc94a) 35%, transparent); transform: scale(1.02); }
+.rk-rung.cur::before { content: "▶"; position: absolute; left: -2px; color: var(--gold, #ffc94a); font-size: 11px; }
+.rk-rung.goal { border-color: #fff; border-style: dashed; }
+.rk-rung.lit { background: #ffffff; color: #0a0c14; box-shadow: 0 0 22px #fff; }
+.rk-rung.lit .m, .rk-rung.lit .c { color: #0a0c14; opacity: 1; }
+.rk-rung.crash { background: rgba(255,90,106,.12); border-color: rgba(255,90,106,.4); }
+.rk-rung.crash.lit { background: #ff5a6a; color: #fff; box-shadow: 0 0 22px #ff5a6a; }
+.rk-ctrl { display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+.rk-btn { padding: 14px 12px; border-radius: 14px; border: 0; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font: 800 16px/1.1 var(--f-display, inherit); color: #0a0c14; background: linear-gradient(180deg, color-mix(in srgb, var(--gold, #ffc94a) 85%, #fff), var(--gold, #ffc94a)); box-shadow: 0 4px 0 rgba(0,0,0,.35); transition: transform .08s, filter .12s; }
+.rk-btn.two { background: linear-gradient(180deg, #ff8ad8, #ff4fd8); }
+.rk-btn.stop { background: linear-gradient(180deg, #ff8a96, #ff5a6a); color: #fff; font-size: 22px; padding: 22px 12px; animation: rkPulse .5s ease-in-out infinite alternate; }
+.rk-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.35); }
+.rk-btn:hover { filter: brightness(1.06); }
+@keyframes rkPulse { to { box-shadow: 0 4px 0 rgba(0,0,0,.35), 0 0 30px rgba(255,90,106,.7); } }
+@media (max-width: 560px) { .rk-ladder { grid-template-columns: 1fr; } .rk-rung { padding: 4px 8px; } .rk-card { width: 116px; height: 160px; } }
+'''
+
+RISK_JS = r'''
+/* ---------- Risikospiele neu: Kartenrisiko und Leiter (seit SW 0.17.0) ---------- */
+// Schneller und mit Tastatur: Karten ← / → (oder 1 / 2), Leiter ↑ oder Leertaste = 1 Sprosse und Stopp, 2 = zwei Sprossen, Enter = einsammeln.
+const GAMBLE_THEME = {
+  sternenwrack: [{ n: "Cyan", c: "#4fe3ff" }, { n: "Magenta", c: "#ff4fd8" }],
+  treibgut: [{ n: "Türkis", c: "#3fd0c8" }, { n: "Koralle", c: "#ff7a59" }],
+  eisenfront: [{ n: "Oliv", c: "#a7c060" }, { n: "Signalrot", c: "#e0503a" }],
+  neustadt: [{ n: "Grün", c: "#6fdc8c" }, { n: "Rot", c: "#ff6b6b" }],
+};
+let rkKeys = null, rkClick = null;
+function rkDone() { rkKeys = null; if (rkClick) $("bonusBody").removeEventListener("click", rkClick); rkClick = null; }
+addEventListener("keydown", e => {
+  if (!rkKeys || $("bonus").hidden || e.repeat) return;
+  if (e.target.closest && e.target.closest("input, select, textarea")) return;
+  const k = rkKeys(e);
+  if (k) { e.preventDefault(); e.stopImmediatePropagation(); }
+}, true);
+async function playGamble() {
+  if (!gambleOffer || spinning || busy) return;
+  let stake = gambleOffer; clearGamble();
+  busy = true; render();
+  const [A, B] = GAMBLE_THEME[WORLD_ID] || GAMBLE_THEME.sternenwrack;
+  openBonus({ id: "beacon", color: B.c }, "Signal-Risiko", `Errate die Farbe der nächsten Karte: ${A.n} oder ${B.n}. Richtig verdoppelt, falsch verliert. Genau 50 : 50, einsammeln geht jederzeit.`);
+  $("bonusBtn").hidden = true;
+  let chain = 0, lock = false, finished = null;
+  const queue = [];
+  const hist = [];
+  const sig = col => `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="${col}" opacity=".22"/><circle cx="20" cy="20" r="8.5" fill="${col}"/><path d="M7 7 a18 18 0 0 0 0 26 M33 7 a18 18 0 0 1 0 26" stroke="${col}" stroke-width="2.2" fill="none"/></svg>`;
+  $("bonusBody").innerHTML = `<div class="rk"><div class="rk-steps" id="rkSteps">${[1, 2, 3, 4, 5].map(i => `<span>×${2 ** i}</span>`).join("")}</div>
+    <div class="rk-table"><div class="rk-card" id="rkCard" style="--ga:${A.c};--gb:${B.c}"><div class="rk-in"><div class="rk-face rk-back"><i></i></div><div class="rk-face rk-front" id="rkFront"></div></div></div></div>
+    <div class="rk-hist" id="rkHist"></div>
+    <div class="rk-pick"><button type="button" data-g="a" style="--gc:${A.c}"><i></i>${A.n}<small>Taste ← oder 1</small></button><button type="button" data-g="b" style="--gc:${B.c}"><i></i>${B.n}<small>Taste → oder 2</small></button></div>
+    <button type="button" class="rk-take" id="rkTake"></button></div>`;
+  const ui = () => {
+    $("bonusTotal").textContent = stake;
+    [...$("rkSteps").children].forEach((s, i) => { s.className = i < chain ? "on" : i === chain ? "next" : ""; });
+    $("rkTake").innerHTML = `Einsammeln · ${fmtN(stake)}<small>Taste Enter</small>`;
+    $("rkHist").innerHTML = hist.map(c => `<i style="color:${c};background:${c}"></i>`).join("");
+  };
+  ui();
+  const result = await new Promise(resolve => {
+    finished = resolve;
+    const pick = async g => {
+      if (lock) { if (queue.length < 6) queue.push(g); return; }
+      lock = true;
+      const real = Math.random() < .5 ? "a" : "b", col = real === "a" ? A.c : B.c, card = $("rkCard");
+      card.classList.remove("win", "lose", "quick");
+      $("rkFront").innerHTML = sig(col);
+      try { sfx.creak(); } catch (e) {}
+      card.classList.add("flip");
+      await wait(300);
+      hist.push(col); if (hist.length > 10) hist.shift();
+      if (g === real) {
+        state.credits += stake; stake *= 2; chain++;
+        bump("gambleWins"); maxStat("gambleChain", chain);
+        card.classList.add("win"); try { sfx.mult(); burstAt(card, 26, ["#5dffa8", "#ffffff"], .7); } catch (e) {}
+        $("bonusStatus").textContent = `Richtig! Jetzt ${stake} Credits im Spiel.`;
+        countCredits(state.credits, 250); ui();
+        if (chain >= 5) { await wait(500); resolve("max"); return; }
+        await wait(260);
+        card.classList.add("quick"); card.classList.remove("flip"); await wait(150);
+        lock = false;
+        if (queue.length) pick(queue.shift());
+      } else {
+        state.credits -= stake;
+        card.classList.add("lose"); try { sfx.streakBreak(); } catch (e) {}
+        countCredits(state.credits, 300);
+        $("bonusStatus").textContent = `Daneben. ${stake} Credits verloren.`;
+        queue.length = 0; stake = 0; ui(); $("bonusTotal").textContent = 0;
+        $("bonusBody").querySelectorAll("button").forEach(b => b.disabled = true);
+        await wait(900); resolve("lost");
+      }
+    };
+    rkClick = e => {
+      const g = e.target.closest("[data-g]"); if (g && !g.disabled) { pick(g.dataset.g); return; }
+      if (e.target.closest("#rkTake") && !lock) resolve("take");
+    };
+    $("bonusBody").addEventListener("click", rkClick);
+    rkKeys = e => {
+      if (e.key === "ArrowLeft" || e.key === "1") { pick("a"); return true; }
+      if (e.key === "ArrowRight" || e.key === "2") { pick("b"); return true; }
+      if (e.key === "Enter" || e.code === "Space") { if (!lock) resolve("take"); return true; }
+      return false;
+    };
+  });
+  rkDone();
+  if (result !== "lost") { addLog("beacon", `Risiko gewonnen (${chain}×)`, "+" + (stake - stake / 2 ** chain), B.c); bip(chain ? "gambleWin" : "small", chain ? 3 : 1); }
+  else { addLog("beacon", "Risiko verloren", "0", "#ff6b7a"); bip("gambleLoss", 3); }
+  if (result !== "lost" && chain) $("bonusStatus").textContent = `Eingesammelt: ${stake} Credits.`;
+  await wait(250);
+  await closeBonus();
+  state.peak = Math.max(state.peak, state.credits);
+  busy = false; checkAch();
+  if (state.credits < 5) { busy = true; render(); await handleBankruptcy(); busy = false; }
+  render(); saveGame();
+}
+
+async function playLadder() {
+  if (!gambleOffer || spinning || busy) return;
+  const base = gambleOffer; clearGamble();
+  busy = true; render();
+  openBonus({ id: "ladder", color: "#ffc94a" }, "Risikoleiter", "Steig so weit hoch, wie du dich traust. Das Licht springt zwischen Ziel und Absturz, du drückst Stopp. Je größer der Sprung, desto kleiner die Chance. Kassieren geht jederzeit.");
+  $("bonusBtn").hidden = true;
+  const top = LADDER.length - 1, val = i => Math.round(base * LADDER[i]);
+  const chance = (a, b) => LADDER[a] / LADDER[b], pct = (a, b) => Math.round(chance(a, b) * 100);
+  let lvl = 0, running = false, stopReq = null;
+  $("bonusBody").innerHTML = `<div class="rk rk-ladder"><div class="rk-rungs" id="rkRungs">${LADDER.map((m, i) => `<div class="rk-rung" data-i="${i}"><span class="m">×${String(m).replace(".", ",")}</span><b>${fmtN(val(i))}</b><span class="c"></span></div>`).reverse().join("")}<div class="rk-rung crash" data-i="-1"><span class="m">✕</span><b>Absturz</b><span class="c">0</span></div></div>
+    <div class="rk-ctrl"><button type="button" class="rk-btn" id="rkOne" data-j="1"></button><button type="button" class="rk-btn two" id="rkTwo" data-j="2"></button><button type="button" class="rk-btn stop" id="rkStop" hidden>Stopp!<small>Leertaste</small></button><button type="button" class="rk-take" id="rkTakeL"></button></div></div>`;
+  const rung = i => $("rkRungs").querySelector(`[data-i="${i}"]`);
+  const ui = () => {
+    $("bonusTotal").textContent = val(lvl);
+    LADDER.forEach((_, i) => { const r = rung(i); r.classList.toggle("past", i < lvl); r.classList.toggle("cur", i === lvl); r.querySelector(".c").textContent = i === lvl + 1 || i === lvl + 2 ? `${pct(lvl, i)} %` : ""; });
+    const one = $("rkOne"), two = $("rkTwo");
+    one.hidden = lvl >= top || running; two.hidden = lvl >= top - 1 || running;
+    if (lvl < top) one.innerHTML = `▲ 1 Sprosse · ${pct(lvl, lvl + 1)} %<small>auf ${fmtN(val(lvl + 1))} · Taste ↑ oder Leertaste</small>`;
+    if (lvl < top - 1) two.innerHTML = `▲▲ 2 Sprossen · ${pct(lvl, lvl + 2)} %<small>auf ${fmtN(val(lvl + 2))} · Taste 2</small>`;
+    $("rkStop").hidden = !running;
+    const t = $("rkTakeL"); t.hidden = running; t.innerHTML = `Kassieren · ${fmtN(val(lvl))}<small>Taste Enter</small>`;
+  };
+  // Lauflicht: schnell, Stopp wirkt nach 2–3 Wechseln, spätestens nach etwa 1,2 Sekunden von selbst
+  const run = (target, win) => new Promise(async res => {
+    const rT = rung(target), rC = rung(-1);
+    running = true; stopReq = null; ui(); rT.classList.add("goal");
+    let n = 0, delay = 55, on = 1, stopAt = null;
+    stopReq = () => { if (stopAt === null) { stopAt = n + 1 + ((Math.random() * 2) | 0); try { sfx.click(); } catch (e) {} } };
+    for (;;) {
+      on = 1 - on;
+      rT.classList.toggle("lit", on === 0); rC.classList.toggle("lit", on === 1);
+      if (state.sound) tone(on === 0 ? 1320 : 440, .04, { type: "square", vol: .03 });
+      await wait(delay); n++;
+      if (stopAt === null && n >= 16) stopAt = n + 2;
+      if (stopAt !== null) {
+        delay = Math.min(170, delay * 1.5);
+        if (n >= stopAt && (on === 0) !== win) {
+          on = 1 - on; rT.classList.toggle("lit", on === 0); rC.classList.toggle("lit", on === 1);
+          if (state.sound) tone(on === 0 ? 1320 : 440, .08, { type: "square", vol: .05 });
+          break;
+        }
+      }
+    }
+    rT.classList.remove("goal"); stopReq = null;
+    await wait(110);
+    rT.classList.remove("lit"); rC.classList.remove("lit");
+    running = false; res();
+  });
+  const result = await new Promise(resolve => {
+    const jump = async j => {
+      if (running) { if (stopReq) stopReq(); return; }
+      if (lvl + j > top) return;
+      const target = lvl + j, win = Math.random() < chance(lvl, target);
+      $("bonusStatus").textContent = `Ziel: ${val(target).toLocaleString("de-DE")} Credits. Drück Stopp!`;
+      await run(target, win);
+      if (win) {
+        state.credits += val(target) - val(lvl); lvl = target;
+        bump("ladderWins"); maxStat("ladderTop", lvl);
+        try { sfx.mult(); burstAt(rung(lvl), 28, ["#ffc94a", "#ffffff", "#ffe08a"], .8); } catch (e) {}
+        countCredits(state.credits, 250);
+        $("bonusStatus").textContent = `Geschafft! ${val(lvl).toLocaleString("de-DE")} Credits auf der Leiter.`;
+        ui();
+        if (lvl >= top) { await wait(500); resolve("max"); }
+      } else {
+        state.credits -= val(lvl);
+        try { sfx.streakBreak(); burstAt(rung(-1), 22, ["#ff5a6a", "#8a90b8"], .6); } catch (e) {}
+        countCredits(state.credits, 300);
+        $("bonusStatus").textContent = `Absturz! ${val(lvl).toLocaleString("de-DE")} Credits verloren.`;
+        $("bonusTotal").textContent = 0;
+        $("bonusBody").querySelectorAll("button").forEach(b => b.disabled = true);
+        await wait(900); resolve("lost");
+      }
+    };
+    rkClick = e => {
+      if (e.target.closest("#rkStop")) { if (stopReq) stopReq(); return; }
+      const j = e.target.closest("[data-j]"); if (j && !j.disabled) { jump(+j.dataset.j); return; }
+      if (e.target.closest("#rkTakeL") && !running) resolve("take");
+    };
+    $("bonusBody").addEventListener("click", rkClick);
+    rkKeys = e => {
+      if (e.code === "Space" || e.key === "ArrowUp" || e.key === "1") { if (running) { if (stopReq) stopReq(); } else jump(1); return true; }
+      if (e.key === "2") { if (running) { if (stopReq) stopReq(); } else jump(2); return true; }
+      if (e.key === "Enter") { if (!running) resolve("take"); return true; }
+      return false;
+    };
+    ui();
+  });
+  rkDone();
+  if (result === "lost") { addLog("beacon", "Risikoleiter abgestürzt", "0", "#ff6b7a"); bip("ladderLoss", 3); }
+  else {
+    const gain = val(lvl) - base;
+    if (lvl) { addLog("beacon", `Risikoleiter ×${String(LADDER[lvl]).replace(".", ",")}`, "+" + gain, "#ffc94a"); state.best = Math.max(state.best, val(lvl)); }
+    $("bonusStatus").textContent = `Kassiert: ${val(lvl).toLocaleString("de-DE")} Credits.`;
+    if (result === "max") { bip("ladderTop", 3); flashScreen(); burst(140, ["#ffc94a", "#ffffff", "#ff4fd8"], 1.3); addDust(2, "Gipfel der Risikoleiter"); }
+    else if (lvl >= 4) bip("ladderWin", 3);
+  }
+  await wait(300);
+  await closeBonus();
+  state.peak = Math.max(state.peak, state.credits);
+  busy = false; checkAch();
+  if (state.credits < 5) { busy = true; render(); await handleBankruptcy(); busy = false; }
+  render(); saveGame();
+}
+'''
+EXTRA_CSS += RISK_CSS
+EXTRA_JS += RISK_JS
