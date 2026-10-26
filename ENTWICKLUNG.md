@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.17.0**, Treibgut 0.9.0, Eisenfront 0.8.0, Neustadt 0.9.0 (26.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.17.1**, Treibgut 0.9.1, Eisenfront 0.8.1, Neustadt 0.9.1 (26.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -13,7 +13,7 @@ Stand: Sternenwrack **Beta 0.17.0**, Treibgut 0.9.0, Eisenfront 0.8.0, Neustadt 
 ## Hauptmenü und Risikospiele (0.17.0)
 - Menü: Schriftzug `.mm-brand` „SALVAGE & GRIND“, darunter „Welt N von 4 · Name“, Leiste `.mm-strip` mit allen vier Welten (Feld `motto` in WORLDS). Titel des Tabs: „Salvage & Grind · Welt“.
 - Risikospiele neu in `extra_parts.py` (RISK_CSS/RISK_JS): `playGamble`/`playLadder` überschreiben die alten Funktionen. Karten: Tasten ←/1, →/2, Enter; Eingaben werden gepuffert. Leiter: Leertaste/↑/1 = 1 Sprosse bzw. Stopp, 2 = zwei Sprossen, Enter = kassieren. Wahrscheinlichkeiten und Gewinne unverändert.
-- Ultrawide: ab 1680 px und 2300 px dreispaltiges Layout (Dock · Automat · Hangar).
+- Ultrawide: ab 1680 px und 2300 px dreispaltiges Layout (Dock · Automat · Hangar). Rahmenbreite an --cell gekoppelt, Symbole per container-type:size auf 74cqh begrenzt (sonst ragen sie in flachen Feldern heraus), Boost-Labor zweispaltig.
 
 ## Arbeitsweise mit dem Nutzer
 - Der Nutzer (heinr2ch) schreibt auf Deutsch, oft per Spracheingabe. Antworten auf Deutsch, knapp, ohne Fachjargon.

@@ -5,15 +5,21 @@ EXTRA_CSS = r'''
 
 /* ---------- Breite Bildschirme (Ultrawide, 1440p, 4K): drei Spalten, größere Walzen ---------- */
 @media (min-width: 1680px) {
-  .app { max-width: 1900px; grid-template-columns: 360px minmax(0, 1fr) 470px; grid-template-rows: auto; grid-template-areas: "dock machine hangar"; }
+  .app { max-width: 1900px; grid-template-columns: 380px minmax(0, 1fr) 470px; grid-template-rows: auto; grid-template-areas: "dock machine hangar"; }
   .dock .dockgrid, .dock .xtiles { grid-template-columns: 1fr; }
-  .frame { --cell: min(140px, calc((100cqw - 124px) / 5), max(100px, calc((100vh - 600px) / 3))); }
+  .dock .labgrid { grid-template-columns: 1fr 1fr; }
+  .frame { --cell: min(150px, calc((100cqw - 124px) / 5), max(108px, calc((100vh - 500px) / 3))); }
+  /* Walzen nicht breiter ziehen als nötig, sonst werden die Felder flach */
+  .stage .frame { max-width: calc(var(--cell) * 6.6 + 120px); margin-inline: auto; }
 }
 @media (min-width: 2300px) {
   .app { max-width: 2520px; grid-template-columns: 440px minmax(0, 1fr) 560px; gap: 24px; }
-  .frame { --cell: min(172px, calc((100cqw - 124px) / 5), max(110px, calc((100vh - 620px) / 3))); }
-  .dock .labgrid { grid-template-columns: 1fr 1fr; }
+  .frame { --cell: min(180px, calc((100cqw - 124px) / 5), max(116px, calc((100vh - 480px) / 3))); }
 }
+/* ---------- Walzensymbole passen immer ins Feld (seit SW 0.17.1) ---------- */
+html body .reel .sym { container-type: size; }
+html body .reel .sym svg { max-height: 74cqh; max-width: 74cqh; }
+html body .reel .sym.feature svg { max-height: 88cqh; max-width: 88cqh; }
 /* ---------- Lesbarkeit: deaktivierte Knöpfe bleiben gut lesbar (seit SW 0.16.0) ---------- */
 html body .bbtn:disabled, html body button.bbtn[disabled] { opacity: 1; background: rgba(255,255,255,.07); color: rgba(255,255,255,.86); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.3); text-shadow: none; filter: none; cursor: not-allowed; }
 html body .vehcard .bbtn:disabled { opacity: 1; }

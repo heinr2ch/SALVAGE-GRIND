@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.17.1 · Walzen und Boost-Labor auf breiten Bildschirmen · 25.10.2026
+- Walzensymbole passen in 21:9 und 16:9 immer ins Feld
+- Walzen größer und nicht mehr flach gezogen
+- Boost-Labor in zwei Spalten, gut lesbar
+
 ## Beta 0.17.0 · Salvage & Grind: neues Hauptmenü und schnellere Risikospiele · 25.10.2026
 - Hauptmenü mit Schriftzug „Salvage & Grind“ und allen vier Welten samt Untertitel
 - Risikokarten neu: Karte dreht sich, schnelle Eingaben, Tasten ← → und Enter
