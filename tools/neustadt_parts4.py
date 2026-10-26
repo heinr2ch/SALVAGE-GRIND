@@ -97,7 +97,7 @@ const TRACKS = [
       const PROG = [[62, 65, 69, 72], [55, 59, 62, 65], [60, 64, 67, 71], [57, 60, 64, 67]], ROOT = [38, 43, 36, 45];
       const STEP = this.dur, bar = Math.floor(i / 16) % 4, s = i % 16, ch = PROG[bar], hot = mode !== "base";
       if (s === 0 || s === 6 || s === 8 || s === 14) mTone(NOTE(ROOT[bar] + (s >= 8 ? 7 : 0)), t, STEP * 1.8, { type: "triangle", vol: .12, attack: .005, release: .12 });
-      if ([0, 3, 6, 10, 12].includes(s)) mTone(1400, t, .03, { type: "square", vol: hot ? .03 : .02, cutoff: 2500, attack: .001, release: .025 });
+      if ([0, 3, 6, 10, 12].includes(s) && (hot || bar % 2 === 1)) mTone(800, t, .03, { type: "triangle", vol: hot ? .022 : .016, attack: .001, release: .025 });
       if (s % 2 === 1) mHat(t, hot ? .022 : .014);
       if ([2, 5, 9, 13].includes(s)) ch.forEach(n => mKeys(NOTE(n), t, STEP * 1.2, .013));
       const MEL = [74, 72, 69, 72, 71, 67, 69, 64];

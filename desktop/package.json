@@ -1,0 +1,40 @@
+{
+  "name": "salvage-grind",
+  "productName": "Salvage & Grind",
+  "version": "0.17.2",
+  "description": "Salvage & Grind – Slot-Sammlung mit vier Welten (nur Spielgeld)",
+  "author": "heinr2ch",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "prepare-app": "node prepare.js",
+    "start": "node prepare.js && electron .",
+    "dist": "node prepare.js && electron-builder --win nsis --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8",
+    "@fontsource/unbounded": "5.1.0",
+    "@fontsource/manrope": "5.1.0",
+    "@fontsource/jetbrains-mono": "5.1.1"
+  },
+  "build": {
+    "appId": "com.heinr2ch.salvagegrind",
+    "productName": "Salvage & Grind",
+    "copyright": "© heinr2ch",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "app/**/*"],
+    "win": { "target": "nsis", "icon": "build/icon.ico", "artifactName": "Salvage-and-Grind-Setup-${version}.exe" },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Salvage & Grind",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "language": "1031"
+    }
+  }
+}

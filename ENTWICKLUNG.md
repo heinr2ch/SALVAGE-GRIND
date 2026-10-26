@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.17.1**, Treibgut 0.9.1, Eisenfront 0.8.1, Neustadt 0.9.1 (26.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.17.2**, Treibgut 0.9.2, Eisenfront 0.8.2, Neustadt 0.9.2 (26.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -15,10 +15,15 @@ Stand: Sternenwrack **Beta 0.17.1**, Treibgut 0.9.1, Eisenfront 0.8.1, Neustadt 
 - Risikospiele neu in `extra_parts.py` (RISK_CSS/RISK_JS): `playGamble`/`playLadder` überschreiben die alten Funktionen. Karten: Tasten ←/1, →/2, Enter; Eingaben werden gepuffert. Leiter: Leertaste/↑/1 = 1 Sprosse bzw. Stopp, 2 = zwei Sprossen, Enter = kassieren. Wahrscheinlichkeiten und Gewinne unverändert.
 - Ultrawide: ab 1680 px und 2300 px dreispaltiges Layout (Dock · Automat · Hangar). Rahmenbreite an --cell gekoppelt, Symbole per container-type:size auf 74cqh begrenzt (sonst ragen sie in flachen Feldern heraus), Boost-Labor zweispaltig.
 
+## Windows-Version (seit 0.17.2)
+- Ordner `desktop/`: Electron-Hülle (`main.js`), `prepare.js` kopiert die vier Welten nach `desktop/app`, baut die Schriften aus @fontsource lokal ein (ersetzt den Google-Fonts-Link), stellt Welt-Links auf lokale Dateien um und übernimmt GAME_VERSION als Installer-Version.
+- Gebaut wird nur auf GitHub (`.github/workflows/windows.yml`, windows-latest), weil diese Sitzung kein npm/Internet hat. Jeder Push, der eine Welt oder `desktop/` ändert, baut neu und legt den Installer als Release `windows-vX.Y.Z` ab.
+- Musik-Prüfung: `music.js` im Scratchpad rendert jedes Stück offline und misst Lautstärke, Spitzen und schrille Töne. Track-Feld `gain` gleicht leise Stücke an (musicLevel).
+
 ## Arbeitsweise mit dem Nutzer
 - Der Nutzer (heinr2ch) schreibt auf Deutsch, oft per Spracheingabe. Antworten auf Deutsch, knapp, ohne Fachjargon.
 - Jede Änderung: testen, direkt nach GitHub pushen, **erst nach erfolgreichem Pages-Deploy** „ist live“ melden.
-  Deploy prüfen: `gh api repos/heinr2ch/salvage-grind/actions/runs --jq '.workflow_runs[0] | .status + " " + (.conclusion // "-") + " " + .head_sha[0:7]'`
+  Deploy prüfen: `gh api 'repos/heinr2ch/salvage-grind/actions/runs?event=dynamic' --jq '.workflow_runs[0] | .status + " " + (.conclusion // "-") + " " + .head_sha[0:7]'`
 - **Versionierung (feste Anweisung):** Schema „Beta 0.MINOR.PATCH“. Neue Features erhöhen MINOR, Korrekturen und kleine Komfortfunktionen PATCH. Nie 1.0 erreichen, ohne dass der Nutzer es sagt. Der Nutzer korrigiert bei Bedarf (z. B. Hilfemodus war für ihn nur ein PATCH).
   Bei jedem Update ändern: `GAME_VERSION`, das `CHANGELOG`-Array im Spiel (neuester Eintrag oben), `CHANGELOG.md`, Versionszeile in `README.md`.
 - Commit-Identität: `user.name=heinr2ch`, `user.email=heinr2ch@users.noreply.github.com`. Tags lassen sich nicht pushen, daher keine Tags.

@@ -4,7 +4,7 @@ Slot-Sammlung im Browser mit vier Welten: **Sternenwrack**, **Treibgut**, **Eise
 
 ## Sternenwrack · Salvage Slots
 
-**Aktuelle Version: Beta 0.17.1** · [Änderungsprotokoll](CHANGELOG.md)
+**Aktuelle Version: Beta 0.17.2** · [Änderungsprotokoll](CHANGELOG.md)
 
 Ein Sci-Fi-Spielautomat im Browser – **nur mit Spielgeld**, es geht um kein echtes Geld.
 
@@ -28,7 +28,7 @@ Das ganze Spiel steckt in einer einzigen Datei: `index.html`.
 
 ### Treibgut · Survival Slots
 
-**Aktuelle Version: Beta 0.9.1** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
+**Aktuelle Version: Beta 0.9.2** · [Änderungsprotokoll](treibgut/CHANGELOG.md)
 
 Meeres-Survival mit eigenem Grundspiel: Statt Walzen ein Fangnetz mit Schwärmen und Nachfang-Kaskaden. Floß statt Raumschiff, Inseln statt Sektoren, Papagei Koko statt Bip. Eigener Spielstand.
 
@@ -36,7 +36,7 @@ Meeres-Survival mit eigenem Grundspiel: Statt Walzen ein Fangnetz mit Schwärmen
 
 ### Eisenfront · Werkstatt-Slots
 
-**Aktuelle Version: Beta 0.8.1** · [Änderungsprotokoll](eisenfront/CHANGELOG.md)
+**Aktuelle Version: Beta 0.8.2** · [Änderungsprotokoll](eisenfront/CHANGELOG.md)
 
 Düstere Werkstatt an der Front: Ein rostiger Panzer wird Stück für Stück wieder flottgemacht. Eigenes Grundspiel als Sammler-Slot: 5 Walzen, 243 Wege, Schraubenkisten mit Beträgen, die Werkstatthund Rex einsammelt. Dazu Brieftaube, Fallschirmkisten, vier Fronten, eigene Musik und Geräusche. Fiktives Szenario ohne echte Armeen oder Abzeichen. Eigener Spielstand.
 
@@ -44,7 +44,7 @@ Düstere Werkstatt an der Front: Ein rostiger Panzer wird Stück für Stück wie
 
 ### Neustadt · Aufbau-Slots
 
-**Aktuelle Version: Beta 0.9.1** · [Änderungsprotokoll](neustadt/CHANGELOG.md)
+**Aktuelle Version: Beta 0.9.2** · [Änderungsprotokoll](neustadt/CHANGELOG.md)
 
 Städtebau: Aus einem Trümmerfeld wird Schritt für Schritt eine Stadt (Wohnviertel, Verkehr, Funkturm, Handel, Energie; Dorf, Kleinstadt, Metropole). Eigenes Grundspiel „Skyline-Walzen“: sechs Walzen als Hochhäuser, jedes pro Dreh 2 bis 7 Felder hoch, bis zu 117.649 Gewinnwege, Nachbau-Kaskaden und Freibauten mit wachsendem Multiplikator. Das Stadtbild ist in Pixeloptik gezeichnet. Mit Waschbär Paule. Eigener Spielstand.
 

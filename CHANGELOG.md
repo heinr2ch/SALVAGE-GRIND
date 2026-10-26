@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.17.2 · Ruhigere Musik und Windows-Version · 25.10.2026
+- Musik entschärft: keine schrillen Bonus-Melodien mehr, leisere Klanghölzer und Rimshots
+- Lagerfeuer genauso laut wie die anderen Stücke, Werkstattmarsch weniger wummernd
+- Neu: installierbare Windows-Version mit eingebauten Schriften
+
 ## Beta 0.17.1 · Walzen und Boost-Labor auf breiten Bildschirmen · 25.10.2026
 - Walzensymbole passen in 21:9 und 16:9 immer ins Feld
 - Walzen größer und nicht mehr flach gezogen

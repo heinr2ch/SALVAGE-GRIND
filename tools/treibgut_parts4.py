@@ -106,7 +106,7 @@ function mSteel(f, t, vol) {
   mTone(f * 2, t, .25, { type: "sine", vol: vol * .4, attack: .003, release: .22 });
   mTone(f * 3.02, t, .14, { type: "sine", vol: vol * .15, attack: .003, release: .12 });
 }
-function mWood(t, vol, f = 1150) { mTone(f, t, .06, { type: "square", vol, cutoff: 2600, attack: .001, release: .05 }); }
+function mWood(t, vol, f = 900) { mTone(f, t, .05, { type: "triangle", vol: vol * .8, attack: .001, release: .04 }); }
 const TRACKS = [
   { id: "shanty", name: "Seemannslied", bpm: 90,
     step(i, t, mode) {
@@ -127,7 +127,7 @@ const TRACKS = [
       }
       if (!hot && phrase === 0 && s === 10 && Math.random() < .4) mPluck(NOTE(ch[2] + 12), t, .05, .6);
     } },
-  { id: "fire", name: "Lagerfeuer", bpm: 72,
+  { id: "fire", name: "Lagerfeuer", bpm: 72, gain: 2.2,
     step(i, t, mode) {
       // ruhige Fingerpicking-Gitarre in G-Dur, Meeresrauschen, gepfiffene Töne
       const PROG = [[55, 59, 62, 67], [52, 55, 59, 64], [48, 52, 55, 60], [50, 54, 57, 62]], ROOT = [43, 40, 36, 38];
@@ -150,11 +150,11 @@ const TRACKS = [
       const bassPat = [1,0,0,1, 0,0,1,0, 1,0,0,1, 0,0,1,0], bassOff = [0,0,0,7, 0,0,12,0, 0,0,0,7, 0,0,4,0];
       if (bassPat[s]) mTone(NOTE(ROOT[bar] + bassOff[s]), t, STEP * 1.6, { type: "triangle", vol: .12, attack: .005, release: .12 });
       if (s === 0 || s === 8) mKick(t, hot ? .24 : .16);
-      if ([0, 3, 6, 10, 12].includes(s)) mWood(t, hot ? .045 : .03);
+      if ([0, 3, 6, 10, 12].includes(s) && (hot || bar % 2 === 1)) mWood(t, hot ? .035 : .025);
       if (s % 2 === 1) mNoise(t, .035, hot ? .045 : .028, 7000);
       const steel = [1,0,1,0, 0,1,0,1, 0,0,1,0, 1,0,0,0];
       const seq = [2, 1, 0, 1, 2, 2, 1, 0];
-      if (steel[s] && (hot || bar % 2 === 0 || s < 8)) mSteel(NOTE(ch[seq[(i >> 1) % 8] % 3] + 12 + (mode === "bonus" ? 12 : 0)), t, hot ? .05 : .038);
+      if (steel[s] && (hot || bar % 2 === 0 || s < 8)) mSteel(NOTE(ch[seq[(i >> 1) % 8] % 3] + 12), t, hot ? .042 : .034);
       if (s === 2 || s === 10) ch.forEach(n => mTone(NOTE(n), t, STEP * .8, { type: "triangle", vol: .018, attack: .004, release: .1 }));
       if (mode === "fs" && s === 14) mSteel(NOTE(ch[2] + 24), t, .04);
     } },

@@ -126,14 +126,14 @@ const TRACKS = [
       const PROG = [[58, 62, 65], [63, 67, 70], [65, 69, 72], [58, 62, 65]], ROOT = [34, 39, 41, 34];
       const MEL = [[70, 0, 70, 72, 74, 0, 70, 0], [75, 0, 74, 72, 70, 0, 67, 0], [72, 0, 72, 74, 77, 0, 72, 0], [70, 72, 74, 72, 70, 0, 0, 0]];
       const STEP = this.dur, bar = Math.floor(i / 16) % 4, s = i % 16, ch = PROG[bar], hot = mode !== "base", phrase = Math.floor(i / 64) % 2;
-      if (s === 0 || s === 8) mTone(NOTE(ROOT[bar]), t, STEP * 3, { type: "triangle", vol: .13, attack: .005, release: .2 });
+      if (s === 0 || s === 8) mTone(NOTE(ROOT[bar]), t, STEP * 3, { type: "triangle", vol: .1, attack: .02, release: .2 });
       if (s === 4 || s === 12) mTone(NOTE(ROOT[bar] + 7), t, STEP * 3, { type: "triangle", vol: .1, attack: .005, release: .2 });
       if (s === 4 || s === 12) ch.forEach(n => mBrass(NOTE(n - 12), t, STEP * 1.4, hot ? .014 : .01));
-      if (s === 0 || s === 8) mKick(t, hot ? .24 : .16);
-      if (s === 4 || s === 12) mSnare(t, hot ? .07 : .05);
-      if (hot && s % 2 === 1) mSnare(t, .025);
+      if (s === 0 || s === 8) mKick(t, hot ? .17 : .12);
+      if (s === 4 || s === 12) mSnare(t, hot ? .045 : .035);
+      if (hot && s % 2 === 1) mSnare(t, .014);
       if (!hot && (s === 14 || s === 15)) mSnare(t, .02);
-      if (s % 2 === 0 && (hot || phrase === 1)) { const n = MEL[bar][s / 2]; if (n) mBrass(NOTE(n + (mode === "bonus" ? 12 : 0)), t, STEP * 1.8, hot ? .022 : .016); }
+      if (s % 2 === 0 && (hot || phrase === 1)) { const n = MEL[bar][s / 2]; if (n) mBrass(NOTE(n), t, STEP * 1.8, hot ? .02 : .016); }
       if (mode === "fs" && s === 0 && bar === 0) mBell(NOTE(82), t, .03);
     } },
   { id: "harp", name: "Mundharmonika", bpm: 76,
@@ -158,12 +158,12 @@ const TRACKS = [
       const STEP = this.dur, bar = Math.floor(i / 16) % 4, s = i % 16, ch = PROG[bar], hot = mode !== "base";
       if (s % 4 === 0) mKick(t, hot ? .28 : .2);
       if ([0, 3, 6, 8, 11, 14].includes(s)) mTone(NOTE(ROOT[bar] + (s === 6 || s === 14 ? 12 : 0)), t, STEP * 1.5, { type: "sawtooth", vol: .05, cutoff: 420, attack: .004, release: .08 });
-      if (s === 4 || s === 12) mAnvil(NOTE(ch[0] + 12), t, hot ? .05 : .04);
+      if (s === 4 || s === 12) mAnvil(NOTE(ch[0] + 12), t, hot ? .036 : .028);
       if (hot && (s === 7 || s === 15)) mAnvil(NOTE(ch[2] + 12), t, .03);
       if (s === 10) mNoise(t, .35, hot ? .05 : .03, 5000);
       if (s % 2 === 1) mNoise(t, .03, hot ? .04 : .024, 7500);
       const seq = [0, 2, 1, 2];
-      if ((hot || bar % 2 === 1) && s % 4 === 2) mTone(NOTE(ch[seq[(i >> 2) % 4]] + 12 + (mode === "bonus" ? 12 : 0)), t, STEP * 1.6, { type: "square", vol: .016, cutoff: 1800, attack: .005, release: .1 });
+      if ((hot || bar % 2 === 1) && s % 4 === 2) mTone(NOTE(ch[seq[(i >> 2) % 4]] + 12), t, STEP * 1.6, { type: "triangle", vol: .02, attack: .005, release: .1 });
     } },
 ];
 '''
