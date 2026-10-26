@@ -2,6 +2,12 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.6.0 · Hauptmenü, Pech-Walze und Freispiel-Kauf · 25.10.2026
+- Neues Hauptmenü „Salvage & Grind“ mit allen vier Welten als Karten: eindeutiger Name, Thema, Spielart und dein Stand (Rang und Guthaben). Im Spiel jederzeit über „Menü“ oben erreichbar.
+- Eigenes Einstellungsmenü (Zahnrad oben oder im Hauptmenü): Ton, Musik, Musiktitel, Lautstärke, Turbo, Begleiter, Pech-Walze, weniger Effekte, Sprache und Spielstand an einem Ort.
+- Pech-Walze: Alle 18 bis 45 bezahlten Drehs erscheint dreimal dasselbe Pech-Symbol und kostet 25 bis 100 % des aktuellen Einsatzes. Nie in Freispielen, in den Einstellungen abschaltbar.
+- Freispiele kaufen: drei Pakete mit 8, 12 oder 20 Freispielen für das 40-, 60- oder 100-fache des Einsatzes. Gekaufte Freispiele laufen wie ausgelöste.
+
 ## Beta 0.5.0 · Sprachen Teil 2 · 25.10.2026
 - Jetzt übersetzt: Spielregeln, Hilfemodus, Sprechblasen von Bip, Koko, Rex und Paule, Funkzeile, Aufträge, Erfolge, Ränge und Gewinnmeldungen.
 - Zusammengesetzte Meldungen mit Namen und Zahlen werden ebenfalls übersetzt.

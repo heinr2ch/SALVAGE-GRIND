@@ -1,0 +1,93 @@
+# Nr	en	es	ja	ru	nl	el
+0	World # of #	Mundo # de #	ワールド # / #	Мир # из #	Wereld # van #	Κόσμος # από #
+1	Worlds	Mundos	ワールド	Миры	Werelden	Κόσμοι
+2	Continue	Continuar	続ける	Продолжить	Verder spelen	Συνέχεια
+3	Menu	Menú	メニュー	Меню	Menu	Μενού
+4	Space	Espacio	宇宙	Космос	Ruimte	Διάστημα
+5	Salvage	Rescate	回収	Добыча	Berging	Διάσωση
+6	Sea	Mar	海	Море	Zee	Θάλασσα
+7	Survival	Supervivencia	サバイバル	Выживание	Overleven	Επιβίωση
+8	Front	Frente	戦線	Фронт	Front	Μέτωπο
+9	Workshop	Taller	工房	Мастерская	Werkplaats	Συνεργείο
+10	# lines	# líneas	# ライン	# линий	# lijnen	# γραμμές
+11	Upgrade your spaceship	Mejora tu nave	宇宙船を強化	Улучшай корабль	Bouw je ruimteschip uit	Αναβάθμισε το διαστημόπλοιο
+12	Fishing net #×#	Red #×#	網 #×#	Сеть #×#	Vangnet #×#	Δίχτυ #×#
+13	Upgrade your raft	Mejora tu balsa	いかだを強化	Улучшай плот	Bouw je vlot uit	Αναβάθμισε τη σχεδία
+14	Upgrade your tank	Mejora tu tanque	戦車を強化	Улучшай танк	Bouw je tank uit	Αναβάθμισε το τανκ
+15	Build up your town	Desarrolla tu ciudad	町を発展	Развивай город	Bouw je stad uit	Ανάπτυξε την πόλη
+16	Rank #	Rango #	ランク #	Ранг #	Rang #	Βαθμός #
+17	No save yet	Sin partida guardada	セーブなし	Нет сохранения	Nog geen spelstand	Δεν υπάρχει αποθήκευση
+18	Play ▶	Jugar ▶	プレイ ▶	Играть ▶	Spelen ▶	Παίξε ▶
+19	Switch →	Cambiar →	切り替え →	Перейти →	Wisselen →	Αλλαγή →
+20	Applies to this world. The language applies to all worlds.	Se aplica a este mundo. El idioma se aplica a todos los mundos.	このワールドに適用。言語は全ワールド共通。	Действует для этого мира. Язык — для всех миров.	Geldt voor deze wereld. De taal geldt voor alle werelden.	Ισχύει για αυτόν τον κόσμο. Η γλώσσα ισχύει για όλους.
+21	Sound and music	Sonido y música	サウンドと音楽	Звук и музыка	Geluid en muziek	Ήχος και μουσική
+22	Sound effects	Efectos de sonido	効果音	Звуковые эффекты	Geluidseffecten	Ηχητικά εφέ
+23	Game	Juego	ゲーム	Игра	Spel	Παιχνίδι
+24	Faster spins once the drive reaches level #	Tiradas más rápidas cuando el propulsor llega al nivel #	推進装置がレベル # になると高速回転	Быстрее вращения, когда двигатель достигнет уровня #	Snellere draaien zodra de aandrijving niveau # heeft	Γρηγορότεροι γύροι μόλις η πρόωση φτάσει στο επίπεδο #
+25	Faster casts once the sail reaches level #	Lanzamientos más rápidos cuando la vela llega al nivel #	帆がレベル # になると高速投網	Быстрее забросы, когда парус достигнет уровня #	Snellere worpen zodra het zeil niveau # heeft	Γρηγορότερες ρίψεις μόλις το πανί φτάσει στο επίπεδο #
+26	Faster pushes once the engine reaches level #	Empujones más rápidos cuando el motor llega al nivel #	エンジンがレベル # になると高速押し出し	Быстрее рывки, когда мотор достигнет уровня #	Snellere duwen zodra de motor niveau # heeft	Γρηγορότερες ωθήσεις μόλις η μηχανή φτάσει στο επίπεδο #
+27	Faster spins once traffic reaches level #	Tiradas más rápidas cuando el tráfico llega al nivel #	交通がレベル # になると高速回転	Быстрее вращения, когда транспорт достигнет уровня #	Snellere draaien zodra verkeer niveau # heeft	Γρηγορότεροι γύροι μόλις η συγκοινωνία φτάσει στο επίπεδο #
+28	Show Bip	Mostrar a Bip	ビップを表示	Показывать Бипа	Bip tonen	Εμφάνιση Μπιπ
+29	Show Koko	Mostrar a Koko	ココを表示	Показывать Коко	Koko tonen	Εμφάνιση Κόκο
+30	Show Rex	Mostrar a Rex	レックスを表示	Показывать Рекса	Rex tonen	Εμφάνιση Ρεξ
+31	Show Paule	Mostrar a Paule	パウレを表示	Показывать Пауле	Paule tonen	Εμφάνιση Πάουλε
+32	Your companion with quips and help	Tu compañero con frases y ayuda	セリフとヘルプの相棒	Твой спутник с шутками и подсказками	Je maatje met grapjes en hulp	Ο σύντροφός σου με ατάκες και βοήθεια
+33	Bad-luck reel	Rodillo de mala suerte	不運リール	Барабан неудачи	Pechrol	Κύλινδρος γκαντεμιάς
+34	Now and then three identical bad-luck symbols cost part of your bet	De vez en cuando, tres símbolos de mala suerte iguales cuestan parte de la apuesta	ときどき同じ不運シンボル3つでベットの一部を失う	Иногда три одинаковых символа неудачи забирают часть ставки	Af en toe kosten drie dezelfde pechsymbolen een deel van je inzet	Πού και πού τρία ίδια σύμβολα γκαντεμιάς κοστίζουν μέρος του πονταρίσματος
+35	Language · Sprache	Idioma · Language	言語 · Language	Язык · Language	Taal · Language	Γλώσσα · Language
+36	Save codes and leaderboard	Códigos de partida y clasificación	セーブコードとランキング	Коды сохранения и таблица лидеров	Spelstandcodes en ranglijst	Κωδικοί αποθήκευσης και κατάταξη
+37	Done	Listo	完了	Готово	Klaar	Έτοιμο
+38	Open settings	Abrir ajustes	設定を開く	Открыть настройки	Instellingen openen	Άνοιγμα ρυθμίσεων
+39	Buy free spins	Comprar tiradas gratis	フリースピンを購入	Купить фриспины	Gratis spins kopen	Αγορά δωρεάν γύρων
+40	Buy free builds	Comprar obras gratis	フリービルドを購入	Купить бесплатные стройки	Gratis bouwrondes kopen	Αγορά δωρεάν χτισιμάτων
+41	Popular	Popular	人気	Популярно	Populair	Δημοφιλές
+42	Bought free spins play exactly like triggered ones, including multiplier and extras.	Las tiradas gratis compradas funcionan igual que las activadas, con multiplicador y extras.	購入したフリースピンは通常と同じく、倍率や特典も含めて進行する。	Купленные фриспины идут так же, как выпавшие, с множителем и бонусами.	Gekochte gratis spins lopen precies als gewonnen, met multiplier en extra's.	Οι αγορασμένοι δωρεάν γύροι παίζουν όπως οι κανονικοί, με πολλαπλασιαστή και έξτρα.
+43	Bought free builds play exactly like triggered ones, including multiplier and extras.	Las obras gratis compradas funcionan igual que las activadas, con multiplicador y extras.	購入したフリービルドは通常と同じく、倍率や特典も含めて進行する。	Купленные бесплатные стройки идут так же, как выпавшие, с множителем и бонусами.	Gekochte gratis bouwrondes lopen precies als gewonnen, met multiplier en extra's.	Τα αγορασμένα δωρεάν χτισίματα παίζουν όπως τα κανονικά, με πολλαπλασιαστή και έξτρα.
+44	Free spins bought	Tiradas gratis compradas	フリースピン購入	Фриспины куплены	Gratis spins gekocht	Δωρεάν γύροι αγοράστηκαν
+45	Free builds bought	Obras gratis compradas	フリービルド購入	Бесплатные стройки куплены	Gratis bouwrondes gekocht	Δωρεάν χτισίματα αγοράστηκαν
+46	# free spins	# tiradas gratis	フリースピン #	# фриспинов	# gratis spins	# δωρεάν γύροι
+47	# free builds	# obras gratis	フリービルド #	# бесплатных строек	# gratis bouwrondes	# δωρεάν χτισίματα
+48	Bet #	Apuesta #	ベット #	Ставка #	Inzet #	Πόνταρισμα #
+49	+# free spins	+# tiradas gratis	フリースピン +#	+# фриспинов	+# gratis spins	+# δωρεάν γύροι
+50	+# free builds	+# obras gratis	フリービルド +#	+# бесплатных строек	+# gratis bouwrondes	+# δωρεάν χτισίματα
+51	Three times § costs part of your bet	Tres veces § cuesta parte de la apuesta	§ が3つでベットの一部を失う	Трижды § — минус часть ставки	Drie keer § kost een deel van je inzet	Τρεις φορές § κοστίζει μέρος του πονταρίσματος
+52	Space pirate	Pirata espacial	宇宙海賊	Космический пират	Ruimtepiraat	Διαστημικός πειρατής
+53	Shark	Tiburón	サメ	Акула	Haai	Καρχαρίας
+54	Mine	Mina	地雷	Мина	Mijn	Νάρκη
+55	Wrecking ball	Bola de demolición	鉄球	Шар-баба	Sloopkogel	Μπάλα κατεδάφισης
+56	# % of your bet of #	# % de tu apuesta de #	ベット # の # %	# % от ставки #	# % van je inzet van #	# % του πονταρίσματος #
+57	Ouch. The bad-luck reel struck.	Ay. El rodillo de mala suerte ha golpeado.	いてて。不運リールにやられた。	Ай. Барабан неудачи сработал.	Au. De pechrol heeft toegeslagen.	Άουτς. Ο κύλινδρος γκαντεμιάς χτύπησε.
+58	Three of the wrong symbol. That hurts.	Tres veces el símbolo equivocado. Eso duele.	まちがったシンボルが3つ。痛い。	Три неправильных символа. Больно.	Drie keer het verkeerde symbool. Dat doet pijn.	Τρεις φορές το λάθος σύμβολο. Πονάει.
+59	Whoa! Who ordered that?	¡Uy! ¿Quién ha pedido eso?	うわっ! 誰が頼んだの?	Ого! Кто это заказывал?	Hé! Wie heeft dat besteld?	Ωχ! Ποιος το παρήγγειλε αυτό;
+60	Bad luck. Things will get better soon.	Mala suerte. Enseguida irá mejor.	ついてないね。すぐ良くなるよ。	Не повезло. Скоро станет лучше.	Pech gehad. Zo gaat het weer beter.	Ατυχία. Σε λίγο θα πάει καλύτερα.
+61	Main menu	Menú principal	メインメニュー	Главное меню	Hoofdmenu	Κύριο μενού
+62	Back to the main menu of §: switch world, settings, continue.	Volver al menú principal de §: cambiar de mundo, ajustes, continuar.	§ のメインメニューへ: ワールド変更、設定、続ける。	В главное меню §: сменить мир, настройки, продолжить.	Terug naar het hoofdmenu van §: wereld wisselen, instellingen, verder spelen.	Πίσω στο κύριο μενού του §: αλλαγή κόσμου, ρυθμίσεις, συνέχεια.
+63	Sound, music, turbo, companion, bad-luck reel, language and save game in one place.	Sonido, música, turbo, compañero, rodillo de mala suerte, idioma y partida en un solo lugar.	サウンド、音楽、ターボ、相棒、不運リール、言語、セーブをまとめて設定。	Звук, музыка, турбо, спутник, барабан неудачи, язык и сохранение в одном месте.	Geluid, muziek, turbo, maatje, pechrol, taal en spelstand op één plek.	Ήχος, μουσική, τούρμπο, σύντροφος, κύλινδρος γκαντεμιάς, γλώσσα και αποθήκευση σε ένα σημείο.
+64	Each world is its own game with its own save. You can come back at any time.	Cada mundo es un juego propio con su propia partida. Puedes volver cuando quieras.	ワールドごとに別のゲームでセーブも別。いつでも戻れる。	Каждый мир — отдельная игра со своим сохранением. Вернуться можно в любой момент.	Elke wereld is een eigen spel met een eigen spelstand. Je kunt altijd terug.	Κάθε κόσμος είναι ξεχωριστό παιχνίδι με δική του αποθήκευση. Μπορείς να γυρίσεις όποτε θες.
+65	City building: from rubble to metropolis with skyline reels and Paule the raccoon.	Construcción de ciudades: de escombros a metrópolis con rodillos skyline y el mapache Paule.	街づくり: がれきから大都市へ、スカイラインリールとアライグマのパウレ。	Градостроение: от руин до мегаполиса с барабанами-небоскрёбами и енотом Пауле.	Stadsbouw: van puin tot metropool met skylinerollen en wasbeer Paule.	Πολεοδομία: από τα ερείπια στη μητρόπολη με κυλίνδρους ουρανοξυστών και το ρακούν Πάουλε.
+66	Fishing net #×# · follow-up catch · upgrade your raft	Red #×# · pesca encadenada · mejora tu balsa	網 #×# · 連続漁 · いかだを強化	Сеть #×# · дозаброс · улучшай плот	Vangnet #×# · navangst · bouw je vlot uit	Δίχτυ #×# · επιπλέον ψάρεμα · αναβάθμισε τη σχεδία
+67	Instantly starts a free spin round at your current bet of # credits. The price depends on your bet.	Inicia al instante una ronda de tiradas gratis con tu apuesta actual de # créditos. El precio depende de la apuesta.	現在のベット # クレジットですぐにフリースピンを開始。価格はベットで決まる。	Сразу запускает раунд фриспинов при текущей ставке # кредитов. Цена зависит от ставки.	Start meteen een ronde gratis spins met je huidige inzet van # credits. De prijs hangt af van je inzet.	Ξεκινά αμέσως γύρο δωρεάν γύρων με το τρέχον πόνταρισμα # μονάδων. Η τιμή εξαρτάται από το πόνταρισμα.
+68	Not enough credits	Créditos insuficientes	クレジット不足	Мало кредитов	Te weinig credits	Δεν φτάνουν οι μονάδες
+69	−# credits	−# créditos	−# クレジット	−# кредитов	−# credits	−# μονάδες
+70	Radio: bad-luck reel! Three times §. That costs # credits.	Radio: ¡rodillo de mala suerte! Tres veces §. Eso cuesta # créditos.	無線: 不運リール! § が3つ。# クレジットの損失。	Рация: барабан неудачи! Трижды §. Это стоит # кредитов.	Radio: pechrol! Drie keer §. Dat kost # credits.	Ασύρματος: κύλινδρος γκαντεμιάς! Τρεις φορές §. Κοστίζει # μονάδες.
+71	Three packages: <b>#</b> for <b>#</b>, <b>#</b> for <b>#</b>, <b>#</b> for <b>#</b> credits at your current bet. Only between spins.	Tres paquetes: <b>#</b> por <b>#</b>, <b>#</b> por <b>#</b>, <b>#</b> por <b>#</b> créditos con la apuesta actual. Solo entre tiradas.	3つのパック: <b>#</b> 回で <b>#</b>、<b>#</b> 回で <b>#</b>、<b>#</b> 回で <b>#</b> クレジット(現在のベット)。回転の合間のみ。	Три пакета: <b>#</b> за <b>#</b>, <b>#</b> за <b>#</b>, <b>#</b> за <b>#</b> кредитов при текущей ставке. Только между вращениями.	Drie pakketten: <b>#</b> voor <b>#</b>, <b>#</b> voor <b>#</b>, <b>#</b> voor <b>#</b> credits bij je huidige inzet. Alleen tussen draaien door.	Τρία πακέτα: <b>#</b> για <b>#</b>, <b>#</b> για <b>#</b>, <b>#</b> για <b>#</b> μονάδες με το τρέχον πόνταρισμα. Μόνο ανάμεσα στους γύρους.
+72	Radio: # free spins bought for # credits. Good luck!	Radio: # tiradas gratis compradas por # créditos. ¡Suerte!	無線: フリースピン # 回を # クレジットで購入。幸運を!	Рация: # фриспинов куплено за # кредитов. Удачи!	Radio: # gratis spins gekocht voor # credits. Veel succes!	Ασύρματος: # δωρεάν γύροι αγοράστηκαν για # μονάδες. Καλή τύχη!
+73	Instantly starts a free spin round at your current bet of # shells. The price depends on your bet.	Inicia al instante una ronda de tiradas gratis con tu apuesta actual de # conchas. El precio depende de la apuesta.	現在のベット # 貝ですぐにフリースピンを開始。価格はベットで決まる。	Сразу запускает раунд фриспинов при текущей ставке # ракушек. Цена зависит от ставки.	Start meteen een ronde gratis spins met je huidige inzet van # schelpen. De prijs hangt af van je inzet.	Ξεκινά αμέσως γύρο δωρεάν γύρων με το τρέχον πόνταρισμα # κοχυλιών. Η τιμή εξαρτάται από το πόνταρισμα.
+74	Not enough shells	Conchas insuficientes	貝不足	Мало ракушек	Te weinig schelpen	Δεν φτάνουν τα κοχύλια
+75	−# shells	−# conchas	−# 貝	−# ракушек	−# schelpen	−# κοχύλια
+76	Radio: bad-luck reel! Three times §. That costs # shells.	Radio: ¡rodillo de mala suerte! Tres veces §. Eso cuesta # conchas.	無線: 不運リール! § が3つ。# 貝の損失。	Рация: барабан неудачи! Трижды §. Это стоит # ракушек.	Radio: pechrol! Drie keer §. Dat kost # schelpen.	Ασύρματος: κύλινδρος γκαντεμιάς! Τρεις φορές §. Κοστίζει # κοχύλια.
+77	Three packages: <b>#</b> for <b>#</b>, <b>#</b> for <b>#</b>, <b>#</b> for <b>#</b> shells at your current bet. Only between casts.	Tres paquetes: <b>#</b> por <b>#</b>, <b>#</b> por <b>#</b>, <b>#</b> por <b>#</b> conchas con la apuesta actual. Solo entre lanzamientos.	3つのパック: <b>#</b> 回で <b>#</b>、<b>#</b> 回で <b>#</b>、<b>#</b> 回で <b>#</b> 貝(現在のベット)。投網の合間のみ。	Три пакета: <b>#</b> за <b>#</b>, <b>#</b> за <b>#</b>, <b>#</b> за <b>#</b> ракушек при текущей ставке. Только между забросами.	Drie pakketten: <b>#</b> voor <b>#</b>, <b>#</b> voor <b>#</b>, <b>#</b> voor <b>#</b> schelpen bij je huidige inzet. Alleen tussen worpen door.	Τρία πακέτα: <b>#</b> για <b>#</b>, <b>#</b> για <b>#</b>, <b>#</b> για <b>#</b> κοχύλια με το τρέχον πόνταρισμα. Μόνο ανάμεσα στις ρίψεις.
+78	Radio: # free spins bought for # shells. Good luck!	Radio: # tiradas gratis compradas por # conchas. ¡Suerte!	無線: フリースピン # 回を # 貝で購入。幸運を!	Рация: # фриспинов куплено за # ракушек. Удачи!	Radio: # gratis spins gekocht voor # schelpen. Veel succes!	Ασύρματος: # δωρεάν γύροι αγοράστηκαν για # κοχύλια. Καλή τύχη!
+79	Instantly starts a free spin round at your current bet of # bolts. The price depends on your bet.	Inicia al instante una ronda de tiradas gratis con tu apuesta actual de # tornillos. El precio depende de la apuesta.	現在のベット # ボルトですぐにフリースピンを開始。価格はベットで決まる。	Сразу запускает раунд фриспинов при текущей ставке # болтов. Цена зависит от ставки.	Start meteen een ronde gratis spins met je huidige inzet van # bouten. De prijs hangt af van je inzet.	Ξεκινά αμέσως γύρο δωρεάν γύρων με το τρέχον πόνταρισμα # βιδών. Η τιμή εξαρτάται από το πόνταρισμα.
+80	Not enough bolts	Tornillos insuficientes	ボルト不足	Мало болтов	Te weinig bouten	Δεν φτάνουν οι βίδες
+81	−# bolts	−# tornillos	−# ボルト	−# болтов	−# bouten	−# βίδες
+82	Radio: bad-luck reel! Three times §. That costs # bolts.	Radio: ¡rodillo de mala suerte! Tres veces §. Eso cuesta # tornillos.	無線: 不運リール! § が3つ。# ボルトの損失。	Рация: барабан неудачи! Трижды §. Это стоит # болтов.	Radio: pechrol! Drie keer §. Dat kost # bouten.	Ασύρματος: κύλινδρος γκαντεμιάς! Τρεις φορές §. Κοστίζει # βίδες.
+83	Three packages: <b>#</b> for <b>#</b>, <b>#</b> for <b>#</b>, <b>#</b> for <b>#</b> bolts at your current bet. Only between pushes.	Tres paquetes: <b>#</b> por <b>#</b>, <b>#</b> por <b>#</b>, <b>#</b> por <b>#</b> tornillos con la apuesta actual. Solo entre empujones.	3つのパック: <b>#</b> 回で <b>#</b>、<b>#</b> 回で <b>#</b>、<b>#</b> 回で <b>#</b> ボルト(現在のベット)。押し出しの合間のみ。	Три пакета: <b>#</b> за <b>#</b>, <b>#</b> за <b>#</b>, <b>#</b> за <b>#</b> болтов при текущей ставке. Только между рывками.	Drie pakketten: <b>#</b> voor <b>#</b>, <b>#</b> voor <b>#</b>, <b>#</b> voor <b>#</b> bouten bij je huidige inzet. Alleen tussen duwen door.	Τρία πακέτα: <b>#</b> για <b>#</b>, <b>#</b> για <b>#</b>, <b>#</b> για <b>#</b> βίδες με το τρέχον πόνταρισμα. Μόνο ανάμεσα στις ωθήσεις.
+84	Radio: # free spins bought for # bolts. Good luck!	Radio: # tiradas gratis compradas por # tornillos. ¡Suerte!	無線: フリースピン # 回を # ボルトで購入。幸運を!	Рация: # фриспинов куплено за # болтов. Удачи!	Radio: # gratis spins gekocht voor # bouten. Veel succes!	Ασύρματος: # δωρεάν γύροι αγοράστηκαν για # βίδες. Καλή τύχη!
+85	Instantly starts a free spin round at your current bet of # coins. The price depends on your bet.	Inicia al instante una ronda de tiradas gratis con tu apuesta actual de # monedas. El precio depende de la apuesta.	現在のベット # コインですぐにフリースピンを開始。価格はベットで決まる。	Сразу запускает раунд при текущей ставке # талеров. Цена зависит от ставки.	Start meteen een ronde met je huidige inzet van # daalders. De prijs hangt af van je inzet.	Ξεκινά αμέσως γύρο με το τρέχον πόνταρισμα # ταλήρων. Η τιμή εξαρτάται από το πόνταρισμα.
+86	Not enough coins	Monedas insuficientes	コイン不足	Мало талеров	Te weinig daalders	Δεν φτάνουν τα τάληρα
+87	−# coins	−# monedas	−# コイン	−# талеров	−# daalders	−# τάληρα
+88	Radio: bad-luck reel! Three times §. That costs # coins.	Radio: ¡rodillo de mala suerte! Tres veces §. Eso cuesta # monedas.	無線: 不運リール! § が3つ。# コインの損失。	Радио: барабан неудачи! Трижды §. Это стоит # талеров.	Radio: pechrol! Drie keer §. Dat kost # daalders.	Ασύρματος: κύλινδρος γκαντεμιάς! Τρεις φορές §. Κοστίζει # τάληρα.
+89	Three packages: <b>#</b> for <b>#</b>, <b>#</b> for <b>#</b>, <b>#</b> for <b>#</b> coins at your current bet. Only between spins.	Tres paquetes: <b>#</b> por <b>#</b>, <b>#</b> por <b>#</b>, <b>#</b> por <b>#</b> monedas con la apuesta actual. Solo entre tiradas.	3つのパック: <b>#</b> 回で <b>#</b>、<b>#</b> 回で <b>#</b>、<b>#</b> 回で <b>#</b> コイン(現在のベット)。回転の合間のみ。	Три пакета: <b>#</b> за <b>#</b>, <b>#</b> за <b>#</b>, <b>#</b> за <b>#</b> талеров при текущей ставке. Только между вращениями.	Drie pakketten: <b>#</b> voor <b>#</b>, <b>#</b> voor <b>#</b>, <b>#</b> voor <b>#</b> daalders bij je huidige inzet. Alleen tussen draaien door.	Τρία πακέτα: <b>#</b> για <b>#</b>, <b>#</b> για <b>#</b>, <b>#</b> για <b>#</b> τάληρα με το τρέχον πόνταρισμα. Μόνο ανάμεσα στους γύρους.
+90	Radio: # free spins bought for # coins. Good luck!	Radio: # tiradas gratis compradas por # monedas. ¡Suerte!	無線: フリースピン # 回を # コインで購入。幸運を!	Радио: # фриспинов куплено за # талеров. Удачи!	Radio: # gratis spins gekocht voor # daalders. Veel succes!	Ασύρματος: # δωρεάν γύροι αγοράστηκαν για # τάληρα. Καλή τύχη!
+91	Radio: # free builds bought for # coins. Good luck!	Radio: # obras gratis compradas por # monedas. ¡Suerte!	無線: フリービルド # 回を # コインで購入。幸運を!	Радио: # бесплатных строек куплено за # талеров. Удачи!	Radio: # gratis bouwrondes gekocht voor # daalders. Veel succes!	Ασύρματος: # δωρεάν χτισίματα αγοράστηκαν για # τάληρα. Καλή τύχη!

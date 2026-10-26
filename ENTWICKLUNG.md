@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.14.0**, Treibgut 0.6.0, Eisenfront 0.5.0, Neustadt 0.6.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.15.0**, Treibgut 0.7.0, Eisenfront 0.6.0, Neustadt 0.7.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -101,3 +101,10 @@ Stand: Sternenwrack **Beta 0.14.0**, Treibgut 0.6.0, Eisenfront 0.5.0, Neustadt 
   - Muster: In Schlüsseln steht `§` für beliebigen Text, der selbst wieder übersetzt wird (`trLoose`, `TR_PATS`, längste Muster zuerst; `trBits` zerlegt an „ · “ und „, “). `#` = Zahl, `%` ist ein echtes Prozentzeichen. Ohne Treffer wird an „ · “ zerlegt.
   - Neue Texte finden: Parser-Skript (acorn aus `/opt/node-tools/node_modules`) sammelt alle deutschen Zeichenketten aus den gebauten Dateien, die noch nicht im Wörterbuch stehen. Das Versionsprotokoll bleibt absichtlich Deutsch.
   - `tools/de_fix.py`: Grammatik-Korrekturen am deutschen Text, die durch die Wortersetzung entstehen (läuft vor dem Einsetzen der Sprachdaten). Wer dort etwas ändert, muss passende Schlüssel in den Sprachdateien mit anpassen.
+
+- **Hauptmenü, Einstellungen, Pech-Walze, Freispiel-Kauf (SW 0.15.0, TG 0.7.0, EF 0.6.0, NS 0.7.0):** Code in `tools/menu_parts.py` (`MENU_CSS`, `MENU_JS`), eingesetzt mit `python3 tools/menu_apply.py index.html` zwischen `/*MENU-CSS-START*/…END` und `/*MENU-JS-START*/…END` (vor dem Start-Knopf-Block). Alle Welten erben es automatisch.
+  - Sammlungsname `COLLECTION = "Salvage & Grind"`. Hauptmenü = das Intro (`#intro`) mit Leiste `.mm-eyebrow`, Knöpfen `#mmSettings`/`#mmWorldsJump` und Weltkarten (`renderWorlds` neu, `worldCard`). `WORLDS` hat dafür `tag`, `mode`, `key` (Speicherschlüssel, für Rang/Guthaben der anderen Welten aus `localStorage`) und `cur`. Im Spiel öffnet `#menuBtn` das Intro mit Klasse `ingame` (`openMainMenu`/`closeMainMenu`), „Weiterspielen“ schließt nur.
+  - Einstellungen `#mmSet`: holt `#volMusic`, `#volSfx`, `#lowFx`, `#resetBtn`, `#trackSel`, `#langSel` per DOM aus Bordbuch und Kopfleiste (Listener bleiben). Schalter `.mms-sw[data-chip]` klicken die versteckten Chips `#sound`, `#music`, `#turbo`, `#bipToggle`. `#worldBtn`, `#bipToggle` und `.trackchip` sind per CSS ausgeblendet.
+  - Pech-Walze: `spin` und `processProgress` sind umhüllt. Nach jedem bezahlten Dreh zählt `jinxLeft` runter (zufällig 18–45), dann `runJinx()`: drei gleiche Symbole aus `JINX_SYMS[WORLD_ID]`, Abzug 25–100 % von `bet()`. Nie in Freispielen. Abschaltbar, gespeichert als `welten-jinx`. Kostet im Mittel etwa 2 % Auszahlung.
+  - Freispiel-Kauf: `FS_BUY` (8/12/20 für 40/60/100 × Einsatz), Knopf `#fsBuyBtn` in `.deck .bets`, Dialog `#fsBuy`, `buyFs(i)`. `fsBuyPrep()` setzt den Freispiel-Zustand jeder Welt zurück (Sternenwrack/Treibgut `fsMult`, Eisenfront `colLev`/`colMeter`, Neustadt `skM`/`skFsBet`), dann `spin(true)`. Geht nur, wenn `machineIdle()`.
+  - Dialoge blockieren Drehs (`mmBlocking`); ein dabei angefragter Dreh in Freispielen oder Autospin wird nach dem Schließen fortgesetzt (`mmPending`, `mmResume`). Texte übersetzt in `tools/i18n/p4_keys.json` / `p4_*.tsv`.

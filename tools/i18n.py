@@ -19,7 +19,7 @@ def load():
             d[p[0]] = p[1:]
     # Teil 2 und 3: nummerierte Übersetzungen (Spalte 1 = Nummer in pX_keys.json); "§" steht für beliebigen Text
     sig = lambda t: (t.count("#"), t.count("§"), t.count("{C}"), t.count("{S}"), sorted(re.findall(r"</?[a-z]+", t)))
-    for part in ("p2", "p3"):
+    for part in ("p2", "p3", "p4"):
         kf = os.path.join(HERE, "i18n", part + "_keys.json")
         if not os.path.exists(kf): continue
         keys = json.load(open(kf, encoding="utf-8"))
