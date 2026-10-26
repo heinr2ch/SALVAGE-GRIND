@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.15.1**, Treibgut 0.7.1, Eisenfront 0.6.1, Neustadt 0.7.1 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.15.2**, Treibgut 0.7.2, Eisenfront 0.6.2, Neustadt 0.7.2 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -109,3 +109,4 @@ Stand: Sternenwrack **Beta 0.15.1**, Treibgut 0.7.1, Eisenfront 0.6.1, Neustadt 
   - Freispiel-Kauf: `FS_BUY` (8/12/20 für 40/60/100 × Einsatz), Knopf `#fsBuyBtn` in `.deck .bets`, Dialog `#fsBuy`, `buyFs(i)`. `fsBuyPrep()` setzt den Freispiel-Zustand jeder Welt zurück (Sternenwrack/Treibgut `fsMult`, Eisenfront `colLev`/`colMeter`, Neustadt `skM`/`skFsBet`), dann `spin(true)`. Geht nur, wenn `machineIdle()`.
   - Dialoge blockieren Drehs (`mmBlocking`); ein dabei angefragter Dreh in Freispielen oder Autospin wird nach dem Schließen fortgesetzt (`mmPending`, `mmResume`). Texte übersetzt in `tools/i18n/p4_keys.json` / `p4_*.tsv`.
   - Start (0.15.1): `closeIntro` ist im Menü-Block neu deklariert (überschreibt die alte): erst Menü schließen, dann Ton/Musik/Begrüßung je einzeln in try/catch. Startknopf heißt überall „Spielen“.
+  - Stolperstein (0.15.2): `renderWorlds` wird schon beim Laden **vor** dem Menü-Block aufgerufen. Darin nur Funktionsdeklarationen verwenden, keine `const` aus dem Menü-Block (sonst TDZ-Fehler, der das ganze Skript abbricht). Zum Testen Spielstände anderer Welten in `localStorage` vorbelegen.

@@ -2,6 +2,9 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.7.2 · Startknopf repariert · 25.10.2026
+- Fix: Wer schon in einer anderen Welt gespielt hatte, konnte das Spiel nicht starten, weil die Weltkarten im Menü beim Laden abstürzten. Der Knopf „Spielen“ funktioniert jetzt wieder.
+
 ## Beta 0.7.1 · Start direkt im Hauptmenü · 25.10.2026
 - Beim Öffnen startet das Spiel direkt im Hauptmenü. Der Startknopf heißt jetzt in allen Welten „Spielen“.
 - Der Start ist abgesichert: Selbst wenn der Browser Ton oder Musik blockiert, geht das Menü zuverlässig zu und das Spiel startet.

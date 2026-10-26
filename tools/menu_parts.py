@@ -103,7 +103,7 @@ const JINX_SYMS = {
   neustadt: { name: "Abrissbirne", svg: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 6h44" stroke="#ffc94a" stroke-width="4" stroke-linecap="round"/><path d="M32 6v24" stroke="#3a3f46" stroke-width="2.5" stroke-dasharray="3 2"/><circle cx="32" cy="44" r="15" fill="#2a2e36" stroke="#0e1014" stroke-width="3"/><circle cx="27" cy="39" r="4" fill="#5a606c"/><rect x="29" y="27" width="6" height="5" fill="#0e1014"/><path d="M6 60l6-6M58 60l-6-6" stroke="#ff8a3c" stroke-width="2.5" stroke-linecap="round"/></svg>` },
 };
 const jinxSym = () => JINX_SYMS[WORLD_ID] || JINX_SYMS.sternenwrack;
-const fmtN = n => Math.round(n).toLocaleString("de-DE");
+function fmtN(n) { return Math.round(n || 0).toLocaleString("de-DE"); }   // als Funktion, weil renderWorlds schon vor diesem Block aufgerufen wird
 let jinxOn = true, jinxLeft = JINX_MIN + ((Math.random() * (JINX_MAX - JINX_MIN + 1)) | 0), jinxArmed = false, jinxBusy = false;
 try { jinxOn = localStorage.getItem("welten-jinx") !== "0"; } catch (e) {}
 if (typeof BIP === "object" && BIP) BIP.jinx = [["sad", "Autsch. Die Pech-Walze hat zugeschlagen."], ["sad", "Dreimal das falsche Symbol. Das tut weh."], ["wow", "Huch! Wer hat denn das bestellt?"], ["sad", "Pech gehabt. Gleich läuft's wieder besser."]];
@@ -128,9 +128,12 @@ function worldCard(w, inMenu) {
     : `<a class="mmw" style="--wc:${w.color}" href="${worldUrl(w)}" target="${worldTarget()}" rel="noopener">${inner}</a>`;
 }
 function renderWorlds() {
-  $("worldGrid").classList.add("mm-grid"); $("introWorlds").classList.add("mm-grid");
-  $("worldGrid").innerHTML = WORLDS.map(w => worldCard(w, false)).join("");
-  $("introWorlds").innerHTML = WORLDS.map(w => worldCard(w, true)).join("");
+  // wird schon beim Laden aufgerufen (vor diesem Block), darf deshalb nie einen Fehler werfen
+  try {
+    $("worldGrid").classList.add("mm-grid"); $("introWorlds").classList.add("mm-grid");
+    $("worldGrid").innerHTML = WORLDS.map(w => worldCard(w, false)).join("");
+    $("introWorlds").innerHTML = WORLDS.map(w => worldCard(w, true)).join("");
+  } catch (e) { try { console.warn("Welten:", e); } catch (er) {} }
 }
 (function setupMenu() {
   const intro = $("intro"), inner = intro.querySelector(".intro-inner");

@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.15.2 · Startknopf repariert · 25.10.2026
+- Fix: Wer schon in einer anderen Welt gespielt hatte, konnte das Spiel nicht starten, weil die Weltkarten im Menü beim Laden abstürzten. Der Knopf „Spielen“ funktioniert jetzt wieder.
+
 ## Beta 0.15.1 · Start direkt im Hauptmenü · 25.10.2026
 - Beim Öffnen startet das Spiel direkt im Hauptmenü. Der Startknopf heißt jetzt in allen Welten „Spielen“.
 - Der Start ist abgesichert: Selbst wenn der Browser Ton oder Musik blockiert, geht das Menü zuverlässig zu und das Spiel startet.
