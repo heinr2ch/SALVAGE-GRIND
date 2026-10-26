@@ -34,6 +34,7 @@ MENU_CSS = r'''
 .chip.mmchip svg { width: 15px; height: 15px; }
 .toggles #worldBtn, .toggles #bipToggle, .toggles .trackchip { display: none !important; }
 /* Einstellungen */
+.mmset, .fsbuy { z-index: 260 !important; }
 .mmset > .bonus-card, .fsbuy > .bonus-card { background: linear-gradient(180deg, rgba(22,24,34,.98), rgba(10,12,18,.98)); color: #f2f2f6; }
 .mmset, .fsbuy { overflow-y: auto; }
 .mmset .bonus-card { max-width: 560px; }
@@ -223,6 +224,20 @@ document.body.insertAdjacentHTML("beforeend", `<div class="bonus mmset" id="mmSe
   if (vs) $("mmsSound").appendChild(vs.closest(".setrow"));
   if (lf) $("mmsGame").appendChild(lf.closest(".setrow"));
   if (rb) $("mmsSave").querySelector(".coderow").appendChild(rb);
+  // Nach dem Zurücksetzen: Einstellungen und Hauptmenü schließen, damit das Schiffsregister vorne erscheint
+  if (rb) {
+    let wasArmed = false;
+    rb.addEventListener("click", () => { wasArmed = rb.classList.contains("armed"); }, true);
+    rb.addEventListener("click", () => setTimeout(() => {
+      if (!wasArmed || rb.classList.contains("armed")) return;
+      closeSettings();
+      const el = $("intro");
+      if (!el.hidden) {
+        if (!el.classList.contains("ingame")) { el.classList.add("ingame"); try { getCtx(); startMusic(); } catch (e) {} }
+        closeMainMenu();
+      }
+    }, 0));
+  }
   const ts = $("trackSel"); if (ts) $("mmsTrack").appendChild(ts);
   const ls = $("langSel"); if (ls) $("mmsLang").appendChild(ls);
   if (oldSec) { oldSec.querySelectorAll(".setrow, .coderow").forEach(n => { if (!n.children.length) n.remove(); }); oldSec.insertAdjacentHTML("beforeend", `<div class="coderow"><button type="button" class="ghost" id="mmsFromLog">Einstellungen öffnen</button></div>`); $("mmsFromLog").addEventListener("click", openSettings); }

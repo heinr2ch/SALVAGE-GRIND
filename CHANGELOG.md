@@ -2,6 +2,10 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.15.3 · Neustart aus dem Hauptmenü repariert · 25.10.2026
+- Fix: Die Einstellungen lagen hinter dem Hauptmenü, wenn man sie von dort öffnete. Dadurch ließen sich weder die Knöpfe darin noch „Spielstand zurücksetzen“ richtig bedienen.
+- Nach dem Zurücksetzen gehen Einstellungen und Hauptmenü jetzt zu, und das Register für den Neuanfang erscheint vorne.
+
 ## Beta 0.15.2 · Startknopf repariert · 25.10.2026
 - Fix: Wer schon in einer anderen Welt gespielt hatte, konnte das Spiel nicht starten, weil die Weltkarten im Menü beim Laden abstürzten. Der Knopf „Spielen“ funktioniert jetzt wieder.
 

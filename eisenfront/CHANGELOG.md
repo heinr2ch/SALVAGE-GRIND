@@ -2,6 +2,10 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.6.3 · Neustart aus dem Hauptmenü repariert · 25.10.2026
+- Fix: Die Einstellungen lagen hinter dem Hauptmenü, wenn man sie von dort öffnete. Dadurch ließen sich weder die Knöpfe darin noch „Spielstand zurücksetzen“ richtig bedienen.
+- Nach dem Zurücksetzen gehen Einstellungen und Hauptmenü jetzt zu, und das Register für den Neuanfang erscheint vorne.
+
 ## Beta 0.6.2 · Startknopf repariert · 25.10.2026
 - Fix: Wer schon in einer anderen Welt gespielt hatte, konnte das Spiel nicht starten, weil die Weltkarten im Menü beim Laden abstürzten. Der Knopf „Spielen“ funktioniert jetzt wieder.
 
