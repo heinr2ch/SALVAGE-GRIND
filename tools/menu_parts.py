@@ -110,7 +110,7 @@ try { jinxOn = localStorage.getItem("welten-jinx") !== "0"; } catch (e) {}
 if (typeof BIP === "object" && BIP) BIP.jinx = [["sad", "Autsch. Die Pech-Walze hat zugeschlagen."], ["sad", "Dreimal das falsche Symbol. Das tut weh."], ["wow", "Huch! Wer hat denn das bestellt?"], ["sad", "Pech gehabt. Gleich läuft's wieder besser."]];
 
 const mmOpen = id => { const el = $(id); return !!el && !el.hidden; };
-const mmBlocking = () => jinxBusy || mmOpen("mmSet") || mmOpen("fsBuy") || (mmOpen("intro") && $("intro").classList.contains("ingame"));
+const mmBlocking = () => jinxBusy || mmOpen("mmSet") || mmOpen("fsBuy") || mmOpen("xpGame") || mmOpen("plinko") || (mmOpen("intro") && $("intro").classList.contains("ingame"));
 const machineIdle = () => ready && !spinning && !busy && !inFs() && !skipCelebration && (typeof sk === "undefined" || !sk)
   && $("scratch").hidden && $("bonus").hidden && $("naming").hidden && $("worlds").hidden && !mmBlocking();
 

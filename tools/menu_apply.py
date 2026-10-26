@@ -2,6 +2,9 @@
 import re, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from menu_parts import MENU_CSS, MENU_JS
+from extra_parts import EXTRA_CSS, EXTRA_JS
+MENU_CSS += EXTRA_CSS
+MENU_JS += EXTRA_JS
 p = sys.argv[1] if len(sys.argv) > 1 else "index.html"
 s = open(p, encoding="utf-8").read()
 def put(s, start, end, body, anchor):

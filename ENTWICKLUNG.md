@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.15.3**, Treibgut 0.7.3, Eisenfront 0.6.3, Neustadt 0.7.3 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.16.0**, Treibgut 0.8.0, Eisenfront 0.7.0, Neustadt 0.8.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -111,3 +111,10 @@ Stand: Sternenwrack **Beta 0.15.3**, Treibgut 0.7.3, Eisenfront 0.6.3, Neustadt 
   - Start (0.15.1): `closeIntro` ist im Menü-Block neu deklariert (überschreibt die alte): erst Menü schließen, dann Ton/Musik/Begrüßung je einzeln in try/catch. Startknopf heißt überall „Spielen“.
   - Stolperstein (0.15.2): `renderWorlds` wird schon beim Laden **vor** dem Menü-Block aufgerufen. Darin nur Funktionsdeklarationen verwenden, keine `const` aus dem Menü-Block (sonst TDZ-Fehler, der das ganze Skript abbricht). Zum Testen Spielstände anderer Welten in `localStorage` vorbelegen.
   - Ebenen (0.15.3): Intro/Hauptmenü hat z-index 200, `.mmset`/`.fsbuy` liegen mit 260 darüber. Nach „Spielstand zurücksetzen“ schließen Einstellungen und Menü automatisch (Listener am `#resetBtn`, erkennt den zweiten Klick an der Klasse `armed`).
+
+- **Training, Plinko, Lesbarkeit (SW 0.16.0, TG 0.8.0, EF 0.7.0, NS 0.8.0):** Code in `tools/extra_parts.py` (`EXTRA_CSS`, `EXTRA_JS`), wird von `tools/menu_apply.py` an den Menü-Block angehängt.
+  - Training (`#xpGame`): `XP_THEME[WORLD_ID]` (Name, Text, Farbe, Hintergrund, Markierung). Pakete `XP_PACKS` = 10/25/50 × Einsatz. Drei Stopps auf `XP_ZONES` (Perfekt 1, Gut .7, Knapp .4, Daneben .1), XP = Einsatz × `XP_RATE(Mittel)` = 0,5 + 2,5 × Mittel. Danach `processProgress()` beim Schließen (Rangaufstieg). Kachel `#xpTile` in der Bordzentrale.
+  - Plinko (`#plinko`): `PL_THEME[WORLD_ID]`, 12 Reihen (`PL_ROWS`), Reihe r hat r+2 Hindernisse (`plPeg`). Weg 50/50 je Reihe, Feld = Anzahl rechts. `PL_MULT` low/mid/high, Erwartungswert je ~99 %. Einsatz = `bet()` (Knöpfe klicken `#betDown`/`#betUp`), Auto 10 Bälle (`plAutoNext`). Pro Ball `addXP(Einsatz)`, `sess`, `track("haul")`, ab 10× Log und Funk, ab 24× +1 Staub. Risiko gemerkt als `welten-plrisk`. Zugang über `#plTile` und `#mmPlinko` im Hauptmenü.
+  - Beide Dialoge blockieren Drehs (`mmBlocking` in `menu_parts.py`) und haben eigene Leertaste-Bedienung.
+  - Lesbarkeit: `.bbtn:disabled` hell beschriftet statt Deckkraft 35 %; `.bbtn` ohne `--bc` bekommt `--gold`, `.vehcard .bbtn` `--lime` (vorher durchsichtig, dunkle Schrift auf dunklem Grund).
+  - Texte in Vorlagen nie mit Wortstücken bauen (z. B. `Versuch${n === 1 ? "" : "e"}`): Der Übersetzungsfilter nimmt nur Einträge, deren ganze Wörter in der Datei stehen.

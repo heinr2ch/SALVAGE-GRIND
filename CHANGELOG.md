@@ -2,6 +2,12 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.16.0 · Training, Plinko und bessere Lesbarkeit · 25.10.2026
+- Neues Minispiel in der Bordzentrale: Spielgeld in XP umwandeln. Jede Welt hat ihr eigenes Training (Flugsimulator, Knotenschule, Schießstand, Bauakademie). Du stoppst dreimal eine Markierung, je genauer, desto mehr XP: 0,5 bis 3 XP pro eingesetztem Spielgeld.
+- Neuer Spielmodus Plinko, in jeder Welt passend gestaltet (Meteorschauer, Kokosnuss-Fall, Kugellager, Baustellen-Plinko): Ein Ball fällt durch zwölf Reihen Hindernisse in Felder mit Multiplikatoren. Drei Risikostufen (außen bis 10×, 33× oder 170×), Einsatz wie im Hauptspiel, Auto mit 10 Bällen. Gewinne, XP, Sternenstaub und Statistik laufen ins normale Spiel.
+- Plinko auch direkt aus dem Hauptmenü erreichbar.
+- Bessere Lesbarkeit: Deaktivierte Knöpfe sind jetzt hell beschriftet statt dunkel auf dunkel, und Knöpfe ohne eigene Farbe (z. B. der Umstieg auf das nächste Fahrzeug oder die nächste Stadtstufe) haben eine helle Grundfarbe mit dunkler Schrift.
+
 ## Beta 0.15.3 · Neustart aus dem Hauptmenü repariert · 25.10.2026
 - Fix: Die Einstellungen lagen hinter dem Hauptmenü, wenn man sie von dort öffnete. Dadurch ließen sich weder die Knöpfe darin noch „Spielstand zurücksetzen“ richtig bedienen.
 - Nach dem Zurücksetzen gehen Einstellungen und Hauptmenü jetzt zu, und das Register für den Neuanfang erscheint vorne.
