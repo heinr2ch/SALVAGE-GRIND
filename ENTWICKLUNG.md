@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.15.0**, Treibgut 0.7.0, Eisenfront 0.6.0, Neustadt 0.7.0 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.15.1**, Treibgut 0.7.1, Eisenfront 0.6.1, Neustadt 0.7.1 (25.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -108,3 +108,4 @@ Stand: Sternenwrack **Beta 0.15.0**, Treibgut 0.7.0, Eisenfront 0.6.0, Neustadt 
   - Pech-Walze: `spin` und `processProgress` sind umhüllt. Nach jedem bezahlten Dreh zählt `jinxLeft` runter (zufällig 18–45), dann `runJinx()`: drei gleiche Symbole aus `JINX_SYMS[WORLD_ID]`, Abzug 25–100 % von `bet()`. Nie in Freispielen. Abschaltbar, gespeichert als `welten-jinx`. Kostet im Mittel etwa 2 % Auszahlung.
   - Freispiel-Kauf: `FS_BUY` (8/12/20 für 40/60/100 × Einsatz), Knopf `#fsBuyBtn` in `.deck .bets`, Dialog `#fsBuy`, `buyFs(i)`. `fsBuyPrep()` setzt den Freispiel-Zustand jeder Welt zurück (Sternenwrack/Treibgut `fsMult`, Eisenfront `colLev`/`colMeter`, Neustadt `skM`/`skFsBet`), dann `spin(true)`. Geht nur, wenn `machineIdle()`.
   - Dialoge blockieren Drehs (`mmBlocking`); ein dabei angefragter Dreh in Freispielen oder Autospin wird nach dem Schließen fortgesetzt (`mmPending`, `mmResume`). Texte übersetzt in `tools/i18n/p4_keys.json` / `p4_*.tsv`.
+  - Start (0.15.1): `closeIntro` ist im Menü-Block neu deklariert (überschreibt die alte): erst Menü schließen, dann Ton/Musik/Begrüßung je einzeln in try/catch. Startknopf heißt überall „Spielen“.

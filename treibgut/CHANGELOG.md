@@ -2,6 +2,10 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.7.1 · Start direkt im Hauptmenü · 25.10.2026
+- Beim Öffnen startet das Spiel direkt im Hauptmenü. Der Startknopf heißt jetzt in allen Welten „Spielen“.
+- Der Start ist abgesichert: Selbst wenn der Browser Ton oder Musik blockiert, geht das Menü zuverlässig zu und das Spiel startet.
+
 ## Beta 0.7.0 · Hauptmenü, Pech-Walze und Freispiel-Kauf · 25.10.2026
 - Neues Hauptmenü „Salvage & Grind“ mit allen vier Welten als Karten: eindeutiger Name, Thema, Spielart und dein Stand (Rang und Guthaben). Im Spiel jederzeit über „Menü“ oben erreichbar.
 - Eigenes Einstellungsmenü (Zahnrad oben oder im Hauptmenü): Ton, Musik, Musiktitel, Lautstärke, Turbo, Begleiter, Pech-Walze, weniger Effekte, Sprache und Spielstand an einem Ort.

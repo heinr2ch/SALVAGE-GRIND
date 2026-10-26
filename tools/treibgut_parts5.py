@@ -1,5 +1,5 @@
 # Teil 5: Fangnetz-Kaskaden (neues Grundspiel), rustikale Geräusche, Wurfhaken, ruhigeres Meer
-TG_VERSION_NET = "0.7.0"
+TG_VERSION_NET = "0.7.1"
 
 FRAME_OLD = '''        <div class="lp" aria-hidden="true">
           <div><span data-l="1">2</span><span data-l="3">4</span></div>

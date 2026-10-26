@@ -134,6 +134,7 @@ function renderWorlds() {
 }
 (function setupMenu() {
   const intro = $("intro"), inner = intro.querySelector(".intro-inner");
+  $("introBtn").textContent = "Spielen";
   const idx = WORLDS.findIndex(w => w.id === WORLD_ID);
   inner.insertAdjacentHTML("afterbegin", `<div class="mm-eyebrow"><i></i>${COLLECTION.replace("&", "&amp;")} · Welt ${idx + 1} von ${WORLDS.length}</div>`);
   const gear = `<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M12.6 3.4l-1.4 1.4M4.8 11.2l-1.4 1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
@@ -155,6 +156,23 @@ function renderWorlds() {
   setTimeout(renderWorlds, 1500);
 })();
 let introLabel = null;
+// Start aus dem Hauptmenü: erst das Menü schließen, dann Ton, Musik und Begrüßung – jeder Schritt einzeln abgesichert,
+// damit ein Fehler (z. B. Audio im Browser blockiert) den Start nie verhindert.
+function closeIntro() {
+  const el = $("intro");
+  if (el.classList.contains("ingame")) { closeMainMenu(); return; }
+  if (el.classList.contains("out")) return;
+  el.classList.add("out");
+  setTimeout(() => { el.hidden = true; }, 650);
+  const safe = f => { try { f(); } catch (e) { try { console.warn("Start:", e); } catch (er) {} } };
+  safe(() => getCtx());
+  safe(() => { if (state.sound) { tone(110, 1.1, { type: "sawtooth", vol: .1, slide: 7 }); [523, 784, 1047].forEach((f, i) => tone(f, .9, { type: "triangle", vol: .1, at: .35 + i * .08 })); } });
+  safe(startMusic);
+  safe(flashScreen);
+  safe(() => { if (needsNaming()) setTimeout(() => openNaming("start"), 900); else setTimeout(() => bip("hello", 3), 1600); });
+  safe(announceVersion);
+  safe(bipActivity);
+}
 function openMainMenu() {
   const el = $("intro");
   if (autoLeft > 0) { autoLeft = 0; clearAutoMarks(); }
