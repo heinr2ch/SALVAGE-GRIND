@@ -8,7 +8,7 @@ Slot-Sammlung im Browser mit vier Welten: **Sternenwrack**, **Treibgut**, **Eise
 
 Ein Sci-Fi-Spielautomat im Browser – **nur mit Spielgeld**, es geht um kein echtes Geld.
 
-**Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/
+**Jetzt spielen:** https://heinr2ch.github.io/SALVAGE-GRIND/
 
 ## Was dich erwartet
 
@@ -32,7 +32,7 @@ Das ganze Spiel steckt in einer einzigen Datei: `index.html`.
 
 Meeres-Survival mit eigenem Grundspiel: Statt Walzen ein Fangnetz mit Schwärmen und Nachfang-Kaskaden. Floß statt Raumschiff, Inseln statt Sektoren, Papagei Koko statt Bip. Eigener Spielstand.
 
-**Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/treibgut/
+**Jetzt spielen:** https://heinr2ch.github.io/SALVAGE-GRIND/treibgut/
 
 ### Eisenfront · Werkstatt-Slots
 
@@ -40,7 +40,7 @@ Meeres-Survival mit eigenem Grundspiel: Statt Walzen ein Fangnetz mit Schwärmen
 
 Düstere Werkstatt an der Front: Ein rostiger Panzer wird Stück für Stück wieder flottgemacht. Eigenes Grundspiel als Sammler-Slot: 5 Walzen, 243 Wege, Schraubenkisten mit Beträgen, die Werkstatthund Rex einsammelt. Dazu Brieftaube, Fallschirmkisten, vier Fronten, eigene Musik und Geräusche. Fiktives Szenario ohne echte Armeen oder Abzeichen. Eigener Spielstand.
 
-**Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/eisenfront/
+**Jetzt spielen:** https://heinr2ch.github.io/SALVAGE-GRIND/eisenfront/
 
 ### Neustadt · Aufbau-Slots
 
@@ -48,4 +48,4 @@ Düstere Werkstatt an der Front: Ein rostiger Panzer wird Stück für Stück wie
 
 Städtebau: Aus einem Trümmerfeld wird Schritt für Schritt eine Stadt (Wohnviertel, Verkehr, Funkturm, Handel, Energie; Dorf, Kleinstadt, Metropole). Eigenes Grundspiel „Skyline-Walzen“: sechs Walzen als Hochhäuser, jedes pro Dreh 2 bis 7 Felder hoch, bis zu 117.649 Gewinnwege, Nachbau-Kaskaden und Freibauten mit wachsendem Multiplikator. Das Stadtbild ist in Pixeloptik gezeichnet. Mit Waschbär Paule. Eigener Spielstand.
 
-**Jetzt spielen:** https://heinr2ch.github.io/STERNENWRACK/neustadt/
+**Jetzt spielen:** https://heinr2ch.github.io/SALVAGE-GRIND/neustadt/

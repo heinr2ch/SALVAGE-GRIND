@@ -6,8 +6,8 @@ Stand: Sternenwrack **Beta 0.17.1**, Treibgut 0.9.1, Eisenfront 0.8.1, Neustadt 
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
 - Komplett eigene Grafiken (SVG inline), keine fremden Assets (Warframe-Assets wurden bewusst abgelehnt).
 - Eine einzige Datei: `index.html` mit HTML, CSS und JS inline. Kein Build-System, keine Abhängigkeiten außer Google Fonts.
-- Gehostet über GitHub Pages: https://heinr2ch.github.io/STERNENWRACK/ (Repo `heinr2ch/STERNENWRACK`, Branch `main`, Root). Jeder Push auf `main` deployt automatisch (1–2 Minuten).
-- Sammlungsname: **Salvage & Grind**. Umbenennung des Repos in `salvage-and-grind` ist gewünscht, kann aber nur der Nutzer in den GitHub-Einstellungen machen (Proxy sperrt Repo-Einstellungen). `worldUrl()` baut die Welt-Links auf GitHub Pages aus dem aktuellen Pfad, funktioniert also mit altem und neuem Namen. Nach der Umbenennung: Remote, README-Links und Deploy-Befehl anpassen.
+- Gehostet über GitHub Pages: https://heinr2ch.github.io/SALVAGE-GRIND/ (Repo `heinr2ch/salvage-grind`, Branch `main`, Root). Jeder Push auf `main` deployt automatisch (1–2 Minuten).
+- Sammlungsname: **Salvage & Grind**. Repo heißt seit 26.10.2026 `heinr2ch/SALVAGE-GRIND` (vorher STERNENWRACK), live unter https://heinr2ch.github.io/SALVAGE-GRIND/. `worldUrl()` baut die Welt-Links auf GitHub Pages aus dem aktuellen Pfad.
 - Dezentes Branding „heinr2ch“ (Intro, Fußzeile, Werftstempel am Schiff).
 
 ## Hauptmenü und Risikospiele (0.17.0)
@@ -18,7 +18,7 @@ Stand: Sternenwrack **Beta 0.17.1**, Treibgut 0.9.1, Eisenfront 0.8.1, Neustadt 
 ## Arbeitsweise mit dem Nutzer
 - Der Nutzer (heinr2ch) schreibt auf Deutsch, oft per Spracheingabe. Antworten auf Deutsch, knapp, ohne Fachjargon.
 - Jede Änderung: testen, direkt nach GitHub pushen, **erst nach erfolgreichem Pages-Deploy** „ist live“ melden.
-  Deploy prüfen: `gh api repos/heinr2ch/STERNENWRACK/actions/runs --jq '.workflow_runs[0] | .status + " " + (.conclusion // "-") + " " + .head_sha[0:7]'`
+  Deploy prüfen: `gh api repos/heinr2ch/salvage-grind/actions/runs --jq '.workflow_runs[0] | .status + " " + (.conclusion // "-") + " " + .head_sha[0:7]'`
 - **Versionierung (feste Anweisung):** Schema „Beta 0.MINOR.PATCH“. Neue Features erhöhen MINOR, Korrekturen und kleine Komfortfunktionen PATCH. Nie 1.0 erreichen, ohne dass der Nutzer es sagt. Der Nutzer korrigiert bei Bedarf (z. B. Hilfemodus war für ihn nur ein PATCH).
   Bei jedem Update ändern: `GAME_VERSION`, das `CHANGELOG`-Array im Spiel (neuester Eintrag oben), `CHANGELOG.md`, Versionszeile in `README.md`.
 - Commit-Identität: `user.name=heinr2ch`, `user.email=heinr2ch@users.noreply.github.com`. Tags lassen sich nicht pushen, daher keine Tags.
@@ -69,7 +69,7 @@ Stand: Sternenwrack **Beta 0.17.1**, Treibgut 0.9.1, Eisenfront 0.8.1, Neustadt 
 
 ## Weitere Stile (Themes)
 - Weitere Stile werden **nicht von Hand kopiert**, sondern per Skript aus dem Sternenwrack-Quelltext erzeugt. So bekommen sie neue Features automatisch.
-- **Treibgut** (Meer, Floß, Inseln) liegt unter `treibgut/index.html`, live unter https://heinr2ch.github.io/STERNENWRACK/treibgut/. Eigene Version (Start Beta 0.1.0), eigenes `treibgut/CHANGELOG.md`.
+- **Treibgut** (Meer, Floß, Inseln) liegt unter `treibgut/index.html`, live unter https://heinr2ch.github.io/SALVAGE-GRIND/treibgut/. Eigene Version (Start Beta 0.1.0), eigenes `treibgut/CHANGELOG.md`.
 - Erzeugen: `python3 tools/treibgut.py <sternenwrack-quelltext.html> <ausgabe.html>` (Quelltext = Artifact-Fassung ohne `<html>/<head>`), danach wie üblich in die Standalone-Hülle packen.
   Die Inhalte liegen in `tools/treibgut_parts*.py`: Farben (`COLOR_MAP`), Symbole, Papagei-SVG, Floß-Grafik (`RAFT_SVG`), Meer-Szene (`OCEAN_SKY`), Inseln, Crew, Erfolge, Texte (`PHRASES` exakt, `WORDS` als Regex).
 - Das Skript bricht ab, wenn ein Ankertext fehlt. Nach Sternenwrack-Änderungen also neu laufen lassen und fehlende Anker in den Parts anpassen.
