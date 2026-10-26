@@ -2,6 +2,11 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 0.9.3 · Windows-Version läuft flüssiger · 25.10.2026
+- Windows-Version nutzt jetzt immer die Grafikkarte, auch bei gesperrten Treibern
+- Bevorzugt die starke Grafikkarte bei Laptops
+- Prüfanzeige mit Strg+Umschalt+G: Grafikkarte und Bilder pro Sekunde
+
 ## Beta 0.9.2 · Ruhigere Musik und Windows-Version · 25.10.2026
 - Musik entschärft: keine schrillen Bonus-Melodien mehr, leisere Klanghölzer und Rimshots
 - Lagerfeuer genauso laut wie die anderen Stücke, Werkstattmarsch weniger wummernd

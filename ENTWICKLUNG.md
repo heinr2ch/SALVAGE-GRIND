@@ -1,6 +1,6 @@
 # Sternenwrack · Entwicklungsnotizen
 
-Stand: Sternenwrack **Beta 0.17.2**, Treibgut 0.9.2, Eisenfront 0.8.2, Neustadt 0.9.2 (26.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
+Stand: Sternenwrack **Beta 0.17.3**, Treibgut 0.9.3, Eisenfront 0.8.3, Neustadt 0.9.3 (26.10.2026). Diese Datei dient als Übergabe für neue Claude-Sitzungen.
 
 ## Was das Spiel ist
 - Browser-Spielautomat mit Sci-Fi-Thema „Bergung im All“. **Nur Spielgeld (Credits), kein echtes Geld.**
@@ -18,6 +18,7 @@ Stand: Sternenwrack **Beta 0.17.2**, Treibgut 0.9.2, Eisenfront 0.8.2, Neustadt 
 ## Windows-Version (seit 0.17.2)
 - Ordner `desktop/`: Electron-Hülle (`main.js`), `prepare.js` kopiert die vier Welten nach `desktop/app`, baut die Schriften aus @fontsource lokal ein (ersetzt den Google-Fonts-Link), stellt Welt-Links auf lokale Dateien um und übernimmt GAME_VERSION als Installer-Version.
 - Gebaut wird nur auf GitHub (`.github/workflows/windows.yml`, windows-latest), weil diese Sitzung kein npm/Internet hat. Jeder Push, der eine Welt oder `desktop/` ändert, baut neu und legt den Installer als Release `windows-vX.Y.Z` ab.
+- main.js erzwingt die Grafikkarte (ignore-gpu-blocklist, force_high_performance_gpu); Strg+Umschalt+G zeigt GPU-Status und Bilder pro Sekunde.
 - Musik-Prüfung: `music.js` im Scratchpad rendert jedes Stück offline und misst Lautstärke, Spitzen und schrille Töne. Track-Feld `gain` gleicht leise Stücke an (musicLevel).
 
 ## Arbeitsweise mit dem Nutzer

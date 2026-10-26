@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 0.17.3 · Windows-Version läuft flüssiger · 25.10.2026
+- Windows-Version nutzt jetzt immer die Grafikkarte, auch bei gesperrten Treibern
+- Bevorzugt die starke Grafikkarte bei Laptops
+- Prüfanzeige mit Strg+Umschalt+G: Grafikkarte und Bilder pro Sekunde
+
 ## Beta 0.17.2 · Ruhigere Musik und Windows-Version · 25.10.2026
 - Musik entschärft: keine schrillen Bonus-Melodien mehr, leisere Klanghölzer und Rimshots
 - Lagerfeuer genauso laut wie die anderen Stücke, Werkstattmarsch weniger wummernd
