@@ -61,7 +61,7 @@ ONLINE_CSS = r'''
 @keyframes cfPulse { 50% { box-shadow: inset 0 0 0 1.5px var(--fc), 0 0 26px var(--fc); } }
 @keyframes cfShake { 25% { transform: translateX(-3px) rotate(-1deg); } 75% { transform: translateX(3px) rotate(1deg); } }
 @keyframes cfBox { 0% { box-shadow: 0 0 0 0 var(--fc, #ffc94a); } 40% { box-shadow: 0 0 0 3px var(--fc, #ffc94a), 0 0 30px var(--fc, #ffc94a); } 100% { box-shadow: none; } }
-@media (max-width: 600px) { #crewFeed { position: fixed; left: 8px; right: 8px; bottom: 132px; max-width: none; width: auto; z-index: 71; } #crewFeed .cf-list { height: 62px; } }
+@media (max-width: 600px) { #crewFeed .cf-p b { display: none; } #crewFeed .cf-p { flex: 0 1 auto; padding-right: 6px; } #crewFeed .cf-crew { padding: 4px 6px; } #crewFeed { position: fixed; left: 8px; right: 8px; bottom: 132px; max-width: none; width: auto; z-index: 71; } #crewFeed .cf-list { height: 62px; } }
 @media (prefers-reduced-motion: reduce) { #crewFeed .cf-row, #crewFeed .cf-row::after { animation: none !important; } }
 .mp-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0 2px; padding: 8px 10px; border-radius: 14px; background: linear-gradient(90deg, rgba(111,220,140,.16), rgba(0,0,0,.25) 60%); border: 1.5px solid rgba(111,220,140,.5); box-shadow: 0 0 22px rgba(111,220,140,.15); }
 .mp-bar[hidden] { display: none; }

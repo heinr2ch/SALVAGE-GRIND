@@ -39,6 +39,9 @@ Stand: Sternenwrack **Beta 0.17.3**, Treibgut 0.9.3, Eisenfront 0.8.3, Neustadt 
 - Übersetzungen der neuen Texte: `tools/i18n/p5_src.py` (Quelle, erzeugt p5_keys.json und p5_01.tsv). Prüfen mit `steam/scan.js <repo> <out.json>` im Scratchpad (listet unübersetzte Texte in Englisch).
 - Pilotenbilder: `tools/avatar_parts.py` (8 Figuren je Welt, SVG), Pilotenleiste #mpBar und Kauf-Banner mpBuyNotice in online_parts.py.
 - Handy: Knopfleiste oben als 3er-Raster (ui_parts, max-width 600). Vorsicht: absolut positionierte Kinder (.sr) in einem overflow-Container ohne position:relative verbreitern die Seite.
+- Team-Spielstände (1.1.0): Liste lokal in `welten-teams` (auch in der Cloud-Sicherung), Info auf teams/{id}/i {n, t, p}. Bilanz je Spieler auf crews|teams/{id}/b/{uid} {w, s} per ServerValue.increment (Gewinn/Einsatz aus sess). Live: on(value) auf …/c, …/x, …/save; teamShow zieht die Credits-Anzeige nach (countCredits, nur wenn machineIdle). teamMerge führt Ausbau nur bei gleichem Fahrzeug zusammen (sonst gewinnt das höhere Fahrzeug).
+- Mitspieler-Leiste sitzt jetzt als #cfCrew im Feed (mpBar), die alte #mpBar wird entfernt.
+- Steuerleiste ab 601 px: Kacheln untereinander, Zahlen werden per deckFit (ui_parts) verkleinert statt abgeschnitten.
 - bump.py kennt `--major` (setzt 1.0.0) und nimmt das heutige Datum.
 
 ## Arbeitsweise mit dem Nutzer
