@@ -647,3 +647,6 @@ EXTRA_JS += ARCADE_JS
 from online_parts import ONLINE_CSS, ONLINE_JS
 EXTRA_CSS += ONLINE_CSS
 EXTRA_JS += ONLINE_JS
+from ui_parts import UI_CSS, UI_JS
+EXTRA_CSS += UI_CSS
+EXTRA_JS += UI_JS
