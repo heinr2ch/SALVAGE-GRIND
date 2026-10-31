@@ -1493,6 +1493,8 @@ html body .bbtn { text-shadow: 0 1px 0 rgba(255,255,255,.25); }
 @media (prefers-reduced-motion: reduce) { #crewFeed .cf-row, #crewFeed .cf-row::after { animation: none !important; } }
 .mp-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0 2px; padding: 8px 10px; border-radius: 14px; background: linear-gradient(90deg, rgba(111,220,140,.16), rgba(0,0,0,.25) 60%); border: 1.5px solid rgba(111,220,140,.5); box-shadow: 0 0 22px rgba(111,220,140,.15); }
 .mp-bar[hidden] { display: none; }
+#credits.tmUp { animation: tmUp 1s ease-out; }
+@keyframes tmUp { 30% { filter: drop-shadow(0 0 10px #6fdc8c); transform: scale(1.08); } }
 #crewFeed.mp { border-color: rgba(111,220,140,.55); box-shadow: 0 0 18px rgba(111,220,140,.18); }
 #crewFeed .cf-crew { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.08); background: rgba(111,220,140,.06); }
 #crewFeed .cf-crew:empty { display: none; }
@@ -7803,10 +7805,12 @@ async function teamStart() {
 /* Live: Muscheln, Erfahrung und Spielstand der Mitspieler sofort übernehmen (nicht erst beim nächsten Abgleich) */
 function teamLive() {
   const live = (k, f) => OL.db.ref(teamPath() + "/" + k).on("value", s => { const V = s.val(); if (V == null || TM.busy) return; f(V); TM.ok = Date.now(); });
-  live("c", V => { if (V === TM.c) return; state.credits = V + (state.credits - TM.c); TM.c = V; if (machineIdle()) render(); });
+  live("c", V => { if (V === TM.c) return; const up = V > TM.c; state.credits = V + (state.credits - TM.c); TM.c = V; teamShow(up); });
   live("x", V => { if (V === TM.x) return; state.xp = V + (state.xp - TM.x); TM.x = V; });
   live("save", V => { if (V === TM.mine) return; TM.remote = V; if (machineIdle()) teamApplyRemote(); });
 }
+/* Muscheln-Anzeige nachziehen, wenn Mitspieler gewinnen oder ausgeben (sonst sähe man es erst nach dem nächsten Dreh) */
+function teamShow(up) { if (!machineIdle() || shownCredits === state.credits) return; countCredits(state.credits, 700); if (up) { const el = $("credits"); el.classList.remove("tmUp"); void el.offsetWidth; el.classList.add("tmUp"); } render(); }
 function teamApplyRemote() { const v = TM.remote; TM.remote = null; if (!v) return; try { teamApply(JSON.parse(v)); } catch (e) {} }
 const teamSig = () => { const o = serialize(); delete o.credits; delete o.xp; return JSON.stringify(o); };
 async function teamSaveSync() {
@@ -7830,7 +7834,7 @@ async function teamTick() {
     if (TM.remote && machineIdle()) teamApplyRemote();
     if (TM.now || teamSig() !== TM.sig || TM.n % 5 === 0) { TM.now = false; await teamSaveSync(); }
     if (TM.n % 30 === 0) OL.db.ref(`teams/${TEAM_ID}/i/p`).set(firebase.database.ServerValue.TIMESTAMP).catch(() => {});
-    if (machineIdle()) render();
+    teamShow(false); if (machineIdle()) render();
   } catch (e) {} finally { TM.busy = false; }
 }
 function mpBuyNotice(v) {
