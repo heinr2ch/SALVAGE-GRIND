@@ -63,6 +63,15 @@ ONLINE_CSS = r'''
 @keyframes cfBox { 0% { box-shadow: 0 0 0 0 var(--fc, #ffc94a); } 40% { box-shadow: 0 0 0 3px var(--fc, #ffc94a), 0 0 30px var(--fc, #ffc94a); } 100% { box-shadow: none; } }
 @media (max-width: 600px) { #crewFeed { position: fixed; left: 8px; right: 8px; bottom: 132px; max-width: none; width: auto; z-index: 71; } #crewFeed .cf-list { height: 62px; } }
 @media (prefers-reduced-motion: reduce) { #crewFeed .cf-row, #crewFeed .cf-row::after { animation: none !important; } }
+.mp-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0 2px; padding: 8px 10px; border-radius: 14px; background: linear-gradient(90deg, rgba(111,220,140,.16), rgba(0,0,0,.25) 60%); border: 1.5px solid rgba(111,220,140,.5); box-shadow: 0 0 22px rgba(111,220,140,.15); }
+.mp-bar[hidden] { display: none; }
+.mp-tag { display: grid; font: 800 11px var(--f-mono, monospace); letter-spacing: .18em; color: #6fdc8c; padding-right: 8px; border-right: 1px solid rgba(255,255,255,.15); }
+.mp-tag small { font-size: 10px; color: rgba(255,255,255,.6); letter-spacing: .1em; }
+.mp-pilot { display: flex; align-items: center; gap: 7px; padding: 4px 10px 4px 4px; border-radius: 99px; background: rgba(0,0,0,.35); border: 1.5px solid color-mix(in srgb, var(--pc) 60%, transparent); opacity: .55; transition: opacity .3s; }
+.mp-pilot.on { opacity: 1; box-shadow: 0 0 12px color-mix(in srgb, var(--pc) 35%, transparent); }
+.mp-pilot b { font-size: 13px; color: #fff; display: block; line-height: 1.1; }
+.mp-pilot small { font-size: 10px; color: var(--pc); font-weight: 700; }
+.mp-pilot.me { border-color: #fff; }
 .mmchip .ol-badge { display: inline-block; min-width: 16px; height: 16px; border-radius: 8px; background: #ff4b6a; color: #fff; font: 800 10px/16px system-ui; text-align: center; margin-left: 4px; }
 '''
 
@@ -116,7 +125,7 @@ async function olNewCode() {
 function olPublish() {
   if (!OL.db) return Promise.resolve();
   return OL.db.ref("players/" + OL.uid).update({ n: olName(), code: OL.code, on: firebase.database.ServerValue.TIMESTAMP,
-    ["w/" + WORLD_ID]: { l: state.level, p: Math.round(state.peak || 0), c: Math.round(state.credits) } }).catch(() => {});
+    ["w/" + WORLD_ID]: { l: state.level, p: Math.round(state.peak || 0), c: Math.round(state.credits) }, ["av/" + WORLD_ID]: typeof avIdx === "number" ? avIdx : 0 }).catch(() => {});
 }
 async function olLoadPeople() {
   const ids = Object.keys(OL.friends);
@@ -160,7 +169,8 @@ function openOnline() { if (!machineIdle() && !OL.vs) return; $("online").hidden
 function closeOnline() { $("online").hidden = true; try { sfx.click(); } catch (e) {} render(); mmResume(); }
 function olItem(id, p, extra, me) {
   const w = (p && p.w && p.w[WORLD_ID]) || {};
-  return `<div class="ol-item${me ? " me" : ""}"><span class="ol-dot${me || olOnline(p) ? " on" : ""}"></span><span><b>${escapeHTML((p && p.n) || "?")}${me ? " (du)" : ""}</b><small>Rang ${w.l || "–"} · Rekord ${fmtN(w.p || 0)}</small></span><span class="ol-acts">${extra || ""}</span></div>`;
+  const av = me ? avMine() : avOf(p);
+  return `<div class="ol-item${me ? " me" : ""}" style="grid-template-columns:auto auto 1fr auto"><span class="ol-dot${me || olOnline(p) ? " on" : ""}"></span>${av ? avHtml(av, 34, cfColor(id)) : `<span class="av" style="width:34px;height:34px;--avc:${cfColor(id)};font:800 14px system-ui;color:#fff">${escapeHTML(((p && p.n) || "?").slice(0, 1))}</span>`}<span><b>${escapeHTML((p && p.n) || "?")}${me ? " (du)" : ""}</b><small>Rang ${w.l || "–"} · Rekord ${fmtN(w.p || 0)}</small></span><span class="ol-acts">${extra || ""}</span></div>`;
 }
 function olRender() {
   document.querySelectorAll("#olTabs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.t === OL.tab)));
@@ -312,19 +322,21 @@ function cfListen(path, title) {
 /* --- Crew-Feed (wie ein Kill-Feed): letzte Gewinne der Crew, live --- */
 const CF_COL = ["#4fe3ff", "#ffb36b", "#a7c060", "#ff7ad9", "#7ee0c8", "#b9a4ff"];
 function cfColor(uid) { let h = 0; for (const c of uid || "") h = (h * 31 + c.charCodeAt(0)) >>> 0; return CF_COL[h % CF_COL.length]; }
-const CF_FT = { fs: ["🎰", "FREISPIELE!", "#b8ff5c"], fsb: ["🛒", "Freispiele gekauft", "#7ee0c8"], bonus: ["🎁", "BONUSSPIEL!", "#ff7ad9"], jp: ["👑", "JACKPOT!", "#ffc94a"], ladder: ["🪜", "Risikoleiter geschafft", "#4fe3ff"], gamble: ["🃏", "Risiko gewonnen", "#9fb3ff"] };
+const CF_FT = { buy: ["🔧", "Ausbau", "#ffb36b"], fs: ["🎰", "FREISPIELE!", "#b8ff5c"], fsb: ["🛒", "Freispiele gekauft", "#7ee0c8"], bonus: ["🎁", "BONUSSPIEL!", "#ff7ad9"], jp: ["👑", "JACKPOT!", "#ffc94a"], ladder: ["🪜", "Risikoleiter geschafft", "#4fe3ff"], gamble: ["🃏", "Risiko gewonnen", "#9fb3ff"] };
 function cfAdd(v) {
   const list = $("cfList"); if (!list) return;
   const em = list.querySelector(".cf-empty"); if (em) em.remove();
   const me = v.u === OL.uid, ft = v.k && CF_FT[v.k], big = (v.x || 0) >= 25;
   const ic = ft ? ft[0] : big ? "💥" : (v.x || 0) >= 10 ? "🔥" : "💰";
-  const right = ft ? ft[1] + (v.a ? ` +${fmtN(v.a)}` : "") : `+${fmtN(v.a)}`;
-  list.insertAdjacentHTML("afterbegin", `<div class="cf-row${me ? " me" : ""}${big ? " big" : ""}${ft ? " ft" : ""}${v.k === "jp" ? " jp" : ""}" style="--pc:${cfColor(v.u)};${ft ? `--fc:${ft[2]}` : ""}"><span class="cf-ic">${ic}</span><b>${escapeHTML(me ? "Du" : v.n || "?")}</b><small>${escapeHTML(v.wn || "")}${!ft && v.x ? " · " + v.x + "×" : ""}</small><span class="cf-amt">${right}</span></div>`);
+  const right = v.k === "buy" ? `${escapeHTML(v.part || "Bauteil")} ${v.lvl || ""}` : ft ? ft[1] + (v.a ? ` +${fmtN(v.a)}` : "") : `+${fmtN(v.a)}`;
+  const avA = typeof v.av === "number" && AV_SETS[v.w || WORLD_ID] ? AV_SETS[v.w || WORLD_ID][v.av] : null;
+  list.insertAdjacentHTML("afterbegin", `<div class="cf-row${me ? " me" : ""}${big ? " big" : ""}${ft ? " ft" : ""}${v.k === "jp" ? " jp" : ""}" style="--pc:${cfColor(v.u)};${ft ? `--fc:${ft[2]}` : ""}">${avA ? avHtml(avA, 22, cfColor(v.u)) : ""}<span class="cf-ic">${ic}</span><b>${escapeHTML(me ? "Du" : v.n || "?")}</b><small>${escapeHTML(v.wn || "")}${!ft && v.x ? " · " + v.x + "×" : ""}</small><span class="cf-amt">${right}</span></div>`);
   [...list.children].forEach((r, i) => { r.classList.toggle("old", i >= 3); if (i >= 5) r.remove(); });
   const row = list.firstElementChild, box = $("crewFeed");
   if (ft || big) { box.style.setProperty("--fc", ft ? ft[2] : "#ffc94a"); box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
     try { burstAt(row, ft ? 26 : 18, ft ? [ft[2], "#ffffff"] : ["#ffc94a", "#ffffff"], .7); } catch (e) {}
     if (!me) { try { tone(ft ? 880 : 660, .18, { type: "triangle", vol: .05 }); tone(ft ? 1320 : 990, .2, { type: "triangle", vol: .04, at: .09 }); } catch (e) {} } }
+  if (v.k === "buy" && !me) mpBuyNotice(v);
   setTimeout(() => row.classList.add("old"), 8000);
   setTimeout(() => { row.classList.add("gone"); setTimeout(() => { row.remove(); if (!list.children.length) list.innerHTML = `<div class="cf-empty">Gewinne deiner Mitspieler erscheinen hier live.</div>`; }, 650); }, 22000);
 }
@@ -359,7 +371,7 @@ function teamMerge(a, b) {
 function teamApply(remote) {
   const c = state.credits, x = state.xp;
   applySave(teamMerge(serialize(), remote)); state.credits = c; state.xp = x;
-  try { render(); } catch (e) {}
+  try { render(); renderHangar(); } catch (e) {}
 }
 async function teamStart() {
   const m = (await OL.db.ref(`teams/${TEAM_ID}/m`).get()).val() || {};
@@ -373,6 +385,12 @@ async function teamStart() {
   radio(`Funk: Team-Spielstand aktiv (${Object.values(m).join(", ")}). Alles, was ihr gewinnt und kauft, teilt ihr.`, true);
   saveGame();
 }
+async function teamSaveSync() {
+  const r = await OL.db.ref(teamPath() + "/save").transaction(v => { let rem = null; try { rem = v ? JSON.parse(v) : null; } catch (e) {} return JSON.stringify(teamMerge(serialize(), rem)); });
+  if (machineIdle()) { try { teamApply(JSON.parse(r.snapshot.val())); } catch (e) {} } else TM.now = true;
+}
+function teamMergeNow() { TM.now = true; }
+async function teamPull() { if (!TM.on) return; const v = (await OL.db.ref(teamPath() + "/save").get()).val(); if (v && machineIdle()) { try { teamApply(JSON.parse(v)); } catch (e) {} } else TM.now = true; }
 async function teamTick() {
   if (!TM.on || TM.busy) return;
   TM.busy = true; TM.n++;
@@ -383,13 +401,32 @@ async function teamTick() {
     const C = rc.snapshot.val() || 0, X = rx.snapshot.val() || 0;
     state.credits = C + (state.credits - c0); state.xp = X + (state.xp - x0);   // was während der Übertragung dazukam, bleibt erhalten
     TM.c = C; TM.x = X;
-    if (TM.n % 4 === 0) {
-      const r = await OL.db.ref(teamPath() + "/save").transaction(v => { let rem = null; try { rem = v ? JSON.parse(v) : null; } catch (e) {} return JSON.stringify(teamMerge(serialize(), rem)); });
-      if (machineIdle()) { try { teamApply(JSON.parse(r.snapshot.val())); } catch (e) {} }
-    }
+    if (TM.n % 2 === 0 || TM.now) { TM.now = false; await teamSaveSync(); }
     render();
   } catch (e) {} finally { TM.busy = false; }
 }
+function mpBuyNotice(v) {
+  const el = $("achPop"); if (!el) return;
+  const avA = typeof v.av === "number" && AV_SETS[v.w || WORLD_ID] ? AV_SETS[v.w || WORLD_ID][v.av] : null;
+  el.style.setProperty("--mc", "#ffb36b");
+  el.innerHTML = `<small>${window.TEAM_ID ? "TEAM-AUSBAU" : "CREW-AUSBAU"}</small><div class="medal" style="background:none;box-shadow:none">${avA ? avHtml(avA, 70, cfColor(v.u)) : "🔧"}</div><b>${escapeHTML(v.n || "?")}</b><p>hat <b style="font-size:1rem">${escapeHTML(v.part || "ein Bauteil")} ${escapeHTML(v.lvl || "")}</b> gekauft${window.TEAM_ID && v.w === WORLD_ID ? " – für euch alle!" : "."}</p>`;
+  el.classList.add("on");
+  try { sfx.bigUpgrade ? sfx.bigUpgrade() : sfx.upgrade(); flashScreen(); const sv = $("shipview"); if (sv) { burstAt(sv, 90, ["#ffb36b", "#ffffff", "#ffc94a"], 1.1); sv.classList.remove("flash"); void sv.offsetWidth; sv.classList.add("flash"); } } catch (e) {}
+  setTimeout(() => el.classList.remove("on"), 3600);
+  if (window.TEAM_ID && v.w === WORLD_ID) teamPull().catch(() => {});
+}
+/* --- Crew-/Team-Leiste: wer spielt mit (Pilotenbilder und Namen) --- */
+function mpBar() {
+  let bar = $("mpBar");
+  const ids = OL.crew ? Object.keys(OL.crewM) : window.TEAM_ID ? Object.keys(OL.teamM || {}) : [];
+  if (!ids.length || !(OL.crew || window.TEAM_ID)) { if (bar) bar.hidden = true; return; }
+  if (!bar) { const mr = document.querySelector(".metarow"); if (!mr) return; mr.insertAdjacentHTML("afterend", `<div id="mpBar" class="mp-bar"></div>`); bar = $("mpBar"); }
+  bar.hidden = false;
+  const names = OL.crew ? OL.crewM : OL.teamM;
+  bar.innerHTML = `<span class="mp-tag">${window.TEAM_ID && !OL.crew ? "TEAM-SPIELSTAND" : "KOOP-CREW"}<small>${ids.length}/4</small></span>` + ids.map(id => { const me = id === OL.uid, p = me ? { n: olName() } : OL.people[id] || { n: names[id] }, on = me || olOnline(OL.people[id]), av = me ? avMine() : avOf(OL.people[id]);
+    return `<span class="mp-pilot${on ? " on" : ""}${me ? " me" : ""}" style="--pc:${cfColor(id)}">${av ? avHtml(av, 30, cfColor(id)) : `<span class="av" style="width:30px;height:30px;--avc:${cfColor(id)}"></span>`}<span><b>${escapeHTML(me ? olName() + " (du)" : p.n || names[id] || "?")}</b><small>${on ? "online" : "offline"}</small></span></span>`; }).join("");
+}
+setInterval(() => { try { if (OL.ready) mpBar(); } catch (e) {} }, 3000);
 /* --- Live-Ticker: große Gewinne der Freunde --- */
 function olTickerListen() {
   Object.keys(OL.friends).forEach(id => { if (OL.live[id]) return;
@@ -432,9 +469,15 @@ function olTick() {
   const d = won - olWon; olWon = won;
   const wn = (WORLDS.find(w => w.id === WORLD_ID) || {}).name || "";
   const lp = olLogPath(), ftNow = olFtNow();
-  if (lp && olFt) Object.keys(ftNow).forEach(k => { if (ftNow[k] > olFt[k]) OL.db.ref(lp).push({ u: OL.uid, n: olName(), k, a: 0, wn, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {}); });
+  if (lp && olFt) Object.keys(ftNow).forEach(k => { if (ftNow[k] > olFt[k]) OL.db.ref(lp).push({ u: OL.uid, n: olName(), k, a: 0, wn, w: WORLD_ID, av: avIdx, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {}); });
   olFt = ftNow;
-  if (d > 0 && lp && d >= bet() * 2) OL.db.ref(lp).push({ u: OL.uid, n: olName(), a: d, x: Math.round(d / Math.max(1, bet())), wn, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {});
+  const shipNow = JSON.stringify(state.ship || {});
+  if (lp && OL.lastShip && shipNow !== OL.lastShip) { const old = JSON.parse(OL.lastShip);
+    Object.keys(state.ship).forEach(id => { if ((state.ship[id] || 0) > (old[id] || 0)) { const c = CATS.find(x => x.id === id) || {};
+      OL.db.ref(lp).push({ u: OL.uid, n: olName(), k: "buy", part: c.name || id, lvl: `St. ${state.ship[id]}`, a: 0, wn, w: WORLD_ID, av: avIdx, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {}); } });
+    if (TM.on) teamMergeNow(); }
+  OL.lastShip = shipNow;
+  if (d > 0 && lp && d >= bet() * 2) OL.db.ref(lp).push({ u: OL.uid, n: olName(), a: d, x: Math.round(d / Math.max(1, bet())), wn, w: WORLD_ID, av: avIdx, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {});
   if (d > 0 && OL.crew) { const share = Math.floor(d * COOP_SHARE); if (share > 0) Object.keys(OL.crewM).forEach(id => { if (id !== OL.uid && olOnline(OL.people[id])) OL.db.ref(`crews/${OL.crew}/feed/${id}`).push({ a: share, n: olName() }).catch(() => {}); }); }
   if (d >= bet() * 10) OL.db.ref(`players/${OL.uid}/live`).set({ a: d, wn, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {});
   if (sess.best > OL.dayBest && sess.best > olBest) { OL.dayBest = sess.best; try { localStorage.setItem("welten-daybest", JSON.stringify({ d: olDay(), a: OL.dayBest })); } catch (e) {}

@@ -108,7 +108,7 @@ for a, b in POST_NS:
 
 # 11. Fahrzeuge werden Stadtstufen, Version, Protokoll
 s = re.sub(r"const VEHICLES = \[\n.*?\n\];\n", lambda m: VEHICLES_NS, s, count=1, flags=re.S)
-s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "0.9.3";', s)
+s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "1.0.0";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_NS)
 
 # 12. Welten

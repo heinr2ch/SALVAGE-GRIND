@@ -1,6 +1,18 @@
 # Neues Hauptmenü, aufgewertete Erfolge, Sicherheits- und Datenschutzhinweise, Hilfe bei Glücksspielproblemen,
 # Pausen-Erinnerung (seit SW 0.18.0, Zweig experimente)
 UI_CSS = r'''
+/* ---------- Sehr große Bildschirme: alles größer statt leerer Flächen ---------- */
+@media (min-width: 2400px) and (min-height: 1300px) { body { zoom: 1.2; } }
+@media (min-width: 3000px) and (min-height: 1300px) { body { zoom: 1.32; } }
+@media (min-width: 3800px) and (min-height: 1900px) { body { zoom: 1.75; } }
+@media (min-width: 2300px) and (max-height: 1200px) { .app { max-width: 2800px; } }
+@media (max-width: 600px) {
+  html body .topbar .toggles { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; margin: 0; padding: 0; gap: 6px; }
+  html body .topbar .toggles .chip { flex: 1 1 auto; justify-content: center; min-width: 0; }
+  html, body { overflow-x: hidden; max-width: 100vw; }
+  #mpBar { flex-wrap: wrap; }
+}
+
 /* ---------- Steuerleiste neu (Credits, Gewinn, Staub, Start, Einsatz) ---------- */
 @media (min-width: 601px) {
   .deck { position: relative; gap: 16px 22px; padding: 18px 20px; border-radius: 20px; overflow: hidden;
@@ -176,7 +188,7 @@ const UI_ICON = {
   $("pauseHelp").addEventListener("click", () => { $("pauseNote").hidden = true; openInfo("help"); });
 })();
 const INFO = {
-  safe: `<p><b>Salvage &amp; Grind ist ein Spiel mit Spielgeld.</b> Es gibt kein Echtgeld, keine Auszahlung von Gewinnen und du kannst keine Credits kaufen. Credits, Muscheln, Schrauben und Taler haben keinen Geldwert.</p>
+  safe: `<p><b>Salvage &amp; Grind ist ein Spiel mit Spielgeld.</b> Es gibt kein Echtgeld, keine Auszahlung von Gewinnen und nichts zu kaufen. Die Spielwährung aller vier Welten hat keinen Geldwert.</p>
     <ul><li>Die Walzen arbeiten mit Zufall. Es gibt keine Muster, Tricks oder „fälligen“ Gewinne.</li>
     <li>Das Spiel simuliert Glücksspiel. Das kann echtes Glücksspiel verharmlosen. Erfolge hier sagen nichts über Chancen in echten Spielhallen oder Online-Casinos aus.</li>
     <li>Empfohlen für Erwachsene ab 18 Jahren.</li>

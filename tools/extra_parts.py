@@ -644,6 +644,9 @@ EXTRA_JS += RISK_JS
 from arcade_parts import ARCADE_CSS, ARCADE_JS
 EXTRA_CSS += ARCADE_CSS
 EXTRA_JS += ARCADE_JS
+from avatar_parts import AV_CSS, AV_JS
+EXTRA_CSS += AV_CSS
+EXTRA_JS += AV_JS
 from online_parts import ONLINE_CSS, ONLINE_JS
 EXTRA_CSS += ONLINE_CSS
 EXTRA_JS += ONLINE_JS

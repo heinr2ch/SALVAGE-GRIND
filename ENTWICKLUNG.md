@@ -26,7 +26,7 @@ Stand: Sternenwrack **Beta 0.17.3**, Treibgut 0.9.3, Eisenfront 0.8.3, Neustadt 
 - `stabil-0.17.3` = eingefrorene Sicherung, nie ändern.
 - `experimente` = Spielwiese. Nach jedem Experiment: auf experimente committen/pushen, dann `python3 tools/beta.py /home/claude/sg-main` (Worktree von main, ggf. `git worktree add /home/claude/sg-main main`), beta/ auf main committen und pushen. Testseite: https://heinr2ch.github.io/SALVAGE-GRIND/beta/ (eigene Spielstände über Präfix `beta:`, Beta-Schild). Erst nach OK des Nutzers nach `main` übernehmen (Version erhöhen, pushen, Deploy abwarten).
 
-## Spielhalle und Online (Zweig experimente, noch nicht live)
+## Spielhalle und Online (live seit Beta 1.0.0)
 - `tools/arcade_parts.py`: ein Spielmodus pro Welt (Asteroidenfeld, Tiefsee-Angel, Panzerjagd, Turmbau), Dialog #arcade, Kachel #arTile im Dock. Einsatz 5/10/25× Einsatz. Tiefsee: Erwartungswert immer 96 % (Seil hält 90 %/m, Faktor 0,96/0,9^n).
 - `tools/online_parts.py`: Firebase (Projekt salvage-grind, Realtime Database europe-west1, anonyme Anmeldung, Domain heinr2ch.github.io freigegeben). Freunde per 6-stelligem Code, Rangliste (Freunde/weltweit nach Rekord), Geschenk alle 24 h (Regel erzwingt Abstand, max. 5000), VS-Duell 5 min über queue/matches, Koop: 25 % Gewinnanteil an Partner, Bauteile ×1,3 (coopCostMul in stepCost).
 - Koop ist eine Crew (crews/{id}/m, bis 4), Einladung über crewInv, 20 % Gewinnanteil je Mitglied über crews/{id}/feed, Bauteile 1 + 0,25 × (Mitglieder − 1). Live-Ticker: players/{uid}/live ab 10× Einsatz. Tagesbester: daily/{UTC-Datum}/{uid}. Cloud-Spielstand: vault/{16-Zeichen-Code} (keine persönlichen Daten), Auto-Sicherung alle 5 min.
@@ -35,8 +35,11 @@ Stand: Sternenwrack **Beta 0.17.3**, Treibgut 0.9.3, Eisenfront 0.8.3, Neustadt 
 - Crew-/Team-Feed sitzt in der Steuerleiste über „Freispiele kaufen“ (#crewFeed in .bets), Feature-Ereignisse (fs, fsb, bonus, jp, ladder, gamble) aus Zählerdifferenzen in olTick.
 - Steuerleiste neu gestaltet (UI_CSS, nur ab 601 px; Handy-Layout unverändert).
 - Regeln: `tools/firebase_rules.json`, in der Konsole unter Realtime Database → Regeln eingetragen.
-- Die Windows-Version (file://) kann sich nicht bei Firebase anmelden, dort bleibt Online aus, bis es eine Lösung gibt.
-- Neue Texte sind noch nicht übersetzt (vor Übernahme nach main erledigen).
+- Windows-Version: main.js startet einen kleinen Server auf 127.0.0.1:47821 (bis +9 falls belegt) und lädt http://localhost, damit Firebase-Anmeldung geht (localhost ist in Firebase freigegeben). Alte file://-Spielstände werden beim ersten Start einmalig über desktop/migrate.html übernommen (Merker migrated-v1 im userData-Ordner).
+- Übersetzungen der neuen Texte: `tools/i18n/p5_src.py` (Quelle, erzeugt p5_keys.json und p5_01.tsv). Prüfen mit `steam/scan.js <repo> <out.json>` im Scratchpad (listet unübersetzte Texte in Englisch).
+- Pilotenbilder: `tools/avatar_parts.py` (8 Figuren je Welt, SVG), Pilotenleiste #mpBar und Kauf-Banner mpBuyNotice in online_parts.py.
+- Handy: Knopfleiste oben als 3er-Raster (ui_parts, max-width 600). Vorsicht: absolut positionierte Kinder (.sr) in einem overflow-Container ohne position:relative verbreitern die Seite.
+- bump.py kennt `--major` (setzt 1.0.0) und nimmt das heutige Datum.
 
 ## Arbeitsweise mit dem Nutzer
 - Der Nutzer (heinr2ch) schreibt auf Deutsch, oft per Spracheingabe. Antworten auf Deutsch, knapp, ohne Fachjargon.

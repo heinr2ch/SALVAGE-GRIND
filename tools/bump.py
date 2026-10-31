@@ -1,11 +1,12 @@
 # Versionssprung für alle vier Welten auf einmal: python3 tools/bump.py "Titel" "Punkt 1" "Punkt 2" ...
 # Liest die aktuellen Versionen, erhöht PATCH (oder MINOR mit --minor) und trägt alles an allen Stellen ein.
 import json, re, sys
-args = sys.argv[1:]; minor = "--minor" in args; args = [a for a in args if a != "--minor"]
+args = sys.argv[1:]; minor = "--minor" in args; major = "--major" in args; args = [a for a in args if a not in ("--minor", "--major")]
 title, items = args[0], args[1:]
-D = "25.10.2026"
+import datetime; D = datetime.date.today().strftime("%d.%m.%Y")
 def nxt(v):
     a, b, c = map(int, v.split("."))
+    if major: return "1.0.0"
     return f"{a}.{b + 1}.0" if minor else f"{a}.{b}.{c + 1}"
 def rd(p): return open(p, encoding="utf-8").read()
 def wr(p, s): open(p, "w", encoding="utf-8").write(s)

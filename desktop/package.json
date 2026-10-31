@@ -24,7 +24,7 @@
     "productName": "Salvage & Grind",
     "copyright": "© heinr2ch",
     "directories": { "output": "dist", "buildResources": "build" },
-    "files": ["main.js", "app/**/*"],
+    "files": ["main.js", "migrate.html", "app/**/*"],
     "win": { "target": "nsis", "icon": "build/icon.ico", "artifactName": "Salvage-and-Grind-Setup-${version}.exe" },
     "nsis": {
       "oneClick": false,

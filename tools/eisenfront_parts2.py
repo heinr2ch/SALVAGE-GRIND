@@ -317,6 +317,7 @@ COUGH_TG = 'skySparks(sky, g.l - 24, 118, 14); bubbleAt(svg, view, g.l, 92, "*pl
 COUGH_EF = 'for (let i = 0; i < 12; i++) { const [x, y, sc] = toSky(sky, g.l + 8, g.t - 8); sky.parts.push({ x, y, vx: -Math.random() * 1.6, vy: -Math.random() * 1.2, r: 2.6 * sc, life: .9, kind: "smoke", dark: true }); } bubbleAt(svg, view, g.l, 86, "*knatter*");'
 
 CHANGELOG_EF = r'''const CHANGELOG = [
+  { v: "1.0.0", date: "31.10.2026", title: "Beta 1.0", items: ["Online: Freunde mit Freundescode, tägliche Geschenke, Rangliste (Freunde, weltweit, höchster Gewinn des Tages).", "VS-Duell: 5 Minuten gegen einen anderen Spieler, gewertet nach Gewinn im Verhältnis zum Einsatz.", "Koop-Crew für bis zu 4 Spieler mit Live-Feed, und ein gemeinsamer Team-Spielstand getrennt vom eigenen.", "Käufe im Zusammenspiel werden sofort für alle übernommen, mit Banner, Ton und Effekt.", "Pilotenleiste zeigt im Mehrspielermodus alle Mitspieler mit Namen, Bild und Online-Status.", "Pilotenbilder: 8 lustige Figuren pro Welt zum Auswählen.", "Spielhalle: ein eigenes Minispiel pro Welt.", "Cloud-Spielstand ohne E-Mail mit Wiederherstellungscode.", "Neues Hauptmenü mit Musik, neue Erfolge mit Medaillen.", "Hinweise zu sicherem Spielen, Datenschutz und Hilfe-Anlaufstellen, Pausen-Erinnerung jede Stunde.", "Neues Design für Handy und Ultrawide, Bedienleiste im Glas-Look.", "Alles in 7 Sprachen übersetzt.", "Windows-Version: Online-Funktionen funktionieren jetzt auch dort."] },
   { v: "0.8.3", date: "25.10.2026", title: "Windows-Version läuft flüssiger", items: ["Windows-Version nutzt jetzt immer die Grafikkarte, auch bei gesperrten Treibern", "Bevorzugt die starke Grafikkarte bei Laptops", "Prüfanzeige mit Strg+Umschalt+G: Grafikkarte und Bilder pro Sekunde"] },
   { v: "0.8.2", date: "25.10.2026", title: "Ruhigere Musik und Windows-Version", items: ["Musik entschärft: keine schrillen Bonus-Melodien mehr, leisere Klanghölzer und Rimshots", "Lagerfeuer genauso laut wie die anderen Stücke, Werkstattmarsch weniger wummernd", "Neu: installierbare Windows-Version mit eingebauten Schriften"] },
   { v: "0.8.1", date: "25.10.2026", title: "Walzen und Boost-Labor auf breiten Bildschirmen", items: ["Walzensymbole passen in 21:9 und 16:9 immer ins Feld", "Walzen größer und nicht mehr flach gezogen", "Boost-Labor in zwei Spalten, gut lesbar"] },
@@ -462,7 +463,7 @@ WORDS_EF = [
     (r"in der Lagune", "in der Werkhalle"), (r"Lagune", "Werkhalle"),
     (r"Inseln", "Fronten"), (r"\bInsel\b", "Front"), (r"Seekarte", "Frontkarte"),
     (r"KOKO-BOOST", "REX-BOOST"), (r"Koko-Boost", "Rex-Boost"), (r"\bKokos\b", "Rex'"), (r"\bKoko\b", "Rex"), (r"Bordpapagei", "Werkstatthund"), (r"Papagei", "Hund"),
-    (r"Strandgilde", "Mechanikergilde"), (r"Strandhändler", "Schrotthändler"), (r"Strandhütte", "Kantine"), (r"Strandsuche", "Lieferung"),
+    (r"Strandgilde", "Mechanikergilde"), (r"Seefahrerrang", "Kommandantenrang"), (r"Strandhändler", "Schrotthändler"), (r"Strandhütte", "Kantine"), (r"Strandsuche", "Lieferung"),
     (r"Kräuterhütte", "Feldküche"), (r"Kräutertrank", "Feldration"),
     (r"\bSegel\b", "Motor"), (r"Ausguck", "Funk"), (r"Feuerstelle", "Kanone"),
     (r"SOS-7", "PZ-7"), (r"Salzbrise", "Rostbeule"),
