@@ -1,6 +1,41 @@
 # Neues Hauptmenü, aufgewertete Erfolge, Sicherheits- und Datenschutzhinweise, Hilfe bei Glücksspielproblemen,
 # Pausen-Erinnerung (seit SW 0.18.0, Zweig experimente)
 UI_CSS = r'''
+/* ---------- Steuerleiste neu (Credits, Gewinn, Staub, Start, Einsatz) ---------- */
+@media (min-width: 601px) {
+  .deck { position: relative; gap: 16px 22px; padding: 18px 20px; border-radius: 20px; overflow: hidden;
+    background: radial-gradient(120% 140% at 50% 120%, color-mix(in srgb, var(--cyan) 14%, transparent), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.35));
+    border: 1px solid rgba(255,255,255,.12); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 18px 40px rgba(0,0,0,.35); }
+  .deck::before { content: ""; position: absolute; left: 18px; right: 18px; top: 0; height: 2px; border-radius: 2px; background: linear-gradient(90deg, transparent, var(--cyan), var(--gold), transparent); opacity: .8; }
+  .deck { grid-template-columns: minmax(0, 1.15fr) auto minmax(0, 1fr); }
+  .wallet { gap: 8px; align-self: center; }
+  .wallet .stat { position: relative; align-content: center; gap: 4px; padding: 12px 10px 12px 14px; min-height: 78px; border-radius: 14px; background: linear-gradient(160deg, rgba(255,255,255,.07), rgba(0,0,0,.28)); border: 1px solid rgba(255,255,255,.1); overflow: hidden; --sc: var(--gold); }
+  .wallet .stat::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: var(--sc); box-shadow: 0 0 12px var(--sc); }
+  .wallet .stat:nth-child(2) { --sc: var(--win, #5dffa8); }
+  .wallet .stat.dust { --sc: var(--violet, #8b6cff); }
+  .wallet .stat > span:first-child { display: flex; align-items: center; gap: 6px; font-size: .56rem; letter-spacing: .05em; color: color-mix(in srgb, var(--sc) 70%, #fff); white-space: nowrap; overflow: hidden; text-overflow: clip; }
+  .wallet .stat b { font-size: clamp(1.25rem, 2.2vw, 1.75rem); letter-spacing: .02em; text-shadow: 0 0 18px color-mix(in srgb, var(--sc) 35%, transparent); }
+  .wallet .stat #credits { background: linear-gradient(180deg, #fff 30%, color-mix(in srgb, var(--gold) 70%, #fff)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .wallet .stat #credits.counting { background: none; color: var(--win); -webkit-text-fill-color: currentColor; }
+  .wallet .stat #lastWin.pos { animation: wlWin .7s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes wlWin { 40% { transform: scale(1.18); text-shadow: 0 0 22px var(--win); } }
+  .spinwrap { width: 122px; height: 122px; }
+  .spinwrap .spin { font-size: .84rem; }
+  .spinwrap .spin svg { width: 34px; height: 34px; }
+  .bets { gap: 10px; align-content: center; }
+  .stepper { border-radius: 14px; border: 1px solid rgba(255,255,255,.16); background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.25)); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+  .stepper button { width: 42px; height: 46px; font-size: 1.3rem; transition: background .15s, color .15s; }
+  .stepper button:hover:not(:disabled) { background: color-mix(in srgb, var(--gold) 18%, transparent); color: var(--gold); }
+  .stepper output b { font-size: 1.35rem; }
+  .auto { gap: 6px; }
+  .auto button { border-radius: 99px !important; padding: 7px 12px !important; border: 1px solid rgba(255,255,255,.16) !important; background: rgba(255,255,255,.05) !important; transition: border-color .15s, background .15s; }
+  .auto button[aria-pressed="true"] { border-color: var(--gold) !important; background: color-mix(in srgb, var(--gold) 20%, transparent) !important; color: var(--gold) !important; }
+  .fsbuybtn { position: relative; overflow: hidden; border-radius: 12px; padding: 11px 14px; font-size: 13px; }
+  .fsbuybtn::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.45) 50%, transparent 65%); transform: translateX(-120%); animation: fsShine 4s ease-in-out infinite; pointer-events: none; }
+  @keyframes fsShine { 0%, 70% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+}
+@media (prefers-reduced-motion: reduce) { .fsbuybtn::after, .wallet .stat #lastWin.pos { animation: none !important; } }
+
 /* ---------- Hauptmenü, zweispaltig ---------- */
 #intro .intro-inner.mm2 { max-width: 1240px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-areas: "top top" "hero side" "foot foot"; gap: 22px 36px; align-items: start; justify-items: stretch; text-align: left; padding-top: 22px; }
 .mm2 .mm2-top { grid-area: top; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }

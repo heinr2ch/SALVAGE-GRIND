@@ -31,25 +31,38 @@ ONLINE_CSS = r'''
 #vsBar[hidden] { display: none; }
 #vsBar .t { color: var(--gold, #ffc94a); }
 #vsBar .lead { color: #6fdc8c; }
-#crewFeed { position: fixed; top: 86px; right: 14px; z-index: 230; width: 290px; pointer-events: none; font: 700 13px var(--f-body, system-ui); }
+#crewFeed { position: relative; width: 100%; max-width: 330px; justify-self: stretch; font: 700 12.5px var(--f-body, system-ui); border-radius: 12px; background: linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.25)); border: 1px solid rgba(255,255,255,.12); overflow: hidden; }
 #crewFeed[hidden] { display: none; }
-#crewFeed .cf-head { pointer-events: auto; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 10px 10px 0 0; background: rgba(8,10,20,.85); border: 1px solid rgba(255,255,255,.14); border-bottom: 0; font: 800 10px var(--f-mono, monospace); letter-spacing: .2em; color: #6fdc8c; }
+#crewFeed .cf-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 5px 10px; font: 800 9.5px var(--f-mono, monospace); letter-spacing: .2em; color: #6fdc8c; background: rgba(255,255,255,.04); border-bottom: 1px solid rgba(255,255,255,.08); }
 #crewFeed .cf-head button { background: none; border: 0; color: rgba(255,255,255,.7); cursor: pointer; font: 800 12px var(--f-mono, monospace); padding: 0 2px; }
 #crewFeed .cf-head i { width: 7px; height: 7px; border-radius: 50%; background: #ff4b6a; box-shadow: 0 0 8px #ff4b6a; display: inline-block; margin-right: 6px; animation: cfLive 1.2s ease-in-out infinite; }
 @keyframes cfLive { 50% { opacity: .3; } }
-#crewFeed .cf-list { display: grid; gap: 4px; padding-top: 4px; }
+#crewFeed .cf-list { display: grid; gap: 3px; padding: 4px; height: 92px; overflow: hidden; align-content: start; }
 #crewFeed.min .cf-list { display: none; }
-#crewFeed .cf-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 8px; background: linear-gradient(90deg, rgba(0,0,0,.78), rgba(0,0,0,.55)); border-left: 3px solid var(--pc); color: #fff; animation: cfIn .35s cubic-bezier(.2,1.3,.4,1); transition: opacity .6s, transform .6s; text-shadow: 0 1px 2px #000; }
-#crewFeed .cf-row.old { opacity: .45; }
-#crewFeed .cf-row.gone { opacity: 0; transform: translateX(30px); }
-#crewFeed .cf-row b { color: var(--pc); max-width: 105px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#crewFeed .cf-empty { color: rgba(255,255,255,.45); font-weight: 600; font-size: 11.5px; padding: 6px; }
+#crewFeed .cf-row { position: relative; display: flex; align-items: center; gap: 7px; padding: 5px 8px; border-radius: 7px; background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 22%, rgba(0,0,0,.6)), rgba(0,0,0,.35)); border-left: 3px solid var(--pc); color: #fff; overflow: hidden;
+  animation: cfIn .5s cubic-bezier(.2,1.5,.35,1); transition: opacity .6s, transform .6s, filter .6s; text-shadow: 0 1px 2px #000; }
+#crewFeed .cf-row::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%); transform: translateX(-120%); animation: cfFlash .9s ease-out .1s; pointer-events: none; }
+#crewFeed .cf-row.old { opacity: .5; filter: saturate(.5); }
+#crewFeed .cf-row.gone { opacity: 0; transform: translateX(40px) scale(.95); }
+#crewFeed .cf-row b { color: var(--pc); max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #crewFeed .cf-row .cf-ic { font-size: 14px; }
 #crewFeed .cf-row .cf-amt { margin-left: auto; color: #ffc94a; font-family: var(--f-mono, monospace); white-space: nowrap; }
-#crewFeed .cf-row small { color: rgba(255,255,255,.6); font-weight: 600; font-size: 11px; white-space: nowrap; }
-#crewFeed .cf-row.big { background: linear-gradient(90deg, rgba(120,80,0,.85), rgba(0,0,0,.6)); }
-#crewFeed .cf-row.me { border-left-color: #ffffff; }
-@keyframes cfIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
-@media (max-width: 700px) { #crewFeed { top: auto; bottom: 86px; right: 8px; width: 230px; font-size: 12px; } }
+#crewFeed .cf-row small { color: rgba(255,255,255,.65); font-weight: 600; font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#crewFeed .cf-row.me { --pc: #ffffff; }
+#crewFeed .cf-row.big .cf-amt { animation: cfAmt .6s cubic-bezier(.2,1.6,.4,1) 2; }
+#crewFeed .cf-row.ft { border-left-width: 0; padding-left: 10px; background: linear-gradient(90deg, color-mix(in srgb, var(--fc) 45%, #000), color-mix(in srgb, var(--fc) 12%, #000)); box-shadow: inset 0 0 0 1.5px var(--fc), 0 0 14px color-mix(in srgb, var(--fc) 55%, transparent); animation: cfIn .5s cubic-bezier(.2,1.5,.35,1), cfPulse 1.2s ease-in-out 3; }
+#crewFeed .cf-row.ft .cf-amt { color: var(--fc); font-family: var(--f-display, system-ui); letter-spacing: .08em; font-size: 11px; }
+#crewFeed .cf-row.jp { animation: cfIn .5s cubic-bezier(.2,1.5,.35,1), cfShake .5s ease-in-out .5s 2, cfPulse 1.2s ease-in-out 3; }
+#crewFeed.flash { animation: cfBox .7s ease-out; }
+@keyframes cfIn { from { opacity: 0; transform: translateX(60px) scale(.8); filter: brightness(2.5); } 60% { transform: translateX(-4px) scale(1.03); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes cfFlash { to { transform: translateX(120%); } }
+@keyframes cfAmt { 50% { transform: scale(1.35); text-shadow: 0 0 12px #ffc94a; } }
+@keyframes cfPulse { 50% { box-shadow: inset 0 0 0 1.5px var(--fc), 0 0 26px var(--fc); } }
+@keyframes cfShake { 25% { transform: translateX(-3px) rotate(-1deg); } 75% { transform: translateX(3px) rotate(1deg); } }
+@keyframes cfBox { 0% { box-shadow: 0 0 0 0 var(--fc, #ffc94a); } 40% { box-shadow: 0 0 0 3px var(--fc, #ffc94a), 0 0 30px var(--fc, #ffc94a); } 100% { box-shadow: none; } }
+@media (max-width: 600px) { #crewFeed { position: fixed; left: 8px; right: 8px; bottom: 132px; max-width: none; width: auto; z-index: 71; } #crewFeed .cf-list { height: 62px; } }
+@media (prefers-reduced-motion: reduce) { #crewFeed .cf-row, #crewFeed .cf-row::after { animation: none !important; } }
 .mmchip .ol-badge { display: inline-block; min-width: 16px; height: 16px; border-radius: 8px; background: #ff4b6a; color: #fff; font: 800 10px/16px system-ui; text-align: center; margin-left: 4px; }
 '''
 
@@ -58,8 +71,8 @@ ONLINE_JS = r'''
 const FB_CFG = { apiKey: "AIzaSyBcnwWCg5qhD-g8DWnsNh-teUZihc4CKtM", authDomain: "salvage-grind.firebaseapp.com", databaseURL: "https://salvage-grind-default-rtdb.europe-west1.firebasedatabase.app", projectId: "salvage-grind", storageBucket: "salvage-grind.firebasestorage.app", messagingSenderId: "169044714781", appId: "1:169044714781:web:38796d21b781bed839adf4" };
 const FB_VER = "10.14.1", GIFT_MS = 864e5, VS_MS = 300000, COOP_SHARE = .2, CREW_MAX = 4, VAULT_MS = 300000;
 const OL = { db: null, uid: null, ready: false, err: "", code: "", friends: {}, people: {}, gifts: {}, tab: "friends", board: "friends", sent: {}, vs: null, queueRef: null,
-  crew: null, crewM: {}, crewInv: {}, ticker: [], live: {}, dayBest: 0, vault: null, vaultAt: 0, confirm: false };
-try { OL.crew = localStorage.getItem("welten-crew") || null; OL.vault = localStorage.getItem("welten-vault") || null; } catch (e) {}
+  crew: null, crewM: {}, crewInv: {}, team: null, teamM: {}, teamInv: {}, ticker: [], live: {}, dayBest: 0, vault: null, vaultAt: 0, confirm: false };
+try { OL.team = localStorage.getItem("welten-myteam") || null; OL.crew = localStorage.getItem("welten-crew") || null; OL.vault = localStorage.getItem("welten-vault") || null; } catch (e) {}
 const olDay = () => new Date().toISOString().slice(0, 10);
 try { const d = JSON.parse(localStorage.getItem("welten-daybest") || "{}"); if (d.d === olDay()) OL.dayBest = d.a || 0; } catch (e) {}
 const olName = () => (state.captain || state.shipName || "Kapitän").slice(0, 20);
@@ -79,6 +92,9 @@ async function olInit() {
       OL.db.ref("friends/" + OL.uid).on("value", s => { OL.friends = s.val() || {}; olLoadPeople(); olTickerListen(); });
       OL.db.ref("crewInv/" + OL.uid).on("value", s => { OL.crewInv = s.val() || {}; olBadge(); if (mmOpen("online")) olRender(); });
       if (OL.crew) olCrewListen();
+      OL.db.ref("teamInv/" + OL.uid).on("value", s => { OL.teamInv = s.val() || {}; olBadge(); if (mmOpen("online")) olRender(); });
+      if (OL.team) OL.db.ref(`teams/${OL.team}/m`).on("value", s => { OL.teamM = s.val() || {}; if (mmOpen("online")) olRender(); });
+      if (window.TEAM_ID) teamStart().catch(e => { try { console.warn("Team:", e); } catch (x) {} });
       OL.db.ref("gifts/" + OL.uid).on("value", s => { OL.gifts = s.val() || {}; olBadge(); if (mmOpen("online")) olRender(); });
       setInterval(olPublish, 60000);
       setInterval(olTick, 2000);
@@ -109,7 +125,7 @@ async function olLoadPeople() {
 }
 const olOnline = p => p && p.on && Date.now() - p.on < 150000;
 function olBadge() {
-  const n = Object.values(OL.gifts).filter(g => g && !g.c).length + Object.keys(OL.crewInv).length;
+  const n = Object.values(OL.gifts).filter(g => g && !g.c).length + Object.keys(OL.crewInv).length + Object.keys(OL.teamInv || {}).length;
   const b = $("olChip"); if (!b) return;
   b.querySelector(".ol-badge") && b.querySelector(".ol-badge").remove();
   if (n) b.insertAdjacentHTML("beforeend", `<span class="ol-badge">${n}</span>`);
@@ -120,12 +136,13 @@ function olMsg(t, ok) { const el = $("olMsg"); if (!el) return; el.textContent =
 (function setupOnline() {
   document.body.insertAdjacentHTML("beforeend", `<div class="bonus" id="online" hidden role="dialog" aria-modal="true" aria-labelledby="olTitle" style="z-index:260">
   <div class="bonus-card"><h2 id="olTitle" style="margin:0 0 4px">Online</h2>
-  <div class="ol-tabs" id="olTabs"><button type="button" data-t="friends">Freunde</button><button type="button" data-t="board">Rangliste</button><button type="button" data-t="vs">VS-Duell</button><button type="button" data-t="coop">Koop-Crew</button><button type="button" data-t="save">Spielstand</button></div>
+  <div class="ol-tabs" id="olTabs"><button type="button" data-t="friends">Freunde</button><button type="button" data-t="board">Rangliste</button><button type="button" data-t="vs">VS-Duell</button><button type="button" data-t="coop">Koop-Crew</button><button type="button" data-t="team">Team-Spielstand</button><button type="button" data-t="save">Spielstand</button></div>
   <p class="ol-msg" id="olMsg" aria-live="polite"></p>
   <div class="ol-pane" id="olPane"></div>
   <div class="ar-row"><span></span><button type="button" class="bbtn ghost" id="olClose">Schließen</button></div></div></div>
   <div id="vsBar" hidden></div>
-  <div id="crewFeed" hidden aria-live="polite"><div class="cf-head"><span><i></i>CREW LIVE</span><button type="button" id="cfMin" aria-label="Feed einklappen">–</button></div><div class="cf-list" id="cfList"></div></div>`);
+  <div id="crewFeed" hidden aria-live="polite"><div class="cf-head"><span id="cfTitle"><i></i>CREW LIVE</span><button type="button" id="cfMin" aria-label="Feed einklappen">–</button></div><div class="cf-list" id="cfList"><div class="cf-empty">Gewinne deiner Mitspieler erscheinen hier live.</div></div></div>`);
+  setTimeout(() => { const fb = $("fsBuyBtn"), cf = $("crewFeed"); if (fb && cf) fb.parentNode.insertBefore(cf, fb); }, 0);
   $("cfMin").addEventListener("click", () => { const f = $("crewFeed"); f.classList.toggle("min"); $("cfMin").textContent = f.classList.contains("min") ? "+" : "–"; try { localStorage.setItem("welten-cfmin", f.classList.contains("min") ? "1" : "0"); } catch (e) {} });
   try { if (localStorage.getItem("welten-cfmin") === "1") { $("crewFeed").classList.add("min"); $("cfMin").textContent = "+"; } } catch (e) {}
   const tg = document.querySelector(".toggles");
@@ -174,6 +191,15 @@ function olRender() {
       ${OL.crew ? `<p class="ol-info"><b>Deine Crew (${n}/${CREW_MAX})</b> · Bauteile kosten gerade ${Math.round((coopCostMul() - 1) * 100)} % mehr.</p><div class="ol-list">${ids2.map(id => olItem(id, id === OL.uid ? { n: olName(), w: { [WORLD_ID]: { l: state.level, p: state.peak } } } : OL.people[id] || { n: OL.crewM[id] }, "", id === OL.uid)).join("")}</div><div class="ol-row"><button type="button" class="ol-small" data-a="leave">Crew verlassen</button></div>`
         : `<p class="ol-info">Du bist in keiner Crew. Lade unter „Freunde“ jemanden ein.</p>`}
       <h3 style="margin:14px 0 6px;font-size:15px">Live-Ticker deiner Freunde</h3><div class="ol-list">${OL.ticker.length ? OL.ticker.slice(0, 12).map(t => `<div class="ol-item"><span class="ol-dot on"></span><span><b>${escapeHTML(t.n)}</b><small>${escapeHTML(t.wn || "")} · ${new Date(t.t).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}</small></span><span class="ol-acts"><b>+${fmtN(t.a)}</b></span></div>`).join("") : `<p class="ol-info">Noch nichts los. Große Gewinne deiner Freunde erscheinen hier sofort.</p>`}</div>`;
+  } else if (OL.tab === "team") {
+    const ids3 = Object.keys(OL.teamM), inv = Object.entries(OL.teamInv || {}), playing = !!window.TEAM_ID;
+    P.innerHTML = `<p class="ol-info">Ein <b>gemeinsamer Spielstand</b> für bis zu 4 Spieler, getrennt von deinem eigenen: Ihr teilt Credits, Erfahrung, Schiff und Ausbau. Jeder Gewinn und jeder Kauf zählt sofort für alle. Dein eigener Spielstand bleibt unberührt, du kannst jederzeit zurückwechseln.</p>
+      ${inv.length ? `<div class="ol-gifts">${inv.map(([tid, v]) => `<div class="ol-gift"><span>🤝 <b>${escapeHTML(v.n || "Ein Freund")}</b> lädt dich in sein Team ein</span><span class="ol-acts"><button type="button" data-a="tjoin" data-id="${tid}">Beitreten</button><button type="button" data-a="tdecline" data-id="${tid}">Ablehnen</button></span></div>`).join("")}</div>` : ""}
+      ${OL.team ? `<p class="ol-info"><b>Dein Team (${ids3.length}/4)</b> ${playing ? "· <span style=\"color:#6fdc8c\">du spielst gerade den Team-Spielstand</span>" : ""}</p>
+        <div class="ol-list">${ids3.map(id => olItem(id, id === OL.uid ? { n: olName(), on: Date.now() } : OL.people[id] || { n: OL.teamM[id] }, "", id === OL.uid)).join("")}</div>
+        <p class="ol-info" style="margin-top:8px">Freunde einladen:</p><div class="ol-list">${Object.keys(OL.friends).filter(f => !OL.teamM[f]).map(f => olItem(f, OL.people[f], `<button type="button" data-a="tinvite" data-id="${f}" ${ids3.length >= 4 ? "disabled" : ""}>Einladen</button>`)).join("") || `<p class="ol-info">Alle Freunde sind schon im Team.</p>`}</div>
+        <div class="ol-row">${playing ? `<button type="button" class="bbtn" data-a="tsolo">Zurück zu meinem Spielstand</button>` : `<button type="button" class="bbtn" data-a="tplay">Team-Spielstand spielen</button>`}<button type="button" class="ol-small" data-a="tleave">Team verlassen</button></div>`
+        : `<button type="button" class="bbtn" data-a="tnew">Team gründen</button>`}`;
   } else {
     P.innerHTML = `<p class="ol-info">Sichere deinen Fortschritt aller vier Welten in der Cloud, ganz ohne E-Mail, Name oder Passwort. Du bekommst einen <b>Wiederherstellungscode</b>. Mit ihm holst du deinen Spielstand auf jedes Gerät. Wer den Code kennt, kann den Spielstand laden, also gib ihn nicht weiter.</p>
       ${OL.vault ? `<div class="ol-me"><span>Dein Wiederherstellungscode<br><span class="ol-code" style="font-size:16px">${olFmtVault(OL.vault)}</span></span><button type="button" class="ol-small" data-a="vcopy">Kopieren</button></div><p class="ol-info">Automatische Sicherung alle 5 Minuten. Zuletzt: ${OL.vaultAt ? new Date(OL.vaultAt).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) : "noch nicht"}.</p><button type="button" class="bbtn" data-a="vsave">Jetzt sichern</button>`
@@ -226,6 +252,13 @@ async function olClick(e) {
     }
     else if (a === "bf" || a === "bg" || a === "bd") { OL.board = a === "bf" ? "friends" : a === "bg" ? "global" : "day"; olRender(); }
     else if (a === "invite") await crewInvite(id);
+    else if (a === "tnew") { const tid = OL.db.ref("teams").push().key; await OL.db.ref(`teams/${tid}/m/${OL.uid}`).set(olName()); teamSet(tid); olMsg("Team gegründet. Lade jetzt Freunde ein.", true); }
+    else if (a === "tinvite") { await OL.db.ref(`teamInv/${id}/${OL.team}`).set({ n: olName(), t: firebase.database.ServerValue.TIMESTAMP }); olMsg(`Einladung an ${(OL.people[id] || {}).n || "deinen Freund"} verschickt.`, true); }
+    else if (a === "tjoin") { const mm = (await OL.db.ref(`teams/${id}/m`).get()).val() || {}; if (!Object.keys(mm).length) { await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove(); olMsg("Dieses Team gibt es nicht mehr.", false); return; } if (Object.keys(mm).length >= 4) { olMsg("Das Team ist schon voll (4 Spieler).", false); return; } await OL.db.ref(`teams/${id}/m/${OL.uid}`).set(olName()).catch(() => { throw new Error("voll"); }); await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove(); teamSet(id); olMsg("Du bist dem Team beigetreten. Tippe auf „Team-Spielstand spielen“.", true); }
+    else if (a === "tdecline") await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove();
+    else if (a === "tplay") teamSwitch(OL.team);
+    else if (a === "tsolo") teamSwitch(null);
+    else if (a === "tleave") { const tid = OL.team; await OL.db.ref(`teams/${tid}/m/${OL.uid}`).remove().catch(() => {}); teamSet(null); if (window.TEAM_ID) teamSwitch(null); else olMsg("Team verlassen.", true); }
     else if (a === "accept") await crewAccept(id);
     else if (a === "decline") { await OL.db.ref(`crewInv/${OL.uid}/${id}`).remove(); }
     else if (a === "leave") await crewLeave();
@@ -239,14 +272,13 @@ async function olClick(e) {
 
 /* --- Koop-Crew (bis 4 Spieler) --- */
 function coopCostMul() { try { const n = OL.crew ? Object.keys(OL.crewM).length : 0; return n >= 2 ? 1 + .25 * (n - 1) : 1; } catch (e) { return 1; } }   // try: wird schon vor diesem Block aufgerufen (stepCost)
-function olSetCrew(cid) { if (OL.logRef) { OL.logRef.off(); OL.logRef = null; } $("crewFeed").hidden = !cid; if (!cid) $("cfList").innerHTML = ""; OL.crew = cid; try { cid ? localStorage.setItem("welten-crew", cid) : localStorage.removeItem("welten-crew"); } catch (e) {} if (OL.crewRef) { OL.crewRef.off(); OL.feedRef.off(); OL.crewRef = OL.feedRef = null; } OL.crewM = {}; if (cid) olCrewListen(); render(); }
+function olSetCrew(cid) { if (OL.logRef) { OL.logRef.off(); OL.logRef = null; } $("crewFeed").hidden = !cid; if (!cid && window.TEAM_ID && OL.db) cfListen(`teams/${TEAM_ID}/log`, "TEAM LIVE"); OL.crew = cid; try { cid ? localStorage.setItem("welten-crew", cid) : localStorage.removeItem("welten-crew"); } catch (e) {} if (OL.crewRef) { OL.crewRef.off(); OL.feedRef.off(); OL.crewRef = OL.feedRef = null; } OL.crewM = {}; if (cid) olCrewListen(); render(); }
 function olCrewListen() {
   OL.crewRef = OL.db.ref(`crews/${OL.crew}/m`);
   OL.crewRef.on("value", s => { OL.crewM = s.val() || {}; if (OL.crew && !OL.crewM[OL.uid]) { olSetCrew(null); } Object.keys(OL.crewM).forEach(id => { if (id !== OL.uid && !OL.people[id]) OL.db.ref("players/" + id).get().then(x => { OL.people[id] = x.val() || { n: OL.crewM[id] }; }).catch(() => {}); }); render(); if (mmOpen("online")) olRender(); });
   $("crewFeed").hidden = false;
   const since = Date.now() - 60000;
-  OL.logRef = OL.db.ref(`crews/${OL.crew}/log`).limitToLast(6);
-  OL.logRef.on("child_added", s => { const v = s.val(); if (v && (v.t || 0) > since) cfAdd(v); });
+  cfListen(`crews/${OL.crew}/log`, "CREW LIVE");
   OL.feedRef = OL.db.ref(`crews/${OL.crew}/feed/${OL.uid}`);
   OL.feedRef.on("child_added", s => { const v = s.val(); s.ref.remove().catch(() => {}); if (!v || !v.a) return; state.credits += v.a; render(); toast(`Crew-Bonus +${fmtN(v.a)} (${v.n || ""})`, "#6fdc8c"); });
 }
@@ -270,19 +302,93 @@ async function crewLeave(quiet) {
   await OL.db.ref(`crews/${cid}/m/${OL.uid}`).remove().catch(() => {}); olSetCrew(null);
   if (!quiet) { olMsg("Crew verlassen. Bauteile kosten wieder normal.", true); olRender(); }
 }
+function cfListen(path, title) {
+  if (OL.logRef) OL.logRef.off();
+  $("crewFeed").hidden = false; $("cfTitle").innerHTML = `<i></i>${title}`;
+  const since = Date.now() - 60000;
+  OL.logRef = OL.db.ref(path).limitToLast(6);
+  OL.logRef.on("child_added", s => { const v = s.val(); if (v && (v.t || 0) > since) cfAdd(v); });
+}
 /* --- Crew-Feed (wie ein Kill-Feed): letzte Gewinne der Crew, live --- */
 const CF_COL = ["#4fe3ff", "#ffb36b", "#a7c060", "#ff7ad9", "#7ee0c8", "#b9a4ff"];
 function cfColor(uid) { let h = 0; for (const c of uid || "") h = (h * 31 + c.charCodeAt(0)) >>> 0; return CF_COL[h % CF_COL.length]; }
+const CF_FT = { fs: ["🎰", "FREISPIELE!", "#b8ff5c"], fsb: ["🛒", "Freispiele gekauft", "#7ee0c8"], bonus: ["🎁", "BONUSSPIEL!", "#ff7ad9"], jp: ["👑", "JACKPOT!", "#ffc94a"], ladder: ["🪜", "Risikoleiter geschafft", "#4fe3ff"], gamble: ["🃏", "Risiko gewonnen", "#9fb3ff"] };
 function cfAdd(v) {
   const list = $("cfList"); if (!list) return;
-  const me = v.u === OL.uid, big = (v.x || 0) >= 25;
-  const ic = big ? "💥" : (v.x || 0) >= 10 ? "🔥" : "💰";
-  list.insertAdjacentHTML("afterbegin", `<div class="cf-row${me ? " me" : ""}${big ? " big" : ""}" style="--pc:${cfColor(v.u)}"><span class="cf-ic">${ic}</span><b>${escapeHTML(me ? "Du" : v.n || "?")}</b><small>${escapeHTML(v.wn || "")}${v.x ? " · " + v.x + "×" : ""}</small><span class="cf-amt">+${fmtN(v.a)}</span></div>`);
-  const rows = [...list.children];
-  rows.forEach((r, i) => { r.classList.toggle("old", i >= 3); if (i >= 5) r.remove(); });
-  const row = list.firstElementChild;
-  setTimeout(() => { row.classList.add("old"); }, 8000);
-  setTimeout(() => { row.classList.add("gone"); setTimeout(() => row.remove(), 650); }, 20000);
+  const em = list.querySelector(".cf-empty"); if (em) em.remove();
+  const me = v.u === OL.uid, ft = v.k && CF_FT[v.k], big = (v.x || 0) >= 25;
+  const ic = ft ? ft[0] : big ? "💥" : (v.x || 0) >= 10 ? "🔥" : "💰";
+  const right = ft ? ft[1] + (v.a ? ` +${fmtN(v.a)}` : "") : `+${fmtN(v.a)}`;
+  list.insertAdjacentHTML("afterbegin", `<div class="cf-row${me ? " me" : ""}${big ? " big" : ""}${ft ? " ft" : ""}${v.k === "jp" ? " jp" : ""}" style="--pc:${cfColor(v.u)};${ft ? `--fc:${ft[2]}` : ""}"><span class="cf-ic">${ic}</span><b>${escapeHTML(me ? "Du" : v.n || "?")}</b><small>${escapeHTML(v.wn || "")}${!ft && v.x ? " · " + v.x + "×" : ""}</small><span class="cf-amt">${right}</span></div>`);
+  [...list.children].forEach((r, i) => { r.classList.toggle("old", i >= 3); if (i >= 5) r.remove(); });
+  const row = list.firstElementChild, box = $("crewFeed");
+  if (ft || big) { box.style.setProperty("--fc", ft ? ft[2] : "#ffc94a"); box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
+    try { burstAt(row, ft ? 26 : 18, ft ? [ft[2], "#ffffff"] : ["#ffc94a", "#ffffff"], .7); } catch (e) {}
+    if (!me) { try { tone(ft ? 880 : 660, .18, { type: "triangle", vol: .05 }); tone(ft ? 1320 : 990, .2, { type: "triangle", vol: .04, at: .09 }); } catch (e) {} } }
+  setTimeout(() => row.classList.add("old"), 8000);
+  setTimeout(() => { row.classList.add("gone"); setTimeout(() => { row.remove(); if (!list.children.length) list.innerHTML = `<div class="cf-empty">Gewinne deiner Mitspieler erscheinen hier live.</div>`; }, 650); }, 22000);
+}
+/* --- Team-Spielstand: bis 4 Spieler teilen einen eigenen Spielstand --- */
+function teamSet(tid) {
+  if (OL.team && OL.db) OL.db.ref(`teams/${OL.team}/m`).off();
+  OL.team = tid; OL.teamM = {}; try { tid ? localStorage.setItem("welten-myteam", tid) : localStorage.removeItem("welten-myteam"); } catch (e) {}
+  if (tid) OL.db.ref(`teams/${tid}/m`).on("value", s => { OL.teamM = s.val() || {}; Object.keys(OL.teamM).forEach(id => { if (id !== OL.uid && !OL.people[id]) OL.db.ref("players/" + id).get().then(x => { OL.people[id] = x.val() || { n: OL.teamM[id] }; if (mmOpen("online")) olRender(); }).catch(() => {}); }); if (mmOpen("online")) olRender(); });
+  if (mmOpen("online")) olRender();
+}
+function teamSwitch(tid) {
+  try { flushSave && flushSave(); } catch (e) {}
+  setTimeout(() => {
+    ready = false;   // verhindert, dass der gerade geladene Stand beim Wechsel überschrieben wird
+    try { tid ? localStorage.setItem("welten-team", tid) : localStorage.removeItem("welten-team"); } catch (e) {}
+    olMsg(tid ? "Wechsle zum Team-Spielstand …" : "Wechsle zu deinem Spielstand …", true);
+    setTimeout(() => location.reload(), 600);
+  }, 400);
+}
+const TM = { on: false, c: 0, x: 0, busy: false, n: 0 };
+const teamPath = () => `teams/${TEAM_ID}/w/${WORLD_ID}`;
+function teamMerge(a, b) {
+  const o = { ...a };
+  if (!b) return o;
+  SAVE_KEYS.forEach(k => { if (k !== "credits" && k !== "xp" && typeof b[k] === "number") o[k] = Math.max(a[k] || 0, b[k]); });
+  if (b.ship) { o.ship = { ...(a.ship || {}) }; Object.keys(b.ship).forEach(k => { o.ship[k] = Math.max(o.ship[k] || 0, b.ship[k] || 0); }); }
+  ["found", "visited", "album", "ach", "crew"].forEach(k => { if (Array.isArray(b[k])) o[k] = [...new Set([...(a[k] || []), ...b[k]])]; });
+  if (b.stats) { o.stats = { ...(a.stats || {}) }; Object.keys(b.stats).forEach(k => { if (typeof b.stats[k] === "number") o.stats[k] = Math.max(o.stats[k] || 0, b.stats[k]); }); }
+  if (b.shipNamed && !a.shipNamed) { o.shipName = b.shipName; o.shipNamed = true; }
+  return o;
+}
+function teamApply(remote) {
+  const c = state.credits, x = state.xp;
+  applySave(teamMerge(serialize(), remote)); state.credits = c; state.xp = x;
+  try { render(); } catch (e) {}
+}
+async function teamStart() {
+  const m = (await OL.db.ref(`teams/${TEAM_ID}/m`).get()).val() || {};
+  if (!m[OL.uid]) { teamSwitch(null); return; }   // nicht (mehr) im Team: zurück zum eigenen Spielstand
+  const r = (await OL.db.ref(teamPath()).get()).val();
+  if (r && r.save) { try { teamApply(JSON.parse(r.save)); } catch (e) {} state.credits = r.c; state.xp = r.x || 0; render(); }
+  else await OL.db.ref(teamPath()).set({ save: JSON.stringify(serialize()), c: state.credits, x: state.xp });
+  TM.c = state.credits; TM.x = state.xp; TM.on = true;
+  if (!OL.crew) cfListen(`teams/${TEAM_ID}/log`, "TEAM LIVE");
+  const chip = $("olChip"); if (chip) { chip.style.borderColor = "#6fdc8c"; chip.title = "Team-Spielstand aktiv"; }
+  radio(`Funk: Team-Spielstand aktiv (${Object.values(m).join(", ")}). Alles, was ihr gewinnt und kauft, teilt ihr.`, true);
+  saveGame();
+}
+async function teamTick() {
+  if (!TM.on || TM.busy) return;
+  TM.busy = true; TM.n++;
+  try {
+    const c0 = state.credits, x0 = state.xp, dc = c0 - TM.c, dx = x0 - TM.x;
+    const rc = await OL.db.ref(teamPath() + "/c").transaction(v => Math.max(0, (v || 0) + dc));
+    const rx = await OL.db.ref(teamPath() + "/x").transaction(v => Math.max(0, (v || 0) + dx));
+    const C = rc.snapshot.val() || 0, X = rx.snapshot.val() || 0;
+    state.credits = C + (state.credits - c0); state.xp = X + (state.xp - x0);   // was während der Übertragung dazukam, bleibt erhalten
+    TM.c = C; TM.x = X;
+    if (TM.n % 4 === 0) {
+      const r = await OL.db.ref(teamPath() + "/save").transaction(v => { let rem = null; try { rem = v ? JSON.parse(v) : null; } catch (e) {} return JSON.stringify(teamMerge(serialize(), rem)); });
+      if (machineIdle()) { try { teamApply(JSON.parse(r.snapshot.val())); } catch (e) {} }
+    }
+    render();
+  } catch (e) {} finally { TM.busy = false; }
 }
 /* --- Live-Ticker: große Gewinne der Freunde --- */
 function olTickerListen() {
@@ -316,14 +422,19 @@ async function vaultLoad() {
   olMsg("Spielstand geladen. Das Spiel startet neu …", true);
   setTimeout(() => location.reload(), 900);
 }
-let olWon = null, olN = 0, olBest = null;
+let olWon = null, olN = 0, olBest = null, olFt = null;
+const olFtNow = () => { const t = state.stats || {}; return { fs: t.fs || 0, fsb: t.fsBought || 0, bonus: state.bonusCount || 0, jp: t.jackpots || 0, ladder: t.ladderWins || 0, gamble: t.gambleWins || 0 }; };
+const olLogPath = () => OL.crew ? `crews/${OL.crew}/log` : window.TEAM_ID ? `teams/${TEAM_ID}/log` : null;
 function olTick() {
   if (!OL.ready) return;
   olN++;
   const won = sess.won; if (olWon === null) { olWon = won; olBest = sess.best; return; }
   const d = won - olWon; olWon = won;
   const wn = (WORLDS.find(w => w.id === WORLD_ID) || {}).name || "";
-  if (d > 0 && OL.crew && d >= bet() * 2) OL.db.ref(`crews/${OL.crew}/log`).push({ u: OL.uid, n: olName(), a: d, x: Math.round(d / Math.max(1, bet())), wn, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {});
+  const lp = olLogPath(), ftNow = olFtNow();
+  if (lp && olFt) Object.keys(ftNow).forEach(k => { if (ftNow[k] > olFt[k]) OL.db.ref(lp).push({ u: OL.uid, n: olName(), k, a: 0, wn, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {}); });
+  olFt = ftNow;
+  if (d > 0 && lp && d >= bet() * 2) OL.db.ref(lp).push({ u: OL.uid, n: olName(), a: d, x: Math.round(d / Math.max(1, bet())), wn, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {});
   if (d > 0 && OL.crew) { const share = Math.floor(d * COOP_SHARE); if (share > 0) Object.keys(OL.crewM).forEach(id => { if (id !== OL.uid && olOnline(OL.people[id])) OL.db.ref(`crews/${OL.crew}/feed/${id}`).push({ a: share, n: olName() }).catch(() => {}); }); }
   if (d >= bet() * 10) OL.db.ref(`players/${OL.uid}/live`).set({ a: d, wn, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {});
   if (sess.best > OL.dayBest && sess.best > olBest) { OL.dayBest = sess.best; try { localStorage.setItem("welten-daybest", JSON.stringify({ d: olDay(), a: OL.dayBest })); } catch (e) {}
@@ -331,7 +442,8 @@ function olTick() {
   olBest = Math.max(olBest, sess.best);
   if (OL.vs && OL.vs.state === "run" && d > 0) { OL.vs.my += Math.round(d / Math.max(1, bet()) * 10); OL.db.ref(`matches/${OL.vs.id}/s/${OL.vs.side}`).set(OL.vs.my).catch(() => {}); }
   if (olN % 15 === 0 && OL.crew) Object.keys(OL.crewM).forEach(id => { if (id !== OL.uid) OL.db.ref("players/" + id + "/on").get().then(s => { OL.people[id] = { ...(OL.people[id] || {}), on: s.val() }; }).catch(() => {}); });
-  if (OL.vault && olN % Math.round(VAULT_MS / 2000) === 0) vaultSave(false).catch(() => {});
+  if (OL.vault && olN % Math.round(VAULT_MS / 2000) === 0 && !window.TEAM_ID) vaultSave(false).catch(() => {});
+  if (TM.on) teamTick();
 }
 
 /* --- VS-Duell: 5 Minuten, Punkte = Gewinne im Verhältnis zum Einsatz --- */
@@ -411,6 +523,11 @@ RULES = r'''{
     "crews": { "$cid": { ".read": "auth != null", ".write": "auth != null && (data.child('m').child(auth.uid).exists() || newData.child('m').child(auth.uid).exists())" } },
     "crewInv": { "$to": { ".read": "auth != null && auth.uid === $to", "$cid": { ".write": "auth != null" } } },
     "daily": { "$day": { ".read": "auth != null", ".indexOn": ["a"], "$uid": { ".write": "auth != null && auth.uid === $uid", ".validate": "newData.child('a').isNumber()" } } },
+    "teams": { "$tid": {
+      ".read": "auth != null && data.child('m').child(auth.uid).exists()",
+      ".write": "auth != null && (data.child('m').child(auth.uid).exists() || newData.child('m').child(auth.uid).exists())",
+      "m": { ".read": "auth != null" } } },
+    "teamInv": { "$to": { ".read": "auth != null && auth.uid === $to", "$tid": { ".write": "auth != null" } } },
     "vault": { "$k": { ".read": "auth != null", ".write": "auth != null && $k.length >= 16" } }
   }
 }'''

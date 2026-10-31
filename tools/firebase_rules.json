@@ -30,6 +30,11 @@
     "crews": { "$cid": { ".read": "auth != null", ".write": "auth != null && (data.child('m').child(auth.uid).exists() || newData.child('m').child(auth.uid).exists())" } },
     "crewInv": { "$to": { ".read": "auth != null && auth.uid === $to", "$cid": { ".write": "auth != null" } } },
     "daily": { "$day": { ".read": "auth != null", ".indexOn": ["a"], "$uid": { ".write": "auth != null && auth.uid === $uid", ".validate": "newData.child('a').isNumber()" } } },
+    "teams": { "$tid": {
+      ".read": "auth != null && data.child('m').child(auth.uid).exists()",
+      ".write": "auth != null && (data.child('m').child(auth.uid).exists() || newData.child('m').child(auth.uid).exists())",
+      "m": { ".read": "auth != null" } } },
+    "teamInv": { "$to": { ".read": "auth != null && auth.uid === $to", "$tid": { ".write": "auth != null" } } },
     "vault": { "$k": { ".read": "auth != null", ".write": "auth != null && $k.length >= 16" } }
   }
 }
