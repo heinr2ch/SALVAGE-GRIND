@@ -1,0 +1,32 @@
+{
+  "rules": {
+    "players": {
+      ".read": "auth != null",
+      ".indexOn": ["w/sternenwrack/p", "w/treibgut/p", "w/eisenfront/p", "w/neustadt/p"],
+      "$uid": { ".write": "auth != null && auth.uid === $uid" }
+    },
+    "codes": {
+      "$code": { ".read": "auth != null", ".write": "auth != null && !data.exists() && newData.val() === auth.uid" }
+    },
+    "friends": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$f": { ".write": "auth != null && (auth.uid === $uid || auth.uid === $f)" }
+      }
+    },
+    "gifts": {
+      "$to": {
+        ".read": "auth != null && auth.uid === $to",
+        "$from": {
+          ".read": "auth != null && auth.uid === $from",
+          ".write": "auth != null && auth.uid === $from && $from !== $to && newData.child('t').val() === now && (!data.exists() || data.child('t').val() + 86400000 <= now)",
+          ".validate": "newData.child('a').isNumber() && newData.child('a').val() > 0 && newData.child('a').val() <= 5000",
+          "c": { ".write": "auth != null && auth.uid === $to && newData.val() === true" }
+        }
+      }
+    },
+    "queue": { "$world": { ".read": "auth != null", "$uid": { ".write": "auth != null" } } },
+    "matches": { "$id": { ".read": "auth != null", ".write": "auth != null" } },
+    "coop": { "$pair": { ".read": "auth != null && $pair.contains(auth.uid)", ".write": "auth != null && $pair.contains(auth.uid)" } }
+  }
+}
