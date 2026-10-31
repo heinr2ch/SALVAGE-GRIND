@@ -21,6 +21,11 @@ Stand: Sternenwrack **Beta 0.17.3**, Treibgut 0.9.3, Eisenfront 0.8.3, Neustadt 
 - main.js erzwingt die Grafikkarte (ignore-gpu-blocklist, force_high_performance_gpu); Strg+Umschalt+G zeigt GPU-Status und Bilder pro Sekunde.
 - Musik-Prüfung: `music.js` im Scratchpad rendert jedes Stück offline und misst Lautstärke, Spitzen und schrille Töne. Track-Feld `gain` gleicht leise Stücke an (musicLevel).
 
+## Zweige (seit 31.10.2026)
+- `main` = live (GitHub Pages und Windows-Build laufen nur von hier).
+- `stabil-0.17.3` = eingefrorene Sicherung, nie ändern.
+- `experimente` = Spielwiese. Neue Ideen dort bauen, dem Nutzer die gebaute Datei zum Testen schicken (SendUserFile), erst nach seinem OK nach `main` übernehmen (Version erhöhen, pushen, Deploy abwarten).
+
 ## Arbeitsweise mit dem Nutzer
 - Der Nutzer (heinr2ch) schreibt auf Deutsch, oft per Spracheingabe. Antworten auf Deutsch, knapp, ohne Fachjargon.
 - Jede Änderung: testen, direkt nach GitHub pushen, **erst nach erfolgreichem Pages-Deploy** „ist live“ melden.
