@@ -24,7 +24,7 @@ Stand: Sternenwrack **Beta 0.17.3**, Treibgut 0.9.3, Eisenfront 0.8.3, Neustadt 
 ## Zweige (seit 31.10.2026)
 - `main` = live (GitHub Pages und Windows-Build laufen nur von hier).
 - `stabil-0.17.3` = eingefrorene Sicherung, nie ändern.
-- `experimente` = Spielwiese. Neue Ideen dort bauen, dem Nutzer die gebaute Datei zum Testen schicken (SendUserFile), erst nach seinem OK nach `main` übernehmen (Version erhöhen, pushen, Deploy abwarten).
+- `experimente` = Spielwiese. Nach jedem Experiment: auf experimente committen/pushen, dann `python3 tools/beta.py /home/claude/sg-main` (Worktree von main, ggf. `git worktree add /home/claude/sg-main main`), beta/ auf main committen und pushen. Testseite: https://heinr2ch.github.io/SALVAGE-GRIND/beta/ (eigene Spielstände über Präfix `beta:`, Beta-Schild). Erst nach OK des Nutzers nach `main` übernehmen (Version erhöhen, pushen, Deploy abwarten).
 
 ## Arbeitsweise mit dem Nutzer
 - Der Nutzer (heinr2ch) schreibt auf Deutsch, oft per Spracheingabe. Antworten auf Deutsch, knapp, ohne Fachjargon.
