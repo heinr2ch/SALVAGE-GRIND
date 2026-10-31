@@ -227,8 +227,8 @@ async function vsFind() {
   s.forEach(c => { const v = c.val(); if (!found && c.key !== OL.uid && v && !v.m && now - (v.t || 0) < 90000) found = c.key; });
   if (found) {
     const id = OL.db.ref("matches").push().key;
-    const r = await q.child(found).transaction(v => v && !v.m ? { ...v, m: id } : undefined);
-    if (r.committed) { const op = r.snapshot.val();
+    const r = await q.child(found).transaction(v => v === null ? null : !v.m ? { ...v, m: id } : undefined);   // null: Wert noch nicht geladen, Firebase versucht es erneut
+    if (r.committed && r.snapshot.val() && r.snapshot.val().m === id) { const op = r.snapshot.val();
       await OL.db.ref("matches/" + id).set({ a: found, b: OL.uid, an: op.n || "?", bn: olName(), start: firebase.database.ServerValue.TIMESTAMP, s: { a: 0, b: 0 } });
       vsJoin(id, "b"); return; }
   }
