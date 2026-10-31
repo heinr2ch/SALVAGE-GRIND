@@ -2,6 +2,21 @@
 
 Versionsschema wie bei Sternenwrack: **Beta 0.MINOR.PATCH**.
 
+## Beta 1.0.0 · Beta 1.0 · 31.10.2026
+- Online: Freunde mit Freundescode, tägliche Geschenke, Rangliste (Freunde, weltweit, höchster Gewinn des Tages).
+- VS-Duell: 5 Minuten gegen einen anderen Spieler, gewertet nach Gewinn im Verhältnis zum Einsatz.
+- Koop-Crew für bis zu 4 Spieler mit Live-Feed, und ein gemeinsamer Team-Spielstand getrennt vom eigenen.
+- Käufe im Zusammenspiel werden sofort für alle übernommen, mit Banner, Ton und Effekt.
+- Pilotenleiste zeigt im Mehrspielermodus alle Mitspieler mit Namen, Bild und Online-Status.
+- Pilotenbilder: 8 lustige Figuren pro Welt zum Auswählen.
+- Spielhalle: ein eigenes Minispiel pro Welt.
+- Cloud-Spielstand ohne E-Mail mit Wiederherstellungscode.
+- Neues Hauptmenü mit Musik, neue Erfolge mit Medaillen.
+- Hinweise zu sicherem Spielen, Datenschutz und Hilfe-Anlaufstellen, Pausen-Erinnerung jede Stunde.
+- Neues Design für Handy und Ultrawide, Bedienleiste im Glas-Look.
+- Alles in 7 Sprachen übersetzt.
+- Windows-Version: Online-Funktionen funktionieren jetzt auch dort.
+
 ## Beta 0.8.3 · Windows-Version läuft flüssiger · 25.10.2026
 - Windows-Version nutzt jetzt immer die Grafikkarte, auch bei gesperrten Treibern
 - Bevorzugt die starke Grafikkarte bei Laptops

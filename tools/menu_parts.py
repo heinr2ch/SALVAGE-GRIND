@@ -130,7 +130,7 @@ try { jinxOn = localStorage.getItem("welten-jinx") !== "0"; } catch (e) {}
 if (typeof BIP === "object" && BIP) BIP.jinx = [["sad", "Autsch. Die Pech-Walze hat zugeschlagen."], ["sad", "Dreimal das falsche Symbol. Das tut weh."], ["wow", "Huch! Wer hat denn das bestellt?"], ["sad", "Pech gehabt. Gleich läuft's wieder besser."]];
 
 const mmOpen = id => { const el = $(id); return !!el && !el.hidden; };
-const mmBlocking = () => jinxBusy || mmOpen("mmSet") || mmOpen("fsBuy") || mmOpen("xpGame") || mmOpen("plinko") || (mmOpen("intro") && $("intro").classList.contains("ingame"));
+const mmBlocking = () => jinxBusy || mmOpen("mmSet") || mmOpen("fsBuy") || mmOpen("xpGame") || mmOpen("plinko") || mmOpen("arcade") || mmOpen("online") || mmOpen("mmInfo") || (mmOpen("intro") && $("intro").classList.contains("ingame"));
 const machineIdle = () => ready && !spinning && !busy && !inFs() && !skipCelebration && (typeof sk === "undefined" || !sk)
   && $("scratch").hidden && $("bonus").hidden && $("naming").hidden && $("worlds").hidden && !mmBlocking();
 
@@ -144,7 +144,7 @@ function worldCard(w, inMenu) {
   const cur = w.id === WORLD_ID, p = worldProgress(w);
   const prog = p ? `Rang ${p.level} · ${fmtN(p.credits)} ${w.cur}` : "Noch kein Spielstand";
   const go = cur ? (inMenu ? "Spielen ▶" : "Du bist hier") : "Wechseln →";
-  const inner = `<span class="mmw-art">${w.art}</span>${cur ? `<span class="mmw-here">Du bist hier</span>` : ""}<span class="mmw-body"><span class="mmw-tag">${w.tag}</span><b>${w.name}</b><span class="mmw-mode">${w.mode}</span><span class="mmw-prog"><span>${prog}</span><span class="mmw-go">${go}</span></span></span>`;
+  const inner = `<span class="mmw-art">${w.art}</span>${cur ? `<span class="mmw-here">Du bist hier</span>` : ""}<span class="mmw-body"><span class="mmw-tag">${w.tag}</span><b>${w.name}</b>${w.motto ? `<span class="mmw-motto">${w.motto[0]} · ${w.motto[1]}</span>` : ""}<span class="mmw-mode">${w.mode}</span><span class="mmw-prog"><span>${prog}</span><span class="mmw-go">${go}</span></span></span>`;
   return cur ? `<button type="button" class="mmw cur" data-cur="1" style="--wc:${w.color}">${inner}</button>`
     : `<a class="mmw" style="--wc:${w.color}" href="${worldUrl(w)}" target="${worldTarget()}" rel="noopener">${inner}</a>`;
 }
