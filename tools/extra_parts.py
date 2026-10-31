@@ -641,3 +641,6 @@ async function playLadder() {
 '''
 EXTRA_CSS += RISK_CSS
 EXTRA_JS += RISK_JS
+from arcade_parts import ARCADE_CSS, ARCADE_JS
+EXTRA_CSS += ARCADE_CSS
+EXTRA_JS += ARCADE_JS
