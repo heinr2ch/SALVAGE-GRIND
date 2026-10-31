@@ -26,6 +26,13 @@ Stand: Sternenwrack **Beta 0.17.3**, Treibgut 0.9.3, Eisenfront 0.8.3, Neustadt 
 - `stabil-0.17.3` = eingefrorene Sicherung, nie ändern.
 - `experimente` = Spielwiese. Nach jedem Experiment: auf experimente committen/pushen, dann `python3 tools/beta.py /home/claude/sg-main` (Worktree von main, ggf. `git worktree add /home/claude/sg-main main`), beta/ auf main committen und pushen. Testseite: https://heinr2ch.github.io/SALVAGE-GRIND/beta/ (eigene Spielstände über Präfix `beta:`, Beta-Schild). Erst nach OK des Nutzers nach `main` übernehmen (Version erhöhen, pushen, Deploy abwarten).
 
+## Spielhalle und Online (Zweig experimente, noch nicht live)
+- `tools/arcade_parts.py`: ein Spielmodus pro Welt (Asteroidenfeld, Tiefsee-Angel, Panzerjagd, Turmbau), Dialog #arcade, Kachel #arTile im Dock. Einsatz 5/10/25× Einsatz. Tiefsee: Erwartungswert immer 96 % (Seil hält 90 %/m, Faktor 0,96/0,9^n).
+- `tools/online_parts.py`: Firebase (Projekt salvage-grind, Realtime Database europe-west1, anonyme Anmeldung, Domain heinr2ch.github.io freigegeben). Freunde per 6-stelligem Code, Rangliste (Freunde/weltweit nach Rekord), Geschenk alle 24 h (Regel erzwingt Abstand, max. 5000), VS-Duell 5 min über queue/matches, Koop: 25 % Gewinnanteil an Partner, Bauteile ×1,3 (coopCostMul in stepCost).
+- Regeln: `tools/firebase_rules.json`, in der Konsole unter Realtime Database → Regeln eingetragen.
+- Die Windows-Version (file://) kann sich nicht bei Firebase anmelden, dort bleibt Online aus, bis es eine Lösung gibt.
+- Neue Texte sind noch nicht übersetzt (vor Übernahme nach main erledigen).
+
 ## Arbeitsweise mit dem Nutzer
 - Der Nutzer (heinr2ch) schreibt auf Deutsch, oft per Spracheingabe. Antworten auf Deutsch, knapp, ohne Fachjargon.
 - Jede Änderung: testen, direkt nach GitHub pushen, **erst nach erfolgreichem Pages-Deploy** „ist live“ melden.
