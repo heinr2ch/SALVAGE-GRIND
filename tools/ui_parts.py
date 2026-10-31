@@ -126,6 +126,23 @@ UI_CSS = r'''
 #pauseNote { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 240; display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-radius: 14px; background: rgba(10,12,22,.95); border: 1.5px solid #7ee0c8; color: #fff; font-size: 13.5px; box-shadow: 0 10px 30px rgba(0,0,0,.5); max-width: min(92vw, 620px); }
 #pauseNote[hidden] { display: none; }
 #pauseNote button { font: 700 12px var(--f-body, system-ui); padding: 7px 12px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08); color: #fff; cursor: pointer; white-space: nowrap; }
+/* ---------- Steuerleiste: Zahlen passen sich an, Kacheln füllen die Höhe ---------- */
+.wallet .stat b { overflow: visible !important; text-overflow: clip !important; white-space: nowrap; max-width: 100%; display: block; }
+.wallet .stat.dust b { display: flex; }
+@media (min-width: 601px) {
+  .deck { gap: 12px 18px; padding: 14px 16px; align-items: stretch; }
+  .wallet { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 1fr; gap: 7px; align-self: stretch; align-content: stretch; }
+  .wallet .stat { min-height: 54px; height: auto; grid-template-columns: minmax(0, auto) minmax(0, 1fr); align-items: center; align-content: center; column-gap: 12px; row-gap: 4px; padding: 8px 14px 8px 16px; }
+  .wallet .stat > *:not(:first-child):not(b) { grid-column: 1 / -1; }
+  .wallet .stat > span:first-child { white-space: nowrap; letter-spacing: .08em; overflow: visible; }
+  .wallet .stat b { font-size: clamp(1.3rem, 2.1vw, 1.9rem); text-align: right; justify-self: stretch; }
+  .wallet .stat.dust b { justify-content: flex-end; }
+  .spinwrap { align-self: center; }
+  .bets { align-content: center; }
+  #crewFeed { max-width: none; }
+  #crewFeed .cf-p { flex: 1 1 calc(50% - 5px); }
+}
+}
 '''
 
 UI_JS = r'''
@@ -275,4 +292,14 @@ function achShow() {
   try { burst(t === 3 ? 90 : 50, [col, "#ffffff", "#ffc94a"], 1); } catch (e) {}
   setTimeout(() => { el.classList.remove("on"); setTimeout(achShow, 450); }, 3200);
 }
+
+/* Steuerleiste: lange Zahlen werden kleiner statt abgeschnitten */
+(function deckFit() {
+  const els = () => [...document.querySelectorAll(".wallet .stat b")];
+  const fit = el => { el.style.fontSize = ""; const w = el.clientWidth || el.parentElement.clientWidth; if (!w) return; let f = parseFloat(getComputedStyle(el).fontSize), n = 0; while (el.scrollWidth > w + 1 && f > 10 && n++ < 12) { f = Math.max(10, f * Math.max(.6, w / el.scrollWidth) - .3); el.style.fontSize = f + "px"; } };
+  let q = false; const all = () => { if (q) return; q = true; requestAnimationFrame(() => { q = false; els().forEach(fit); }); };
+  const mo = new MutationObserver(all); els().forEach(el => mo.observe(el, { childList: true, characterData: true, subtree: true }));
+  window.addEventListener("resize", all); try { new ResizeObserver(all).observe(document.querySelector(".wallet")); } catch (e) {}
+  setTimeout(all, 300);
+})();
 '''

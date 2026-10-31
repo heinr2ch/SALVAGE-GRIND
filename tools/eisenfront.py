@@ -136,7 +136,7 @@ s = s.replace("/* ---------- Treibgut: Fangnetz", "/* ---------- Eisenfront: Ers
 s = re.sub(r"const VEHICLES = \[\n.*?\n\];\n", lambda m: VEHICLES_EF, s, count=1, flags=re.S)
 
 # 10. Version und Protokoll
-s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "1.0.0";', s)
+s = re.sub(r'const GAME_VERSION = "[^"]+";', 'const GAME_VERSION = "1.1.0";', s)
 block("const CHANGELOG = [", "];\n", CHANGELOG_EF)
 
 # 11. Welten

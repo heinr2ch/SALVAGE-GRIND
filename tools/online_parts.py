@@ -65,6 +65,29 @@ ONLINE_CSS = r'''
 @media (prefers-reduced-motion: reduce) { #crewFeed .cf-row, #crewFeed .cf-row::after { animation: none !important; } }
 .mp-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0 2px; padding: 8px 10px; border-radius: 14px; background: linear-gradient(90deg, rgba(111,220,140,.16), rgba(0,0,0,.25) 60%); border: 1.5px solid rgba(111,220,140,.5); box-shadow: 0 0 22px rgba(111,220,140,.15); }
 .mp-bar[hidden] { display: none; }
+#crewFeed.mp { border-color: rgba(111,220,140,.55); box-shadow: 0 0 18px rgba(111,220,140,.18); }
+#crewFeed .cf-crew { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.08); background: rgba(111,220,140,.06); }
+#crewFeed .cf-crew:empty { display: none; }
+.cf-p { display: flex; align-items: center; gap: 5px; padding: 2px 8px 2px 2px; border-radius: 99px; background: rgba(0,0,0,.35); border: 1.5px solid color-mix(in srgb, var(--pc) 55%, transparent); opacity: .6; min-width: 0; flex: 1 1 0; }
+.cf-p.on { opacity: 1; }
+.cf-p.me { border-color: #fff; }
+.cf-p .av { position: relative; flex: none; }
+.cf-p.on .av::after { content: ""; position: absolute; right: -1px; bottom: -1px; width: 7px; height: 7px; border-radius: 50%; background: #6fdc8c; box-shadow: 0 0 6px #6fdc8c; border: 1.5px solid #111; }
+.cf-p span { display: grid; min-width: 0; line-height: 1.1; }
+.cf-p b { font-size: 11px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cf-p em { font: 800 10.5px var(--f-mono, monospace); font-style: normal; white-space: nowrap; }
+.cf-p em.pos { color: #6fdc8c; } .cf-p em.neg { color: #ff7a8a; }
+#cfSync { font: 700 9px var(--f-mono, monospace); letter-spacing: .08em; color: rgba(255,255,255,.55); margin-left: auto; margin-right: 6px; }
+#cfSync.ok { color: #6fdc8c; } #cfSync.bad { color: #ff7a8a; }
+.ol-team { display: grid; gap: 6px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.05); border: 1.5px solid rgba(255,255,255,.12); }
+.ol-team.cur { border-color: #6fdc8c; box-shadow: 0 0 14px rgba(111,220,140,.2); }
+.ol-team.sel { border-color: var(--gold, #ffc94a); }
+.ol-team h4 { margin: 0; font-size: 15px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.ol-team h4 small { font-size: 11px; color: rgba(255,255,255,.6); font-weight: 600; }
+.ol-team .tw { display: flex; flex-wrap: wrap; gap: 5px; }
+.ol-team .tw span { font: 700 11px var(--f-mono, monospace); padding: 3px 7px; border-radius: 8px; background: rgba(0,0,0,.3); color: rgba(255,255,255,.85); }
+.ol-team .tm { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; color: rgba(255,255,255,.8); }
+.ol-team .tm em { font-style: normal; font-weight: 800; } .ol-team .tm em.pos { color: #6fdc8c; } .ol-team .tm em.neg { color: #ff7a8a; }
 .mp-tag { display: grid; font: 800 11px var(--f-mono, monospace); letter-spacing: .18em; color: #6fdc8c; padding-right: 8px; border-right: 1px solid rgba(255,255,255,.15); }
 .mp-tag small { font-size: 10px; color: rgba(255,255,255,.6); letter-spacing: .1em; }
 .mp-pilot { display: flex; align-items: center; gap: 7px; padding: 4px 10px 4px 4px; border-radius: 99px; background: rgba(0,0,0,.35); border: 1.5px solid color-mix(in srgb, var(--pc) 60%, transparent); opacity: .55; transition: opacity .3s; }
@@ -81,6 +104,7 @@ const FB_CFG = { apiKey: "AIzaSyBcnwWCg5qhD-g8DWnsNh-teUZihc4CKtM", authDomain: 
 const FB_VER = "10.14.1", GIFT_MS = 864e5, VS_MS = 300000, COOP_SHARE = .2, CREW_MAX = 4, VAULT_MS = 300000;
 const OL = { db: null, uid: null, ready: false, err: "", code: "", friends: {}, people: {}, gifts: {}, tab: "friends", board: "friends", sent: {}, vs: null, queueRef: null,
   crew: null, crewM: {}, crewInv: {}, team: null, teamM: {}, teamInv: {}, ticker: [], live: {}, dayBest: 0, vault: null, vaultAt: 0, confirm: false };
+OL.tinfo = {}; OL.bal = {};
 try { OL.team = localStorage.getItem("welten-myteam") || null; OL.crew = localStorage.getItem("welten-crew") || null; OL.vault = localStorage.getItem("welten-vault") || null; } catch (e) {}
 const olDay = () => new Date().toISOString().slice(0, 10);
 try { const d = JSON.parse(localStorage.getItem("welten-daybest") || "{}"); if (d.d === olDay()) OL.dayBest = d.a || 0; } catch (e) {}
@@ -102,7 +126,8 @@ async function olInit() {
       OL.db.ref("crewInv/" + OL.uid).on("value", s => { OL.crewInv = s.val() || {}; olBadge(); if (mmOpen("online")) olRender(); });
       if (OL.crew) olCrewListen();
       OL.db.ref("teamInv/" + OL.uid).on("value", s => { OL.teamInv = s.val() || {}; olBadge(); if (mmOpen("online")) olRender(); });
-      if (OL.team) OL.db.ref(`teams/${OL.team}/m`).on("value", s => { OL.teamM = s.val() || {}; if (mmOpen("online")) olRender(); });
+      [OL.team, window.TEAM_ID].forEach(t => { if (t && !teamList()[t]) teamRemember(t, "Team"); });
+      if (window.TEAM_ID || OL.team) { const t0 = window.TEAM_ID || OL.team; OL.team = null; teamSet(t0); }
       if (window.TEAM_ID) teamStart().catch(e => { try { console.warn("Team:", e); } catch (x) {} });
       OL.db.ref("gifts/" + OL.uid).on("value", s => { OL.gifts = s.val() || {}; olBadge(); if (mmOpen("online")) olRender(); });
       setInterval(olPublish, 60000);
@@ -150,7 +175,7 @@ function olMsg(t, ok) { const el = $("olMsg"); if (!el) return; el.textContent =
   <div class="ol-pane" id="olPane"></div>
   <div class="ar-row"><span></span><button type="button" class="bbtn ghost" id="olClose">Schließen</button></div></div></div>
   <div id="vsBar" hidden></div>
-  <div id="crewFeed" hidden aria-live="polite"><div class="cf-head"><span id="cfTitle"><i></i>CREW LIVE</span><button type="button" id="cfMin" aria-label="Feed einklappen">–</button></div><div class="cf-list" id="cfList"><div class="cf-empty">Gewinne deiner Mitspieler erscheinen hier live.</div></div></div>`);
+  <div id="crewFeed" hidden aria-live="polite"><div class="cf-head"><span id="cfTitle"><i></i>CREW LIVE</span><span id="cfSync"></span><button type="button" id="cfMin" aria-label="Feed einklappen">–</button></div><div class="cf-crew" id="cfCrew"></div><div class="cf-list" id="cfList"><div class="cf-empty">Gewinne deiner Mitspieler erscheinen hier live.</div></div></div>`);
   setTimeout(() => { const fb = $("fsBuyBtn"), cf = $("crewFeed"); if (fb && cf) fb.parentNode.insertBefore(cf, fb); }, 0);
   $("cfMin").addEventListener("click", () => { const f = $("crewFeed"); f.classList.toggle("min"); $("cfMin").textContent = f.classList.contains("min") ? "+" : "–"; try { localStorage.setItem("welten-cfmin", f.classList.contains("min") ? "1" : "0"); } catch (e) {} });
   try { if (localStorage.getItem("welten-cfmin") === "1") { $("crewFeed").classList.add("min"); $("cfMin").textContent = "+"; } } catch (e) {}
@@ -167,10 +192,12 @@ function olMsg(t, ok) { const el = $("olMsg"); if (!el) return; el.textContent =
 })();
 function openOnline() { if (!machineIdle() && !OL.vs) return; $("online").hidden = false; try { sfx.click(); } catch (e) {} olRender(); olInit(); }
 function closeOnline() { $("online").hidden = true; try { sfx.click(); } catch (e) {} render(); mmResume(); }
-function olItem(id, p, extra, me) {
+const olNet = id => { const b = (OL.bal || {})[id]; return b ? Math.round((b.w || 0) - (b.s || 0)) : null; };
+const olNetTxt = v => v == null ? "" : `${v >= 0 ? "+" : "−"}${fmtN(Math.abs(v))}`;
+function olItem(id, p, extra, me, bal) {
   const w = (p && p.w && p.w[WORLD_ID]) || {};
   const av = me ? avMine() : avOf(p);
-  return `<div class="ol-item${me ? " me" : ""}" style="grid-template-columns:auto auto 1fr auto"><span class="ol-dot${me || olOnline(p) ? " on" : ""}"></span>${av ? avHtml(av, 34, cfColor(id)) : `<span class="av" style="width:34px;height:34px;--avc:${cfColor(id)};font:800 14px system-ui;color:#fff">${escapeHTML(((p && p.n) || "?").slice(0, 1))}</span>`}<span><b>${escapeHTML((p && p.n) || "?")}${me ? " (du)" : ""}</b><small>Rang ${w.l || "–"} · Rekord ${fmtN(w.p || 0)}</small></span><span class="ol-acts">${extra || ""}</span></div>`;
+  return `<div class="ol-item${me ? " me" : ""}" style="grid-template-columns:auto auto 1fr auto"><span class="ol-dot${me || olOnline(p) ? " on" : ""}"></span>${av ? avHtml(av, 34, cfColor(id)) : `<span class="av" style="width:34px;height:34px;--avc:${cfColor(id)};font:800 14px system-ui;color:#fff">${escapeHTML(((p && p.n) || "?").slice(0, 1))}</span>`}<span><b>${escapeHTML((p && p.n) || "?")}${me ? " (du)" : ""}</b><small>Rang ${w.l || "–"} · Rekord ${fmtN(w.p || 0)}${bal != null ? ` · Bilanz <b style="color:${bal >= 0 ? "#6fdc8c" : "#ff7a8a"}">${olNetTxt(bal)}</b>` : ""}</small></span><span class="ol-acts">${extra || ""}</span></div>`;
 }
 function olRender() {
   document.querySelectorAll("#olTabs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.t === OL.tab)));
@@ -198,18 +225,19 @@ function olRender() {
     const ids2 = Object.keys(OL.crewM), n = ids2.length, inv = Object.entries(OL.crewInv);
     P.innerHTML = `<p class="ol-info">Grindet zu zweit, dritt oder viert: Jeder bekommt <b>20 %</b> von dem, was die anderen gewinnen, obendrauf. Je größer die Crew, desto teurer die Bauteile: 2 Spieler +25 %, 3 Spieler +50 %, 4 Spieler +75 %. Einladen kannst du Freunde unter „Freunde“.</p>
       ${inv.length ? `<div class="ol-gifts">${inv.map(([cid, v]) => `<div class="ol-gift"><span>👥 <b>${escapeHTML(v.n || "Ein Freund")}</b> lädt dich in seine Crew ein</span><span class="ol-acts"><button type="button" data-a="accept" data-id="${cid}">Beitreten</button><button type="button" data-a="decline" data-id="${cid}">Ablehnen</button></span></div>`).join("")}</div>` : ""}
-      ${OL.crew ? `<p class="ol-info"><b>Deine Crew (${n}/${CREW_MAX})</b> · Bauteile kosten gerade ${Math.round((coopCostMul() - 1) * 100)} % mehr.</p><div class="ol-list">${ids2.map(id => olItem(id, id === OL.uid ? { n: olName(), w: { [WORLD_ID]: { l: state.level, p: state.peak } } } : OL.people[id] || { n: OL.crewM[id] }, "", id === OL.uid)).join("")}</div><div class="ol-row"><button type="button" class="ol-small" data-a="leave">Crew verlassen</button></div>`
+      ${OL.crew ? `<p class="ol-info"><b>Deine Crew (${n}/${CREW_MAX})</b> · Bauteile kosten gerade ${Math.round((coopCostMul() - 1) * 100)} % mehr.</p><div class="ol-list">${ids2.map(id => olItem(id, id === OL.uid ? { n: olName(), w: { [WORLD_ID]: { l: state.level, p: state.peak } } } : OL.people[id] || { n: OL.crewM[id] }, "", id === OL.uid, olNet(id))).join("")}</div><div class="ol-row"><button type="button" class="ol-small" data-a="leave">Crew verlassen</button></div>`
         : `<p class="ol-info">Du bist in keiner Crew. Lade unter „Freunde“ jemanden ein.</p>`}
       <h3 style="margin:14px 0 6px;font-size:15px">Live-Ticker deiner Freunde</h3><div class="ol-list">${OL.ticker.length ? OL.ticker.slice(0, 12).map(t => `<div class="ol-item"><span class="ol-dot on"></span><span><b>${escapeHTML(t.n)}</b><small>${escapeHTML(t.wn || "")} · ${new Date(t.t).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}</small></span><span class="ol-acts"><b>+${fmtN(t.a)}</b></span></div>`).join("") : `<p class="ol-info">Noch nichts los. Große Gewinne deiner Freunde erscheinen hier sofort.</p>`}</div>`;
   } else if (OL.tab === "team") {
-    const ids3 = Object.keys(OL.teamM), inv = Object.entries(OL.teamInv || {}), playing = !!window.TEAM_ID;
+    const inv = Object.entries(OL.teamInv || {}), L = teamList(), tids = Object.keys(L).sort((a, b) => (((OL.tinfo || {})[b] || {}).i || {}).p - (((OL.tinfo || {})[a] || {}).i || {}).p || 0), ids3 = Object.keys(OL.teamM || {});
     P.innerHTML = `<p class="ol-info">Ein <b>gemeinsamer Spielstand</b> für bis zu 4 Spieler, getrennt von deinem eigenen: Ihr teilt Credits, Erfahrung, Schiff und Ausbau. Jeder Gewinn und jeder Kauf zählt sofort für alle. Dein eigener Spielstand bleibt unberührt, du kannst jederzeit zurückwechseln.</p>
       ${inv.length ? `<div class="ol-gifts">${inv.map(([tid, v]) => `<div class="ol-gift"><span>🤝 <b>${escapeHTML(v.n || "Ein Freund")}</b> lädt dich in sein Team ein</span><span class="ol-acts"><button type="button" data-a="tjoin" data-id="${tid}">Beitreten</button><button type="button" data-a="tdecline" data-id="${tid}">Ablehnen</button></span></div>`).join("")}</div>` : ""}
-      ${OL.team ? `<p class="ol-info"><b>Dein Team (${ids3.length}/4)</b> ${playing ? "· <span style=\"color:#6fdc8c\">du spielst gerade den Team-Spielstand</span>" : ""}</p>
-        <div class="ol-list">${ids3.map(id => olItem(id, id === OL.uid ? { n: olName(), on: Date.now() } : OL.people[id] || { n: OL.teamM[id] }, "", id === OL.uid)).join("")}</div>
-        <p class="ol-info" style="margin-top:8px">Freunde einladen:</p><div class="ol-list">${Object.keys(OL.friends).filter(f => !OL.teamM[f]).map(f => olItem(f, OL.people[f], `<button type="button" data-a="tinvite" data-id="${f}" ${ids3.length >= 4 ? "disabled" : ""}>Einladen</button>`)).join("") || `<p class="ol-info">Alle Freunde sind schon im Team.</p>`}</div>
-        <div class="ol-row">${playing ? `<button type="button" class="bbtn" data-a="tsolo">Zurück zu meinem Spielstand</button>` : `<button type="button" class="bbtn" data-a="tplay">Team-Spielstand spielen</button>`}<button type="button" class="ol-small" data-a="tleave">Team verlassen</button></div>`
-        : `<button type="button" class="bbtn" data-a="tnew">Team gründen</button>`}`;
+      <h3 style="margin:10px 0 6px;font-size:15px">Deine Team-Spielstände (${tids.length})</h3>
+      <div class="ol-list">${tids.length ? tids.map(teamCard).join("") : `<p class="ol-info">Noch keine Team-Spielstände. Leg unten einen an.</p>`}</div>
+      ${OL.team && L[OL.team] ? `<p class="ol-info" style="margin-top:10px"><b>Einladen in „${escapeHTML(L[OL.team].n)}“ (${ids3.length}/4):</b></p><div class="ol-list">${Object.keys(OL.friends).filter(f => !OL.teamM[f]).map(f => olItem(f, OL.people[f], `<button type="button" data-a="tinvite" data-id="${f}" ${ids3.length >= 4 ? "disabled" : ""}>Einladen</button>`)).join("") || `<p class="ol-info">Alle Freunde sind schon im Team.</p>`}</div>` : ""}
+      <h3 style="margin:14px 0 6px;font-size:15px">Neuer Team-Spielstand</h3>
+      <div class="ol-row"><input id="olTeamName" maxlength="24" placeholder="Name, z. B. Freitagsrunde" aria-label="Name des Team-Spielstands"><button type="button" class="ol-small" data-a="tnew">Anlegen</button></div>`;
+    teamInfoLoad(false);
   } else {
     P.innerHTML = `<p class="ol-info">Sichere deinen Fortschritt aller vier Welten in der Cloud, ganz ohne E-Mail, Name oder Passwort. Du bekommst einen <b>Wiederherstellungscode</b>. Mit ihm holst du deinen Spielstand auf jedes Gerät. Wer den Code kennt, kann den Spielstand laden, also gib ihn nicht weiter.</p>
       ${OL.vault ? `<div class="ol-me"><span>Dein Wiederherstellungscode<br><span class="ol-code" style="font-size:16px">${olFmtVault(OL.vault)}</span></span><button type="button" class="ol-small" data-a="vcopy">Kopieren</button></div><p class="ol-info">Automatische Sicherung alle 5 Minuten. Zuletzt: ${OL.vaultAt ? new Date(OL.vaultAt).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) : "noch nicht"}.</p><button type="button" class="bbtn" data-a="vsave">Jetzt sichern</button>`
@@ -262,13 +290,16 @@ async function olClick(e) {
     }
     else if (a === "bf" || a === "bg" || a === "bd") { OL.board = a === "bf" ? "friends" : a === "bg" ? "global" : "day"; olRender(); }
     else if (a === "invite") await crewInvite(id);
-    else if (a === "tnew") { const tid = OL.db.ref("teams").push().key; await OL.db.ref(`teams/${tid}/m/${OL.uid}`).set(olName()); teamSet(tid); olMsg("Team gegründet. Lade jetzt Freunde ein.", true); }
-    else if (a === "tinvite") { await OL.db.ref(`teamInv/${id}/${OL.team}`).set({ n: olName(), t: firebase.database.ServerValue.TIMESTAMP }); olMsg(`Einladung an ${(OL.people[id] || {}).n || "deinen Freund"} verschickt.`, true); }
-    else if (a === "tjoin") { const mm = (await OL.db.ref(`teams/${id}/m`).get()).val() || {}; if (!Object.keys(mm).length) { await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove(); olMsg("Dieses Team gibt es nicht mehr.", false); return; } if (Object.keys(mm).length >= 4) { olMsg("Das Team ist schon voll (4 Spieler).", false); return; } await OL.db.ref(`teams/${id}/m/${OL.uid}`).set(olName()).catch(() => { throw new Error("voll"); }); await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove(); teamSet(id); olMsg("Du bist dem Team beigetreten. Tippe auf „Team-Spielstand spielen“.", true); }
+    else if (a === "tnew") { const nm = (($("olTeamName") || {}).value || "").trim().slice(0, 24) || `Team ${olDate(Date.now())}`; const tid = OL.db.ref("teams").push().key; await OL.db.ref(`teams/${tid}/m/${OL.uid}`).set(olName()); await OL.db.ref(`teams/${tid}/i`).set({ n: nm, t: firebase.database.ServerValue.TIMESTAMP, p: 0 }); teamRemember(tid, nm, Date.now()); teamSet(tid); await teamInfoLoad(true); olMsg(`„${nm}“ angelegt. Lade jetzt Freunde ein oder tippe auf „Spielen“.`, true); }
+    else if (a === "tsel") { teamSet(id); }
+    else if (a === "tforget") { teamForget(id); if (OL.team === id) teamSet(null); olRender(); }
+    else if (a === "tren") { const inp = $("olTeamName"), nm = ((inp || {}).value || "").trim().slice(0, 24); if (!nm) { olMsg("Schreib den neuen Namen unten ins Namensfeld und tippe dann nochmal auf „Umbenennen“.", false); if (inp) inp.focus(); return; } await OL.db.ref(`teams/${id}/i/n`).set(nm); teamRemember(id, nm); inp.value = ""; await teamInfoLoad(true); olMsg(`Umbenannt in „${nm}“.`, true); }
+    else if (a === "tinvite") { await OL.db.ref(`teamInv/${id}/${OL.team}`).set({ n: olName(), tn: (teamList()[OL.team] || {}).n || "", t: firebase.database.ServerValue.TIMESTAMP }); olMsg(`Einladung an ${(OL.people[id] || {}).n || "deinen Freund"} verschickt.`, true); }
+    else if (a === "tjoin") { const mm = (await OL.db.ref(`teams/${id}/m`).get()).val() || {}; if (!Object.keys(mm).length) { await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove(); olMsg("Dieses Team gibt es nicht mehr.", false); return; } if (Object.keys(mm).length >= 4) { olMsg("Das Team ist schon voll (4 Spieler).", false); return; } await OL.db.ref(`teams/${id}/m/${OL.uid}`).set(olName()).catch(() => { throw new Error("voll"); }); await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove(); const ti = (await OL.db.ref(`teams/${id}/i`).get()).val() || {}; teamRemember(id, ti.n || (OL.teamInv[id] || {}).tn || "Team", ti.t || Date.now()); teamSet(id); await teamInfoLoad(true); olMsg("Du bist dem Team beigetreten. Tippe auf „Spielen“.", true); }
     else if (a === "tdecline") await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove();
-    else if (a === "tplay") teamSwitch(OL.team);
+    else if (a === "tplay") teamSwitch(id || OL.team);
     else if (a === "tsolo") teamSwitch(null);
-    else if (a === "tleave") { const tid = OL.team; await OL.db.ref(`teams/${tid}/m/${OL.uid}`).remove().catch(() => {}); teamSet(null); if (window.TEAM_ID) teamSwitch(null); else olMsg("Team verlassen.", true); }
+    else if (a === "tleave") { const tid = id || OL.team; if (OL.confirmLeave !== tid) { OL.confirmLeave = tid; olMsg("Wirklich verlassen? Der Team-Spielstand ist dann für dich weg. Zum Bestätigen nochmal auf „Verlassen“ tippen.", false); return; } OL.confirmLeave = null; await OL.db.ref(`teams/${tid}/m/${OL.uid}`).remove().catch(() => {}); teamForget(tid); if (OL.team === tid) teamSet(null); if (window.TEAM_ID === tid) teamSwitch(null); else { olMsg("Team verlassen.", true); olRender(); } }
     else if (a === "accept") await crewAccept(id);
     else if (a === "decline") { await OL.db.ref(`crewInv/${OL.uid}/${id}`).remove(); }
     else if (a === "leave") await crewLeave();
@@ -341,6 +372,36 @@ function cfAdd(v) {
   setTimeout(() => { row.classList.add("gone"); setTimeout(() => { row.remove(); if (!list.children.length) list.innerHTML = `<div class="cf-empty">Gewinne deiner Mitspieler erscheinen hier live.</div>`; }, 650); }, 22000);
 }
 /* --- Team-Spielstand: bis 4 Spieler teilen einen eigenen Spielstand --- */
+function teamList() { try { return JSON.parse(localStorage.getItem("welten-teams") || "{}") || {}; } catch (e) { return {}; } }
+function teamRemember(tid, n, t) { const o = teamList(); o[tid] = { n: n || (o[tid] || {}).n || "Team", t: t || (o[tid] || {}).t || Date.now() }; try { localStorage.setItem("welten-teams", JSON.stringify(o)); } catch (e) {} }
+function teamForget(tid) { const o = teamList(); delete o[tid]; try { localStorage.setItem("welten-teams", JSON.stringify(o)); } catch (e) {} delete OL.tinfo[tid]; }
+const olDate = t => t ? new Date(t).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }) : "–";
+const olTime = t => t ? olDate(t) + " " + new Date(t).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) : "–";
+async function teamInfoLoad(force) {
+  const L = teamList(); OL.tinfo = OL.tinfo || {};
+  const todo = Object.keys(L).filter(tid => force || !OL.tinfo[tid] || Date.now() - OL.tinfo[tid].at >= 30000);
+  if (!todo.length || OL.tLoading) return; OL.tLoading = true;
+  await Promise.all(todo.map(async tid => {
+    try {
+      const [i, m, b, w] = await Promise.all(["i", "m", "b", "w"].map(k => OL.db.ref(`teams/${tid}/${k}`).get().then(x => x.val())));
+      const ws = {}; Object.entries(w || {}).forEach(([wid, v]) => { let sv = {}; try { sv = JSON.parse(v.save || "{}"); } catch (e) {} const st = sv.ship ? Object.values(sv.ship).reduce((a, x) => a + (x || 0), 0) : 0; ws[wid] = { c: v.c || 0, l: sv.level || 1, v: (sv.vehicle | 0) + 1, st }; });
+      if (i && i.n && i.n !== L[tid].n) teamRemember(tid, i.n, i.t);
+      OL.tinfo[tid] = { at: Date.now(), i: i || {}, m: m || {}, b: b || {}, w: ws, gone: !m || !m[OL.uid] };
+    } catch (e) { OL.tinfo[tid] = { at: Date.now(), i: {}, m: {}, b: {}, w: {}, gone: true }; }
+  }));
+  OL.tLoading = false;
+  if (mmOpen("online") && OL.tab === "team") olRender();
+}
+function teamCard(tid) {
+  const L = teamList()[tid] || {}, I = (OL.tinfo || {})[tid], cur = window.TEAM_ID === tid, sel = OL.team === tid;
+  const info = I ? I.i : {}, m = I ? I.m : {}, b = I ? I.b : {};
+  const worlds = I ? WORLDS.filter(w => I.w[w.id]).map(w => { const x = I.w[w.id]; return `<span title="${escapeHTML(w.name)}">${escapeHTML(w.name)} · Rang ${x.l} · ${fmtN(x.c)} · Fz. ${x.v} (${x.st}/45)</span>`; }).join("") : "";
+  const mem = I ? Object.keys(m).map(id => { const bb = b[id], net = bb ? Math.round((bb.w || 0) - (bb.s || 0)) : null; return `<span>${escapeHTML(id === OL.uid ? olName() + " (du)" : (OL.people[id] || {}).n || m[id] || "?")}${net != null ? ` <em class="${net >= 0 ? "pos" : "neg"}">${olNetTxt(net)}</em>` : ""}</span>`; }).join(" · ") : "Lade …";
+  return `<div class="ol-team${cur ? " cur" : ""}${sel && !cur ? " sel" : ""}"><h4>${escapeHTML(info.n || L.n || "Team")}<small>erstellt ${olDate(info.t || L.t)} · zuletzt gespielt ${olTime(info.p)}</small></h4>
+    ${I && I.gone ? `<p class="ol-info">Dieses Team gibt es nicht mehr oder du bist nicht mehr dabei.</p><div class="ol-row"><button type="button" class="ol-small" data-a="tforget" data-id="${tid}">Aus der Liste entfernen</button></div></div>` : `
+    <div class="tm">👥 ${mem}</div>${worlds ? `<div class="tw">${worlds}</div>` : `<div class="tw"><span>Noch nicht gespielt</span></div>`}
+    <div class="ol-row">${cur ? `<button type="button" class="bbtn" data-a="tsolo">Zurück zu meinem Spielstand</button>` : `<button type="button" class="bbtn" data-a="tplay" data-id="${tid}">Spielen</button>`}<button type="button" class="ol-small" data-a="tsel" data-id="${tid}">${sel ? "✓ Ausgewählt" : "Mitspieler einladen"}</button><button type="button" class="ol-small" data-a="tren" data-id="${tid}">Umbenennen</button><button type="button" class="ol-small" data-a="tleave" data-id="${tid}">Verlassen</button></div></div>`}`;
+}
 function teamSet(tid) {
   if (OL.team && OL.db) OL.db.ref(`teams/${OL.team}/m`).off();
   OL.team = tid; OL.teamM = {}; try { tid ? localStorage.setItem("welten-myteam", tid) : localStorage.removeItem("welten-myteam"); } catch (e) {}
@@ -362,15 +423,18 @@ function teamMerge(a, b) {
   const o = { ...a };
   if (!b) return o;
   SAVE_KEYS.forEach(k => { if (k !== "credits" && k !== "xp" && typeof b[k] === "number") o[k] = Math.max(a[k] || 0, b[k]); });
-  if (b.ship) { o.ship = { ...(a.ship || {}) }; Object.keys(b.ship).forEach(k => { o.ship[k] = Math.max(o.ship[k] || 0, b.ship[k] || 0); }); }
+  const va = a.vehicle | 0, vb = b.vehicle | 0;   // neues Fahrzeug startet als Wrack: Ausbau nur innerhalb desselben Fahrzeugs zusammenführen
+  if (vb > va) o.ship = { ...(b.ship || {}) };
+  else if (vb === va && b.ship) { o.ship = { ...(a.ship || {}) }; Object.keys(b.ship).forEach(k => { o.ship[k] = Math.max(o.ship[k] || 0, b.ship[k] || 0); }); }
   ["found", "visited", "album", "ach", "crew"].forEach(k => { if (Array.isArray(b[k])) o[k] = [...new Set([...(a[k] || []), ...b[k]])]; });
   if (b.stats) { o.stats = { ...(a.stats || {}) }; Object.keys(b.stats).forEach(k => { if (typeof b.stats[k] === "number") o.stats[k] = Math.max(o.stats[k] || 0, b.stats[k]); }); }
   if (b.shipNamed && !a.shipNamed) { o.shipName = b.shipName; o.shipNamed = true; }
   return o;
 }
 function teamApply(remote) {
-  const c = state.credits, x = state.xp;
+  const c = state.credits, x = state.xp, v0 = state.vehicle | 0, s0 = JSON.stringify(state.ship || {});
   applySave(teamMerge(serialize(), remote)); state.credits = c; state.xp = x;
+  if ((state.vehicle | 0) !== v0 || JSON.stringify(state.ship || {}) !== s0) { try { lastShipKey = ""; lastVehKey = ""; } catch (e) {} OL.lastShip = JSON.stringify(state.ship || {}); }
   try { render(); renderHangar(); } catch (e) {}
 }
 async function teamStart() {
@@ -379,15 +443,28 @@ async function teamStart() {
   const r = (await OL.db.ref(teamPath()).get()).val();
   if (r && r.save) { try { teamApply(JSON.parse(r.save)); } catch (e) {} state.credits = r.c; state.xp = r.x || 0; render(); }
   else await OL.db.ref(teamPath()).set({ save: JSON.stringify(serialize()), c: state.credits, x: state.xp });
-  TM.c = state.credits; TM.x = state.xp; TM.on = true;
+  TM.c = state.credits; TM.x = state.xp; TM.on = true; TM.ok = Date.now();
+  const L = teamList()[TEAM_ID] || {};
+  OL.db.ref(`teams/${TEAM_ID}/i`).get().then(x => { const i = x.val() || {}; const up = { p: firebase.database.ServerValue.TIMESTAMP }; if (!i.n) { up.n = L.n || "Team"; up.t = L.t || Date.now(); } return OL.db.ref(`teams/${TEAM_ID}/i`).update(up); }).catch(() => {});
+  teamLive();
   if (!OL.crew) cfListen(`teams/${TEAM_ID}/log`, "TEAM LIVE");
   const chip = $("olChip"); if (chip) { chip.style.borderColor = "#6fdc8c"; chip.title = "Team-Spielstand aktiv"; }
   radio(`Funk: Team-Spielstand aktiv (${Object.values(m).join(", ")}). Alles, was ihr gewinnt und kauft, teilt ihr.`, true);
   saveGame();
 }
+/* Live: Credits, Erfahrung und Spielstand der Mitspieler sofort übernehmen (nicht erst beim nächsten Abgleich) */
+function teamLive() {
+  const live = (k, f) => OL.db.ref(teamPath() + "/" + k).on("value", s => { const V = s.val(); if (V == null || TM.busy) return; f(V); TM.ok = Date.now(); });
+  live("c", V => { if (V === TM.c) return; state.credits = V + (state.credits - TM.c); TM.c = V; if (machineIdle()) render(); });
+  live("x", V => { if (V === TM.x) return; state.xp = V + (state.xp - TM.x); TM.x = V; });
+  live("save", V => { if (V === TM.mine) return; TM.remote = V; if (machineIdle()) teamApplyRemote(); });
+}
+function teamApplyRemote() { const v = TM.remote; TM.remote = null; if (!v) return; try { teamApply(JSON.parse(v)); } catch (e) {} }
+const teamSig = () => { const o = serialize(); delete o.credits; delete o.xp; return JSON.stringify(o); };
 async function teamSaveSync() {
-  const r = await OL.db.ref(teamPath() + "/save").transaction(v => { let rem = null; try { rem = v ? JSON.parse(v) : null; } catch (e) {} return JSON.stringify(teamMerge(serialize(), rem)); });
-  if (machineIdle()) { try { teamApply(JSON.parse(r.snapshot.val())); } catch (e) {} } else TM.now = true;
+  const r = await OL.db.ref(teamPath() + "/save").transaction(v => { let rem = null; try { rem = v ? JSON.parse(v) : null; } catch (e) {} TM.mine = JSON.stringify(teamMerge(serialize(), rem)); return TM.mine; });
+  TM.sig = teamSig();
+  if (machineIdle()) { try { teamApply(JSON.parse(r.snapshot.val())); } catch (e) {} TM.sig = teamSig(); } else TM.now = true;
 }
 function teamMergeNow() { TM.now = true; }
 async function teamPull() { if (!TM.on) return; const v = (await OL.db.ref(teamPath() + "/save").get()).val(); if (v && machineIdle()) { try { teamApply(JSON.parse(v)); } catch (e) {} } else TM.now = true; }
@@ -401,8 +478,11 @@ async function teamTick() {
     const C = rc.snapshot.val() || 0, X = rx.snapshot.val() || 0;
     state.credits = C + (state.credits - c0); state.xp = X + (state.xp - x0);   // was während der Übertragung dazukam, bleibt erhalten
     TM.c = C; TM.x = X;
-    if (TM.n % 2 === 0 || TM.now) { TM.now = false; await teamSaveSync(); }
-    render();
+    TM.ok = Date.now();
+    if (TM.remote && machineIdle()) teamApplyRemote();
+    if (TM.now || teamSig() !== TM.sig || TM.n % 5 === 0) { TM.now = false; await teamSaveSync(); }
+    if (TM.n % 30 === 0) OL.db.ref(`teams/${TEAM_ID}/i/p`).set(firebase.database.ServerValue.TIMESTAMP).catch(() => {});
+    if (machineIdle()) render();
   } catch (e) {} finally { TM.busy = false; }
 }
 function mpBuyNotice(v) {
@@ -415,16 +495,22 @@ function mpBuyNotice(v) {
   setTimeout(() => el.classList.remove("on"), 3600);
   if (window.TEAM_ID && v.w === WORLD_ID) teamPull().catch(() => {});
 }
-/* --- Crew-/Team-Leiste: wer spielt mit (Pilotenbilder und Namen) --- */
+/* --- Bilanz je Spieler (Gewinn minus Einsatz) in Crew oder Team --- */
+const balPath = () => OL.crew ? `crews/${OL.crew}/b` : window.TEAM_ID ? `teams/${TEAM_ID}/b` : null;
+function balListen() { const p = balPath(); if (OL.balKey === p) return; if (OL.balRef) OL.balRef.off(); OL.balKey = p; OL.bal = {}; OL.balRef = null; if (!p) return; OL.balRef = OL.db.ref(p); OL.balRef.on("value", s => { OL.bal = s.val() || {}; mpBar(); }); }
+/* --- Crew-/Team-Leiste im Live-Feed: Pilotenbilder, Namen, online, Bilanz --- */
 function mpBar() {
-  let bar = $("mpBar");
+  const old = $("mpBar"); if (old) old.remove();
+  const box = $("crewFeed"), el = $("cfCrew"); if (!box || !el) return;
   const ids = OL.crew ? Object.keys(OL.crewM) : window.TEAM_ID ? Object.keys(OL.teamM || {}) : [];
-  if (!ids.length || !(OL.crew || window.TEAM_ID)) { if (bar) bar.hidden = true; return; }
-  if (!bar) { const mr = document.querySelector(".metarow"); if (!mr) return; mr.insertAdjacentHTML("afterend", `<div id="mpBar" class="mp-bar"></div>`); bar = $("mpBar"); }
-  bar.hidden = false;
-  const names = OL.crew ? OL.crewM : OL.teamM;
-  bar.innerHTML = `<span class="mp-tag">${window.TEAM_ID && !OL.crew ? "TEAM-SPIELSTAND" : "KOOP-CREW"}<small>${ids.length}/4</small></span>` + ids.map(id => { const me = id === OL.uid, p = me ? { n: olName() } : OL.people[id] || { n: names[id] }, on = me || olOnline(OL.people[id]), av = me ? avMine() : avOf(OL.people[id]);
-    return `<span class="mp-pilot${on ? " on" : ""}${me ? " me" : ""}" style="--pc:${cfColor(id)}">${av ? avHtml(av, 30, cfColor(id)) : `<span class="av" style="width:30px;height:30px;--avc:${cfColor(id)}"></span>`}<span><b>${escapeHTML(me ? olName() + " (du)" : p.n || names[id] || "?")}</b><small>${on ? "online" : "offline"}</small></span></span>`; }).join("");
+  box.classList.toggle("mp", !!ids.length);
+  if (!ids.length) { el.innerHTML = ""; return; }
+  const names = OL.crew ? OL.crewM : OL.teamM, team = window.TEAM_ID && !OL.crew;
+  const t = $("cfTitle"); if (t) t.innerHTML = `<i></i>${team ? "TEAM LIVE" : "CREW LIVE"} · ${ids.length}/4`;
+  const sy = $("cfSync"); if (sy) { const ok = team ? Date.now() - (TM.ok || 0) < 8000 : true; sy.className = ok ? "ok" : "bad"; sy.textContent = team ? (ok ? "● synchron" : "● verbinde …") : ""; }
+  const order = ids.slice().sort((a, b) => (olNet(b) ?? -1e18) - (olNet(a) ?? -1e18));
+  el.innerHTML = order.map(id => { const me = id === OL.uid, p = me ? { n: olName() } : OL.people[id] || { n: names[id] }, on = me || olOnline(OL.people[id]), av = me ? avMine() : avOf(OL.people[id]), net = olNet(id);
+    return `<span class="cf-p${on ? " on" : ""}${me ? " me" : ""}" style="--pc:${cfColor(id)}" title="${escapeHTML((me ? "Du" : p.n || names[id] || "?") + " · " + (on ? "online" : "offline"))}">${av ? avHtml(av, 22, cfColor(id)) : `<span class="av" style="width:22px;height:22px;--avc:${cfColor(id)}"></span>`}<span><b>${escapeHTML(me ? "Du" : p.n || names[id] || "?")}</b><em class="${(net || 0) >= 0 ? "pos" : "neg"}">${net == null ? "±0" : olNetTxt(net)}</em></span></span>`; }).join("");
 }
 setInterval(() => { try { if (OL.ready) mpBar(); } catch (e) {} }, 3000);
 /* --- Live-Ticker: große Gewinne der Freunde --- */
@@ -437,7 +523,7 @@ function olTickerListen() {
 }
 /* --- Spielstand in der Cloud (Wiederherstellungscode, keine persönlichen Daten) --- */
 const olFmtVault = c => (c || "").match(/.{1,4}/g).join("-");
-function olSaves() { const s = {}; [...WORLDS.map(w => w.key), "welten-lang"].forEach(k => { try { const v = localStorage.getItem(k); if (v != null) s[k.replace(/[.#$\[\]\/]/g, "_")] = v; } catch (e) {} }); return s; }
+function olSaves() { const s = {}; [...WORLDS.map(w => w.key), "welten-lang", "welten-teams"].forEach(k => { try { const v = localStorage.getItem(k); if (v != null) s[k.replace(/[.#$\[\]\/]/g, "_")] = v; } catch (e) {} }); return s; }
 async function vaultSave(manual) {
   if (!OL.db) return;
   if (!OL.vault) { const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", r = crypto.getRandomValues(new Uint32Array(16)); OL.vault = Array.from(r, x => A[x % A.length]).join(""); try { localStorage.setItem("welten-vault", OL.vault); } catch (e) {} }
@@ -459,14 +545,16 @@ async function vaultLoad() {
   olMsg("Spielstand geladen. Das Spiel startet neu …", true);
   setTimeout(() => location.reload(), 900);
 }
-let olWon = null, olN = 0, olBest = null, olFt = null;
+let olWon = null, olBet = 0, olN = 0, olBest = null, olFt = null;
 const olFtNow = () => { const t = state.stats || {}; return { fs: t.fs || 0, fsb: t.fsBought || 0, bonus: state.bonusCount || 0, jp: t.jackpots || 0, ladder: t.ladderWins || 0, gamble: t.gambleWins || 0 }; };
 const olLogPath = () => OL.crew ? `crews/${OL.crew}/log` : window.TEAM_ID ? `teams/${TEAM_ID}/log` : null;
 function olTick() {
   if (!OL.ready) return;
   olN++;
-  const won = sess.won; if (olWon === null) { olWon = won; olBest = sess.best; return; }
-  const d = won - olWon; olWon = won;
+  const won = sess.won; if (olWon === null) { olWon = won; olBet = sess.bet; olBest = sess.best; return; }
+  const d = won - olWon; olWon = won; const db = sess.bet - olBet; olBet = sess.bet;
+  balListen();
+  const bp = balPath(); if (bp && (d > 0 || db > 0)) OL.db.ref(`${bp}/${OL.uid}`).update({ w: firebase.database.ServerValue.increment(Math.max(0, d)), s: firebase.database.ServerValue.increment(Math.max(0, db)), n: olName() }).catch(() => {});
   const wn = (WORLDS.find(w => w.id === WORLD_ID) || {}).name || "";
   const lp = olLogPath(), ftNow = olFtNow();
   if (lp && olFt) Object.keys(ftNow).forEach(k => { if (ftNow[k] > olFt[k]) OL.db.ref(lp).push({ u: OL.uid, n: olName(), k, a: 0, wn, w: WORLD_ID, av: avIdx, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {}); });
@@ -484,7 +572,7 @@ function olTick() {
     OL.db.ref(`daily/${olDay()}/${OL.uid}`).set({ n: olName(), a: OL.dayBest, wn }).catch(() => {}); }
   olBest = Math.max(olBest, sess.best);
   if (OL.vs && OL.vs.state === "run" && d > 0) { OL.vs.my += Math.round(d / Math.max(1, bet()) * 10); OL.db.ref(`matches/${OL.vs.id}/s/${OL.vs.side}`).set(OL.vs.my).catch(() => {}); }
-  if (olN % 15 === 0 && OL.crew) Object.keys(OL.crewM).forEach(id => { if (id !== OL.uid) OL.db.ref("players/" + id + "/on").get().then(s => { OL.people[id] = { ...(OL.people[id] || {}), on: s.val() }; }).catch(() => {}); });
+  if (olN % 15 === 0 && (OL.crew || window.TEAM_ID)) Object.keys(OL.crew ? OL.crewM : OL.teamM || {}).forEach(id => { if (id !== OL.uid) OL.db.ref("players/" + id + "/on").get().then(s => { OL.people[id] = { ...(OL.people[id] || {}), on: s.val() }; }).catch(() => {}); });
   if (OL.vault && olN % Math.round(VAULT_MS / 2000) === 0 && !window.TEAM_ID) vaultSave(false).catch(() => {});
   if (TM.on) teamTick();
 }

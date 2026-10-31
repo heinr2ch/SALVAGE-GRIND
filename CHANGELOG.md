@@ -2,6 +2,14 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.1.0 · Mehrspieler-Update · 31.10.2026
+- Team-Spielstände speichern: mehrere Teams mit Namen, Datum und kleiner Übersicht (Rang, Fahrzeug, Ausbau je Welt), umbenennen und verlassen.
+- Bilanz je Spieler: Gewinn minus Einsatz für jeden in Crew oder Team.
+- Mitspieler mit Bild, Online-Status und Bilanz jetzt kompakt im Live-Feed in der Steuerleiste.
+- Fehler behoben: Im Team-Spielstand war das nächste Fahrzeug nach dem Wechsel sofort voll ausgebaut.
+- Team-Spielstand gleicht sich jetzt live ab: Credits und Ausbau der anderen kommen sofort an, mit Anzeige „synchron“.
+- Steuerleiste: Zahlen werden nie mehr abgeschnitten, die Kacheln füllen die Fläche.
+
 ## Beta 1.0.0 · Beta 1.0 · 31.10.2026
 - Online: Freunde mit Freundescode, tägliche Geschenke, Rangliste (Freunde, weltweit, höchster Gewinn des Tages).
 - VS-Duell: 5 Minuten gegen einen anderen Spieler, gewertet nach Gewinn im Verhältnis zum Einsatz.

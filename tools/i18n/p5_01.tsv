@@ -241,3 +241,35 @@
 239	§: fills with every §, every § on the reels adds extra	§: se llena con cada §, cada § en los rodillos da extra	§：§ ごとに貯まり、リール上の § でさらに追加	§: заполняется с каждым §, каждый § на барабанах даёт бонус	§: vult zich bij elke §, elke § op de rollen geeft extra	§: γεμίζει με κάθε §, κάθε § στους κυλίνδρους δίνει έξτρα
 240	§: fills with every §, every § while building adds extra	§: se llena con cada §, cada § al construir da extra	§：§ ごとに貯まり、建設中の § でさらに追加	§: заполняется с каждым §, каждый § при стройке даёт бонус	§: vult zich bij elke §, elk § bij het bouwen geeft extra	§: γεμίζει με κάθε §, κάθε § στο χτίσιμο δίνει έξτρα
 241	§: fills with every round, every § while building adds extra	§: se llena con cada ronda, cada § al construir da extra	§：ラウンドごとに貯まり、建設中の § でさらに追加	§: заполняется каждый раунд, каждый § при стройке даёт бонус	§: vult zich elke ronde, elk § bij het bouwen geeft extra	§: γεμίζει σε κάθε γύρο, κάθε § στο χτίσιμο δίνει έξτρα
+242	Your team saves (#)	Tus partidas de equipo (#)	チームセーブ（#）	Твои командные сохранения (#)	Jouw teamvoortgangen (#)	Οι ομαδικές πρόοδοί σου (#)
+243	created # · last played # #:#	creada # · jugada por última vez # #:#	作成 # ・最終プレイ # #:#	создано # · последняя игра # #:#	gemaakt # · laatst gespeeld # #:#	δημιουργία # · τελευταίο παιχνίδι # #:#
+244	created # · last played –	creada # · jugada por última vez –	作成 # ・最終プレイ –	создано # · последняя игра –	gemaakt # · laatst gespeeld –	δημιουργία # · τελευταίο παιχνίδι –
+245	✓ Selected	✓ Seleccionada	✓ 選択中	✓ Выбрано	✓ Geselecteerd	✓ Επιλεγμένο
+246	Rename	Renombrar	名前を変更	Переименовать	Hernoemen	Μετονομασία
+247	Leave	Salir	抜ける	Покинуть	Verlaten	Αποχώρηση
+248	Invite players	Invitar jugadores	仲間を招待	Пригласить игроков	Medespelers uitnodigen	Πρόσκληση παικτών
+249	Not played yet	Aún sin jugar	まだプレイしていません	Ещё не играли	Nog niet gespeeld	Δεν έχει παιχτεί ακόμα
+250	This team no longer exists or you're no longer in it.	Este equipo ya no existe o ya no formas parte.	このチームはもう存在しないか、あなたはメンバーではありません。	Этой команды больше нет, или ты в ней больше не состоишь.	Dit team bestaat niet meer of je zit er niet meer in.	Αυτή η ομάδα δεν υπάρχει πια ή δεν είσαι πια μέλος.
+251	Remove from list	Quitar de la lista	リストから削除	Убрать из списка	Uit de lijst verwijderen	Αφαίρεση από τη λίστα
+252	Invite to "§" (#/#):	Invitar a «§» (#/#):	「§」に招待（#/#）：	Пригласить в «§» (#/#):	Uitnodigen voor "§" (#/#):	Πρόσκληση στο «§» (#/#):
+253	New team save	Nueva partida de equipo	新しいチームセーブ	Новое командное сохранение	Nieuwe teamvoortgang	Νέα ομαδική πρόοδος
+254	Create	Crear	作成	Создать	Aanmaken	Δημιουργία
+255	Name of the team save	Nombre de la partida de equipo	チームセーブの名前	Название командного сохранения	Naam van de teamvoortgang	Όνομα ομαδικής προόδου
+256	Name, e.g. Friday crew	Nombre, p. ej. Grupo del viernes	名前（例：金曜メンバー）	Название, напр. Пятничная компания	Naam, bijv. Vrijdagclub	Όνομα, π.χ. Παρέα της Παρασκευής
+257	No team saves yet. Create one below.	Aún no hay partidas de equipo. Crea una abajo.	まだチームセーブがありません。下で作成しよう。	Командных сохранений пока нет. Создай ниже.	Nog geen teamvoortgangen. Maak er hieronder een.	Δεν υπάρχουν ακόμα ομαδικές πρόοδοι. Δημιούργησε μία παρακάτω.
+258	§ (you)	§ (tú)	§（あなた）	§ (ты)	§ (jij)	§ (εσύ)
+259	CREW LIVE · #/#	EQUIPO EN VIVO · #/#	クルー ライブ · #/#	КОМАНДА LIVE · #/#	CREW LIVE · #/#	ΠΛΗΡΩΜΑ LIVE · #/#
+260	TEAM LIVE · #/#	EQUIPO EN VIVO · #/#	チーム ライブ · #/#	КОМАНДА LIVE · #/#	TEAM LIVE · #/#	ΟΜΑΔΑ LIVE · #/#
+261	● in sync	● sincronizado	● 同期中	● синхронно	● synchroon	● συγχρονισμένο
+262	● connecting …	● conectando…	● 接続中…	● подключение …	● verbinden …	● σύνδεση…
+263	§ · online	§ · en línea	§ · オンライン	§ · в сети	§ · online	§ · online
+264	§ · offline	§ · desconectado	§ · オフライン	§ · не в сети	§ · offline	§ · offline
+265	Rank # · record # · balance	Rango # · récord # · balance	ランク # · 記録 # · 収支	Ранг # · рекорд # · баланс	Rang # · record # · saldo	Βαθμός # · ρεκόρ # · ισοζύγιο
+266	Veh. # (#/#)	Veh. # (#/#)	機体 # (#/#)	Тех. # (#/#)	Voert. # (#/#)	Όχ. # (#/#)
+267	"§" created. Invite friends now or tap "Play".	«§» creada. Invita amigos o toca «Jugar».	「§」を作成しました。フレンドを招待するか「プレイ」をタップ。	«§» создано. Пригласи друзей или нажми «Играть».	"§" aangemaakt. Nodig nu vrienden uit of tik op "Spelen".	Το «§» δημιουργήθηκε. Προσκάλεσε φίλους ή πάτα «Παίξε».
+268	Type the new name in the name field below, then tap "Rename" again.	Escribe el nuevo nombre en el campo de abajo y vuelve a tocar «Renombrar».	下の名前欄に新しい名前を入力して、もう一度「名前を変更」をタップ。	Впиши новое название в поле ниже и снова нажми «Переименовать».	Typ de nieuwe naam onderaan in het naamveld en tik nog eens op "Hernoemen".	Γράψε το νέο όνομα στο πεδίο παρακάτω και πάτα ξανά «Μετονομασία».
+269	Renamed to "§".	Renombrada a «§».	「§」に変更しました。	Переименовано в «§».	Hernoemd naar "§".	Μετονομάστηκε σε «§».
+270	Really leave? The team save will be gone for you. Tap "Leave" again to confirm.	¿Seguro que quieres salir? Perderás la partida de equipo. Toca «Salir» otra vez para confirmar.	本当に抜けますか？チームセーブはあなたから消えます。確認するにはもう一度「抜ける」をタップ。	Точно покинуть? Командное сохранение для тебя пропадёт. Нажми «Покинуть» ещё раз для подтверждения.	Echt verlaten? De teamvoortgang is dan voor jou weg. Tik nog eens op "Verlaten" om te bevestigen.	Σίγουρα αποχώρηση; Η ομαδική πρόοδος θα χαθεί για σένα. Πάτα ξανά «Αποχώρηση» για επιβεβαίωση.
+271	You joined the team. Tap "Play".	Te has unido al equipo. Toca «Jugar».	チームに参加しました。「プレイ」をタップ。	Ты вступил в команду. Нажми «Играть».	Je bent lid van het team. Tik op "Spelen".	Μπήκες στην ομάδα. Πάτα «Παίξε».
+272	Left the team.	Has salido del equipo.	チームを抜けました。	Ты покинул команду.	Team verlaten.	Αποχώρησες από την ομάδα.
+273	You	Tú	あなた	Ты	Jij	Εσύ
