@@ -2,6 +2,13 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.13.0 · Foto, Gewinn-Film, Wetter, Sammelbuch, Streamer-Modus · 02.11.2026
+- Fotomodus: Knopf „Foto“ am Fahrzeug macht ein schönes Bild zum Speichern, Kopieren oder Teilen.
+- Große Gewinne zeigen jetzt einen kurzen Film mit deinem Fahrzeug.
+- Wetter und Tageszeit: abends und nachts ändert sich die Stimmung, je nach Welt gibt es Schnee, Regen, Sternschnuppen oder Glühwürmchen.
+- Sammelbuch (Tab Sammlung): volle Seiten bringen einmalig einen Bonus.
+- Streamer-Modus in den Einstellungen: Kontoname verschwommen, größere Gewinne und Twitch-Chat-Abstimmungen mit !1, !2 …
+
 ## Beta 1.12.11 · Neonküste: Dein eigener Wagen fährt durch · 02.11.2026
 - Bei Wild und Respin fährt jetzt dein eigener Wagen mit allen Ausbauten über die Walzen – mit glühenden Reifen.
 - Fehler behoben: Das Auto blieb nach der Durchfahrt manchmal rechts noch ein paar Sekunden stehen.
