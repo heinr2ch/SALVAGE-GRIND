@@ -2,6 +2,10 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.2 · Vorschau zum Anklicken, Welten animiert · 02.11.2026
+- Die Karten der kommenden Welten öffnen per Klick eine Vorschau mit Bild, Symbolen und Spielideen
+- Welt-Karten im Menü und bei Welt wählen schweben dezent, mit Glanz
+
 ## Beta 1.12.1 · Mehr Bewegung im Hauptmenü · 02.11.2026
 - Chromgarage-Vorschau animiert: Räder drehen, Auto wippt, Funken, Lichtband; Brutzelküche mit flackernder Flamme
 - Symbole der Hauptmenü-Kacheln bewegen sich dezent (auf dem Handy und bei weniger Effekten aus)
