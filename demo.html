@@ -2056,6 +2056,32 @@ html.sg-eco *, html.sg-eco *::before, html.sg-eco *::after { -webkit-backdrop-fi
 .globe-row button { padding: 9px 16px; border-radius: 99px; border: 0; cursor: pointer; font: 800 13px var(--f-body, system-ui); color: #0c1020; background: linear-gradient(180deg, #d9ecff, #9cc4ff); }
 .globe-row button.ghost { color: #fff; background: rgba(255,255,255,.08); }
 @media (prefers-reduced-motion: reduce) { .globe-snow i, .gl-it img.masc { animation: none; } }
+
+#raidHud { position: fixed; left: 50%; top: 10px; z-index: 60; width: min(440px, calc(100vw - 20px)); transform: translateX(-50%); padding: 10px 14px 12px; border-radius: 16px;
+  background: linear-gradient(180deg, rgba(40,10,24,.94), rgba(18,6,14,.94)); border: 1px solid rgba(255,90,120,.45); box-shadow: 0 14px 40px rgba(0,0,0,.55), 0 0 30px rgba(255,60,100,.18);
+  color: #fff; font: 700 13px/1.35 var(--f-body, system-ui); pointer-events: auto; animation: raidIn .45s cubic-bezier(.2,1.4,.4,1); }
+#raidHud[hidden] { display: none; }
+#raidHud .rh-top { display: flex; align-items: center; gap: 10px; }
+#raidHud .rh-ic { font-size: 30px; line-height: 1; filter: drop-shadow(0 0 10px rgba(255,80,110,.6)); animation: raidBob 1.6s ease-in-out infinite; }
+#raidHud .rh-name { font: 800 15px/1.1 var(--f-display, system-ui); letter-spacing: .02em; }
+#raidHud .rh-sub { font-size: 11px; color: rgba(255,255,255,.7); font-weight: 600; }
+#raidHud .rh-time { margin-left: auto; font: 800 18px var(--f-mono, monospace); color: #ffd34a; }
+#raidHud .rh-bar { position: relative; height: 14px; margin: 9px 0 7px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+#raidHud .rh-bar i { position: absolute; inset: 0 auto 0 0; border-radius: 99px; background: linear-gradient(90deg, #ff3d6e, #ff8a4c); transition: width .5s ease; }
+#raidHud .rh-bar span { position: absolute; inset: 0; display: grid; place-items: center; font: 800 10px var(--f-mono, monospace); text-shadow: 0 1px 2px #000; }
+#raidHud .rh-who { display: flex; flex-wrap: wrap; gap: 6px; font-size: 11.5px; }
+#raidHud .rh-who b { padding: 2px 8px; border-radius: 99px; background: rgba(255,255,255,.1); font-weight: 700; }
+#raidHud .rh-who b.me { background: rgba(255,211,74,.22); color: #ffd34a; }
+#raidHud .rh-end { margin-top: 8px; padding: 8px 10px; border-radius: 10px; text-align: center; font-weight: 800; }
+#raidHud .rh-end.win { background: rgba(79,227,154,.16); color: #8ff0bf; }
+#raidHud .rh-end.lose { background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); }
+#raidHud .rh-x { position: absolute; right: 8px; top: 6px; background: none; border: 0; color: rgba(255,255,255,.6); font-size: 16px; cursor: pointer; }
+#raidHud.hit { animation: raidHit .3s ease; }
+#cfRaid { color: #ff8aa0 !important; font-size: 11px !important; letter-spacing: .06em; }
+@keyframes raidIn { from { opacity: 0; transform: translate(-50%, -20px) scale(.95); } }
+@keyframes raidBob { 50% { transform: translateY(-3px) rotate(-4deg); } }
+@keyframes raidHit { 30% { transform: translateX(-50%) translateX(-4px); } 60% { transform: translateX(-50%) translateX(4px); } }
+@media (prefers-reduced-motion: reduce) { #raidHud, #raidHud .rh-ic { animation: none; } }
 /*MENU-CSS-END*/
 /* ---------- Handy: kompakt, Kontrollleiste unten fest, kein Doppeltipp-Zoom ---------- */
 html { touch-action: manipulation; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -5520,9 +5546,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.9.7";
+const GAME_VERSION = "1.10.0";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.10.0", date: "02.11.2026", title: "Crew-Raid (Online-Koop)", items: ["Neu: Crew-Raid – mit deiner Crew gleichzeitig gegen einen Boss (Knopf ⚔ RAID im Crew-Feed)", "Jeder dreht in seiner Welt, jeder Gewinn macht Schaden; 3 Minuten Zeit, Lebensbalken und Schadensliste live für alle", "Boss besiegt: Belohnung für alle, die mitgemacht haben, mehr für mehr Schaden", "Fünf Bosse: Asteroiden-Koloss, Sturmkrake, Schrottgolem, Abrissbirne, Neon-Hai"] },
   { v: "1.9.7", date: "02.11.2026", title: "Konto mit Key", items: ["Beim Start zuerst Anmeldename und Passwort, der Beta-Key wird beim ersten Mal fest mit dem Konto verknüpft", "Wieder angemeldet: der hinterlegte Key wird automatisch genutzt", "Passwort zurückgesetzt: beim nächsten Anmelden neues Passwort festlegen"] },
   { v: "1.9.6", date: "02.11.2026", title: "Closed Beta mit Key", items: ["Das Spiel startet nur noch mit persönlichem Beta-Key (einmal eingeben, wird gemerkt)", "Ohne Key gibt es die Demo (Sternenwrack, erstes Fahrzeug)", "Der Spielcode liegt öffentlich nur noch verschlüsselt vor"] },
   { v: "1.9.5", date: "01.11.2026", title: "Neustadt in neuem Glanz", items: ["Die Stadt in Neustadt ist komplett neu gezeichnet: weiche, farbige Häuser statt grober Pixel", "Straße mit fahrenden Autos, Bus und Straßenbahn, Grünstreifen mit Bäumen und Bänken", "Neue Ausbaustufen: Fachwerk-Dorf, bunte Altstadt, moderne Wohntürme mit Dachgärten, Rathaus mit goldener Kuppel, Fernsehturm, Einkaufszentrum", "Metropole mit Hochhauskulisse und Riesenrad, Baustelle mit Kran am Anfang"] },
@@ -9700,6 +9727,94 @@ async function openGlobe() { await globeSnap(true); globeRender(); $("globe").hi
   const xt = $("xtMore"); if (xt && !$("xtGlobe")) { xt.insertAdjacentHTML("afterbegin", `<button type="button" class="ghost" id="xtGlobe" style="width:100%;margin-bottom:6px">❄ Schneekugel</button>`); $("xtGlobe").onclick = openGlobe; }
 })();
 HELP_RULES.unshift(["#globe", () => ["Schneekugel", "Alle Welten bauen gemeinsam daran. Voll ausgebaute Welten bringen ihr Maskottchen mit."]]);
+
+/* ---------- Crew-Raid: gemeinsam gegen einen Boss (Online-Koop) ---------- */
+const RAID_MS = 180000, RAID_HP_PER = 70, RAID_COOLDOWN = 60000;
+const RAID_BOSS = { sternenwrack: ["☄️", "Asteroiden-Koloss"], treibgut: ["🐙", "Sturmkrake"], eisenfront: ["🤖", "Schrottgolem"], neustadt: ["🏗️", "Abrissbirne"], neonkueste: ["🦈", "Neon-Hai"] };
+const RAID = { ref: null, cid: null, cur: null, won: null, seen: null, hideT: 0 };
+document.body.insertAdjacentHTML("beforeend", `<div id="raidHud" hidden role="status" aria-live="polite"></div>`);
+function raidLeft(r) { return Math.max(0, (r.t0 || 0) + (r.dur || RAID_MS) - (Date.now() + (RAID.skew || 0))); }
+function raidDone(r) { return Object.values(r.dmg || {}).reduce((a, b) => a + (+b || 0), 0); }
+function raidBtn() {
+  const box = document.querySelector("#crewFeed .cf-btns"); if (!box) return;
+  let b = $("cfRaid");
+  if (!b) { box.insertAdjacentHTML("afterbegin", `<button type="button" id="cfRaid" title="Crew-Raid starten: gemeinsam gegen einen Boss">⚔ RAID</button>`); b = $("cfRaid"); b.addEventListener("click", raidStart); }
+  b.hidden = !(typeof OL !== "undefined" && OL.crew);
+}
+async function raidStart() {
+  if (typeof OL === "undefined" || !OL.ready || !OL.crew) { toast("Raids gibt es nur in einer Crew."); return; }
+  const r = RAID.cur;
+  if (r && raidLeft(r) > 0 && raidDone(r) < r.hp) { toast("Es läuft schon ein Raid!"); return; }
+  if (r && Date.now() + (RAID.skew || 0) - ((r.t0 || 0) + (r.dur || RAID_MS)) < RAID_COOLDOWN && raidLeft(r) === 0) { toast("Kurze Pause: der nächste Raid geht gleich wieder."); return; }
+  const n = Math.max(1, Object.keys(OL.crewM || {}).length), id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  await OL.db.ref(`crews/${OL.crew}/raid`).set({ id, by: olName(), byU: OL.uid, w: WORLD_ID, t0: firebase.database.ServerValue.TIMESTAMP, dur: RAID_MS, hp: RAID_HP_PER * n, dmg: {}, nm: { [OL.uid]: olName() } }).catch(() => toast("Raid konnte nicht starten."));
+  try { sfx.mission(); } catch (e) {}
+}
+function raidListen() {
+  const cid = typeof OL !== "undefined" && OL.ready ? OL.crew : null;
+  if (cid === RAID.cid) return;
+  if (RAID.ref) { RAID.ref.off(); RAID.ref = null; }
+  RAID.cid = cid; RAID.cur = null; $("raidHud").hidden = true;
+  if (!cid) return;
+  if (!RAID.skewOn) { RAID.skewOn = true; OL.db.ref(".info/serverTimeOffset").on("value", s => { RAID.skew = s.val() || 0; }); }
+  RAID.ref = OL.db.ref(`crews/${cid}/raid`);
+  RAID.ref.on("value", s => {
+    const r = s.val(); RAID.cur = r;
+    if (r && r.id !== RAID.seen) {
+      RAID.seen = r.id; RAID.won = sess.won;
+      if (raidLeft(r) > 0 && r.byU !== OL.uid) { toast(`⚔ ${r.by} startet einen Crew-Raid! Dreh mit, jeder Gewinn macht Schaden.`, "#ff8aa0"); try { sfx.mission(); } catch (e) {} }
+    }
+    raidRender();
+  });
+}
+function raidRender() {
+  const r = RAID.cur, el = $("raidHud");
+  if (!r || !r.id) { el.hidden = true; return; }
+  const left = raidLeft(r), done = raidDone(r), hp = r.hp || 1, win = done >= hp, over = win || left === 0;
+  const endAt = (r.t0 || 0) + (r.dur || RAID_MS);
+  if (over && Date.now() + (RAID.skew || 0) - endAt > 45000 && !win) { el.hidden = true; return; }
+  if (win && RAID.hideT && Date.now() > RAID.hideT) { el.hidden = true; return; }
+  const [ic, name] = RAID_BOSS[r.w] || RAID_BOSS.sternenwrack, mm = Math.floor(left / 60000), ss = Math.floor(left / 1000) % 60;
+  const who = Object.entries(r.dmg || {}).sort((a, b) => b[1] - a[1]).map(([u, v]) => `<b class="${u === OL.uid ? "me" : ""}">${escapeHTML(((r.nm || {})[u] || "?").slice(0, 14))} ${Math.round(v)}</b>`).join("");
+  let end = "";
+  if (win) { end = `<div class="rh-end win">Besiegt! ${raidReward(r)}</div>`; if (!RAID.hideT) RAID.hideT = Date.now() + 20000; }
+  else if (left === 0) end = `<div class="rh-end lose">Der Boss ist entkommen. Beim nächsten Mal mehr drehen!</div>`;
+  else RAID.hideT = 0;
+  el.innerHTML = `<button type="button" class="rh-x" aria-label="Ausblenden" id="raidX">×</button><div class="rh-top"><span class="rh-ic" aria-hidden="true">${ic}</span><div><div class="rh-name">${escapeHTML(name)}</div><div class="rh-sub">Crew-Raid · gestartet von ${escapeHTML(r.by || "?")}</div></div><span class="rh-time">${over ? "–" : mm + ":" + String(ss).padStart(2, "0")}</span></div>
+    <div class="rh-bar"><i style="width:${Math.max(0, 100 - done / hp * 100).toFixed(1)}%"></i><span>${Math.max(0, Math.round(hp - done))} / ${hp}</span></div>
+    <div class="rh-who">${who || '<span class="rh-sub">Noch kein Treffer. Dreh, um Schaden zu machen!</span>'}</div>${end}`;
+  el.hidden = false;
+  $("raidX").onclick = () => { el.hidden = true; RAID.hideT = Date.now() - 1; if (!over) RAID.hideT = 0, RAID.mute = r.id; };
+  if (RAID.mute === r.id && !over) el.hidden = true;
+}
+// Belohnung nach dem Sieg: Grundbetrag für alle, die mitgemacht haben, plus Anteil nach Schaden. Nur einmal pro Raid.
+function raidReward(r) {
+  const mine = (r.dmg || {})[OL.uid] || 0; if (!mine) return "Mach beim nächsten Raid mit, dann gibt's eine Belohnung.";
+  const share = mine / Math.max(1, raidDone(r)), amt = Math.round(bet() * (25 + 75 * share));
+  const k = "welten-raid-" + r.id; let got = false; try { got = !!localStorage.getItem(k); } catch (e) {}
+  if (!got) {
+    try { localStorage.setItem(k, "1"); } catch (e) {}
+    state.credits += amt; try { render(); saveGame(); burst(90, ["#ff8aa0", "#ffd34a", "#ffffff"], 1.2); sfx.mission(); } catch (e) {}
+    toast(`⚔ Raid gewonnen! +${fmtN(amt)} für dich`, "#8ff0bf");
+  }
+  return `+${fmtN(amt)} für dich`;
+}
+// Schaden: alle 2 Sekunden die neuen Gewinne zählen (Gewinn ÷ Einsatz, mindestens 1 pro Gewinn)
+setInterval(() => {
+  try {
+    raidBtn(); raidListen();
+    const r = RAID.cur; if (!r || !RAID.ref) return;
+    const won = sess.won; if (RAID.won === null) RAID.won = won;
+    const d = won - RAID.won; RAID.won = won;
+    if (d > 0 && raidLeft(r) > 0 && raidDone(r) < r.hp) {
+      const hit = Math.max(1, Math.round(d / Math.max(1, bet())));
+      const up = {}; up[`dmg/${OL.uid}`] = firebase.database.ServerValue.increment(hit); up[`nm/${OL.uid}`] = olName();
+      RAID.ref.update(up).catch(() => {});
+      const el = $("raidHud"); el.classList.remove("hit"); void el.offsetWidth; el.classList.add("hit");
+    }
+    raidRender();
+  } catch (e) {}
+}, 2000);
 /*MENU-JS-END*/
 /* ---------- Start-Knopf: Feedback beim Drücken, Drehen, Gewinnen ---------- */
 (function () {

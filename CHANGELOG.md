@@ -2,6 +2,12 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.10.0 · Crew-Raid (Online-Koop) · 02.11.2026
+- Neu: Crew-Raid – mit deiner Crew gleichzeitig gegen einen Boss (Knopf ⚔ RAID im Crew-Feed)
+- Jeder dreht in seiner Welt, jeder Gewinn macht Schaden; 3 Minuten Zeit, Lebensbalken und Schadensliste live für alle
+- Boss besiegt: Belohnung für alle, die mitgemacht haben, mehr für mehr Schaden
+- Fünf Bosse: Asteroiden-Koloss, Sturmkrake, Schrottgolem, Abrissbirne, Neon-Hai
+
 ## Beta 1.9.7 · Konto mit Key · 02.11.2026
 - Beim Start zuerst Anmeldename und Passwort, der Beta-Key wird beim ersten Mal fest mit dem Konto verknüpft
 - Wieder angemeldet: der hinterlegte Key wird automatisch genutzt
