@@ -2,6 +2,10 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.1 · Mehr Bewegung im Hauptmenü · 02.11.2026
+- Chromgarage-Vorschau animiert: Räder drehen, Auto wippt, Funken, Lichtband; Brutzelküche mit flackernder Flamme
+- Symbole der Hauptmenü-Kacheln bewegen sich dezent (auf dem Handy und bei weniger Effekten aus)
+
 ## Beta 1.12.0 · Freispiele fortsetzen, Vorschau neue Welten · 02.11.2026
 - Unterbrochene Freispiele (Neuladen, Tab zu) gehen beim nächsten Start weiter
 - Demnächst: zwei neue Welten – Brutzelküche und Chromgarage
