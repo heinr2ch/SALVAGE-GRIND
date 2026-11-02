@@ -5520,9 +5520,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.9.6";
+const GAME_VERSION = "1.9.7";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.9.7", date: "02.11.2026", title: "Konto mit Key", items: ["Beim Start zuerst Anmeldename und Passwort, der Beta-Key wird beim ersten Mal fest mit dem Konto verknüpft", "Wieder angemeldet: der hinterlegte Key wird automatisch genutzt", "Passwort zurückgesetzt: beim nächsten Anmelden neues Passwort festlegen"] },
   { v: "1.9.6", date: "02.11.2026", title: "Closed Beta mit Key", items: ["Das Spiel startet nur noch mit persönlichem Beta-Key (einmal eingeben, wird gemerkt)", "Ohne Key gibt es die Demo (Sternenwrack, erstes Fahrzeug)", "Der Spielcode liegt öffentlich nur noch verschlüsselt vor"] },
   { v: "1.9.5", date: "01.11.2026", title: "Neustadt in neuem Glanz", items: ["Die Stadt in Neustadt ist komplett neu gezeichnet: weiche, farbige Häuser statt grober Pixel", "Straße mit fahrenden Autos, Bus und Straßenbahn, Grünstreifen mit Bäumen und Bänken", "Neue Ausbaustufen: Fachwerk-Dorf, bunte Altstadt, moderne Wohntürme mit Dachgärten, Rathaus mit goldener Kuppel, Fernsehturm, Einkaufszentrum", "Metropole mit Hochhauskulisse und Riesenrad, Baustelle mit Kran am Anfang"] },
   { v: "1.9.4", date: "01.11.2026", title: "Handy bleibt kühler", items: ["Auf Handys läuft das Spiel jetzt im Sparmodus: 30 statt 60 Bilder pro Sekunde, Hintergrund noch langsamer", "Weniger Dauer-Animationen und keine teuren Unschärfe-Effekte mehr auf dem Handy", "Rund 45 % weniger Rechenlast – Akku hält länger, Handy wird nicht mehr so warm"] },

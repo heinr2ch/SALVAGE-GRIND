@@ -89,6 +89,7 @@ svg.chart { width: 100%; height: 170px; display: block; }
     <nav role="tablist">
       <button role="tab" data-tab="ov" aria-selected="true">Übersicht</button>
       <button role="tab" data-tab="pl">Spieler</button>
+      <button role="tab" data-tab="ac">Konten</button>
       <button role="tab" data-tab="ke">Keys</button>
       <button role="tab" data-tab="lo">Anmeldungen</button>
       <button role="tab" data-tab="fb">Feedback</button>
@@ -115,6 +116,14 @@ svg.chart { width: 100%; height: 170px; display: block; }
       <div class="card">
         <div class="row" style="margin-bottom:10px"><input id="plQ" placeholder="Name suchen" style="flex:1;min-width:160px"><select id="plF"><option value="">Alle</option><option value="1">Aktiv (7 Tage)</option><option value="acct">Mit Konto</option><option value="guest">Gäste</option></select></div>
         <div class="tbl"><table id="plT"></table></div>
+      </div>
+    </section>
+
+    <section data-pane="ac" hidden>
+      <div class="card">
+        <div class="row" style="margin-bottom:10px"><h2 style="margin:0;flex:1">Spielkonten <small id="acCount"></small></h2><input id="acQ" placeholder="Name suchen" style="min-width:160px"></div>
+        <p class="muted" style="margin:0 0 10px">„Passwort zurücksetzen“ setzt das Passwort auf <b>123456</b>. Beim nächsten Anmelden muss der Spieler ein neues festlegen; Spielstand und Key bleiben erhalten.</p>
+        <div class="tbl"><table id="acT"></table></div>
       </div>
     </section>
 
@@ -189,9 +198,9 @@ svg.chart { width: 100%; height: 170px; display: block; }
   async function load() {
     $("reload").disabled = true; $("stamp").textContent = "lädt …";
     try {
-      const [players, keys, use, rlog, rnew, master] = await Promise.all([get("players"), get("admin/keys"), get("keyuse"), get("reportsLog"), get("reports"), get("admin/master")]);
+      const [players, keys, use, rlog, rnew, master, accounts, owners] = await Promise.all([get("players"), get("admin/keys"), get("keyuse"), get("reportsLog"), get("reports"), get("admin/master"), get("accounts"), get("keyowner")]);
       if (master === null && keys === null && players === null) throw new Error("Kein Zugriff. Ist dieses Konto als Admin eingetragen?");
-      D.players = players || {}; D.keys = keys || {}; D.use = use || {}; D.master = master;
+      D.players = players || {}; D.keys = keys || {}; D.use = use || {}; D.master = master; D.accounts = accounts || {}; D.owners = owners || {};
       D.reports = Object.entries(Object.assign({}, rlog || {}, rnew || {})).map(([id, r]) => Object.assign({ id, neu: !!(rnew && rnew[id]) }, r)).sort((a, b) => (b.t || 0) - (a.t || 0));
       D.logs = []; Object.entries(D.use).forEach(([id, u]) => Object.values((u && u.log) || {}).forEach(l => D.logs.push(Object.assign({ id }, l)))); D.logs.sort((a, b) => (b.t || 0) - (a.t || 0));
       try { D.names = await shallowCount("names"); } catch (e) { D.names = null; }
@@ -220,7 +229,7 @@ svg.chart { width: 100%; height: 170px; display: block; }
     const act = d => P.filter(p => p.on && now - p.on < d).length;
     const keysAll = Object.entries(D.keys), keysOn = keysAll.filter(([, k]) => k && k.active);
     const kpi = (l, v, sub) => `<div class="kpi"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
-    $("kpis").innerHTML = kpi("Konten", D.names == null ? "–" : fmt(D.names), "angemeldete Spielnamen") + kpi("Spieler-Geräte", fmt(P.length), "online gesehen") + kpi("Aktiv heute", fmt(act(DAY))) + kpi("Aktiv 7 Tage", fmt(act(7 * DAY))) + kpi("Aktiv 30 Tage", fmt(act(30 * DAY)))
+    $("kpis").innerHTML = kpi("Konten", D.names == null ? "–" : fmt(D.names), "angemeldete Spielnamen") + kpi("Konten mit Key", fmt(Object.keys(D.accounts).length), "seit Closed Beta") + kpi("Spieler-Geräte", fmt(P.length), "online gesehen") + kpi("Aktiv heute", fmt(act(DAY))) + kpi("Aktiv 7 Tage", fmt(act(7 * DAY))) + kpi("Aktiv 30 Tage", fmt(act(30 * DAY)))
       + kpi("Keys aktiv", fmt(keysOn.length), keysAll.length - keysOn.length ? (keysAll.length - keysOn.length) + " gesperrt" : "") + kpi("Feedback", fmt(D.reports.length), D.reports.filter(r => r.neu).length ? D.reports.filter(r => r.neu).length + " noch nicht in Discord" : "");
     const days = Object.keys(D.daily).sort();
     chart("dauChart", days, days.map(d => D.daily[d]), "#7c5cff");
@@ -233,7 +242,7 @@ svg.chart { width: 100%; height: 170px; display: block; }
     bars("verBars", cnt(p => p.v || "vor 1.9.6").slice(0, 8));
     const top = P.slice().sort((a, b) => maxLevel(b) - maxLevel(a)).slice(0, 10);
     $("topT").innerHTML = `<tr><th>#</th><th>Name</th><th class="num">Level</th><th>Welten</th><th>Zuletzt</th></tr>` + top.map((p, i) => `<tr><td>${i + 1}</td><td>${esc(p.n || "?")}</td><td class="num">${maxLevel(p)}</td><td>${Object.keys(p.w || {}).map(w => (WORLDS[w] || w).slice(0, 2)).join(" ")}</td><td>${when(p.on)}</td></tr>`).join("");
-    renderPlayers(); renderKeys(); renderLogins(); renderReports();
+    renderPlayers(); renderAccounts(); renderKeys(); renderLogins(); renderReports();
   }
   let plSort = "on";
   function renderPlayers() {
@@ -296,12 +305,42 @@ svg.chart { width: 100%; height: 170px; display: block; }
     const K = Object.entries(D.keys).map(([id, k]) => { const lg = Object.values((D.use[id] && D.use[id].log) || {}); const last = lg.reduce((a, l) => (l.t || 0) > ((a && a.t) || 0) ? l : a, null); return Object.assign({ id, n: lg.length, last }, k); })
       .filter(k => !q || (k.name || "").toLowerCase().includes(q) || pretty(k.key).toLowerCase().includes(q)).sort((a, b) => (b.created || 0) - (a.created || 0));
     $("keyCount").textContent = `${Object.values(D.keys).filter(k => k.active).length} aktiv von ${Object.keys(D.keys).length}`;
-    $("keT").innerHTML = `<tr><th>Key</th><th>Für</th><th>Status</th><th>Erstellt</th><th class="num">Starts</th><th>Zuletzt benutzt</th><th></th></tr>` + K.map(k => `<tr><td class="key">${pretty(k.key)}</td><td>${esc(k.name)}</td><td><span class="pill ${k.active ? "on" : "off"}">${k.active ? "aktiv" : "gesperrt"}</span></td><td>${dt(k.created)}</td><td class="num">${k.n}</td><td>${k.last ? when(k.last.t) + ` <span class="muted">${esc(k.last.p || "")} · ${esc(k.last.w || "")}</span>` : '<span class="muted">nie</span>'}</td>
+    $("keT").innerHTML = `<tr><th>Key</th><th>Für</th><th>Konto</th><th>Status</th><th>Erstellt</th><th class="num">Starts</th><th>Zuletzt benutzt</th><th></th></tr>` + K.map(k => `<tr><td class="key">${pretty(k.key)}</td><td>${esc(k.name)}</td><td>${D.owners[k.id] ? esc((D.accounts[D.owners[k.id]] || {}).n || D.owners[k.id]) : '<span class="muted">frei</span>'}</td><td><span class="pill ${k.active ? "on" : "off"}">${k.active ? "aktiv" : "gesperrt"}</span></td><td>${dt(k.created)}</td><td class="num">${k.n}</td><td>${k.last ? when(k.last.t) + ` <span class="muted">${esc(k.last.p || "")} · ${esc(k.last.w || "")}</span>` : '<span class="muted">nie</span>'}</td>
       <td style="white-space:nowrap"><button class="btn ghost sm" data-copy="${pretty(k.key)}">Kopieren</button> ${k.active ? `<button class="btn bad sm" data-act="off" data-id="${k.id}">Sperren</button>` : `<button class="btn ok sm" data-act="on" data-id="${k.id}">Entsperren</button> <button class="btn ghost sm" data-act="del" data-id="${k.id}">Löschen</button>`}</td></tr>`).join("")
       || '<tr><td class="muted">Noch keine Keys</td></tr>';
     $("keT").querySelectorAll("[data-act]").forEach(b => b.onclick = () => { b.disabled = true; (b.dataset.act === "del" ? delKey(b.dataset.id) : setActive(b.dataset.id, b.dataset.act === "on")).catch(er => { alert(er.message); b.disabled = false; }); });
   }
   $("kQ").oninput = renderKeys;
+
+  /* ---------- Konten: Passwort zurücksetzen (123456 + Pflichtwechsel), Key lösen ---------- */
+  const acctHash = (n, pw) => sha("sg1|" + String(n).trim().replace(/\s+/g, " ").toLowerCase() + "|" + pw).then(hex);
+  const ownOf = h => sha("own|" + h).then(hex);
+  function renderAccounts() {
+    const q = $("acQ").value.trim().toLowerCase();
+    const A = Object.entries(D.accounts).map(([nk, a]) => Object.assign({ nk }, a || {})).filter(a => !q || (a.n || a.nk).toLowerCase().includes(q)).sort((a, b) => (b.last || 0) - (a.last || 0));
+    $("acCount").textContent = A.length + " Konten";
+    $("acT").innerHTML = `<tr><th>Name</th><th>Key</th><th>Angelegt</th><th>Zuletzt angemeldet</th><th>Status</th><th></th></tr>` + A.map(a => { const k = D.keys[a.k];
+      return `<tr><td><b>${esc(a.n || a.nk)}</b></td><td>${k ? `<span class="key">${pretty(k.key)}</span> <span class="muted">${esc(k.name)}</span>${k.active ? "" : ' <span class="pill off">gesperrt</span>'}` : '<span class="muted">kein Key</span>'}</td><td>${dt(a.t)}</td><td>${when(a.last)}</td>
+      <td>${a.mc ? '<span class="pill n">muss Passwort ändern</span>' : '<span class="pill on">ok</span>'}</td><td style="white-space:nowrap"><button class="btn ghost sm" data-ac="pw" data-nk="${esc(a.nk)}">Passwort zurücksetzen</button> ${a.k ? `<button class="btn ghost sm" data-ac="unlink" data-nk="${esc(a.nk)}">Key lösen</button>` : ""}</td></tr>`; }).join("")
+      || '<tr><td class="muted">Noch keine Konten (entstehen bei der ersten Anmeldung mit Key)</td></tr>';
+    $("acT").querySelectorAll("[data-ac]").forEach(b => b.onclick = () => { b.disabled = true; (b.dataset.ac === "pw" ? resetPw(b.dataset.nk) : unlinkKey(b.dataset.nk)).catch(er => { alert(er.message); b.disabled = false; }); });
+  }
+  $("acQ").oninput = renderAccounts;
+  async function resetPw(nk) {
+    const a = D.accounts[nk]; if (!a || !confirm(`Passwort von „${a.n}“ auf 123456 zurücksetzen? Beim nächsten Anmelden muss ein neues Passwort gewählt werden.`)) return;
+    const h = a.h, h2 = await acctHash(a.n, "123456"), own2 = await ownOf(h2);
+    if (h === h2) { await db.ref().update({ ["accounts/" + nk + "/mc"]: true, ["acctkey/" + h + "/mc"]: true }); toast("Zurückgesetzt"); return load(); }
+    const [v, ak] = await Promise.all([get("vault/" + h), get("acctkey/" + h)]), up = {};
+    if (v) { up["vault/" + h2] = v; up["vault/" + h] = null; }
+    up["acctkey/" + h2] = Object.assign({}, ak || {}, { mc: true }); up["acctkey/" + h] = null;
+    up["names/" + nk] = own2;
+    up["accounts/" + nk + "/h"] = h2; up["accounts/" + nk + "/own"] = own2; up["accounts/" + nk + "/mc"] = true;
+    await db.ref().update(up); toast("Passwort ist jetzt 123456"); await load();
+  }
+  async function unlinkKey(nk) {
+    const a = D.accounts[nk]; if (!a || !a.k || !confirm(`Key von „${a.n}“ lösen? Der Spieler muss beim nächsten Anmelden einen Key eingeben, der Key ist wieder frei.`)) return;
+    await db.ref().update({ ["keyowner/" + a.k]: null, ["acctkey/" + a.h]: null, ["accounts/" + nk + "/k"]: null }); toast("Key gelöst"); await load();
+  }
 
   /* ---------- Anmeldungen (Spielstarts mit Key) ---------- */
   function renderLogins() {
@@ -312,7 +351,7 @@ svg.chart { width: 100%; height: 170px; display: block; }
       + kpi("Keys nie benutzt", fmt(Object.keys(D.keys).filter(id => !(D.use[id] && D.use[id].log)).length));
     const days = Array.from({ length: 30 }, (_, i) => dayKey(now - (29 - i) * DAY)), per = {}; L.forEach(l => { const k = dayKey(l.t || 0); per[k] = (per[k] || 0) + 1; });
     chart("loChart", days, days.map(d => per[d] || 0), "#4ade80");
-    $("loT").innerHTML = `<tr><th>Wann</th><th>Wer (Key)</th><th>Welt</th><th>Gerät</th></tr>` + L.slice(0, 200).map(l => `<tr><td>${dt(l.t)}</td><td>${esc(name(l.id))}</td><td>${esc(l.w || "–")}</td><td>${esc(l.p || "–")}</td></tr>`).join("") || '<tr><td class="muted">Noch keine Starts</td></tr>';
+    $("loT").innerHTML = `<tr><th>Wann</th><th>Konto</th><th>Key für</th><th>Welt</th><th>Gerät</th></tr>` + L.slice(0, 200).map(l => `<tr><td>${dt(l.t)}</td><td>${esc(l.n || "–")}</td><td>${esc(name(l.id))}</td><td>${esc(l.w || "–")}</td><td>${esc(l.p || "–")}</td></tr>`).join("") || '<tr><td class="muted">Noch keine Starts</td></tr>';
   }
 
   /* ---------- Feedback ---------- */

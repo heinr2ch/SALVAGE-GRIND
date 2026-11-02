@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.9.7 · Konto mit Key · 02.11.2026
+- Beim Start zuerst Anmeldename und Passwort, der Beta-Key wird beim ersten Mal fest mit dem Konto verknüpft
+- Wieder angemeldet: der hinterlegte Key wird automatisch genutzt
+- Passwort zurückgesetzt: beim nächsten Anmelden neues Passwort festlegen
+
 ## Beta 1.9.6 · Closed Beta mit Key · 02.11.2026
 - Das Spiel startet nur noch mit persönlichem Beta-Key (einmal eingeben, wird gemerkt)
 - Ohne Key gibt es die Demo (Sternenwrack, erstes Fahrzeug)

@@ -22,6 +22,10 @@ h1 { margin: 0; font: 800 1.75rem/1.1 "Unbounded", system-ui, sans-serif; letter
 .tag { display: inline-block; margin: 10px 0 18px; padding: 3px 12px; border-radius: 99px; font: 700 .72rem/1.6 system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #ffd34a; background: rgba(255,211,74,.12); border: 1px solid rgba(255,211,74,.35); }
 p { margin: 0 0 16px; color: #b8c0dc; }
 form { display: grid; gap: 10px; }
+label { display: block; text-align: left; margin: 4px 2px -4px; font-size: .8rem; font-weight: 700; color: #b8c0dc; }
+input.plain { text-transform: none; letter-spacing: .01em; font-family: inherit; text-align: left; }
+.ok { color: #8fe9a8; }
+.hint { font-size: .85rem; color: #9aa5c8; margin: 0 0 4px; text-align: left; }
 input { width: 100%; padding: 13px 14px; border-radius: 12px; border: 1.5px solid rgba(200,210,255,.22); background: rgba(5,7,16,.6); color: #fff; text-align: center;
   font: 700 16px/1.2 ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; outline: none; }
 input:focus { border-color: #7c5cff; box-shadow: 0 0 0 3px rgba(124,92,255,.3); }
@@ -41,14 +45,36 @@ button[disabled] { opacity: .6; cursor: wait; }
   <img class="logo" src="../media/kinearbyte.png" alt="">
   <h1>Salvage &amp; Grind</h1>
   <div class="tag" data-t="tag">Closed Beta</div>
-  <p data-t="lead">Die Testphase ist nur für eingeladene Spieler. Gib deinen Beta-Key ein.</p>
-  <form id="sgForm" autocomplete="off">
-    <input id="sgKey" placeholder="SG-XXXXX-XXXXX-XXXXX-XXXXX" maxlength="40" spellcheck="false" autocapitalize="characters" aria-label="Beta-Key">
-    <button id="sgGo" type="submit" data-t="go">Spiel starten</button>
-    <div class="err" id="sgErr" role="alert"></div>
+
+  <form id="fLogin" autocomplete="on">
+    <p data-t="lead">Melde dich mit deinem Spielkonto an. Neu hier? Dann wird dein Konto angelegt und du brauchst einen Beta-Key.</p>
+    <label for="sgName" data-t="lName">Anmeldename</label>
+    <input class="plain" id="sgName" name="username" autocomplete="username" maxlength="20" spellcheck="false" autocapitalize="off" placeholder="z. B. Sternenfuchs77">
+    <label for="sgPw" data-t="lPw">Passwort (mindestens 6 Zeichen)</label>
+    <input class="plain" id="sgPw" name="password" type="password" autocomplete="current-password" maxlength="40">
+    <button id="bLogin" type="submit" data-t="go">Anmelden</button>
   </form>
+
+  <form id="fKey" autocomplete="off" hidden>
+    <p id="keyLead"></p>
+    <input id="sgKey" placeholder="SG-XXXXX-XXXXX-XXXXX-XXXXX" maxlength="40" spellcheck="false" autocapitalize="characters" aria-label="Beta-Key">
+    <button id="bKey" type="submit" data-t="link">Key verknüpfen und spielen</button>
+    <a href="#" id="kBack" class="small" data-t="back">Zurück</a>
+  </form>
+
+  <form id="fPw" autocomplete="on" hidden>
+    <p data-t="pwLead">Dein Passwort wurde zurückgesetzt. Bitte leg jetzt ein neues fest.</p>
+    <input type="text" name="username" autocomplete="username" hidden id="pwUser">
+    <label for="sgPw1" data-t="lNew">Neues Passwort (mindestens 6 Zeichen)</label>
+    <input class="plain" id="sgPw1" type="password" autocomplete="new-password" maxlength="40">
+    <label for="sgPw2" data-t="lNew2">Neues Passwort wiederholen</label>
+    <input class="plain" id="sgPw2" type="password" autocomplete="new-password" maxlength="40">
+    <button id="bPw" type="submit" data-t="save">Speichern und spielen</button>
+  </form>
+
+  <div class="err" id="sgErr" role="alert"></div>
   <div class="more">
-    <a href="../demo.html" data-t="demo" id="sgDemo">Ohne Key: Demo spielen</a>
+    <a href="../demo.html" data-t="demo" id="sgDemo">Ohne Konto: Demo spielen</a>
     <span data-t="ask">Noch keinen Key? Schreib uns: <a href="mailto:kinearbyte@icloud.com">kinearbyte@icloud.com</a></span>
   </div>
   <div class="small" data-t="by">ein Spiel von <b>KIneArbyte</b> · nur Spielgeld, kein Echtgeld</div>
@@ -56,88 +82,193 @@ button[disabled] { opacity: .6; cursor: wait; }
 <script>
 (function () {
   "use strict";
+  /* Startseite der Closed Beta (tools/gate.html → von tools/seal.py vor jede Welt gesetzt).
+     1. Anmeldename + Passwort (dasselbe Konto wie im Spiel: Speicherschlüssel h = SHA-256("sg1|name|passwort"), Name gehört dem Konto über names/<name>).
+     2. Neues Konto oder altes Konto ohne Key → Beta-Key eingeben, er wird fest mit dem Konto verknüpft (keyowner/<keyId>, acctkey/<h>).
+        Wieder angemeldet → der hinterlegte Key wird geholt, keine Eingabe nötig.
+     3. Passwort vom Dashboard zurückgesetzt (123456, acctkey/<h>.mc) → neues Passwort festlegen, Spielstand zieht mit um.
+     Danach wird das verschlüsselte Spiel (spiel.bin) mit dem Key entschlüsselt und gestartet. Offline: mit gemerkter Anmeldung und gemerktem Key. */
   var ROOT = "../", UP = "../";
   window.SG_GATE = { root: ROOT };
+  var DB = "https://salvage-grind-default-rtdb.europe-west1.firebasedatabase.app";
+  var FB = { apiKey: "AIzaSyBcnwWCg5qhD-g8DWnsNh-teUZihc4CKtM", authDomain: "salvage-grind.firebaseapp.com", databaseURL: DB, projectId: "salvage-grind" };
   var EN = !/^de/i.test(navigator.language || "de");
-  var T = { tag: "Closed Beta", lead: "The test phase is for invited players only. Enter your beta key.", go: "Start game", demo: "No key: play the demo",
-    by: "a game by <b>KIneArbyte</b> · play money only, no real money", ask: 'No key yet? Write to us: <a href="mailto:kinearbyte@icloud.com">kinearbyte@icloud.com</a>' };
-  var ERR = EN ? { format: "That doesn't look like a key (SG- and 20 characters).", invalid: "This key is not valid (anymore).", net: "No connection. Please try again.", old: "Your browser is too old for this game." }
-    : { format: "Das sieht nicht wie ein Key aus (SG- und 20 Zeichen).", invalid: "Dieser Key ist nicht (mehr) gültig.", net: "Keine Verbindung. Bitte nochmal versuchen.", old: "Dein Browser ist zu alt für dieses Spiel." };
+  var T = { tag: "Closed Beta", lead: "Sign in with your game account. New here? Your account will be created and you need a beta key.", lName: "Username", lPw: "Password (at least 6 characters)",
+    go: "Sign in", link: "Link key and play", back: "Back", pwLead: "Your password was reset. Please choose a new one now.", lNew: "New password (at least 6 characters)", lNew2: "Repeat new password",
+    save: "Save and play", demo: "No account: play the demo", by: "a game by <b>KIneArbyte</b> · play money only, no real money", ask: 'No key yet? Write to us: <a href="mailto:kinearbyte@icloud.com">kinearbyte@icloud.com</a>' };
+  var M = EN ? {
+    name: "Usernames need 3 to 20 characters (letters, numbers, space, - _ .).", mail: "Please don't use an e-mail address or phone number as your username.", pw: "The password needs at least 6 characters.",
+    taken: "This username already exists. Wrong password or a different name?", conn: "Connecting …", net: "No connection to the server. Please try again.",
+    newAcct: "Welcome, <b>%s</b>! New account: please enter your personal beta key. It will be linked to your account for good.", oldAcct: "Hello <b>%s</b>! Your account has no beta key yet. Please enter it once, it will be linked to your account.",
+    format: "That doesn't look like a key (SG- and 20 characters).", invalid: "This key is not valid.", used: "This key already belongs to another account.", blocked: "Your beta key has been blocked. Please contact us.",
+    pwSame: "The passwords do not match.", pw123: "Please choose a password other than 123456.", old: "Your browser is too old for this game.", start: "Starting game …" } : {
+    name: "Der Anmeldename braucht 3 bis 20 Zeichen (Buchstaben, Zahlen, Leerzeichen, - _ .).", mail: "Bitte keine E-Mail-Adresse oder Telefonnummer als Anmeldenamen.", pw: "Das Passwort braucht mindestens 6 Zeichen.",
+    taken: "Diesen Anmeldenamen gibt es schon. Falsches Passwort oder ein anderer Name?", conn: "Verbinde …", net: "Keine Verbindung zum Server. Bitte nochmal versuchen.",
+    newAcct: "Willkommen, <b>%s</b>! Neues Konto: Gib bitte deinen persönlichen Beta-Key ein. Er wird fest mit deinem Konto verknüpft.", oldAcct: "Hallo <b>%s</b>! Mit deinem Konto ist noch kein Beta-Key verknüpft. Gib ihn bitte einmal ein, dann bleibt er hinterlegt.",
+    format: "Das sieht nicht wie ein Key aus (SG- und 20 Zeichen).", invalid: "Dieser Key ist nicht gültig.", used: "Dieser Key gehört schon zu einem anderen Konto.", blocked: "Dein Beta-Key wurde gesperrt. Bitte melde dich bei uns.",
+    pwSame: "Die beiden Passwörter sind nicht gleich.", pw123: "Bitte ein anderes Passwort als 123456 wählen.", old: "Dein Browser ist zu alt für dieses Spiel.", start: "Spiel startet …" };
   if (EN) document.querySelectorAll("[data-t]").forEach(function (el) { el.innerHTML = T[el.dataset.t]; });
   var $ = function (id) { return document.getElementById(id); };
-  var store = { get: function () { try { return localStorage.getItem("sg-key") || ""; } catch (e) { return ""; } },
-    set: function (v) { try { v ? localStorage.setItem("sg-key", v) : localStorage.removeItem("sg-key"); } catch (e) {} } };
+  var LS = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} } };
   var enc = new TextEncoder();
-  function b64(s) { var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
-  function sha(s) { return crypto.subtle.digest("SHA-256", enc.encode(s)).then(function (h) { return new Uint8Array(h); }); }
-  function hex(a) { return Array.prototype.map.call(a, function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }
-  function norm(k) {
-    var n = String(k || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-    if (n.length === 22 && n.slice(0, 2) === "SG") n = n.slice(2);
-    return n.replace(/O/g, "0").replace(/[IL]/g, "1").replace(/U/g, "V");
+  var b64 = function (s) { var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; };
+  var shaB = async function (s) { return new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(s))); };
+  var hex = function (a) { return Array.prototype.map.call(a, function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); };
+  var shaH = async function (s) { return hex(await shaB(s)); };
+  var clean = function (n) { return String(n || "").trim().replace(/\s+/g, " "); };
+  var nameKey = function (n) { return clean(n).toLowerCase().replace(/[.#$\[\]\/]/g, "_"); };   // wie acctKey im Spiel
+  var acctHash = function (n, pw) { return shaH("sg1|" + clean(n).toLowerCase() + "|" + pw); };   // wie acctHash im Spiel
+  var ownOf = function (h) { return shaH("own|" + h); };
+  function norm(k) { var n = String(k || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); if (n.length === 22 && n.slice(0, 2) === "SG") n = n.slice(2); return n.replace(/O/g, "0").replace(/[IL]/g, "1").replace(/U/g, "V"); }
+  var keyId = async function (n) { return (await shaH("sg-id:" + n)).slice(0, 16); };
+  function msg(t, ok) { var e = $("sgErr"); e.innerHTML = t || ""; e.className = "err" + (ok ? " ok" : ""); }
+  function busy(on) { ["bLogin", "bKey", "bPw"].forEach(function (id) { $(id).disabled = on; }); }
+  function show(f) { ["fLogin", "fKey", "fPw"].forEach(function (id) { $(id).hidden = id !== f; }); document.body.classList.remove("wait"); var first = $(f).querySelector("input:not([hidden])"); if (first) setTimeout(function () { first.focus(); }, 30); }
+
+  /* ---------- Firebase (dieselbe Bibliothek und derselbe anonyme Zugang wie im Spiel) ---------- */
+  var db = null;
+  function script(src) { return new Promise(function (ok, no) { var s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+  async function fb() {
+    if (db) return db;
+    var base = ROOT + "vendor/firebase/";
+    if (!window.firebase) { await script(base + "firebase-app-compat.js"); await Promise.all([script(base + "firebase-auth-compat.js"), script(base + "firebase-database-compat.js")]); }
+    if (!firebase.apps.length) firebase.initializeApp(FB);
+    if (!firebase.auth().currentUser) await Promise.race([firebase.auth().signInAnonymously(), new Promise(function (_, no) { setTimeout(function () { no(new Error("net")); }, 9000); })]);
+    db = firebase.database(); return db;
   }
-  function getJSON(url, ms) {
-    var c = window.AbortController ? new AbortController() : null, t = c && setTimeout(function () { c.abort(); }, ms || 8000);
-    return fetch(url, { cache: "no-store", signal: c && c.signal }).then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); }).finally(function () { t && clearTimeout(t); });
+  var get = async function (p) { return (await (await fb()).ref(p).get()).val(); };
+
+  /* ---------- Key: Spielschlüssel auspacken ---------- */
+  var cache = { get: function () { try { return JSON.parse(LS.get("sg-kw") || "null"); } catch (e) { return null; } }, set: function (v) { LS.set("sg-kw", v ? JSON.stringify(v) : null); } };
+  async function entryFor(id, online) {
+    if (online) { var e = await get("betakeys/" + id); if (!e || !e.iv) { cache.set(null); throw new Error("blocked"); } cache.set({ id: id, iv: e.iv, w: e.w }); return e; }
+    var c = cache.get(); if (c && c.id === id) return c; throw new Error("net");
   }
-  // Keys liegen in Firebase (betakeys/<id>, nur einzeln abrufbar; verwaltet im Dashboard admin.html). Der letzte gültige Eintrag
-  // wird gemerkt, damit das Spiel auch offline startet; online wird jedes Mal neu geprüft (gesperrt = sofort aus).
-  var DB = "https://salvage-grind-default-rtdb.europe-west1.firebasedatabase.app";
-  var cache = { get: function () { try { return JSON.parse(localStorage.getItem("sg-kw") || "null"); } catch (e) { return null; } },
-    set: function (v) { try { v ? localStorage.setItem("sg-kw", JSON.stringify(v)) : localStorage.removeItem("sg-kw"); } catch (e) {} } };
-  function entry(id) {
-    return getJSON(DB + "/betakeys/" + id + ".json", 6000).then(function (e) {
-      if (!e || !e.iv) { var c = cache.get(); if (c && c.id === id) cache.set(null); throw new Error("invalid"); }
-      cache.set({ id: id, iv: e.iv, w: e.w }); return e;
-    }, function () { var c = cache.get(); if (c && c.id === id) return c; throw new Error("net"); });
+  async function gameKey(n, online) {
+    var id = await keyId(n), e = await entryFor(id, online);
+    try {
+      var kek = await crypto.subtle.importKey("raw", await shaB("sg-kek:" + n), "AES-GCM", false, ["decrypt"]);
+      var raw = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(e.iv) }, kek, b64(e.w));
+      return { id: id, K: await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]) };
+    } catch (x) { throw new Error("invalid"); }
   }
-  function logUse(id) {
+  function logUse(id, name) {
     try { if (sessionStorage.getItem("sg-kl")) return; sessionStorage.setItem("sg-kl", "1"); } catch (e) {}
     var w = (location.pathname.match(/(treibgut|eisenfront|neustadt|neonkueste)\/?$/) || [, "sternenwrack"])[1] + (/\/beta\//.test(location.pathname) ? " (Beta)" : "");
-    fetch(DB + "/keyuse/" + id + "/log.json", { method: "POST", body: JSON.stringify({ t: { ".sv": "timestamp" }, w: w, p: window.sgDesk ? "App" : (/Mobi|Android|iPhone|iPad/.test(navigator.userAgent) ? "Handy" : "Browser") }) }).catch(function () {});
+    fetch(DB + "/keyuse/" + id + "/log.json", { method: "POST", body: JSON.stringify({ t: { ".sv": "timestamp" }, w: w, n: String(name || "").slice(0, 30), p: window.sgDesk ? "App" : (/Mobi|Android|iPhone|iPad/.test(navigator.userAgent) ? "Handy" : "Browser") }) }).catch(function () {});
   }
-  function unlock(key) {
-    var n = norm(key);
-    if (n.length !== 20) return Promise.reject(new Error("format"));
-    return Promise.all([sha("sg-id:" + n), sha("sg-kek:" + n)]).then(function (h) {
-      var id = hex(h[0]).slice(0, 16);
-      return entry(id).then(function (e) {
-        return crypto.subtle.importKey("raw", h[1], "AES-GCM", false, ["decrypt"])
-          .then(function (kek) { return crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(e.iv) }, kek, b64(e.w)); })
-          .then(function (raw) { logUse(id); return crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]); })
-          .catch(function () { throw new Error("invalid"); });
-      });
-    });
+  async function play(K) {
+    var r = await fetch("spiel.bin?v=20261102143137", { cache: "no-cache" }); if (!r.ok) throw new Error("net");
+    var b = new Uint8Array(await r.arrayBuffer());
+    var pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b.slice(0, 12) }, K, b.slice(12));
+    var html = await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+    if (!/github\.io$/.test(location.hostname)) {
+      // In der App: Links zwischen den Welten auf die lokalen Dateien umstellen
+      html = html.replace(/https:\/\/heinr2ch\.github\.io\/(?:SALVAGE-GRIND|salvage-grind|STERNENWRACK|salvage-and-grind)\/((?:treibgut|eisenfront|neustadt|neonkueste)\/)?/g, function (m, sub) { return UP + (sub || "") + "index.html"; })
+        .replace('/github\\.io$/.test(location.hostname) ? "_self" : "_blank"', '"_self"');
+    }
+    document.open(); document.write(html); document.close();
   }
-  function play(K) {
-    return fetch("spiel.bin?v=20261102140117", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error("net"); return r.arrayBuffer(); }).then(function (buf) {
-      var b = new Uint8Array(buf);
-      return crypto.subtle.decrypt({ name: "AES-GCM", iv: b.slice(0, 12) }, K, b.slice(12));
-    }).then(function (pt) {
-      return new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
-    }).then(function (html) {
-      if (!/github\.io$/.test(location.hostname)) {
-        // In der App: Links zwischen den Welten auf die lokalen Dateien umstellen (früher in desktop/prepare.js)
-        html = html.replace(/https:\/\/heinr2ch\.github\.io\/(?:SALVAGE-GRIND|salvage-grind|STERNENWRACK|salvage-and-grind)\/((?:treibgut|eisenfront|neustadt|neonkueste)\/)?/g, function (m, sub) { return UP + (sub || "") + "index.html"; })
-          .replace('/github\\.io$/.test(location.hostname) ? "_self" : "_blank"', '"_self"');
-      }
-      document.open(); document.write(html); document.close();
-    });
+  async function launch(name, h, n, online) {
+    var g = await gameKey(n, online);
+    LS.set("welten-acct", name); LS.set("welten-vault", h); LS.set("sg-key", n);
+    if (online) { logUse(g.id, name); try { (await fb()).ref("accounts/" + nameKey(name)).update({ last: firebase.database.ServerValue.TIMESTAMP, prev: h }).catch(function () {}); } catch (e) {} }
+    msg(M.start, true); await play(g.K);
+  }
+
+  /* ---------- Ablauf ---------- */
+  var cur = null;   // { name, h, own, nk, isNew }
+  async function login(name, pw) {
+    var h = await acctHash(name, pw), own = await ownOf(h), nk = nameKey(name);
+    await fb();
+    var owner = await get("names/" + nk);
+    if (owner && owner !== own) throw new Error("taken");
+    cur = { name: name, h: h, own: own, nk: nk, isNew: !owner };
+    var ak = owner ? await get("acctkey/" + h) : null;
+    if (ak && ak.mc) { $("pwUser").value = name; msg(""); show("fPw"); return; }
+    if (ak && ak.key) { await restore(h); return launch(name, h, ak.key, true); }
+    $("keyLead").innerHTML = (cur.isNew ? M.newAcct : M.oldAcct).replace("%s", name.replace(/[<>&]/g, "")); msg(""); show("fKey");
+  }
+  // Spielstand des Kontos auf dieses Gerät holen (wie die Anmeldung im Spiel)
+  async function restore(h) {
+    if (LS.get("welten-vault") === h) return;
+    try { var v = await get("vault/" + h); if (v && v.s) Object.keys(v.s).forEach(function (k) { LS.set(k, v.s[k]); }); } catch (e) {}
+  }
+  async function linkKey(raw) {
+    var n = norm(raw); if (n.length !== 20) throw new Error("format");
+    var id = await keyId(n);
+    if (!(await get("betakeys/" + id))) throw new Error("invalid");
+    var owner = await get("keyowner/" + id);
+    if (owner && owner !== cur.nk) throw new Error("used");
+    var up = {}, T = firebase.database.ServerValue.TIMESTAMP;
+    up["acctkey/" + cur.h] = { key: n, k: id };
+    if (!owner) up["keyowner/" + id] = cur.nk;
+    if (cur.isNew) { up["names/" + cur.nk] = cur.own; up["accounts/" + cur.nk] = { n: cur.name, h: cur.h, own: cur.own, k: id, t: T, last: T }; }
+    else if (!(await get("accounts/" + cur.nk).catch(function () { return null; }))) up["accounts/" + cur.nk] = { n: cur.name, h: cur.h, own: cur.own, k: id, t: T, last: T };
+    try { await (await fb()).ref().update(up); }
+    catch (e) {   // Konto gab es schon im Dashboard-Verzeichnis: nur Key verknüpfen, Verzeichnis per prev-Nachweis aktualisieren
+      delete up["accounts/" + cur.nk]; up["accounts/" + cur.nk + "/k"] = id; up["accounts/" + cur.nk + "/prev"] = cur.h;
+      await (await fb()).ref().update(up);
+    }
+    if (cur.isNew) { LS.set("welten-vault", null); }
+    await restore(cur.h);
+    return launch(cur.name, cur.h, n, true);
+  }
+  // Pflicht-Passwortwechsel nach Zurücksetzen: Spielstand, Key und Namen auf den neuen Speicherschlüssel umziehen
+  async function changePw(pw) {
+    var h2 = await acctHash(cur.name, pw), own2 = await ownOf(h2), d = await fb();
+    var ak = await get("acctkey/" + cur.h), v = await get("vault/" + cur.h), up = {};
+    up["accounts/" + cur.nk + "/h"] = h2; up["accounts/" + cur.nk + "/own"] = own2; up["accounts/" + cur.nk + "/prev"] = cur.h; up["accounts/" + cur.nk + "/mc"] = null;
+    up["names/" + cur.nk] = own2;
+    up["acctkey/" + h2] = ak && ak.key ? { key: ak.key, k: ak.k } : null; up["acctkey/" + cur.h] = null;
+    if (v) { up["vault/" + h2] = v; up["vault/" + cur.h] = null; }
+    await d.ref().update(up);
+    var old = cur.h; cur.h = h2; cur.own = own2;
+    if (LS.get("welten-vault") === old) LS.set("welten-vault", h2);
+    await restore(h2);
+    if (!ak || !ak.key) { cur.isNew = false; $("keyLead").innerHTML = M.oldAcct.replace("%s", cur.name.replace(/[<>&]/g, "")); msg(""); return show("fKey"); }
+    return launch(cur.name, h2, ak.key, true);
   }
   function fail(e) {
-    document.body.classList.remove("wait");
-    var c = (e && e.message) || "net"; $("sgErr").textContent = ERR[c] || ERR.net; $("sgGo").disabled = false;
-    if (c === "invalid") store.set("");
+    busy(false); document.body.classList.remove("wait");
+    var c = (e && e.message) || "net"; msg(M[c] || M.net);
   }
-  function start(key, quiet) {
-    $("sgGo").disabled = true; $("sgErr").textContent = "";
-    return unlock(key).then(function (K) { store.set(norm(key)); return play(K); }).catch(function (e) { if (quiet && e && e.message !== "invalid") { document.body.classList.remove("wait"); $("sgGo").disabled = false; return; } fail(e); });
-  }
-  if (window.SG_DEMO || (window.sgDesk && !/github\.io$/.test(location.hostname))) { $("sgDemo").hidden = true; }
-  if (!(window.crypto && crypto.subtle && window.DecompressionStream && window.fetch)) { document.body.classList.remove("wait"); $("sgErr").textContent = ERR.old; $("sgGo").disabled = true; return; }
-  $("sgForm").addEventListener("submit", function (ev) { ev.preventDefault(); start($("sgKey").value, false); });
-  var saved = store.get();
-  if (saved) { $("sgKey").value = saved; start(saved, true); } else document.body.classList.remove("wait");
+
+  $("fLogin").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var name = clean($("sgName").value), pw = $("sgPw").value;
+    if (name.length < 3 || name.length > 20 || !/^[\p{L}\p{N} _.\-]+$/u.test(name)) return msg(M.name);
+    if (/@/.test(name) || /\d{6,}/.test(name)) return msg(M.mail);
+    if (pw.length < 6) return msg(M.pw);
+    busy(true); msg(M.conn, true);
+    login(name, pw).catch(fail).finally(function () { busy(false); });
+  });
+  $("fKey").addEventListener("submit", function (ev) { ev.preventDefault(); busy(true); msg(M.conn, true); linkKey($("sgKey").value).catch(fail).finally(function () { busy(false); }); });
+  $("kBack").addEventListener("click", function (ev) { ev.preventDefault(); msg(""); show("fLogin"); });
+  $("fPw").addEventListener("submit", function (ev) {
+    ev.preventDefault(); var a = $("sgPw1").value, b = $("sgPw2").value;
+    if (a.length < 6) return msg(M.pw); if (a !== b) return msg(M.pwSame); if (a === "123456") return msg(M.pw123);
+    busy(true); msg(M.conn, true); changePw(a).catch(fail).finally(function () { busy(false); });
+  });
+
+  if (window.SG_DEMO || (window.sgDesk && !/github\.io$/.test(location.hostname))) $("sgDemo").hidden = true;
+  if (!(window.crypto && crypto.subtle && window.DecompressionStream && window.fetch && window.Promise)) { show("fLogin"); msg(M.old); busy(true); return; }
+
+  // Schon angemeldet (auf diesem Gerät gemerkt): Key aus dem Konto holen und direkt starten, offline mit gemerktem Key
+  (async function auto() {
+    var name = LS.get("welten-acct"), h = LS.get("welten-vault");
+    if (name) $("sgName").value = name;
+    if (!name || !h || h.length !== 64) return show("fLogin");
+    var n = LS.get("sg-key"), ak = null, online = true;
+    try { await fb(); ak = await get("acctkey/" + h); } catch (e) { online = false; }
+    if (online) {
+      if (!ak || !ak.key) return show("fLogin");            // Passwort geändert, zurückgesetzt oder noch kein Key: neu anmelden
+      if (ak.mc) { cur = { name: name, h: h, nk: nameKey(name) }; $("pwUser").value = name; return show("fPw"); }
+      n = ak.key;
+    }
+    if (!n) return show("fLogin");
+    try { await launch(name, h, n, online); } catch (e) { show("fLogin"); if (e && e.message === "blocked") msg(M.blocked); }
+  })();
 })();
 </script>
 </body>
