@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.4 · Weltwechsel mit Übergang · 02.11.2026
+- Beim Wechsel der Welt: schnelle Wischblende in der Farbe der Zielwelt mit Namen und Whoosh-Sound, in der neuen Welt öffnet sie sich wieder
+
 ## Beta 1.12.3 · Musik zur Vorschau · 02.11.2026
 - Die Vorschau der kommenden Welten spielt einen eigenen Track: Swing-Jazz in der Brutzelküche, Hip-Hop/Funk in der Chromgarage
 

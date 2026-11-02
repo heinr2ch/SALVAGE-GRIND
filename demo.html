@@ -2127,6 +2127,34 @@ html.sg-eco *, html.sg-eco *::before, html.sg-eco *::after { -webkit-backdrop-fi
 .fr-empty { padding: 14px; border-radius: 14px; text-align: center; color: var(--ink-soft, #9aa5c8); background: rgba(255,255,255,.03); border: 1px dashed var(--line, rgba(255,255,255,.15)); font-size: 13px; }
 @media (max-width: 520px) { .fr-acts button span { display: none; } }
 
+/* ---------- Weltwechsel: Stinger-Übergang ---------- */
+#wswipe { position: fixed; inset: 0; z-index: 2147483600; pointer-events: none; overflow: hidden; display: grid; place-items: center; }
+#wswipe[hidden] { display: none; }
+#wswipe i { position: absolute; top: -20%; bottom: -20%; width: 75%; transform: skewX(-14deg) translateX(-160%); background: var(--wc, #ffc94a); }
+#wswipe i.p2 { width: 140%; left: -20%; background: #070a18; transform: skewX(-14deg) translateX(-180%); }
+#wswipe i.p3 { width: 20%; background: #ffffff; opacity: .9; transform: skewX(-14deg) translateX(-400%); }
+#wswipe .ws-t { position: relative; z-index: 2; display: grid; justify-items: center; gap: 4px; opacity: 0; color: #fff; text-align: center; }
+#wswipe .ws-t small { font: 800 12px var(--f-mono, monospace); letter-spacing: .3em; color: var(--wc); text-transform: uppercase; }
+#wswipe .ws-t b { font: 900 clamp(34px, 8vw, 78px)/1 var(--f-display, system-ui); letter-spacing: .04em; text-shadow: 0 0 30px var(--wc), 0 4px 0 rgba(0,0,0,.4); }
+#wswipe .ws-t em { width: 0; height: 4px; border-radius: 4px; background: var(--wc); box-shadow: 0 0 14px var(--wc); }
+#wswipe.in i.p3 { animation: wsP3 .42s cubic-bezier(.7,0,.3,1) forwards; }
+#wswipe.in i.p1 { animation: wsIn .42s cubic-bezier(.7,0,.3,1) .04s forwards; }
+#wswipe.in i.p2 { animation: wsIn2 .46s cubic-bezier(.7,0,.3,1) .12s forwards; }
+#wswipe.in .ws-t { animation: wsT .35s ease .32s forwards; }
+#wswipe.in .ws-t em { animation: wsBar 1.4s ease .45s forwards; }
+#wswipe.out i.p2 { transform: skewX(-14deg) translateX(0); animation: wsOut .55s cubic-bezier(.7,0,.3,1) .15s forwards; }
+#wswipe.out i.p1 { transform: skewX(-14deg) translateX(40%); animation: wsOut1 .5s cubic-bezier(.7,0,.3,1) .05s forwards; }
+#wswipe.out .ws-t { opacity: 1; animation: wsTo .25s ease forwards; }
+#wswipe.out .ws-t em { width: 160px; }
+@keyframes wsIn { to { transform: skewX(-14deg) translateX(40%); } }
+@keyframes wsIn2 { to { transform: skewX(-14deg) translateX(0); } }
+@keyframes wsP3 { to { transform: skewX(-14deg) translateX(600%); } }
+@keyframes wsT { from { opacity: 0; transform: scale(1.3); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes wsBar { to { width: 160px; } }
+@keyframes wsOut { to { transform: skewX(-14deg) translateX(130%); } }
+@keyframes wsOut1 { to { transform: skewX(-14deg) translateX(260%); } }
+@keyframes wsTo { to { opacity: 0; transform: scale(.9); } }
+
 button.soon-c { appearance: none; text-align: left; color: #fff; cursor: pointer; font: inherit; transition: transform .2s, box-shadow .2s; }
 button.soon-c:hover, button.soon-c:focus-visible { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,0,0,.45), 0 0 0 2px #ffd34a; outline: none; }
 /* Vorschau-Fenster */
@@ -5667,9 +5695,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.12.3";
+const GAME_VERSION = "1.12.4";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.12.4", date: "02.11.2026", title: "Weltwechsel mit Übergang", items: ["Beim Wechsel der Welt: schnelle Wischblende in der Farbe der Zielwelt mit Namen und Whoosh-Sound, in der neuen Welt öffnet sie sich wieder"] },
   { v: "1.12.3", date: "02.11.2026", title: "Musik zur Vorschau", items: ["Die Vorschau der kommenden Welten spielt einen eigenen Track: Swing-Jazz in der Brutzelküche, Hip-Hop/Funk in der Chromgarage"] },
   { v: "1.12.2", date: "02.11.2026", title: "Vorschau zum Anklicken, Welten animiert", items: ["Die Karten der kommenden Welten öffnen per Klick eine Vorschau mit Bild, Symbolen und Spielideen", "Welt-Karten im Menü und bei Welt wählen schweben dezent, mit Glanz"] },
   { v: "1.12.1", date: "02.11.2026", title: "Mehr Bewegung im Hauptmenü", items: ["Chromgarage-Vorschau animiert: Räder drehen, Auto wippt, Funken, Lichtband; Brutzelküche mit flackernder Flamme", "Symbole der Hauptmenü-Kacheln bewegen sich dezent (auf dem Handy und bei weniger Effekten aus)"] },
@@ -10132,6 +10161,44 @@ function soonAdd() {
     <button type="button" class="soon-c g" data-soon="g" aria-label="Vorschau Chromgarage öffnen">${SOON_ART.g}<i>BALD</i><b>Chromgarage</b><small>Rostlaube rein, Showcar raus: Felgen, Lack, Neon.</small></button></div></div>`);
 }
 setInterval(soonAdd, 1000); soonAdd();
+
+/* ---------- Weltwechsel mit Stinger: Wischblende in der Farbe der Zielwelt, Whoosh + Schlag, auf der neuen Seite wieder auf ---------- */
+document.body.insertAdjacentHTML("beforeend", `<div id="wswipe" hidden aria-hidden="true"><i class="p1"></i><i class="p2"></i><i class="p3"></i><div class="ws-t"><small></small><b></b><em></em></div></div>`);
+function wsStinger() {
+  try {
+    const c = getCtx(); if (!c || state.sound === false) return; c.resume && c.resume();
+    const t = c.currentTime, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    s.buffer = noiseBuf; f.type = "bandpass"; f.Q.value = 2; f.frequency.setValueAtTime(300, t); f.frequency.exponentialRampToValueAtTime(5200, t + .4);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.45, t + .3); g.gain.exponentialRampToValueAtTime(.001, t + .5);
+    s.connect(f).connect(g).connect(master); s.start(t); s.stop(t + .55);
+    tone(70, .45, { type: "sine", vol: .5, at: .38, slide: -30 }); noise(.12, .18, .38, 1200);
+    [523, 659, 784, 1047].forEach((fq, i) => tone(fq, .5, { type: "triangle", vol: .07, at: .42 + i * .025 }));
+  } catch (e) {}
+}
+function wsGo(href, w) {
+  const el = $("wswipe"); if (!el || reduced) { location.href = href; return; }
+  el.style.setProperty("--wc", w.color || "#ffc94a"); el.querySelector("small").textContent = "Welt wechseln"; el.querySelector("b").textContent = w.name;
+  el.className = ""; el.hidden = false; void el.offsetWidth; el.className = "in";
+  try { sessionStorage.setItem("sg-wipe", JSON.stringify({ n: w.name, c: w.color, t: Date.now() })); } catch (e) {}
+  try { stopMusic(); } catch (e) {}
+  wsStinger();
+  setTimeout(() => { location.href = href; }, 640);
+}
+document.addEventListener("click", e => {
+  const a = e.target.closest && e.target.closest("a[href]"); if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+  if (a.target && a.target !== "_self") return;
+  let w = null; try { const h = new URL(a.href, location.href).href; w = WORLDS.find(x => x.id !== WORLD_ID && new URL(worldUrl(x), location.href).href === h); } catch (er) {}
+  if (!w) return;
+  e.preventDefault(); wsGo(a.href, w);
+}, true);
+// Ankunft: Blende über der neuen Welt wieder öffnen
+(function wsArrive() {
+  let d = null; try { d = JSON.parse(sessionStorage.getItem("sg-wipe") || "null"); sessionStorage.removeItem("sg-wipe"); } catch (e) {}
+  if (!d || Date.now() - d.t > 15000) return;
+  const el = $("wswipe"); el.style.setProperty("--wc", d.c || "#ffc94a"); el.querySelector("small").textContent = "Willkommen in"; el.querySelector("b").textContent = d.n || "";
+  el.hidden = false; el.className = "out"; setTimeout(() => { el.hidden = true; el.className = ""; }, 900);
+})();
+
 
 const SOON_INFO = {
   k: { name: "Brutzelküche", tag: "NEUE WELT · DEMNÄCHST", lead: "Vom rostigen Imbisswagen zum Sternerestaurant: Jeder Gewinn bringt neue Zutaten, Geräte und Gäste in deine Küche.",

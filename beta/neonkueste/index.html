@@ -126,7 +126,7 @@ button[disabled] { opacity: .6; cursor: wait; }
   var keyId = async function (n) { return (await shaH("sg-id:" + n)).slice(0, 16); };
   function msg(t, ok) { var e = $("sgErr"); e.innerHTML = t || ""; e.className = "err" + (ok ? " ok" : ""); }
   function busy(on) { ["bLogin", "bKey", "bPw"].forEach(function (id) { $(id).disabled = on; }); }
-  function show(f) { ["fLogin", "fKey", "fPw"].forEach(function (id) { $(id).hidden = id !== f; }); document.body.classList.remove("wait"); var first = $(f).querySelector("input:not([hidden])"); if (first) setTimeout(function () { first.focus(); }, 30); }
+  function show(f) { var wpe = document.getElementById("sgWipe"); if (wpe) wpe.remove();  ["fLogin", "fKey", "fPw"].forEach(function (id) { $(id).hidden = id !== f; }); document.body.classList.remove("wait"); var first = $(f).querySelector("input:not([hidden])"); if (first) setTimeout(function () { first.focus(); }, 30); }
 
   /* ---------- Firebase (dieselbe Bibliothek und derselbe anonyme Zugang wie im Spiel) ---------- */
   var db = null;
@@ -161,7 +161,7 @@ button[disabled] { opacity: .6; cursor: wait; }
     fetch(DB + "/keyuse/" + id + "/log.json", { method: "POST", body: JSON.stringify({ t: { ".sv": "timestamp" }, w: w, n: String(name || "").slice(0, 30), p: window.sgDesk ? "App" : (/Mobi|Android|iPhone|iPad/.test(navigator.userAgent) ? "Handy" : "Browser") }) }).catch(function () {});
   }
   async function play(K) {
-    var r = await fetch("spiel.bin?v=20261102192944", { cache: "no-cache" }); if (!r.ok) throw new Error("net");
+    var r = await fetch("spiel.bin?v=20261102193300", { cache: "no-cache" }); if (!r.ok) throw new Error("net");
     var b = new Uint8Array(await r.arrayBuffer());
     var pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b.slice(0, 12) }, K, b.slice(12));
     var html = await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
@@ -258,6 +258,8 @@ button[disabled] { opacity: .6; cursor: wait; }
   if (!(window.crypto && crypto.subtle && window.DecompressionStream && window.fetch && window.Promise)) { show("fLogin"); msg(M.old); busy(true); return; }
 
   // Schon angemeldet (auf diesem Gerät gemerkt): Key aus dem Konto holen und direkt starten, offline mit gemerktem Key
+  // Weltwechsel-Blende: während die neue Welt lädt, Name in Weltfarbe zeigen
+  try { var wp = JSON.parse(sessionStorage.getItem("sg-wipe") || "null"); if (wp && Date.now() - wp.t < 15000 && LS.get("welten-vault")) { document.body.insertAdjacentHTML("beforeend", '<div id="sgWipe" style="position:fixed;inset:0;display:grid;place-items:center;background:#070a18;z-index:5"><div style="display:grid;justify-items:center;gap:6px;color:#fff;text-align:center"><small style="font:800 12px ui-monospace,monospace;letter-spacing:.3em;color:' + (wp.c || "#ffc94a") + '">WELT WECHSELN</small><b style="font:900 clamp(34px,8vw,78px)/1 Unbounded,system-ui;letter-spacing:.04em;text-shadow:0 0 30px ' + (wp.c || "#ffc94a") + '">' + String(wp.n || "").replace(/[<>&]/g, "") + '</b><span style="width:160px;height:4px;border-radius:4px;background:' + (wp.c || "#ffc94a") + '"></span></div></div>'); } } catch (e) {}
   (async function auto() {
     var name = LS.get("welten-acct"), h = LS.get("welten-vault");
     if (name) $("sgName").value = name;
