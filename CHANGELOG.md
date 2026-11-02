@@ -2,6 +2,10 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.5 · Übergang mit Weltbild, schnelleres Menü · 02.11.2026
+- Weltwechsel zeigt das Bild der Zielwelt, eigener Klang je Welt, keine springenden Schriften mehr
+- Hauptmenü: Welten erscheinen sofort und ploppen kurz nacheinander auf
+
 ## Beta 1.12.4 · Weltwechsel mit Übergang · 02.11.2026
 - Beim Wechsel der Welt: schnelle Wischblende in der Farbe der Zielwelt mit Namen und Whoosh-Sound, in der neuen Welt öffnet sie sich wieder
 
