@@ -109,7 +109,9 @@ button[disabled] { opacity: .6; cursor: wait; }
     pwSame: "Die beiden Passwörter sind nicht gleich.", pw123: "Bitte ein anderes Passwort als 123456 wählen.", old: "Dein Browser ist zu alt für dieses Spiel.", start: "Spiel startet …" };
   if (EN) document.querySelectorAll("[data-t]").forEach(function (el) { el.innerHTML = T[el.dataset.t]; });
   var $ = function (id) { return document.getElementById(id); };
-  var LS = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} } };
+  // Die Beta hat eigene Spielstände (Präfix "beta:", siehe tools/beta.py) – hier vor dem Spiel von Hand, danach übernimmt das Spiel
+  var PFX = /\/beta\//.test(location.pathname) ? "beta:" : "";
+  var LS = { get: function (k) { try { return localStorage.getItem(PFX + k); } catch (e) { return null; } }, set: function (k, v) { try { v == null ? localStorage.removeItem(PFX + k) : localStorage.setItem(PFX + k, v); } catch (e) {} } };
   var enc = new TextEncoder();
   var b64 = function (s) { var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; };
   var shaB = async function (s) { return new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(s))); };
@@ -158,7 +160,7 @@ button[disabled] { opacity: .6; cursor: wait; }
     fetch(DB + "/keyuse/" + id + "/log.json", { method: "POST", body: JSON.stringify({ t: { ".sv": "timestamp" }, w: w, n: String(name || "").slice(0, 30), p: window.sgDesk ? "App" : (/Mobi|Android|iPhone|iPad/.test(navigator.userAgent) ? "Handy" : "Browser") }) }).catch(function () {});
   }
   async function play(K) {
-    var r = await fetch("spiel.bin?v=20261102143137", { cache: "no-cache" }); if (!r.ok) throw new Error("net");
+    var r = await fetch("spiel.bin?v=20261102143309", { cache: "no-cache" }); if (!r.ok) throw new Error("net");
     var b = new Uint8Array(await r.arrayBuffer());
     var pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b.slice(0, 12) }, K, b.slice(12));
     var html = await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
