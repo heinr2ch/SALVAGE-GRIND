@@ -2,6 +2,10 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.10 · Neonküste: Polizeisirene und coolere Auto-Fahrt · 02.11.2026
+- Freispiel-Symbole (Sirene) lösen jetzt ein Martinshorn mit rot-blauem Blaulicht aus statt eines dumpfen Schlags.
+- Die Auto-Durchfahrt ist actionreicher: Neon-Leuchtspur, Scheinwerfer, Fahrtwind-Streifen und eine sanftere Vorbeifahrt mit Motor von links nach rechts – ohne Wackeln und ohne Kratzgeräusch.
+
 ## Beta 1.12.9 · Neonküste: Auto-Burnout bei Wild und Respin · 02.11.2026
 - Wenn ein Wild aufgeht oder ein Respin kommt, brettert ein Neon-Sportwagen mit glühenden Reifen, Rauch und Bremsspuren über die Walzen – mit Motorsound, Reifenquietschen und Auspuffknall.
 - Bonus-Symbole (Sirene, Kapsel, Warp) schlagen jetzt sichtbar ein: Druckwelle, Lichtblitz, Beben und dumpfer Schlag.
