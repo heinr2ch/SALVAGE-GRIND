@@ -2,6 +2,10 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.9 · Neonküste: Auto-Burnout bei Wild und Respin · 02.11.2026
+- Wenn ein Wild aufgeht oder ein Respin kommt, brettert ein Neon-Sportwagen mit glühenden Reifen, Rauch und Bremsspuren über die Walzen – mit Motorsound, Reifenquietschen und Auspuffknall.
+- Bonus-Symbole (Sirene, Kapsel, Warp) schlagen jetzt sichtbar ein: Druckwelle, Lichtblitz, Beben und dumpfer Schlag.
+
 ## Beta 1.12.8 · Aussehen im Team synchron · 02.11.2026
 - Team-Spielstand: Lack, Aufkleber, Name sowie Flagge und Sticker des Fahrzeugs sind für alle gleich – die zuletzt gemachte Änderung gilt
 
