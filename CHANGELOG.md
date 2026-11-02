@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.0 · Freispiele fortsetzen, Vorschau neue Welten · 02.11.2026
+- Unterbrochene Freispiele (Neuladen, Tab zu) gehen beim nächsten Start weiter
+- Demnächst: zwei neue Welten – Brutzelküche und Chromgarage
+- Hintergrund: anonyme Klick-Heatmap für bessere Bedienung
+
 ## Beta 1.11.0 · Ausbau-Effekt, Freundschaftsanfragen, neue Rangliste · 02.11.2026
 - Ausbauen mit Animation und Baugeräusch: Bauteil springt auf, Lichtwelle, Hammer
 - Freunde: Anfrage per Anmeldename oder Code, annehmen oder ablehnen, übersichtliche Liste mit Online-Status
