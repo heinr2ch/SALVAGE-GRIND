@@ -172,7 +172,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
         <div class="card"><h2>Plattform <small>Spieler</small></h2><div class="bars" id="pfBars"></div></div>
         <div class="card"><h2>Version <small>Spieler</small></h2><div class="bars" id="verBars"></div></div>
       </div>
-      <div class="card"><h2>Bestenliste <small>höchstes Level über alle Welten</small></h2><div class="tbl"><table id="topT"></table></div></div>
+      <div class="card"><h2>Bestenliste <small>höchstes Level über alle Welten</small><button class="btn ghost sm" id="boardReset" style="margin-left:auto">Weltrangliste im Spiel zurücksetzen</button></h2><div class="tbl"><table id="topT"></table></div></div>
     </section>
 
     <section data-pane="pl" hidden>
@@ -397,6 +397,10 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
     $("acT").querySelectorAll("[data-ac]").forEach(b => b.onclick = () => { b.disabled = true; (b.dataset.ac === "pw" ? resetPw(b.dataset.nk) : unlinkKey(b.dataset.nk)).catch(er => { alert(er.message); b.disabled = false; }); });
   }
   $("acQ").oninput = renderAccounts;
+  $("boardReset").onclick = async () => {
+    if (!confirm("Weltrangliste im Spiel zurücksetzen? Es startet eine neue Saison: gezählt wird nur noch, was ab jetzt erspielt wird.")) return;
+    try { await db.ref("config/boardEp").set(TS); toast("Neue Saison gestartet"); } catch (e) { alert(e.message); }
+  };
   async function resetPw(nk) {
     const a = D.accounts[nk]; if (!a || !confirm(`Passwort von „${a.n}“ auf 123456 zurücksetzen? Beim nächsten Anmelden muss ein neues Passwort gewählt werden.`)) return;
     const h = a.h, h2 = await acctHash(a.n, "123456"), own2 = await ownOf(h2);

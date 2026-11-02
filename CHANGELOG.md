@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.11.0 · Ausbau-Effekt, Freundschaftsanfragen, neue Rangliste · 02.11.2026
+- Ausbauen mit Animation und Baugeräusch: Bauteil springt auf, Lichtwelle, Hammer
+- Freunde: Anfrage per Anmeldename oder Code, annehmen oder ablehnen, übersichtliche Liste mit Online-Status
+- Weltrangliste neu gestartet: es zählt der Höchststand seit Saisonbeginn
+
 ## Beta 1.10.0 · Crew-Raid (Online-Koop) · 02.11.2026
 - Neu: Crew-Raid – mit deiner Crew gleichzeitig gegen einen Boss (Knopf ⚔ RAID im Crew-Feed)
 - Jeder dreht in seiner Welt, jeder Gewinn macht Schaden; 3 Minuten Zeit, Lebensbalken und Schadensliste live für alle

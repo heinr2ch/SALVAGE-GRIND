@@ -2082,6 +2082,50 @@ html.sg-eco *, html.sg-eco *::before, html.sg-eco *::after { -webkit-backdrop-fi
 @keyframes raidBob { 50% { transform: translateY(-3px) rotate(-4deg); } }
 @keyframes raidHit { 30% { transform: translateX(-50%) translateX(-4px); } 60% { transform: translateX(-50%) translateX(4px); } }
 @media (prefers-reduced-motion: reduce) { #raidHud, #raidHud .rh-ic { animation: none; } }
+
+/* ---------- Ausbau-Effekt ---------- */
+.bfx { position: absolute; z-index: 6; left: 50%; top: 46%; transform: translate(-50%, -50%); pointer-events: none; display: grid; justify-items: center; gap: 4px; }
+.bfx .bfx-ic { width: 64px; height: 64px; filter: drop-shadow(0 0 16px var(--bc)); animation: bfxPop .9s cubic-bezier(.2,1.6,.4,1) both; }
+.bfx .bfx-ic svg { width: 100%; height: 100%; }
+.bfx b { padding: 4px 12px; border-radius: 99px; background: rgba(0,0,0,.72); color: #fff; font: 800 13px var(--f-display, system-ui); letter-spacing: .04em; white-space: nowrap; box-shadow: 0 0 0 2px var(--bc), 0 6px 18px rgba(0,0,0,.5); animation: bfxTag 1.6s ease both; }
+.bfx .bfx-ring { position: absolute; left: 50%; top: 32px; width: 40px; height: 40px; margin: -20px; border-radius: 50%; border: 3px solid var(--bc); animation: bfxRing .9s ease-out both; }
+.bfx .bfx-ring.r2 { animation-delay: .18s; }
+.bfx-sweep { position: absolute; inset: 0; z-index: 5; pointer-events: none; background: linear-gradient(105deg, transparent 35%, color-mix(in srgb, var(--bc) 45%, transparent) 50%, transparent 65%); background-size: 260% 100%; animation: bfxSweep .9s ease-out both; mix-blend-mode: screen; }
+.bfx-hammer { position: absolute; z-index: 6; font-size: 26px; pointer-events: none; animation: bfxHammer .55s ease-in-out 3; transform-origin: 80% 80%; }
+.shipview.bfx-shake { animation: bfxShake .45s ease; }
+@keyframes bfxPop { 0% { transform: scale(.2) rotate(-25deg); opacity: 0; } 55% { transform: scale(1.25) rotate(6deg); opacity: 1; } 100% { transform: scale(1) rotate(0); } }
+@keyframes bfxTag { 0% { opacity: 0; transform: translateY(8px); } 15%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-10px); } }
+@keyframes bfxRing { from { transform: scale(.4); opacity: 1; } to { transform: scale(3.6); opacity: 0; } }
+@keyframes bfxSweep { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+@keyframes bfxHammer { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-40deg); } }
+@keyframes bfxShake { 20% { transform: translate(-3px, 1px); } 40% { transform: translate(3px, -1px); } 60% { transform: translate(-2px, 0); } 80% { transform: translate(2px, 1px); } }
+@media (prefers-reduced-motion: reduce) { .bfx *, .bfx-sweep, .bfx-hammer, .shipview.bfx-shake { animation: none !important; } }
+
+/* ---------- Freunde (neu) ---------- */
+.fr-sec { margin: 0 0 14px; }
+.fr-sec h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 800 12px var(--f-mono, monospace); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft, #9aa5c8); }
+.fr-sec h3 .fr-n { min-width: 20px; padding: 1px 7px; border-radius: 99px; background: var(--gold, #ffc94a); color: #1a1200; font-size: 11px; letter-spacing: 0; text-align: center; }
+.fr-add { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.fr-add input { min-width: 0; padding: 11px 12px; border-radius: 12px; border: 1px solid var(--line, rgba(255,255,255,.15)); background: rgba(0,0,0,.3); color: inherit; font: 600 14px var(--f-body, system-ui); }
+.fr-hint { margin: 6px 2px 0; font-size: 12px; color: var(--ink-soft, #9aa5c8); }
+.fr-hint b { color: var(--ink, #fff); font-family: var(--f-mono, monospace); letter-spacing: .08em; }
+.fr-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid var(--line, rgba(255,255,255,.1)); }
+.fr-card + .fr-card { margin-top: 6px; }
+.fr-card.req { background: linear-gradient(90deg, rgba(255,201,74,.14), rgba(255,201,74,.03)); border-color: rgba(255,201,74,.4); }
+.fr-av { position: relative; flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font: 800 15px var(--f-display, system-ui); color: #fff; background: var(--fc, #4a5a8a); }
+.fr-av i { position: absolute; right: -1px; bottom: -1px; width: 11px; height: 11px; border-radius: 50%; border: 2px solid #12182c; background: #5a627a; }
+.fr-av i.on { background: #4fe39a; box-shadow: 0 0 8px #4fe39a; }
+.fr-who { min-width: 0; flex: 1; display: grid; line-height: 1.25; }
+.fr-who b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fr-who small { color: var(--ink-soft, #9aa5c8); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fr-acts { display: flex; gap: 6px; flex: none; }
+.fr-acts button { min-width: 36px; height: 34px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line, rgba(255,255,255,.15)); background: rgba(255,255,255,.06); color: inherit; cursor: pointer; font: 700 12.5px var(--f-body, system-ui); }
+.fr-acts button.ok { background: #4fe39a; border-color: #4fe39a; color: #062a17; }
+.fr-acts button.no { color: #ff8aa0; }
+.fr-acts button:disabled { opacity: .45; cursor: default; }
+.fr-acts button.hot { border-color: var(--gold, #ffc94a); color: var(--gold, #ffc94a); }
+.fr-empty { padding: 14px; border-radius: 14px; text-align: center; color: var(--ink-soft, #9aa5c8); background: rgba(255,255,255,.03); border: 1px dashed var(--line, rgba(255,255,255,.15)); font-size: 13px; }
+@media (max-width: 520px) { .fr-acts button span { display: none; } }
 /*MENU-CSS-END*/
 /* ---------- Handy: kompakt, Kontrollleiste unten fest, kein Doppeltipp-Zoom ---------- */
 html { touch-action: manipulation; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -5546,9 +5590,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.10.0";
+const GAME_VERSION = "1.11.0";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.11.0", date: "02.11.2026", title: "Ausbau-Effekt, Freundschaftsanfragen, neue Rangliste", items: ["Ausbauen mit Animation und Baugeräusch: Bauteil springt auf, Lichtwelle, Hammer", "Freunde: Anfrage per Anmeldename oder Code, annehmen oder ablehnen, übersichtliche Liste mit Online-Status", "Weltrangliste neu gestartet: es zählt der Höchststand seit Saisonbeginn"] },
   { v: "1.10.0", date: "02.11.2026", title: "Crew-Raid (Online-Koop)", items: ["Neu: Crew-Raid – mit deiner Crew gleichzeitig gegen einen Boss (Knopf ⚔ RAID im Crew-Feed)", "Jeder dreht in seiner Welt, jeder Gewinn macht Schaden; 3 Minuten Zeit, Lebensbalken und Schadensliste live für alle", "Boss besiegt: Belohnung für alle, die mitgemacht haben, mehr für mehr Schaden", "Fünf Bosse: Asteroiden-Koloss, Sturmkrake, Schrottgolem, Abrissbirne, Neon-Hai"] },
   { v: "1.9.7", date: "02.11.2026", title: "Konto mit Key", items: ["Beim Start zuerst Anmeldename und Passwort, der Beta-Key wird beim ersten Mal fest mit dem Konto verknüpft", "Wieder angemeldet: der hinterlegte Key wird automatisch genutzt", "Passwort zurückgesetzt: beim nächsten Anmelden neues Passwort festlegen"] },
   { v: "1.9.6", date: "02.11.2026", title: "Closed Beta mit Key", items: ["Das Spiel startet nur noch mit persönlichem Beta-Key (einmal eingeben, wird gemerkt)", "Ohne Key gibt es die Demo (Sternenwrack, erstes Fahrzeug)", "Der Spielcode liegt öffentlich nur noch verschlüsselt vor"] },
@@ -9815,6 +9860,160 @@ setInterval(() => {
     raidRender();
   } catch (e) {}
 }, 2000);
+
+/* ---------- Ausbau-Effekt: Bauteil-Symbol springt auf, Ringe, Lichtwelle, Hammer, Baugeräusch ---------- */
+function buildSound(big) {
+  try {
+    [0, .12, .24].forEach((t, i) => { noise(0.05, 0.22, t, 1800 + i * 400); tone(140 + i * 30, 0.07, { type: "square", vol: 0.08, at: t }); });   // Hammerschläge
+    [523, 659, 784, 1047].forEach((f, i) => tone(f * (big ? 1 : .75), 0.18, { type: "triangle", vol: 0.1, at: 0.36 + i * 0.07 }));            // aufsteigende Fanfare
+    if (big) [784, 988, 1175].forEach(f => tone(f, 0.9, { type: "sine", vol: 0.08, at: 0.7 }));
+  } catch (e) {}
+}
+function buildFx(id, big) {
+  const v = $("shipview"), c = (typeof CATS !== "undefined" && CATS.find(x => x.id === id)) || {}; if (!v) return;
+  const col = c.color || "#ffc94a", lv = (state.ship || {})[id] || 0;
+  let x = 50, y = 46;
+  try { if (typeof partAnchors === "function") { const a = partAnchors(state.ship)[id], svg = $("shipsvg"); if (a && svg) { const pt = svg.createSVGPoint(); pt.x = a[0]; pt.y = a[1]; const p = pt.matrixTransform(svg.getScreenCTM()), r = v.getBoundingClientRect(); x = Math.min(82, Math.max(18, (p.x - r.left) / r.width * 100)); y = Math.min(70, Math.max(24, (p.y - r.top) / r.height * 100)); } } } catch (e) {}
+  const fx = document.createElement("div"); fx.className = "bfx"; fx.style.cssText = `--bc:${col};left:${x}%;top:${y}%`;
+  fx.innerHTML = `<span class="bfx-ring"></span><span class="bfx-ring r2"></span><span class="bfx-ic">${c.icon || "🔧"}</span><b>${escapeHTML(c.name || "Ausbau")} · Stufe ${lv}${big ? " ★" : ""}</b>`;
+  const sw = document.createElement("div"); sw.className = "bfx-sweep"; sw.style.setProperty("--bc", col);
+  const hm = document.createElement("div"); hm.className = "bfx-hammer"; hm.textContent = "🔨"; hm.style.cssText = `left:calc(${x}% + 34px);top:calc(${y}% - 46px)`;
+  v.append(sw, fx, hm); v.classList.remove("bfx-shake"); void v.offsetWidth; v.classList.add("bfx-shake");
+  setTimeout(() => { fx.remove(); sw.remove(); hm.remove(); v.classList.remove("bfx-shake"); }, big ? 2200 : 1700);
+  buildSound(big);
+}
+if (typeof buyUpgrade === "function") {
+  const bu0 = buyUpgrade;
+  buyUpgrade = function (id) { const before = (state.ship || {})[id]; const r = bu0.apply(this, arguments); const now = (state.ship || {})[id]; if (now > before && !(state.lowfx && reduced)) buildFx(id, now % 3 === 0); return r; };
+}
+
+/* ---------- Weltrangliste mit Saison: zählt nur den Höchststand seit dem letzten Zurücksetzen (config/boardEp, im Dashboard) ---------- */
+function boardPeak() {
+  const ep = (typeof OL !== "undefined" && OL.boardEp) || 0;
+  if ((state.bpe || 0) !== ep) { state.bpe = ep; state.bp = 0; }
+  state.bp = Math.max(state.bp || 0, Math.round(state.credits || 0));
+  return state.bp;
+}
+if (typeof olPublish === "function") {
+  const op0 = olPublish;
+  olPublish = function () {
+    if (!OL.db) return Promise.resolve();
+    const r = op0.apply(this, arguments);
+    OL.db.ref(`players/${OL.uid}/w/${WORLD_ID}`).update({ p: boardPeak(), e: OL.boardEp || 0 }).catch(() => {});
+    return r;
+  };
+}
+async function boardEpLoad() { try { if (OL.db) { OL.boardEp = (await OL.db.ref("config/boardEp").get()).val() || 0; } } catch (e) { OL.boardEp = OL.boardEp || 0; } }
+setInterval(() => { if (typeof OL !== "undefined" && OL.ready && OL.boardEp === undefined) { OL.boardEp = null; boardEpLoad().then(() => { try { olPublish(); } catch (e) {} }); } }, 1500);
+if (typeof olBoard === "function") {
+  const ob0 = olBoard;
+  olBoard = async function () {
+    if (OL.board !== "global") { const st = state.peak; state.peak = boardPeak(); try { return await ob0.apply(this, arguments); } finally { state.peak = st; } }
+    let rows = [];
+    try { const s = await OL.db.ref("players").orderByChild(`w/${WORLD_ID}/p`).limitToLast(60).get(); s.forEach(c => { rows.push([c.key, c.val()]); }); }
+    catch (e) { $("olBoard").textContent = "Konnte die Rangliste nicht laden."; return; }
+    const ep = OL.boardEp || 0;
+    rows = rows.filter(([, p]) => { const w = (p.w || {})[WORLD_ID] || {}; return (w.e || 0) === ep && w.p > 0; }).sort((a, b) => b[1].w[WORLD_ID].p - a[1].w[WORLD_ID].p).slice(0, 30);
+    $("olBoard").innerHTML = (ep ? `<p class="ol-info" style="margin:0 0 8px">Saison seit ${new Date(ep).toLocaleDateString("de-DE")}</p>` : "") + (rows.map(([id, p], i) => olItem(id, p, `<span class="ol-rank">${i + 1}.</span>`, id === OL.uid)).join("") || `<p class="ol-info">Die Rangliste ist frisch. Spiel los und hol dir Platz 1!</p>`);
+  };
+}
+
+/* ---------- Freunde: Anfragen mit Annehmen/Ablehnen, Suche per Anmeldename oder Code, übersichtliche Liste ---------- */
+const FR = { inc: {}, out: {}, ref: null };
+try { FR.out = JSON.parse(localStorage.getItem("welten-freq-out") || "{}"); } catch (e) {}
+function frListen() {
+  if (FR.ref || !(typeof OL !== "undefined" && OL.ready && OL.db)) return;
+  FR.ref = OL.db.ref("freq/" + OL.uid);
+  FR.ref.on("value", s => {
+    const v = s.val() || {}, fresh = Object.keys(v).filter(k => !FR.inc[k]);
+    FR.inc = v;
+    if (fresh.length && FR.seen) { toast(`👋 ${(v[fresh[0]] || {}).n || "Jemand"} möchte mit dir befreundet sein.`, "#ffc94a"); try { sfx.mission(); } catch (e) {} }
+    FR.seen = true;
+    Object.keys(FR.out).forEach(k => { if (OL.friends[k]) delete FR.out[k]; }); frSaveOut();
+    olBadge(); if (mmOpen("online") && OL.tab === "friends") olRender();
+  });
+}
+function frSaveOut() { try { localStorage.setItem("welten-freq-out", JSON.stringify(FR.out)); } catch (e) {} }
+setInterval(frListen, 1500);
+if (typeof olBadge === "function") {
+  const bd0 = olBadge;
+  olBadge = function () {
+    bd0.apply(this, arguments);
+    const n = Object.keys(FR.inc || {}).length; if (!n) return;
+    const b = $("olChip"); if (!b) return;
+    let el = b.querySelector(".ol-badge"); if (!el) { b.insertAdjacentHTML("beforeend", `<span class="ol-badge">0</span>`); el = b.querySelector(".ol-badge"); }
+    el.textContent = String((+el.textContent || 0) + n);
+  };
+}
+const frColor = s => `hsl(${[...String(s || "?")].reduce((a, ch) => a + ch.charCodeAt(0) * 7, 0) % 360} 55% 42%)`;
+function frCard(id, p, acts, sub, cls = "") {
+  p = p || {}; const n = p.n || "?", on = !!olOnline(p), w = p.cw && (WORLDS.find(x => x.id === p.cw) || {}).name, lv = p.w && p.cw && p.w[p.cw] ? p.w[p.cw].l : null;
+  return `<div class="fr-card ${cls}"><span class="fr-av" style="--fc:${frColor(n)}">${escapeHTML(n.slice(0, 1).toUpperCase())}<i class="${on ? "on" : ""}"></i></span>
+    <span class="fr-who"><b>${escapeHTML(n)}</b><small>${sub != null ? sub : (on ? "online" : (p.on ? "zuletzt " + olAgo(p.on) : "offline")) + (w ? " · " + escapeHTML(w) + (lv ? " Lv " + lv : "") : "")}</small></span><span class="fr-acts">${acts}</span></div>`;
+}
+function olAgo(t) { const d = Date.now() - t; if (d < 3600e3) return "vor " + Math.max(1, Math.round(d / 60e3)) + " Min."; if (d < 864e5) return "vor " + Math.round(d / 3600e3) + " Std."; return "vor " + Math.round(d / 864e5) + " Tagen"; }
+function frRender() {
+  const P = $("olPane"), ids = Object.keys(OL.friends).sort((a, b) => ((+!!olOnline(OL.people[b])) - (+!!olOnline(OL.people[a]))) || (((OL.people[b] || {}).on || 0) - ((OL.people[a] || {}).on || 0)));
+  const inc = Object.entries(FR.inc || {}), out = Object.entries(FR.out || {}).filter(([k]) => !OL.friends[k]);
+  const gifts = Object.entries(OL.gifts).filter(([, g]) => g && !g.c);
+  P.innerHTML = `
+    ${inc.length ? `<div class="fr-sec"><h3>Anfragen <span class="fr-n">${inc.length}</span></h3>${inc.map(([id, r]) => frCard(id, { n: r.n }, `<button type="button" class="ok" data-a="fracc" data-id="${id}">✓ <span>Annehmen</span></button><button type="button" class="no" data-a="frdec" data-id="${id}" aria-label="Ablehnen">✕</button>`, "möchte dein Freund sein", "req")).join("")}</div>` : ""}
+    ${gifts.length ? `<div class="fr-sec"><h3>Geschenke <span class="fr-n">${gifts.length}</span></h3>${gifts.map(([from, g]) => frCard(from, OL.people[from] || { n: "Freund" }, `<button type="button" class="ok" data-a="claim" data-id="${from}">🎁 <span>${fmtN(g.a)}</span></button>`, `schenkt dir ${fmtN(g.a)} Credits`, "req")).join("")}</div>` : ""}
+    <div class="fr-sec"><h3>Freund hinzufügen</h3>
+      <div class="fr-add"><input id="olAdd" maxlength="20" placeholder="Anmeldename oder Code" aria-label="Anmeldename oder Freundescode" autocapitalize="off" spellcheck="false"><button type="button" class="ol-small" data-a="fradd">Anfrage senden</button></div>
+      <p class="fr-hint">Dein Code: <b>${OL.code}</b> <button type="button" class="ol-small" data-a="copy" style="padding:2px 8px;margin-left:4px">Kopieren</button></p></div>
+    ${out.length ? `<div class="fr-sec"><h3>Gesendet</h3>${out.map(([id, r]) => frCard(id, { n: r.n }, `<button type="button" class="no" data-a="frcancel" data-id="${id}" aria-label="Anfrage zurückziehen">✕</button>`, "wartet auf Annahme")).join("")}</div>` : ""}
+    <div class="fr-sec"><h3>Deine Freunde ${ids.length ? `<span class="fr-n" style="background:rgba(255,255,255,.15);color:inherit">${ids.length}</span>` : ""}</h3>
+      ${ids.length ? ids.map(id => { const last = OL.sent[id] || 0, can = Date.now() - last > GIFT_MS, inCrew = !!OL.crewM[id], full = Object.keys(OL.crewM).length >= CREW_MAX;
+        return frCard(id, OL.people[id], `<button type="button" data-a="gift" data-id="${id}" ${can ? "" : "disabled"} title="${can ? "Geschenk schicken (alle 24 Std.)" : "Nächstes Geschenk " + olLeft(last)}">🎁</button><button type="button" data-a="invite" data-id="${id}" ${inCrew || full ? "disabled" : ""} class="${inCrew ? "hot" : ""}" title="${inCrew ? "Ist in deiner Crew" : "In deine Crew einladen"}">👥</button><button type="button" class="no" data-a="frrm" data-id="${id}" title="Freund entfernen">✕</button>`); }).join("")
+        : `<div class="fr-empty">Noch keine Freunde. Gib oben einen Anmeldenamen oder Code ein. Sobald die Anfrage angenommen ist, erscheint dein Freund hier.</div>`}
+    </div>`;
+  try { olGiftTimes(); } catch (e) {}
+}
+if (typeof olRender === "function") {
+  const or0 = olRender;
+  olRender = function () { if (OL.ready && OL.tab === "friends" && $("olPane")) { frListen(); return frRender(); } return or0.apply(this, arguments); };
+}
+async function frFind(q) {
+  q = q.trim(); if (!q) return null;
+  if (/^[A-Za-z0-9]{6}$/.test(q)) { const uid = (await OL.db.ref("codes/" + q.toUpperCase()).get()).val(); if (uid) return uid; }
+  const s = await OL.db.ref("players").orderByChild("n").equalTo(q).limitToLast(10).get(); let best = null;
+  s.forEach(c => { const v = c.val() || {}; if (!best || (v.on || 0) > best[1]) best = [c.key, v.on || 0]; });
+  return best && best[0];
+}
+document.addEventListener("click", async e => {
+  const b = e.target.closest("#olPane [data-a^='fr']"); if (!b) return;
+  e.stopImmediatePropagation();
+  const a = b.dataset.a, id = b.dataset.id; b.disabled = true;
+  try {
+    if (a === "fradd") {
+      const q = ($("olAdd").value || "").trim(); if (!q) { olMsg("Gib einen Anmeldenamen oder Code ein.", false); return; }
+      const uid = await frFind(q);
+      if (!uid) { olMsg("Niemanden gefunden. Anmeldenamen genau so schreiben, wie er im Spiel steht, oder den 6-stelligen Code nehmen.", false); return; }
+      if (uid === OL.uid || q.toUpperCase() === OL.code) { olMsg("Das bist du selbst.", false); return; }
+      if (OL.friends[uid]) { olMsg("Ihr seid schon befreundet.", true); return; }
+      if (FR.inc[uid]) { await frAccept(uid); return; }   // die andere Seite hat schon angefragt: direkt befreundet
+      const p = (await OL.db.ref("players/" + uid).get()).val() || {};
+      await OL.db.ref(`freq/${uid}/${OL.uid}`).set({ n: olName(), t: firebase.database.ServerValue.TIMESTAMP });
+      FR.out[uid] = { n: p.n || q, t: Date.now() }; frSaveOut();
+      olMsg(`Anfrage an ${p.n || q} gesendet. Sobald sie angenommen ist, seid ihr Freunde.`, true); olRender();
+    } else if (a === "fracc") await frAccept(id);
+    else if (a === "frdec") { await OL.db.ref(`freq/${OL.uid}/${id}`).remove(); olMsg("Anfrage abgelehnt.", true); }
+    else if (a === "frcancel") { await OL.db.ref(`freq/${id}/${OL.uid}`).remove().catch(() => {}); delete FR.out[id]; frSaveOut(); olRender(); }
+    else if (a === "frrm") {
+      const n = (OL.people[id] || {}).n || "diesen Freund";
+      if (b.dataset.sure !== "1") { b.dataset.sure = "1"; b.disabled = false; b.textContent = "Sicher?"; setTimeout(() => { if (b.isConnected) { b.dataset.sure = ""; b.textContent = "✕"; } }, 3000); return; }
+      await OL.db.ref().update({ [`friends/${OL.uid}/${id}`]: null, [`friends/${id}/${OL.uid}`]: null }); olMsg(`${n} entfernt.`, true);
+    }
+  } catch (er) { olMsg("Das hat nicht geklappt. Bitte nochmal versuchen.", false); }
+  finally { if (b.isConnected && b.dataset.sure !== "1") b.disabled = false; }
+}, true);
+async function frAccept(id) {
+  const n = ((FR.inc || {})[id] || {}).n || (OL.people[id] || {}).n || "Dein neuer Freund";
+  await OL.db.ref().update({ [`friends/${OL.uid}/${id}`]: true, [`friends/${id}/${OL.uid}`]: true, [`freq/${OL.uid}/${id}`]: null });
+  olMsg(`Du bist jetzt mit ${n} befreundet!`, true);
+  try { burst(50, ["#4fe39a", "#ffc94a", "#ffffff"], 1); sfx.mission(); } catch (e) {}
+}
 /*MENU-JS-END*/
 /* ---------- Start-Knopf: Feedback beim Drücken, Drehen, Gewinnen ---------- */
 (function () {
