@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.3 · Musik zur Vorschau · 02.11.2026
+- Die Vorschau der kommenden Welten spielt einen eigenen Track: Swing-Jazz in der Brutzelküche, Hip-Hop/Funk in der Chromgarage
+
 ## Beta 1.12.2 · Vorschau zum Anklicken, Welten animiert · 02.11.2026
 - Die Karten der kommenden Welten öffnen per Klick eine Vorschau mit Bild, Symbolen und Spielideen
 - Welt-Karten im Menü und bei Welt wählen schweben dezent, mit Glanz
