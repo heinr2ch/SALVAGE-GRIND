@@ -5707,9 +5707,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.13.0";
+const GAME_VERSION = "1.14.0";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.14.0", date: "02.11.2026", title: "Wochen-Herausforderung, Crew-Garage, Anfeuern", items: ["Wochen-Herausforderung für alle (Tab Sammlung): jede Woche eine neue Aufgabe mit Bestenliste und einer Lackierung, die es nur in dieser Woche gibt.", "Crew-Garage: die Crew baut mit jedem Gewinn zusammen an einem großen Fahrzeug, jede neue Stufe bringt allen einen Bonus.", "Zuschauen und anfeuern: Hinweis, wenn ein Freund Freispiele hat, live zuschauen und Emojis schicken, die bei ihm auf dem Bildschirm aufsteigen.", "Das Foto-Symbol am Fahrzeug ist jetzt der neue Knopf „Foto“."] },
   { v: "1.13.0", date: "02.11.2026", title: "Foto, Gewinn-Film, Wetter, Sammelbuch, Streamer-Modus", items: ["Fotomodus: Knopf „Foto“ am Fahrzeug macht ein schönes Bild zum Speichern, Kopieren oder Teilen.", "Große Gewinne zeigen jetzt einen kurzen Film mit deinem Fahrzeug.", "Wetter und Tageszeit: abends und nachts ändert sich die Stimmung, je nach Welt gibt es Schnee, Regen, Sternschnuppen oder Glühwürmchen.", "Sammelbuch (Tab Sammlung): volle Seiten bringen einmalig einen Bonus.", "Streamer-Modus in den Einstellungen: Kontoname verschwommen, größere Gewinne und Twitch-Chat-Abstimmungen mit !1, !2 …"] },
   { v: "1.12.11", date: "02.11.2026", title: "Neonküste: Dein eigener Wagen fährt durch", items: ["Bei Wild und Respin fährt jetzt dein eigener Wagen mit allen Ausbauten über die Walzen – mit glühenden Reifen.", "Fehler behoben: Das Auto blieb nach der Durchfahrt manchmal rechts noch ein paar Sekunden stehen."] },
   { v: "1.12.10", date: "02.11.2026", title: "Neonküste: Polizeisirene und coolere Auto-Fahrt", items: ["Freispiel-Symbole (Sirene) lösen jetzt ein Martinshorn mit rot-blauem Blaulicht aus statt eines dumpfen Schlags.", "Die Auto-Durchfahrt ist actionreicher: Neon-Leuchtspur, Scheinwerfer, Fahrtwind-Streifen und eine sanftere Vorbeifahrt mit Motor von links nach rechts – ohne Wackeln und ohne Kratzgeräusch."] },
@@ -10730,6 +10731,205 @@ function ixStreamerApply() { document.documentElement.classList.toggle("ix-strea
   inp.addEventListener("change", () => { IXS.ch = inp.value.trim().replace(/^#/, "").replace(/[^A-Za-z0-9_]/g, ""); inp.value = IXS.ch; try { localStorage.setItem("welten-twitch", IXS.ch); } catch (e) {} IXS.votes = {}; IXS.who = {}; ixTwitch(); });
   sync(); ixStreamerApply();
 })();
+
+/* =================== Ideen-Paket Teil 2: Wochen-Herausforderung, Crew-Garage, Anfeuern =================== */
+(function ideas2Css() {
+  const st = document.createElement("style");
+  st.textContent = `
+.ix-wk { display: grid; gap: 8px; }
+.ix-wk .task { display: flex; gap: 10px; align-items: center; }
+.ix-wk .task .sw { width: 42px; height: 42px; flex: none; border-radius: 12px; box-shadow: 0 0 0 2px rgba(255,255,255,.25) inset, 0 0 16px var(--wc, #ffc94a); }
+.ix-wk .bar { height: 8px; border-radius: 8px; background: rgba(255,255,255,.1); overflow: hidden; }
+.ix-wk .bar i { display: block; height: 100%; background: linear-gradient(90deg, #ffc94a, #ff4fa8); transition: width .5s; }
+.ix-wk ol { margin: 0; padding-left: 22px; font-size: 13px; }
+.ix-wk ol li.me { color: #ffc94a; font-weight: 700; }
+.ix-wk small, .ix-cg small { opacity: .75; }
+.ix-cg { display: grid; gap: 8px; }
+.ix-cg .stage { position: relative; border-radius: 14px; background: radial-gradient(ellipse at 50% 85%, rgba(255,201,74,.25), rgba(0,0,0,.25) 70%); padding: 8px; }
+.ix-cg .stage svg { width: 100%; height: auto; display: block; }
+.ix-cg .stage b { position: absolute; left: 10px; top: 8px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #ffc94a; }
+.ix-cg .who { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; }
+.ix-cheer { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.ix-cheer button { font-size: 22px; width: 46px; height: 46px; border-radius: 12px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.06); cursor: pointer; }
+.ix-cheer button:active { transform: scale(.9); }
+.ix-emo { position: fixed; z-index: 2147482500; pointer-events: none; font-size: 54px; animation: ixEmo 2.2s ease-out forwards; filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); }
+.ix-emo small { display: block; font: 700 12px system-ui, sans-serif; color: #fff; text-align: center; text-shadow: 0 1px 4px #000; }
+@keyframes ixEmo { 0% { transform: translateY(0) scale(.3); opacity: 0; } 15% { transform: translateY(-20px) scale(1.2); opacity: 1; } 100% { transform: translateY(-220px) scale(1); opacity: 0; } }
+.ix-pop { position: fixed; right: 14px; top: 80px; z-index: 2147481500; max-width: 300px; padding: 12px 14px; border-radius: 14px; background: rgba(12,10,30,.94); border: 1px solid rgba(255,201,74,.6); color: #fff; font: 13px/1.4 system-ui, sans-serif; box-shadow: 0 10px 30px rgba(0,0,0,.5); animation: ixFilmIn .3s ease; }
+.ix-pop .ix-row { margin-top: 8px; }
+`;
+  document.head.appendChild(st);
+})();
+const ixInFs = () => { try { return !!((typeof inFs === "function" && inFs()) || (typeof sk !== "undefined" && sk && sk.free)); } catch (e) { return false; } };
+const ixOnline = () => typeof OL !== "undefined" && OL.ready && OL.db && OL.uid;
+const ixEsc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* ---------- A) Wochen-Herausforderung für alle ---------- */
+const IX_WEEK = () => Math.floor((Date.now() - Date.UTC(2024, 0, 1)) / 6048e5);   // Woche beginnt montags (UTC)
+const IX_WEEK_END = () => Date.UTC(2024, 0, 1) + (IX_WEEK() + 1) * 6048e5;
+const IX_TASKS = [
+  { k: "fs", t: n => `Löse ${n}-mal Freispiele aus`, n: 6 },
+  { k: "bigwin", t: n => `Erziele ${n} Gewinne ab 10× Einsatz`, n: 12 },
+  { k: "four", t: n => `Lande ${n} Gewinne mit 4 oder 5 gleichen Symbolen`, n: 40 },
+  { k: "symwin", m: "relic", t: n => `Gewinne ${n}-mal mit dem Top-Symbol`, n: 25 },
+  { k: "spins", t: n => `Drehe ${n}-mal in beliebigen Welten`, n: 600 },
+  { k: "upgrade", t: n => `Baue ${n} Teile aus`, n: 12 },
+  { k: "streak", t: n => `Schaffe ${n} Gewinn-Strähnen`, n: 10 },
+  { k: "laser", t: n => `Lass ${n}-mal das Wild zuschlagen`, n: 30 }
+];
+const ixTask = () => IX_TASKS[IX_WEEK() % IX_TASKS.length];
+const ixHue = w => (w * 67) % 360;
+const ixWkPaint = w => ({ id: "wk" + w, name: `Wochenlack ${w % 100}`, filter: `hue-rotate(${ixHue(w)}deg) saturate(2) brightness(1.12)`, sw: `linear-gradient(135deg, hsl(${ixHue(w)},90%,60%), hsl(${(ixHue(w) + 60) % 360},90%,35%))`, need: "" });
+function ixWk() {
+  let d = null; try { d = JSON.parse(localStorage.getItem("welten-wk") || "null"); } catch (e) {}
+  if (!d || d.w !== IX_WEEK()) d = { w: IX_WEEK(), p: 0, done: false };
+  return d;
+}
+function ixWkSave(d) { try { localStorage.setItem("welten-wk", JSON.stringify(d)); } catch (e) {} }
+const ixWkPaints = () => { try { return JSON.parse(localStorage.getItem("welten-wkp") || "[]"); } catch (e) { return []; } };
+function ixWkPaintsApply() { try { ixWkPaints().forEach(w => { if (!PAINTS.find(p => p.id === "wk" + w)) PAINTS.push(ixWkPaint(w)); }); } catch (e) {} }
+ixWkPaintsApply();
+let ixWkPush = null;
+function ixWkAdd(type, amount, meta) {
+  const T = ixTask(); if (type !== T.k || (T.m && meta !== T.m)) return;
+  const d = ixWk(); if (d.done) return; d.p = Math.min(T.n, d.p + (amount || 1));
+  if (d.p >= T.n) {
+    d.done = true; const ps = ixWkPaints(); if (!ps.includes(d.w)) { ps.push(d.w); try { localStorage.setItem("welten-wkp", JSON.stringify(ps)); } catch (e) {} }
+    ixWkPaintsApply(); try { renderCrewTab(); } catch (e) {}
+    toast("Wochen-Herausforderung geschafft! Neue Lackierung freigeschaltet.", "#ffc94a"); try { sfx.fanfare(1); } catch (e) {}
+  }
+  ixWkSave(d); ixWkRender();
+  clearTimeout(ixWkPush); ixWkPush = setTimeout(ixWkPublish, 8000);
+}
+function ixWkPublish() {
+  if (!ixOnline()) return; const d = ixWk(); if (!d.p) return;
+  OL.db.ref(`weekly/${d.w}/${OL.uid}`).set({ n: olName(), p: d.p, d: d.done ? 1 : 0, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {});
+}
+let ixWkTop = [], ixWkTopAt = 0;
+async function ixWkLoad() {
+  if (!ixOnline() || Date.now() - ixWkTopAt < 60000) return; ixWkTopAt = Date.now();
+  try { const s = await OL.db.ref(`weekly/${IX_WEEK()}`).orderByChild("p").limitToLast(10).get(); const a = []; s.forEach(c => { a.push({ id: c.key, ...c.val() }); }); ixWkTop = a.reverse(); ixWkRender(); } catch (e) {}
+}
+function ixWkRender() {
+  const box = $("ixWk"); if (!box) return; const T = ixTask(), d = ixWk(), P = ixWkPaint(d.w), left = IX_WEEK_END() - Date.now();
+  const days = Math.floor(left / 864e5), hrs = Math.floor(left % 864e5 / 36e5);
+  box.innerHTML = `<div class="task"><span class="sw" style="background:${P.sw};--wc:hsl(${ixHue(d.w)},90%,60%)" title="Belohnung: ${P.name}"></span><div style="flex:1"><b>${T.t(T.n)}</b><br><small>${d.done ? "Geschafft! Lackierung „" + P.name + "“ gehört dir." : `Belohnung: Lackierung „${P.name}“ – gibt es nur diese Woche`}</small></div></div>
+    <div class="bar"><i style="width:${d.p / T.n * 100}%"></i></div><small>${d.p} / ${T.n} · noch ${days} Tage ${hrs} Std. · zählt in allen Welten</small>
+    ${ixWkTop.length ? `<b style="font-size:13px">Bestenliste dieser Woche</b><ol>${ixWkTop.map(r => `<li class="${ixOnline() && r.id === OL.uid ? "me" : ""}">${ixEsc(r.n)} – ${r.p}${r.d ? " ✓" : ""}</li>`).join("")}</ol>` : `<small>${ixOnline() ? "Noch niemand in der Bestenliste – sei der Erste!" : "Online gehen, um die Bestenliste zu sehen."}</small>`}`;
+}
+
+/* ---------- B) Crew-Garage: alle bauen zusammen ---------- */
+const IX_CG = [0, 400, 1200, 3000, 7000, 15000, 30000, 60000, 120000];
+const ixCgStage = p => { let s = 0; IX_CG.forEach((x, i) => { if (p >= x) s = i; }); return s; };
+let ixCgPend = 0, ixCg = null, ixCgRef = null, ixCgCid = null;
+function ixCgListen() {
+  const cid = ixOnline() ? OL.crew : null; if (cid === ixCgCid) return;
+  if (ixCgRef) ixCgRef.off(); ixCgRef = null; ixCgCid = cid; ixCg = null;
+  if (cid) { ixCgRef = OL.db.ref(`crews/${cid}/garage`); ixCgRef.on("value", s => { ixCg = s.val() || { p: 0 }; ixCgCheck(); ixCgRender(); }); }
+  ixCgRender();
+}
+function ixCgFlush() {
+  if (!ixCgPend || !ixOnline() || !OL.crew) return; const n = Math.round(ixCgPend); ixCgPend = 0; if (n < 1) return;
+  const inc = firebase.database.ServerValue.increment;
+  OL.db.ref(`crews/${OL.crew}/garage`).update({ p: inc(n), [`by/${OL.uid}`]: inc(n), [`nm/${OL.uid}`]: olName() }).catch(() => {});
+}
+function ixCgCheck() {
+  if (!ixCg || !ixCgCid) return; const st = ixCgStage(ixCg.p || 0); let seen = 0;
+  try { seen = +(localStorage.getItem("welten-cg-" + ixCgCid) || -1); } catch (e) {}
+  if (seen < 0) { try { localStorage.setItem("welten-cg-" + ixCgCid, st); } catch (e) {} return; }
+  if (st > seen) {
+    try { localStorage.setItem("welten-cg-" + ixCgCid, st); } catch (e) {}
+    const amt = Math.round(Math.max(1, bet()) * 15 * st); state.credits += amt;
+    try { countCredits(state.credits, 600); sfx.fanfare(1); saveGame(); render(); } catch (e) {}
+    toast(`Crew-Garage: Stufe ${st} fertig! Jeder in der Crew bekommt +${fmtN(amt)}.`, "#ffc94a");
+  }
+}
+function ixCgRender() {
+  const box = $("ixCg"); if (!box) return;
+  if (!ixCgCid) { box.innerHTML = `<small>Tritt einer Crew bei (Online-Menü), dann baut ihr hier zusammen ein großes Fahrzeug. Jeder Gewinn bringt Baupunkte.</small>`; return; }
+  const p = (ixCg && ixCg.p) || 0, st = ixCgStage(p), nx = IX_CG[st + 1], lv = Math.min(9, Math.round(st * 9 / (IX_CG.length - 1)));
+  let svg = ""; try { svg = vehicleSVG({ hull: lv, engine: lv, scanner: lv, cargo: lv, reactor: lv }, "cg"); } catch (e) {}
+  const by = Object.entries((ixCg && ixCg.by) || {}).sort((a, b) => b[1] - a[1]).slice(0, 8), nm = (ixCg && ixCg.nm) || {};
+  box.innerHTML = `<div class="stage"><b>Stufe ${st} / ${IX_CG.length - 1}</b><svg viewBox="${($("shipsvg") && $("shipsvg").getAttribute("viewBox")) || "40 20 320 130"}">${svg}</svg></div>
+    <div class="ix-wk"><div class="bar"><i style="width:${nx ? (p - IX_CG[st]) / (nx - IX_CG[st]) * 100 : 100}%"></i></div></div>
+    <small>${fmtN(p)} Baupunkte${nx ? ` · nächste Stufe bei ${fmtN(nx)}` : " · ganz fertig!"} · jede neue Stufe bringt allen einen Bonus</small>
+    ${by.length ? `<div class="who">${by.map(([u, n]) => `<span>${ixEsc(nm[u] || "?")}: <b>${fmtN(n)}</b></span>`).join("")}</div>` : ""}`;
+}
+
+/* ---------- C) Zuschauen bei Freispielen und Anfeuern ---------- */
+let ixFsOn = false, ixCheerRef = null, ixCheerUid = null;
+function ixFsPublish() {
+  const on = ixInFs(); if (on === ixFsOn || !ixOnline()) return; ixFsOn = on;
+  OL.db.ref(`players/${OL.uid}/fs`).set(on ? firebase.database.ServerValue.TIMESTAMP : null).catch(() => {});
+}
+function ixEmo(e, name) {
+  const fr = document.querySelector(".frame") || document.body, r = fr.getBoundingClientRect();
+  const el = document.createElement("div"); el.className = "ix-emo"; el.innerHTML = `${ixEsc(e)}<small>${ixEsc(name || "")}</small>`;
+  el.style.left = (r.left + r.width * (.2 + Math.random() * .6)) + "px"; el.style.top = (r.top + r.height * .6) + "px";
+  document.body.appendChild(el); setTimeout(() => el.remove(), 2300);
+  try { tone(1047, .1, { type: "triangle", vol: .05 }); tone(1568, .14, { type: "triangle", vol: .05, at: .08 }); } catch (x) {}
+}
+function ixCheerListen() {
+  if (!ixOnline() || ixCheerUid === OL.uid) return; ixCheerUid = OL.uid;
+  const t0 = Date.now(); ixCheerRef = OL.db.ref(`cheer/${OL.uid}`).limitToLast(5);
+  ixCheerRef.on("child_added", s => { const v = s.val() || {}; s.ref.remove().catch(() => {}); if ((v.t || 0) < t0 - 5000) return; ixEmo(v.e, v.n); });
+}
+const IX_EMOS = ["🔥", "👏", "😱", "🍀", "💰", "🚀"];
+function ixCheerSend(uid, e) {
+  if (!ixOnline() || !uid) return;
+  OL.db.ref(`cheer/${uid}`).push({ e, n: olName(), t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {});
+  ixEmo(e, "");
+}
+// Zuschau-Fenster um Anfeuer-Knöpfe ergänzen; Walzen auch für Freunde senden (nicht nur Crew/Team)
+if (typeof fnWatch === "function") {
+  const fw0 = fnWatch;
+  fnWatch = async function (uid) {
+    const r = await fw0.apply(this, arguments);
+    try { const body = fnBody("fnWatch"); if (body && !body.querySelector(".ix-cheer")) { body.insertAdjacentHTML("beforeend", `<p style="margin:12px 0 0;opacity:.8">Anfeuern:</p><div class="ix-cheer">${IX_EMOS.map(e => `<button type="button" data-emo="${e}" aria-label="${e} schicken">${e}</button>`).join("")}</div>`); }
+      body.querySelector(".ix-cheer").onclick = ev => { const b = ev.target.closest("[data-emo]"); if (b) ixCheerSend(uid, b.dataset.emo); }; } catch (e) {}
+    return r;
+  };
+}
+if (typeof fnPublishReels === "function") {
+  const fp0 = fnPublishReels;
+  fnPublishReels = function (win) {
+    try { if (ixOnline() && !(OL.crew || window.TEAM_ID) && Object.keys(OL.friends || {}).length) { const s = fnSnap(); if (s) OL.db.ref(`watch/${OL.uid}/rl`).set({ ...s, w: WORLD_ID, win: Math.round(win || 0), b: bet(), n: olName(), t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {}); return; } } catch (e) {}
+    return fp0.apply(this, arguments);
+  };
+}
+const ixFsSeen = {};
+async function ixFriendsFs() {
+  if (!ixOnline()) return; const ids = Object.keys(OL.friends || {}).concat(Object.keys(OL.crewM || {})).filter((x, i, a) => x !== OL.uid && a.indexOf(x) === i).slice(0, 30);
+  for (const id of ids) {
+    let fs = null; try { fs = (await OL.db.ref(`players/${id}/fs`).get()).val(); } catch (e) {}
+    if (!fs || Date.now() - fs > 180000 || ixFsSeen[id] === fs || $("ixPop")) continue; ixFsSeen[id] = fs;
+    const p = OL.people[id] || {}, name = p.n || (OL.crewM || {})[id] || "Ein Freund";
+    const pop = document.createElement("div"); pop.className = "ix-pop"; pop.id = "ixPop";
+    pop.innerHTML = `🎰 <b>${ixEsc(name)}</b> hat gerade Freispiele!<div class="ix-row"><button type="button" class="ix-btn" data-p="no">Später</button><button type="button" class="ix-btn main" data-p="go">Zuschauen</button></div>`;
+    document.body.appendChild(pop); setTimeout(() => pop.remove(), 20000);
+    pop.addEventListener("click", ev => { const b = ev.target.closest("[data-p]"); if (!b) return; pop.remove(); if (b.dataset.p === "go") { try { fnWatch(id); } catch (e) {} } });
+    break;
+  }
+}
+
+/* ---------- Anbindung: Spielende jeder Runde, Zähler, Oberfläche ---------- */
+if (typeof track === "function") {
+  const tr2 = track;
+  track = function (type, amount, meta) { try { ixWkAdd(type, type === "haul" ? 0 : amount, meta); if (type === "haul" && amount > 0) ixCgPend += amount / Math.max(1, bet()); } catch (e) {} return tr2.apply(this, arguments); };
+}
+if (typeof fnSpinEnd === "function") { const se2 = fnSpinEnd; fnSpinEnd = function () { try { ixFsPublish(); } catch (e) {} return se2.apply(this, arguments); }; }
+(function ixUi2() {
+  const col = $("pv-col"); if (!col) return;
+  const first = col.querySelector(".psec");
+  (first || col).insertAdjacentHTML(first ? "beforebegin" : "afterbegin", `<div class="psec"><h3>Wochen-Herausforderung</h3><div class="ix-wk" id="ixWk"></div></div><div class="psec"><h3>Crew-Garage</h3><div class="ix-cg" id="ixCg"></div></div>`);
+  ixWkRender(); ixCgRender();
+  const t = document.querySelector('[aria-controls="pv-col"], #pt-col, [data-pv="col"]'); if (t) t.addEventListener("click", () => { ixWkLoad(); ixWkRender(); ixCgRender(); });
+  const ph = $("fnShotB"); if (ph) ph.hidden = true;   // altes Foto-Symbol: ersetzt durch den Knopf „Foto“
+})();
+setInterval(() => { try { ixCgListen(); ixCheerListen(); ixCgFlush(); } catch (e) {} }, 5000);
+setInterval(() => { try { ixFsPublish(); ixWkLoad(); } catch (e) {} }, 15000);
+setInterval(() => { try { if (!document.hidden) ixFriendsFs(); } catch (e) {} }, 30000);
+setInterval(() => { try { const d = ixWk(); if (d.p && !d.done) ixWkRender(); } catch (e) {} }, 60000);
 /*MENU-JS-END*/
 /* ---------- Start-Knopf: Feedback beim Drücken, Drehen, Gewinnen ---------- */
 (function () {

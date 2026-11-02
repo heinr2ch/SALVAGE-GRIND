@@ -2,6 +2,12 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.14.0 · Wochen-Herausforderung, Crew-Garage, Anfeuern · 02.11.2026
+- Wochen-Herausforderung für alle (Tab Sammlung): jede Woche eine neue Aufgabe mit Bestenliste und einer Lackierung, die es nur in dieser Woche gibt.
+- Crew-Garage: die Crew baut mit jedem Gewinn zusammen an einem großen Fahrzeug, jede neue Stufe bringt allen einen Bonus.
+- Zuschauen und anfeuern: Hinweis, wenn ein Freund Freispiele hat, live zuschauen und Emojis schicken, die bei ihm auf dem Bildschirm aufsteigen.
+- Das Foto-Symbol am Fahrzeug ist jetzt der neue Knopf „Foto“.
+
 ## Beta 1.13.0 · Foto, Gewinn-Film, Wetter, Sammelbuch, Streamer-Modus · 02.11.2026
 - Fotomodus: Knopf „Foto“ am Fahrzeug macht ein schönes Bild zum Speichern, Kopieren oder Teilen.
 - Große Gewinne zeigen jetzt einen kurzen Film mit deinem Fahrzeug.
