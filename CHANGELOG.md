@@ -2,6 +2,12 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.7 · Team-Spielstand und Einsatz · 02.11.2026
+- Team-Einladung angenommen: der Team-Spielstand wird direkt geladen
+- Team-Spielstand: der Einsatz springt nicht mehr auf den Einsatz des Mitspielers
+- Neonküste: Einsatz pro Dreh gut sichtbar (rot, wenn die Chips nicht reichen); bei zu wenig Chips werden heiße Zeilen aus- bzw. der Einsatz heruntergeschaltet statt zu blockieren
+- Fahrzeug 1 von 3 steht jetzt in allen Welten unter den Ausbau-Knöpfen
+
 ## Beta 1.12.6 · Fehlerbehebung Weltwechsel · 02.11.2026
 - Schwarzer Bildschirm beim Weltwechsel behoben
 - Weltbild und Name bleiben während des ganzen Wechsels stehen

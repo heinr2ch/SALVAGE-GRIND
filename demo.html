@@ -5707,9 +5707,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.12.6";
+const GAME_VERSION = "1.12.7";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.12.7", date: "02.11.2026", title: "Team-Spielstand und Einsatz", items: ["Team-Einladung angenommen: der Team-Spielstand wird direkt geladen", "Team-Spielstand: der Einsatz springt nicht mehr auf den Einsatz des Mitspielers", "Neonküste: Einsatz pro Dreh gut sichtbar (rot, wenn die Chips nicht reichen); bei zu wenig Chips werden heiße Zeilen aus- bzw. der Einsatz heruntergeschaltet statt zu blockieren", "Fahrzeug 1 von 3 steht jetzt in allen Welten unter den Ausbau-Knöpfen"] },
   { v: "1.12.6", date: "02.11.2026", title: "Fehlerbehebung Weltwechsel", items: ["Schwarzer Bildschirm beim Weltwechsel behoben", "Weltbild und Name bleiben während des ganzen Wechsels stehen"] },
   { v: "1.12.5", date: "02.11.2026", title: "Übergang mit Weltbild, schnelleres Menü", items: ["Weltwechsel zeigt das Bild der Zielwelt, eigener Klang je Welt, keine springenden Schriften mehr", "Hauptmenü: Welten erscheinen sofort und ploppen kurz nacheinander auf"] },
   { v: "1.12.4", date: "02.11.2026", title: "Weltwechsel mit Übergang", items: ["Beim Wechsel der Welt: schnelle Wischblende in der Farbe der Zielwelt mit Namen und Whoosh-Sound, in der neuen Welt öffnet sie sich wieder"] },
@@ -8320,7 +8321,7 @@ async function olClick(e) {
     else if (a === "tforget") { teamForget(id); if (OL.team === id) teamSet(null); olRender(); }
     else if (a === "tren") { const inp = $("olTeamName"), nm = ((inp || {}).value || "").trim().slice(0, 24); if (!nm) { olMsg("Schreib den neuen Namen unten ins Namensfeld und tippe dann nochmal auf „Umbenennen“.", false); if (inp) inp.focus(); return; } await OL.db.ref(`teams/${id}/i/n`).set(nm); teamRemember(id, nm); inp.value = ""; await teamInfoLoad(true); olMsg(`Umbenannt in „${nm}“.`, true); }
     else if (a === "tinvite") { await OL.db.ref(`teamInv/${id}/${OL.team}`).set({ n: olName(), tn: (teamList()[OL.team] || {}).n || "", t: firebase.database.ServerValue.TIMESTAMP }); olMsg(`Einladung an ${(OL.people[id] || {}).n || "deinen Freund"} verschickt.`, true); }
-    else if (a === "tjoin") { const mm = (await OL.db.ref(`teams/${id}/m`).get()).val() || {}; if (!Object.keys(mm).length) { await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove(); olMsg("Dieses Team gibt es nicht mehr.", false); return; } if (Object.keys(mm).length >= 4) { olMsg("Das Team ist schon voll (4 Spieler).", false); return; } await OL.db.ref(`teams/${id}/m/${OL.uid}`).set(olName()).catch(() => { throw new Error("voll"); }); await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove(); const ti = (await OL.db.ref(`teams/${id}/i`).get()).val() || {}; teamRemember(id, ti.n || (OL.teamInv[id] || {}).tn || "Team", ti.t || Date.now()); teamSet(id); await teamInfoLoad(true); olMsg("Du bist dem Team beigetreten. Tippe auf „Spielen“.", true); }
+    else if (a === "tjoin") { const mm = (await OL.db.ref(`teams/${id}/m`).get()).val() || {}; if (!Object.keys(mm).length) { await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove(); olMsg("Dieses Team gibt es nicht mehr.", false); return; } if (Object.keys(mm).length >= 4) { olMsg("Das Team ist schon voll (4 Spieler).", false); return; } await OL.db.ref(`teams/${id}/m/${OL.uid}`).set(olName()).catch(() => { throw new Error("voll"); }); await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove(); const ti = (await OL.db.ref(`teams/${id}/i`).get()).val() || {}; teamRemember(id, ti.n || (OL.teamInv[id] || {}).tn || "Team", ti.t || Date.now()); teamSet(id); await teamInfoLoad(true); setTimeout(() => teamSwitch(id), 900); olMsg("Du bist dem Team beigetreten. Tippe auf „Spielen“.", true); }
     else if (a === "tdecline") await OL.db.ref(`teamInv/${OL.uid}/${id}`).remove();
     else if (a === "tplay") teamSwitch(id || OL.team);
     else if (a === "tsolo") teamSwitch(null);
@@ -8457,8 +8458,9 @@ function teamMerge(a, b) {
   return o;
 }
 function teamApply(remote) {
-  const c = state.credits, x = state.xp, v0 = state.vehicle | 0, s0 = JSON.stringify(state.ship || {});
+  const c = state.credits, x = state.xp, v0 = state.vehicle | 0, s0 = JSON.stringify(state.ship || {}), li = state.lineIdx;
   applySave(teamMerge(serialize(), remote)); state.credits = c; state.xp = x;
+  if (typeof li === "number") state.lineIdx = Math.min(li, typeof maxLineIdx === "function" ? maxLineIdx() : li);   // Einsatz ist persönlich: nicht vom Mitspieler übernehmen
   if ((state.vehicle | 0) !== v0 || JSON.stringify(state.ship || {}) !== s0) { try { lastShipKey = ""; lastVehKey = ""; } catch (e) {} OL.lastShip = JSON.stringify(state.ship || {}); }
   try { render(); renderHangar(); } catch (e) {}
 }
@@ -9156,7 +9158,7 @@ $("fnPops").addEventListener("click", async e => {
   const fake = document.createElement("button"); fake.dataset.a = a; fake.dataset.id = id;
   await olClick({ target: fake });
   if (a === "claim") { try { flashScreen(); } catch (x) {} }
-  if (a === "accept" || a === "tjoin") toast(a === "tjoin" ? "Team beigetreten! Unter Online → Team-Spielstand auf „Spielen“ tippen." : "Willkommen in der Crew!", "#6fdc8c");
+  if (a === "accept" || a === "tjoin") toast(a === "tjoin" ? "Team beigetreten! Der Team-Spielstand wird geladen …" : "Willkommen in der Crew!", "#6fdc8c");
 });
 
 /* --- 11: Zuschauen: die Walzen von Mitspielern live sehen --- */
@@ -10175,6 +10177,8 @@ function soonAdd() {
     <button type="button" class="soon-c g" data-soon="g" aria-label="Vorschau Chromgarage öffnen">${SOON_ART.g}<i>BALD</i><b>Chromgarage</b><small>Rostlaube rein, Showcar raus: Felgen, Lack, Neon.</small></button></div></div>`);
 }
 setInterval(soonAdd, 1000); soonAdd();
+// „Fahrzeug 1 von 3“ unter die Ausbau-Knöpfe, damit man sieht, worauf der Ausbau hinausläuft
+(function vehBelow() { const v = $("vehCard"), u = $("upgrades"); if (v && u && u.nextElementSibling !== v) u.after(v); })();
 
 /* ---------- Weltwechsel mit Stinger: Wischblende in der Farbe der Zielwelt, Whoosh + Schlag, auf der neuen Seite wieder auf ---------- */
 document.body.insertAdjacentHTML("beforeend", `<div id="wswipe" hidden aria-hidden="true"><i class="p1"></i><i class="p2"></i><i class="p3"></i><div class="ws-t"><div class="ws-art"></div><small></small><b></b><em></em></div></div>`);
