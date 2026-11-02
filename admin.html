@@ -4,102 +4,165 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b0f24">
 <title>Salvage &amp; Grind · Dashboard</title>
-<link rel="icon" href="media/kinearbyte.png">
+<link rel="icon" href="media/app-icon.png">
+<link rel="stylesheet" href="fonts/sw.css">
 <style>
-/* Dashboard für KIneArbyte: Spieler, Aktivität, Keys (erzeugen/sperren), Key-Starts, Feedback. Zugang nur mit dem Admin-Konto (Firebase Auth, Regeln in tools/firebase_rules.json). */
-:root { --bg: #0b0e1a; --panel: #141a2e; --panel2: #1b2340; --line: rgba(200,210,255,.12); --ink: #eef2fb; --soft: #9aa5c8; --mute: #6c769a;
-  --acc: #7c5cff; --acc2: #37d6ff; --ok: #4ade80; --warn: #ffc94a; --bad: #ff6b7a; --r: 14px; color-scheme: dark; }
+/* Dashboard für KIneArbyte: Spieler, Aktivität, Konten, Keys (erzeugen/sperren), Spielstarts, Feedback. Zugang nur mit dem Admin-Konto (Firebase Auth, Regeln in tools/firebase_rules.json). */
+:root {
+  --bg: #070a1a; --bg2: #0d1230; --panel: rgba(22,28,62,.72); --panel-solid: #161c3e; --line: rgba(160,175,255,.12); --line2: rgba(160,175,255,.2);
+  --ink: #f2f4ff; --soft: #a9b1d6; --mute: #6f78a3;
+  --gold: #ffb238; --gold2: #ffd27a; --cyan: #46d9ff; --orange: #ff8a4c; --green: #4fe39a; --violet: #9b7bff; --bad: #ff6b81;
+  --r: 18px; --font: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --disp: "Unbounded", "Manrope", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+html, body { margin: 0; min-height: 100%; }
+html { background: var(--bg); }
+body { color: var(--ink); font: 14px/1.5 var(--font); -webkit-font-smoothing: antialiased;
+  background: radial-gradient(1200px 600px at 85% -10%, rgba(255,178,56,.10), transparent 60%), radial-gradient(900px 500px at -10% 110%, rgba(70,217,255,.08), transparent 60%), linear-gradient(180deg, var(--bg2), var(--bg)) fixed; }
 button, input, select { font: inherit; color: inherit; }
-.wrap { max-width: 1180px; margin: 0 auto; padding: 18px 16px 60px; }
-header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-header img { width: 36px; height: 36px; border-radius: 9px; }
-header h1 { margin: 0; font-size: 1.15rem; letter-spacing: .02em; }
-header .who { margin-left: auto; color: var(--soft); font-size: .85rem; display: flex; gap: 10px; align-items: center; }
-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
-nav button { border: 1px solid var(--line); background: var(--panel); padding: 8px 14px; border-radius: 99px; cursor: pointer; color: var(--soft); font-weight: 600; }
-nav button[aria-selected="true"] { background: var(--acc); border-color: var(--acc); color: #fff; }
-.btn { border: 0; border-radius: 10px; padding: 9px 14px; cursor: pointer; background: var(--acc); color: #fff; font-weight: 700; }
-.btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--soft); }
-.btn.bad { background: rgba(255,107,122,.15); color: var(--bad); border: 1px solid rgba(255,107,122,.35); }
-.btn.ok { background: rgba(74,222,128,.13); color: var(--ok); border: 1px solid rgba(74,222,128,.35); }
-.btn.sm { padding: 5px 10px; font-size: .8rem; border-radius: 8px; }
-.btn[disabled] { opacity: .5; cursor: wait; }
-input, select { background: #0a0d18; border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; outline: none; }
-input:focus, select:focus { border-color: var(--acc); }
-.grid { display: grid; gap: 12px; }
-.kpis { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 14px; }
-.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; }
-.kpi span { display: block; color: var(--soft); font-size: .78rem; font-weight: 600; }
-.kpi b { display: block; font-size: 1.7rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
-.kpi small { color: var(--mute); font-size: .75rem; }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; min-width: 0; }
-.card h2 { margin: 0 0 10px; font-size: .95rem; }
-.card h2 small { color: var(--mute); font-weight: 500; margin-left: 6px; }
-.two { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-bottom: 12px; }
-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
-th { color: var(--soft); font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; cursor: pointer; white-space: nowrap; }
-td.num, th.num { text-align: right; }
-.tbl { overflow-x: auto; }
-.pill { display: inline-block; padding: 1px 8px; border-radius: 99px; font-size: .72rem; font-weight: 700; }
-.pill.on { background: rgba(74,222,128,.14); color: var(--ok); } .pill.off { background: rgba(255,107,122,.14); color: var(--bad); }
-.pill.n { background: rgba(124,92,255,.16); color: #c4b5ff; }
-.key { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 700; letter-spacing: .03em; }
-.muted { color: var(--mute); }
-.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.bars { display: grid; gap: 6px; }
-.bar { display: grid; grid-template-columns: 110px 1fr 54px; gap: 8px; align-items: center; font-size: .85rem; }
-.bar i { display: block; height: 10px; border-radius: 99px; background: linear-gradient(90deg, var(--acc), var(--acc2)); min-width: 2px; }
-.bar em { font-style: normal; text-align: right; color: var(--soft); font-variant-numeric: tabular-nums; }
-svg.chart { width: 100%; height: 170px; display: block; }
-.newkeys { margin-top: 12px; padding: 12px; border-radius: 12px; background: rgba(74,222,128,.08); border: 1px solid rgba(74,222,128,.3); }
-.newkeys div { display: flex; gap: 10px; align-items: center; padding: 4px 0; }
-.msg { white-space: pre-wrap; word-break: break-word; }
-#login { max-width: 360px; margin: 12vh auto 0; text-align: center; }
-#login form { display: grid; gap: 10px; margin-top: 14px; }
-#err { color: var(--bad); min-height: 1.3em; font-weight: 600; }
 [hidden] { display: none !important; }
-.toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #fff; color: #111; padding: 8px 16px; border-radius: 99px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
-@media (max-width: 600px) { .bar { grid-template-columns: 84px 1fr 44px; } th, td { padding: 6px 5px; } }
+.muted { color: var(--mute); }
+
+/* ---------- Anmeldung ---------- */
+.login { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+.login .box { width: min(100%, 380px); text-align: center; padding: 34px 28px 28px; border-radius: 24px; background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+.login img { width: 84px; height: 84px; display: block; margin: 0 auto 14px; filter: drop-shadow(0 10px 24px rgba(255,178,56,.25)); }
+.login h1 { margin: 0; font: 700 1.25rem/1.2 var(--disp); }
+.login p { margin: 6px 0 20px; color: var(--soft); font-size: .9rem; }
+.login form { display: grid; gap: 10px; }
+#err { color: var(--bad); min-height: 1.3em; font-weight: 700; font-size: .88rem; }
+
+/* ---------- Grundgerüst ---------- */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+.side { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 6px; padding: 22px 14px; border-right: 1px solid var(--line); background: rgba(9,12,32,.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.brand { display: flex; align-items: center; gap: 12px; padding: 0 8px 18px; }
+.brand img { width: 42px; height: 42px; }
+.brand b { display: block; font: 700 .95rem/1.15 var(--disp); }
+.brand span { font-size: .75rem; color: var(--mute); letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+nav { display: grid; gap: 4px; }
+nav button { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: transparent; padding: 10px 12px; border-radius: 12px; cursor: pointer; color: var(--soft); font-weight: 700; text-align: left; transition: background .15s, color .15s; }
+nav button svg { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+nav button:hover { background: rgba(160,175,255,.08); color: var(--ink); }
+nav button[aria-selected="true"] { background: linear-gradient(90deg, rgba(255,178,56,.18), rgba(255,178,56,.04)); color: var(--gold2); box-shadow: inset 3px 0 0 var(--gold); }
+.side .foot { margin-top: auto; display: grid; gap: 8px; padding: 12px 8px 0; border-top: 1px solid var(--line); font-size: .8rem; color: var(--mute); }
+.side .foot .row { gap: 6px; }
+.main { min-width: 0; padding: 26px 30px 60px; }
+.top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.top h1 { margin: 0; font: 700 1.6rem/1.15 var(--disp); letter-spacing: -.01em; }
+.top p { margin: 4px 0 0; color: var(--mute); font-size: .88rem; }
+
+/* ---------- Bausteine ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 12px; padding: 10px 16px; cursor: pointer; font-weight: 800;
+  color: #1d1300; background: linear-gradient(180deg, var(--gold2), var(--gold)); box-shadow: 0 6px 18px rgba(255,178,56,.25); transition: transform .1s, filter .15s; }
+.btn:hover { filter: brightness(1.06); } .btn:active { transform: translateY(1px); }
+.btn.ghost { background: rgba(160,175,255,.07); color: var(--soft); box-shadow: inset 0 0 0 1px var(--line2); }
+.btn.ghost:hover { color: var(--ink); background: rgba(160,175,255,.12); }
+.btn.bad { background: rgba(255,107,129,.12); color: var(--bad); box-shadow: inset 0 0 0 1px rgba(255,107,129,.35); }
+.btn.ok { background: rgba(79,227,154,.12); color: var(--green); box-shadow: inset 0 0 0 1px rgba(79,227,154,.35); }
+.btn.sm { padding: 6px 11px; font-size: .78rem; border-radius: 9px; }
+.btn[disabled] { opacity: .5; cursor: wait; }
+input, select { background: rgba(5,8,22,.65); border: 1px solid var(--line2); border-radius: 12px; padding: 10px 13px; outline: none; transition: border-color .15s, box-shadow .15s; }
+input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255,178,56,.18); }
+.grid { display: grid; gap: 16px; }
+.kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-bottom: 16px; }
+.kpi { position: relative; overflow: hidden; padding: 16px 18px 15px; border-radius: var(--r); background: var(--panel); border: 1px solid var(--line); }
+.kpi::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--c, var(--gold)); }
+.kpi::after { content: ""; position: absolute; right: -30px; top: -30px; width: 100px; height: 100px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--c, var(--gold)) 22%, transparent), transparent 70%); }
+.kpi:nth-child(6n+1) { --c: var(--gold); } .kpi:nth-child(6n+2) { --c: var(--cyan); } .kpi:nth-child(6n+3) { --c: var(--green); } .kpi:nth-child(6n+4) { --c: var(--orange); } .kpi:nth-child(6n+5) { --c: var(--violet); } .kpi:nth-child(6n+6) { --c: var(--bad); }
+.kpi span { display: block; color: var(--soft); font-size: .76rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.kpi b { display: block; margin-top: 4px; font: 700 1.9rem/1.1 var(--disp); font-variant-numeric: tabular-nums; }
+.kpi small { display: block; margin-top: 4px; color: var(--mute); font-size: .76rem; }
+.card { min-width: 0; padding: 18px 20px; border-radius: var(--r); background: var(--panel); border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+section > .card + .card { margin-top: 16px; }
+.card h2 { margin: 0 0 14px; font: 700 .98rem/1.3 var(--font); display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.card h2 small { color: var(--mute); font-weight: 600; font-size: .78rem; }
+.two { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); margin-bottom: 16px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.tbl { overflow-x: auto; margin: 0 -6px; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { position: sticky; top: 0; color: var(--mute); font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; cursor: pointer; white-space: nowrap; background: var(--panel-solid); }
+tr:last-child td { border-bottom: 0; }
+tbody tr:hover td, table tr:hover td { background: rgba(160,175,255,.04); }
+td.num, th.num { text-align: right; }
+.pill { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: .7rem; font-weight: 800; letter-spacing: .02em; }
+.pill.on { background: rgba(79,227,154,.13); color: var(--green); } .pill.off { background: rgba(255,107,129,.13); color: var(--bad); }
+.pill.n { background: rgba(155,123,255,.16); color: #c9b8ff; }
+.key { font: 600 .82rem var(--mono); letter-spacing: .02em; color: var(--gold2); white-space: nowrap; }
+.bars { display: grid; gap: 10px; }
+.bar { display: grid; grid-template-columns: 120px 1fr auto; gap: 12px; align-items: center; font-size: .86rem; }
+.bar > span { color: var(--soft); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar i { display: block; height: 10px; border-radius: 99px; min-width: 4px; background: linear-gradient(90deg, var(--gold), var(--orange)); box-shadow: 0 0 12px rgba(255,178,56,.25); }
+.bars#cwBars i { background: linear-gradient(90deg, var(--cyan), #6aa8ff); box-shadow: 0 0 12px rgba(70,217,255,.25); }
+.bars#pfBars i { background: linear-gradient(90deg, var(--green), var(--cyan)); box-shadow: none; }
+.bars#verBars i { background: linear-gradient(90deg, var(--violet), #c084fc); box-shadow: none; }
+.bar em { font-style: normal; text-align: right; white-space: nowrap; min-width: 40px; color: var(--soft); font: 600 .8rem var(--mono); }
+svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
+.newkeys { margin-top: 14px; padding: 14px 16px; border-radius: 14px; background: rgba(79,227,154,.07); border: 1px solid rgba(79,227,154,.3); }
+.newkeys div { display: flex; gap: 12px; align-items: center; padding: 5px 0; flex-wrap: wrap; }
+.msg { white-space: pre-wrap; word-break: break-word; max-width: 560px; }
+.toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 50; background: var(--ink); color: #0b0f24; padding: 9px 18px; border-radius: 99px; font-weight: 800; box-shadow: 0 14px 40px rgba(0,0,0,.45); }
+.note { margin: 0 0 12px; color: var(--soft); font-size: .86rem; padding: 10px 14px; border-radius: 12px; background: rgba(255,178,56,.07); border: 1px solid rgba(255,178,56,.2); }
+
+/* ---------- Handy ---------- */
+@media (max-width: 860px) {
+  .shell { grid-template-columns: 1fr; }
+  .side { position: sticky; top: 0; z-index: 20; height: auto; flex-direction: row; align-items: center; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; gap: 10px; }
+  .brand { padding: 0; } .brand div { display: none; } .brand img { width: 34px; height: 34px; }
+  nav { display: flex; gap: 4px; }
+  nav button { padding: 8px 11px; white-space: nowrap; }
+  nav button span { display: none; } nav button[aria-selected="true"] span { display: inline; }
+  .side .foot { margin: 0 0 0 auto; border: 0; padding: 0; display: flex; } .side .foot .stamp { display: none; }
+  .main { padding: 18px 16px 50px; }
+  .top h1 { font-size: 1.3rem; }
+  .bar { grid-template-columns: 90px 1fr auto; }
+  .two { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <section id="login" class="card">
-    <img src="media/kinearbyte.png" alt="" style="width:56px;border-radius:12px">
-    <h1 style="margin:10px 0 0;font-size:1.2rem">Salvage &amp; Grind · Dashboard</h1>
-    <div class="muted">Nur für KIneArbyte</div>
+<section id="login" class="login">
+  <div class="box">
+    <img src="media/app-icon.png" alt="">
+    <h1>Dashboard</h1>
+    <p>Salvage &amp; Grind · nur für KIneArbyte</p>
     <form id="lf">
       <input id="lm" type="email" placeholder="E-Mail" autocomplete="username" required>
       <input id="lp" type="password" placeholder="Passwort" autocomplete="current-password" required>
       <button class="btn" id="lb">Anmelden</button>
       <div id="err"></div>
     </form>
-  </section>
+  </div>
+</section>
 
-  <div id="app" hidden>
-    <header>
-      <img src="media/kinearbyte.png" alt="">
-      <h1>Salvage &amp; Grind · Dashboard</h1>
-      <div class="who"><span id="stamp" class="muted"></span><button class="btn ghost sm" id="reload">Aktualisieren</button><button class="btn ghost sm" id="logout">Abmelden</button></div>
-    </header>
+<div id="app" class="shell" hidden>
+  <aside class="side">
+    <div class="brand"><img src="media/app-icon.png" alt=""><div><b>Salvage &amp; Grind</b><span>Dashboard</span></div></div>
     <nav role="tablist">
-      <button role="tab" data-tab="ov" aria-selected="true">Übersicht</button>
-      <button role="tab" data-tab="pl">Spieler</button>
-      <button role="tab" data-tab="ac">Konten</button>
-      <button role="tab" data-tab="ke">Keys</button>
-      <button role="tab" data-tab="lo">Anmeldungen</button>
-      <button role="tab" data-tab="fb">Feedback</button>
+      <button role="tab" data-tab="ov" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/></svg><span>Übersicht</span></button>
+      <button role="tab" data-tab="pl"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 11a3 3 0 1 0 0-6M22 21c0-3-2-5.5-5-6"/></svg><span>Spieler</span></button>
+      <button role="tab" data-tab="ac"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Konten</span></button>
+      <button role="tab" data-tab="ke"><svg viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 21 2M16 7l3 3M19 4l2 2"/></svg><span>Keys</span></button>
+      <button role="tab" data-tab="lo"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg><span>Anmeldungen</span></button>
+      <button role="tab" data-tab="fb"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Feedback</span></button>
     </nav>
+    <div class="foot">
+      <span class="stamp" id="stamp"></span>
+      <div class="row"><button class="btn ghost sm" id="reload">Aktualisieren</button><button class="btn ghost sm" id="logout">Abmelden</button></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="top"><div><h1 id="pageTitle">Übersicht</h1><p id="pageSub">Alles über das Spiel auf einen Blick</p></div></div>
 
     <section data-pane="ov">
       <div class="grid kpis" id="kpis"></div>
       <div class="grid two">
         <div class="card"><h2>Aktive Spieler pro Tag <small>letzte 30 Tage</small></h2><svg class="chart" id="dauChart"></svg></div>
-        <div class="card"><h2>Neue Spieler pro Tag <small>erster Besuch, letzte 30 Tage</small></h2><svg class="chart" id="newChart"></svg></div>
+        <div class="card"><h2>Neue Spieler pro Tag <small>erster Besuch · letzte 30 Tage</small></h2><svg class="chart" id="newChart"></svg></div>
       </div>
       <div class="grid two">
         <div class="card"><h2>Welten <small>Spieler mit Fortschritt · Ø Level</small></h2><div class="bars" id="worldBars"></div></div>
@@ -114,41 +177,41 @@ svg.chart { width: 100%; height: 170px; display: block; }
 
     <section data-pane="pl" hidden>
       <div class="card">
-        <div class="row" style="margin-bottom:10px"><input id="plQ" placeholder="Name suchen" style="flex:1;min-width:160px"><select id="plF"><option value="">Alle</option><option value="1">Aktiv (7 Tage)</option><option value="acct">Mit Konto</option><option value="guest">Gäste</option></select></div>
+        <div class="row" style="margin-bottom:14px"><input id="plQ" placeholder="Name suchen …" style="flex:1;min-width:180px"><select id="plF"><option value="">Alle Spieler</option><option value="1">Aktiv (7 Tage)</option><option value="acct">Mit Konto</option><option value="guest">Gäste</option></select></div>
         <div class="tbl"><table id="plT"></table></div>
       </div>
     </section>
 
     <section data-pane="ac" hidden>
       <div class="card">
-        <div class="row" style="margin-bottom:10px"><h2 style="margin:0;flex:1">Spielkonten <small id="acCount"></small></h2><input id="acQ" placeholder="Name suchen" style="min-width:160px"></div>
-        <p class="muted" style="margin:0 0 10px">„Passwort zurücksetzen“ setzt das Passwort auf <b>123456</b>. Beim nächsten Anmelden muss der Spieler ein neues festlegen; Spielstand und Key bleiben erhalten.</p>
+        <div class="row" style="margin-bottom:12px"><h2 style="margin:0;flex:1">Spielkonten <small id="acCount"></small></h2><input id="acQ" placeholder="Name suchen …" style="min-width:180px"></div>
+        <p class="note">„Passwort zurücksetzen“ setzt das Passwort auf <b>123456</b>. Beim nächsten Anmelden muss der Spieler ein neues festlegen – Spielstand und Key bleiben erhalten.</p>
         <div class="tbl"><table id="acT"></table></div>
       </div>
     </section>
 
     <section data-pane="ke" hidden>
-      <div class="card" style="margin-bottom:12px">
+      <div class="card">
         <h2>Neue Keys erzeugen</h2>
-        <form class="row" id="kf"><input id="kn" placeholder="Für wen? (Name)" required style="flex:1;min-width:180px"><input id="kc" type="number" min="1" max="50" value="1" style="width:80px" aria-label="Anzahl"><button class="btn" id="kb">Erzeugen</button></form>
+        <form class="row" id="kf"><input id="kn" placeholder="Für wen? (Name)" required style="flex:1;min-width:200px"><input id="kc" type="number" min="1" max="50" value="1" style="width:90px" aria-label="Anzahl"><button class="btn" id="kb">Erzeugen</button></form>
         <div id="newKeys"></div>
       </div>
       <div class="card">
-        <div class="row" style="margin-bottom:10px"><h2 style="margin:0;flex:1">Alle Keys <small id="keyCount"></small></h2><input id="kQ" placeholder="Suchen" style="min-width:160px"></div>
+        <div class="row" style="margin-bottom:12px"><h2 style="margin:0;flex:1">Alle Keys <small id="keyCount"></small></h2><input id="kQ" placeholder="Suchen …" style="min-width:180px"></div>
         <div class="tbl"><table id="keT"></table></div>
       </div>
     </section>
 
     <section data-pane="lo" hidden>
       <div class="grid kpis" id="loKpis"></div>
-      <div class="card" style="margin-bottom:12px"><h2>Spielstarts mit Key pro Tag <small>letzte 30 Tage</small></h2><svg class="chart" id="loChart"></svg></div>
+      <div class="card"><h2>Spielstarts pro Tag <small>letzte 30 Tage</small></h2><svg class="chart" id="loChart"></svg></div>
       <div class="card"><h2>Letzte Starts</h2><div class="tbl"><table id="loT"></table></div></div>
     </section>
 
     <section data-pane="fb" hidden>
       <div class="card"><h2>Feedback und Fehlermeldungen <small id="fbCount"></small></h2><div class="tbl"><table id="fbT"></table></div></div>
     </section>
-  </div>
+  </main>
 </div>
 <script src="vendor/firebase/firebase-app-compat.js"></script>
 <script src="vendor/firebase/firebase-auth-compat.js"></script>
@@ -186,6 +249,8 @@ svg.chart { width: 100%; height: 170px; display: block; }
   document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
     document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
     document.querySelectorAll("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab);
+    const SUB = { ov: "Alles über das Spiel auf einen Blick", pl: "Alle Spieler, die online gesehen wurden", ac: "Konten mit Beta-Key, Passwort zurücksetzen", ke: "Beta-Keys erzeugen, sperren und entsperren", lo: "Jeder Spielstart mit Key", fb: "Ideen, Lob und Fehlermeldungen aus dem Spiel" };
+    $("pageTitle").textContent = b.textContent.trim(); $("pageSub").textContent = SUB[b.dataset.tab] || ""; window.scrollTo(0, 0);
   });
 
   /* ---------- Daten laden ---------- */
@@ -217,12 +282,18 @@ svg.chart { width: 100%; height: 170px; display: block; }
     $(el).innerHTML = rows.length ? rows.map(([l, v, extra]) => `<div class="bar"><span>${esc(l)}</span><i style="width:${(v / max * 100).toFixed(1)}%"></i><em>${fmt(v)}${extra ? " · " + extra : ""}</em></div>`).join("") : '<div class="muted">Noch keine Daten</div>';
   }
   function chart(el, days, vals, col) {
-    const W = 600, H = 170, P = 26, max = Math.max(1, ...vals), bw = (W - P) / days.length;
-    let s = `<line x1="${P}" y1="${H - 20}" x2="${W}" y2="${H - 20}" stroke="rgba(200,210,255,.15)"/>`;
-    [0, .5, 1].forEach(f => { const y = H - 20 - f * (H - 40); s += `<text x="${P - 4}" y="${y + 4}" fill="#6c769a" font-size="10" text-anchor="end">${Math.round(max * f)}</text>`; if (f) s += `<line x1="${P}" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(200,210,255,.06)"/>`; });
-    vals.forEach((v, i) => { const h = v / max * (H - 40), x = P + i * bw + 2; s += `<rect x="${x}" y="${H - 20 - h}" width="${bw - 4}" height="${h}" rx="2" fill="${col}"><title>${days[i]}: ${v}</title></rect>`; if (i % 5 === 4 || i === days.length - 1) s += `<text x="${x + bw / 2 - 2}" y="${H - 6}" fill="#6c769a" font-size="10" text-anchor="middle">${days[i].slice(8)}.${days[i].slice(5, 7)}.</text>`; });
+    const W = 640, H = 190, L = 30, B = 22, T = 10, max = Math.max(1, ...vals), n = vals.length, sx = (W - L - 6) / Math.max(1, n - 1);
+    const X = i => L + i * sx, Y = v => T + (1 - v / max) * (H - T - B), id = el + "G";
+    const pts = vals.map((v, i) => [X(i), Y(v)]);
+    const d = pts.map(([x, y], i) => (i ? "L" : "M") + x.toFixed(1) + "," + y.toFixed(1)).join(" ");
+    let s = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".38"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>`;
+    [0, .5, 1].forEach(f => { const y = Y(max * f); s += `<line x1="${L}" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(160,175,255,${f ? .08 : .18})" ${f ? 'stroke-dasharray="3 5"' : ""}/><text x="${L - 8}" y="${y + 4}" fill="#6f78a3" font-size="10" text-anchor="end" font-family="JetBrains Mono, monospace">${Math.round(max * f)}</text>`; });
+    s += `<path d="${d} L${X(n - 1)},${H - B} L${L},${H - B} Z" fill="url(#${id})"/><path d="${d}" fill="none" stroke="${col}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 4px 10px ${col}55)"/>`;
+    pts.forEach(([x, y], i) => { s += `<circle cx="${x}" cy="${y}" r="${vals[i] ? 3 : 0}" fill="#0d1230" stroke="${col}" stroke-width="2"><title>${days[i].slice(8)}.${days[i].slice(5, 7)}.: ${vals[i]}</title></circle><rect x="${x - sx / 2}" y="${T}" width="${sx}" height="${H - T - B}" fill="transparent"><title>${days[i].slice(8)}.${days[i].slice(5, 7)}.: ${vals[i]}</title></rect>`;
+      if (i % 5 === 4 || i === n - 1) s += `<text x="${x}" y="${H - 5}" fill="#6f78a3" font-size="10" text-anchor="middle" font-family="JetBrains Mono, monospace">${days[i].slice(8)}.${days[i].slice(5, 7)}.</text>`; });
     $(el).setAttribute("viewBox", `0 0 ${W} ${H}`); $(el).innerHTML = s;
   }
+
   const maxLevel = p => Math.max(0, ...Object.values(p.w || {}).map(w => (w && w.l) || 0));
   function render() {
     const P = Object.entries(D.players).map(([uid, p]) => Object.assign({ uid }, p || {})), now = Date.now();
@@ -232,9 +303,9 @@ svg.chart { width: 100%; height: 170px; display: block; }
     $("kpis").innerHTML = kpi("Konten", D.names == null ? "–" : fmt(D.names), "angemeldete Spielnamen") + kpi("Konten mit Key", fmt(Object.keys(D.accounts).length), "seit Closed Beta") + kpi("Spieler-Geräte", fmt(P.length), "online gesehen") + kpi("Aktiv heute", fmt(act(DAY))) + kpi("Aktiv 7 Tage", fmt(act(7 * DAY))) + kpi("Aktiv 30 Tage", fmt(act(30 * DAY)))
       + kpi("Keys aktiv", fmt(keysOn.length), keysAll.length - keysOn.length ? (keysAll.length - keysOn.length) + " gesperrt" : "") + kpi("Feedback", fmt(D.reports.length), D.reports.filter(r => r.neu).length ? D.reports.filter(r => r.neu).length + " noch nicht in Discord" : "");
     const days = Object.keys(D.daily).sort();
-    chart("dauChart", days, days.map(d => D.daily[d]), "#7c5cff");
+    chart("dauChart", days, days.map(d => D.daily[d]), "#ffb238");
     const nw = {}; P.forEach(p => { if (p.f) { const k = dayKey(p.f); nw[k] = (nw[k] || 0) + 1; } });
-    chart("newChart", days, days.map(d => nw[d] || 0), "#37d6ff");
+    chart("newChart", days, days.map(d => nw[d] || 0), "#46d9ff");
     bars("worldBars", Object.keys(WORLDS).map(w => { const ps = P.filter(p => p.w && p.w[w] && p.w[w].l); const avg = ps.length ? Math.round(ps.reduce((a, p) => a + p.w[w].l, 0) / ps.length) : 0; return [WORLDS[w], ps.length, "Ø Lv " + avg]; }));
     const cnt = (f) => { const m = {}; P.forEach(p => { const k = f(p); if (k) m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
     bars("cwBars", cnt(p => WORLDS[p.cw] || p.cw));
@@ -350,7 +421,7 @@ svg.chart { width: 100%; height: 170px; display: block; }
     $("loKpis").innerHTML = kpi("Starts heute", fmt(L.filter(l => now - l.t < DAY).length)) + kpi("Spieler heute", fmt(uniq(DAY)), "verschiedene Keys") + kpi("Spieler 7 Tage", fmt(uniq(7 * DAY))) + kpi("Starts gesamt", fmt(L.length))
       + kpi("Keys nie benutzt", fmt(Object.keys(D.keys).filter(id => !(D.use[id] && D.use[id].log)).length));
     const days = Array.from({ length: 30 }, (_, i) => dayKey(now - (29 - i) * DAY)), per = {}; L.forEach(l => { const k = dayKey(l.t || 0); per[k] = (per[k] || 0) + 1; });
-    chart("loChart", days, days.map(d => per[d] || 0), "#4ade80");
+    chart("loChart", days, days.map(d => per[d] || 0), "#4fe39a");
     $("loT").innerHTML = `<tr><th>Wann</th><th>Konto</th><th>Key für</th><th>Welt</th><th>Gerät</th></tr>` + L.slice(0, 200).map(l => `<tr><td>${dt(l.t)}</td><td>${esc(l.n || "–")}</td><td>${esc(name(l.id))}</td><td>${esc(l.w || "–")}</td><td>${esc(l.p || "–")}</td></tr>`).join("") || '<tr><td class="muted">Noch keine Starts</td></tr>';
   }
 
