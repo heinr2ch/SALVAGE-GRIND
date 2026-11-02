@@ -2,6 +2,10 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.11 · Neonküste: Dein eigener Wagen fährt durch · 02.11.2026
+- Bei Wild und Respin fährt jetzt dein eigener Wagen mit allen Ausbauten über die Walzen – mit glühenden Reifen.
+- Fehler behoben: Das Auto blieb nach der Durchfahrt manchmal rechts noch ein paar Sekunden stehen.
+
 ## Beta 1.12.10 · Neonküste: Polizeisirene und coolere Auto-Fahrt · 02.11.2026
 - Freispiel-Symbole (Sirene) lösen jetzt ein Martinshorn mit rot-blauem Blaulicht aus statt eines dumpfen Schlags.
 - Die Auto-Durchfahrt ist actionreicher: Neon-Leuchtspur, Scheinwerfer, Fahrtwind-Streifen und eine sanftere Vorbeifahrt mit Motor von links nach rechts – ohne Wackeln und ohne Kratzgeräusch.
