@@ -2154,9 +2154,9 @@ html.sg-eco *, html.sg-eco *::before, html.sg-eco *::after { -webkit-backdrop-fi
 #wswipe.in i.p2 { animation: wsIn2 .46s cubic-bezier(.7,0,.3,1) .12s forwards; }
 #wswipe.in .ws-t { animation: wsT .35s ease .32s forwards; }
 #wswipe.in .ws-t em { animation: wsBar 1.4s ease .45s forwards; }
-#wswipe.out i.p2 { transform: skewX(-14deg) translateX(0); animation: wsOut .55s cubic-bezier(.7,0,.3,1) .15s forwards; }
-#wswipe.out i.p1 { transform: skewX(-14deg) translateX(40%); animation: wsOut1 .5s cubic-bezier(.7,0,.3,1) .05s forwards; }
-#wswipe.out .ws-t { opacity: 1; animation: wsTo .25s ease forwards; }
+#wswipe.out i.p2 { transform: skewX(-14deg) translateX(0); animation: wsOut .55s cubic-bezier(.7,0,.3,1) .5s forwards; }
+#wswipe.out i.p1 { transform: skewX(-14deg) translateX(40%); animation: wsOut1 .5s cubic-bezier(.7,0,.3,1) .4s forwards; }
+#wswipe.out .ws-t { opacity: 1; animation: wsTo .3s ease .35s forwards; }
 #wswipe.out .ws-t em { width: 160px; }
 @keyframes wsIn { to { transform: skewX(-14deg) translateX(40%); } }
 @keyframes wsIn2 { to { transform: skewX(-14deg) translateX(0); } }
@@ -5707,9 +5707,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.12.5";
+const GAME_VERSION = "1.12.6";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.12.6", date: "02.11.2026", title: "Fehlerbehebung Weltwechsel", items: ["Schwarzer Bildschirm beim Weltwechsel behoben", "Weltbild und Name bleiben während des ganzen Wechsels stehen"] },
   { v: "1.12.5", date: "02.11.2026", title: "Übergang mit Weltbild, schnelleres Menü", items: ["Weltwechsel zeigt das Bild der Zielwelt, eigener Klang je Welt, keine springenden Schriften mehr", "Hauptmenü: Welten erscheinen sofort und ploppen kurz nacheinander auf"] },
   { v: "1.12.4", date: "02.11.2026", title: "Weltwechsel mit Übergang", items: ["Beim Wechsel der Welt: schnelle Wischblende in der Farbe der Zielwelt mit Namen und Whoosh-Sound, in der neuen Welt öffnet sie sich wieder"] },
   { v: "1.12.3", date: "02.11.2026", title: "Musik zur Vorschau", items: ["Die Vorschau der kommenden Welten spielt einen eigenen Track: Swing-Jazz in der Brutzelküche, Hip-Hop/Funk in der Chromgarage"] },
@@ -10221,9 +10222,11 @@ document.addEventListener("click", e => {
 // Ankunft: Blende über der neuen Welt wieder öffnen
 (function wsArrive() {
   let d = null; try { d = JSON.parse(sessionStorage.getItem("sg-wipe") || "null"); sessionStorage.removeItem("sg-wipe"); } catch (e) {}
+  const pre = $("wsPre");
+  if (pre) { setTimeout(() => { pre.style.opacity = "0"; pre.style.transform = "scale(1.06)"; setTimeout(() => pre.remove(), 500); }, 380); return; }   // kam über die Startseite: dort steht die Blende schon
   if (!d || Date.now() - d.t > 15000) return;
   const el = $("wswipe"); el.style.setProperty("--wc", d.c || "#ffc94a"); el.querySelector("small").textContent = "Willkommen in"; el.querySelector("b").textContent = d.n || ""; el.querySelector(".ws-art").innerHTML = d.a || "";
-  el.hidden = false; el.className = "out"; setTimeout(() => { el.hidden = true; el.className = ""; }, 900);
+  el.hidden = false; el.className = "out"; setTimeout(() => { el.hidden = true; el.className = ""; }, 1250);
 })();
 
 
