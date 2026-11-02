@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.12.8 · Aussehen im Team synchron · 02.11.2026
+- Team-Spielstand: Lack, Aufkleber, Name sowie Flagge und Sticker des Fahrzeugs sind für alle gleich – die zuletzt gemachte Änderung gilt
+
 ## Beta 1.12.7 · Team-Spielstand und Einsatz · 02.11.2026
 - Team-Einladung angenommen: der Team-Spielstand wird direkt geladen
 - Team-Spielstand: der Einsatz springt nicht mehr auf den Einsatz des Mitspielers

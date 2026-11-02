@@ -5707,9 +5707,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.12.7";
+const GAME_VERSION = "1.12.8";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.12.8", date: "02.11.2026", title: "Aussehen im Team synchron", items: ["Team-Spielstand: Lack, Aufkleber, Name sowie Flagge und Sticker des Fahrzeugs sind für alle gleich – die zuletzt gemachte Änderung gilt"] },
   { v: "1.12.7", date: "02.11.2026", title: "Team-Spielstand und Einsatz", items: ["Team-Einladung angenommen: der Team-Spielstand wird direkt geladen", "Team-Spielstand: der Einsatz springt nicht mehr auf den Einsatz des Mitspielers", "Neonküste: Einsatz pro Dreh gut sichtbar (rot, wenn die Chips nicht reichen); bei zu wenig Chips werden heiße Zeilen aus- bzw. der Einsatz heruntergeschaltet statt zu blockieren", "Fahrzeug 1 von 3 steht jetzt in allen Welten unter den Ausbau-Knöpfen"] },
   { v: "1.12.6", date: "02.11.2026", title: "Fehlerbehebung Weltwechsel", items: ["Schwarzer Bildschirm beim Weltwechsel behoben", "Weltbild und Name bleiben während des ganzen Wechsels stehen"] },
   { v: "1.12.5", date: "02.11.2026", title: "Übergang mit Weltbild, schnelleres Menü", items: ["Weltwechsel zeigt das Bild der Zielwelt, eigener Klang je Welt, keine springenden Schriften mehr", "Hauptmenü: Welten erscheinen sofort und ploppen kurz nacheinander auf"] },
@@ -8455,6 +8456,8 @@ function teamMerge(a, b) {
   ["found", "visited", "album", "ach", "crew"].forEach(k => { if (Array.isArray(b[k])) o[k] = [...new Set([...(a[k] || []), ...b[k]])]; });
   if (b.stats) { o.stats = { ...(a.stats || {}) }; Object.keys(b.stats).forEach(k => { if (typeof b.stats[k] === "number") o.stats[k] = Math.max(o.stats[k] || 0, b.stats[k]); }); }
   if (b.shipNamed && !a.shipNamed) { o.shipName = b.shipName; o.shipNamed = true; }
+  // Aussehen (Lack, Aufkleber, Name, Flagge/Sticker): die zuletzt geänderte Fassung gilt für alle im Team
+  if ((b.lookT || 0) > (a.lookT || 0)) { ["paint", "decal", "shipName", "shipNamed", "look", "lookT"].forEach(k => { if (k in b) o[k] = b[k]; }); }
   return o;
 }
 function teamApply(remote) {
@@ -10139,6 +10142,32 @@ async function frAccept(id) {
   await OL.db.ref().update({ [`friends/${OL.uid}/${id}`]: true, [`friends/${id}/${OL.uid}`]: true, [`freq/${OL.uid}/${id}`]: null });
   olMsg(`Du bist jetzt mit ${n} befreundet!`, true);
   try { burst(50, ["#4fe39a", "#ffc94a", "#ffffff"], 1); sfx.mission(); } catch (e) {}
+}
+
+/* ---------- Aussehen im Team-Spielstand synchron: Zeitstempel bei jeder Änderung, mitspeichern, übernehmen ---------- */
+const lookSig = () => { let l = ""; try { l = localStorage.getItem("welten-look-" + WORLD_ID) || ""; } catch (e) {} return [state.paint, state.decal, state.shipName, l].join("|"); };
+let lookLast = null;
+if (typeof serialize === "function") {
+  const se0 = serialize;
+  serialize = function () {
+    const d = se0.apply(this, arguments), sig = lookSig();
+    if (lookLast !== null && sig !== lookLast) state.lookT = Date.now();
+    lookLast = sig;
+    try { d.look = localStorage.getItem("welten-look-" + WORLD_ID) || ""; } catch (e) {}
+    d.lookT = state.lookT || 0; return d;
+  };
+}
+if (typeof applySave === "function") {
+  const ap0 = applySave;
+  applySave = function (d) {
+    const before = lookSig(); ap0.apply(this, arguments);
+    try {
+      if (d && typeof d.lookT === "number") state.lookT = d.lookT;
+      if (d && typeof d.look === "string" && d.look) { localStorage.setItem("welten-look-" + WORLD_ID, d.look); try { fnLookRender(); } catch (e) {} }
+      const now = lookSig(); if (now !== before) { try { lastShipKey = ""; lastVehKey = ""; applyName && applyName(); } catch (e) {} }
+      lookLast = now;
+    } catch (e) {}
+  };
 }
 
 /* ---------- Demnächst: Vorschau im Hauptmenü ---------- */
