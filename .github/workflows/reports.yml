@@ -1,0 +1,32 @@
+name: Feedback nach Discord
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+
+# Ein Lauf bleibt 75 Minuten wach und leitet neue Meldungen innerhalb weniger Sekunden weiter.
+# Alle 30 Minuten startet ein neuer Lauf und löst den alten ab, so gibt es keine Lücken.
+concurrency:
+  group: reports
+  cancel-in-progress: true
+
+jobs:
+  forward:
+    # Läuft nur im öffentlichen Repo (dort kostenlos); das private Quell-Repo baut nichts
+    if: github.repository == 'heinr2ch/SALVAGE-GRIND'
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node .github/scripts/reports_to_discord.js
+        env:
+          DISCORD_WEBHOOK_REPORT: ${{ secrets.DISCORD_WEBHOOK_REPORT }}
+          DISCORD_WEBHOOK_FEEDBACK: ${{ secrets.DISCORD_WEBHOOK_FEEDBACK }}
+          FIREBASE_DB_SECRET: ${{ secrets.FIREBASE_DB_SECRET }}
+          WATCH_MIN: "75"

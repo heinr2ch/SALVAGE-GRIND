@@ -1,0 +1,105 @@
+name: Desktop-Versionen bauen (Windows, Mac, Linux · Vollversion und Demo)
+
+# Baut bei jedem Push auf main oder experimente (Release nur von main) (wenn sich Spiel oder Desktop-Hülle ändern) oder per Knopfdruck:
+#  - Windows: Installer (.exe) + entpackter Ordner für Steam
+#  - Mac: .zip (enthält die App) für Intel (x64) und Apple Silicon (arm64)
+#  - Linux: AppImage, .deb + entpackter Ordner für Steam
+# jeweils als Vollversion und als Demo (nur Sternenwrack, erstes Fahrzeug).
+# IDs kommen aus GitHub → Settings → Secrets and variables → Actions → Variables:
+#   STEAM_APPID, STEAM_DEMO_APPID, DISCORD_APPID   (fehlen sie, laufen die Versionen ohne Steam/Discord)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, experimente]
+    paths: ["desktop/**", ".github/workflows/desktop.yml", "index.html", "treibgut/index.html", "eisenfront/index.html", "neustadt/index.html", "neonkueste/index.html", "fonts/**", "vendor/**", "media/**", "**/spiel.bin", "keys.json", "demo.html"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    # Läuft nur im öffentlichen Repo (dort kostenlos); das private Quell-Repo baut nichts
+    if: github.repository == 'heinr2ch/SALVAGE-GRIND'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        edition: [full, demo]
+    runs-on: ${{ matrix.os }}
+    env:
+      SG_DEMO: ${{ matrix.edition == 'demo' && '1' || '0' }}
+      SG_STEAM_APPID: ${{ vars.STEAM_APPID }}
+      SG_STEAM_DEMO_APPID: ${{ vars.STEAM_DEMO_APPID }}
+      SG_DISCORD_APPID: ${{ vars.DISCORD_APPID }}
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Abhängigkeiten
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+      - name: Windows bauen
+        if: runner.os == 'Windows'
+        working-directory: desktop
+        run: npm run dist:win
+      - name: Mac bauen
+        if: runner.os == 'macOS'
+        working-directory: desktop
+        run: npm run dist:mac
+      - name: Linux bauen
+        if: runner.os == 'Linux'
+        working-directory: desktop
+        run: npm run dist:linux
+      - name: Selbsttest (startet die App kurz)
+        shell: bash
+        working-directory: desktop/dist
+        env:
+          SG_SMOKE: "1"
+        run: |
+          set -e
+          if [ "$RUNNER_OS" = "Linux" ]; then exe=$(ls linux-unpacked/salvage-and-grind*  | grep -v '\.' | head -1); xvfb-run -a timeout 90 "./$exe" --no-sandbox 2>&1 | grep SMOKE | tee /dev/stderr | grep -q '"spiel":true'; fi
+          if [ "$RUNNER_OS" = "Windows" ]; then exe=$(ls win-unpacked/*.exe | head -1); export SG_SMOKE_OUT="$PWD/smoke.txt"; timeout 90 "./$exe" || true; cat smoke.txt; grep -q '"spiel":true' smoke.txt; rm smoke.txt; fi
+          if [ "$RUNNER_OS" = "macOS" ]; then d=$([ "$(uname -m)" = arm64 ] && echo mac-arm64 || echo mac); ls -la "$d"; app=$(ls -d "$d"/*.app | head -1); echo "Teste $app"; bin=$(ls "$app/Contents/MacOS/" | head -1); codesign -dv --verbose=2 "$app" 2>&1 | head -5 || true; perl -e 'alarm 90; exec {$ARGV[0]} @ARGV' "$app/Contents/MacOS/$bin" > out.txt 2>&1 || true; tail -20 out.txt; grep -q '"spiel":true' out.txt; rm out.txt; fi
+      - name: Ordner für Steam packen
+        shell: bash
+        working-directory: desktop/dist
+        run: |
+          set -e
+          tag=$([ "$SG_DEMO" = "1" ] && echo "Demo-" || echo "")
+          v=$(node -p "require('../package.json').version")
+          if [ -d win-unpacked ]; then (cd win-unpacked && 7z a -tzip "../Salvage-and-Grind-${tag}${v}-steam-windows.zip" . >/dev/null); fi
+          if [ -d linux-unpacked ]; then (cd linux-unpacked && zip -qr "../Salvage-and-Grind-${tag}${v}-steam-linux.zip" .); fi
+          ls -la
+      - name: Version lesen
+        id: v
+        shell: bash
+        run: echo "version=$(node -p "require('./desktop/package.json').version")" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SG-${{ matrix.edition }}-${{ runner.os }}
+          if-no-files-found: error
+          path: |
+            desktop/dist/*.exe
+            desktop/dist/*.zip
+            desktop/dist/*.AppImage
+            desktop/dist/*.deb
+      - name: Download-Seite (Release, nur von main)
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: desktop-v${{ steps.v.outputs.version }}
+          name: Salvage & Grind ${{ steps.v.outputs.version }} · Windows, Mac, Linux
+          prerelease: true
+          body: |
+            Salvage & Grind – Closed Beta (Testversion für Eingeladene). Nur Spielgeld, kein Echtgeld.
+            Windows: Setup .exe · Mac: .zip entpacken, App in „Programme“ ziehen (Intel = x64, Apple Silicon = arm64; beim ersten Start Rechtsklick → Öffnen) · Linux: .AppImage oder .deb
+            Dateien mit „Demo“ sind die Demo (nur Sternenwrack, erstes Fahrzeug). „steam“-Zips sind die Ordner für den Steam-Upload.
+          files: |
+            desktop/dist/*.exe
+            desktop/dist/*-mac-*.zip
+            desktop/dist/*.AppImage
+            desktop/dist/*.deb
+            desktop/dist/*-steam-*.zip

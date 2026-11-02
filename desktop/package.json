@@ -1,0 +1,107 @@
+{
+  "name": "salvage-grind",
+  "productName": "Salvage & Grind",
+  "version": "1.8.1",
+  "description": "Salvage & Grind – Slot-Sammlung mit fünf Welten (nur Spielgeld, Early Access)",
+  "author": {
+    "name": "heinr2ch",
+    "email": "heinr2ch@users.noreply.github.com"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "prepare-app": "node prepare.js",
+    "start": "node prepare.js && electron .",
+    "dist": "node prepare.js && electron-builder -c builder.json --win nsis --x64 --publish never",
+    "dist:win": "node prepare.js && electron-builder -c builder.json --win nsis dir --x64 --publish never",
+    "dist:mac": "node prepare.js && electron-builder -c builder.json --mac zip --x64 --arm64 --publish never",
+    "dist:linux": "node prepare.js && electron-builder -c builder.json --linux AppImage deb dir --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "com.heinr2ch.salvagegrind",
+    "productName": "Salvage & Grind",
+    "copyright": "© heinr2ch",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "discord.js",
+      "migrate.html",
+      "app/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico",
+      "artifactName": "Salvage-and-Grind-Setup-${version}.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Salvage & Grind",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "language": "1031"
+    },
+    "extraResources": [
+      {
+        "from": "steam",
+        "to": ".",
+        "filter": [
+          "steam_appid.txt",
+          "discord_appid.txt",
+          "build.json"
+        ]
+      }
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/steamworks.js/**"
+    ],
+    "mac": {
+      "target": [
+        "zip"
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.casual-games",
+      "artifactName": "Salvage-and-Grind-${version}-mac-${arch}.${ext}",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "identity": "-",
+      "darkModeSupport": true
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "build/icon.png",
+      "category": "Game",
+      "executableName": "salvage-and-grind",
+      "artifactName": "Salvage-and-Grind-${version}-linux-${arch}.${ext}",
+      "synopsis": "Slot-Sammlung mit fünf Welten (nur Spielgeld)",
+      "desktop": {
+        "Name": "Salvage & Grind",
+        "Comment": "Slot-Sammlung mit fünf Welten (nur Spielgeld)",
+        "Categories": "Game;"
+      }
+    },
+    "deb": {
+      "maintainer": "heinr2ch <heinr2ch@users.noreply.github.com>"
+    },
+    "publish": null
+  },
+  "optionalDependencies": {
+    "steamworks.js": "0.4.0"
+  },
+  "homepage": "https://heinr2ch.github.io/SALVAGE-GRIND/"
+}

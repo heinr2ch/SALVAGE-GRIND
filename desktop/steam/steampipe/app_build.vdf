@@ -1,0 +1,14 @@
+"AppBuild"
+{
+	"AppID"	"APPID_HIER"
+	"Desc"	"Salvage & Grind Public Beta"
+	"ContentRoot"	"../content/"
+	"BuildOutput"	"../output/"
+	"SetLive"	"beta"
+	"Depots"
+	{
+		"DEPOT_WINDOWS"	"depot_windows.vdf"
+		"DEPOT_MAC"	"depot_mac.vdf"
+		"DEPOT_LINUX"	"depot_linux.vdf"
+	}
+}

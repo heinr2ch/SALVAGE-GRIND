@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Salvage &amp; Grind</title>
+<link rel="icon" href="media/kinearbyte.png">
+<link rel="stylesheet" href="fonts/sw.css">
+<style>
+/* Schlüssel-Tor (Closed Beta): das Spiel liegt verschlüsselt neben dieser Seite (spiel.bin) und startet nur mit gültigem Key. Erzeugt von tools/seal.py. */
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; color: #eef2fb; font: 16px/1.5 "Alegreya Sans", system-ui, sans-serif;
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(124,92,255,.28), transparent 70%), radial-gradient(ellipse 60% 50% at 100% 100%, rgba(55,214,255,.16), transparent 70%), linear-gradient(180deg, #0f1326, #070912); }
+body.wait .card { opacity: 0; }
+.card { width: min(100%, 420px); text-align: center; padding: 30px 26px 24px; border-radius: 22px; transition: opacity .3s;
+  background: linear-gradient(180deg, rgba(30,36,64,.88), rgba(14,17,32,.92)); border: 1px solid rgba(200,210,255,.14); box-shadow: 0 24px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.07); }
+.logo { width: 64px; height: 64px; border-radius: 16px; display: block; margin: 0 auto 12px; }
+h1 { margin: 0; font: 800 1.75rem/1.1 "Unbounded", system-ui, sans-serif; letter-spacing: .02em; background: linear-gradient(180deg, #fff, #b9a8ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tag { display: inline-block; margin: 10px 0 18px; padding: 3px 12px; border-radius: 99px; font: 700 .72rem/1.6 system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #ffd34a; background: rgba(255,211,74,.12); border: 1px solid rgba(255,211,74,.35); }
+p { margin: 0 0 16px; color: #b8c0dc; }
+form { display: grid; gap: 10px; }
+input { width: 100%; padding: 13px 14px; border-radius: 12px; border: 1.5px solid rgba(200,210,255,.22); background: rgba(5,7,16,.6); color: #fff; text-align: center;
+  font: 700 16px/1.2 ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; outline: none; }
+input:focus { border-color: #7c5cff; box-shadow: 0 0 0 3px rgba(124,92,255,.3); }
+button { padding: 13px; border: 0; border-radius: 99px; cursor: pointer; color: #120b2a; font: 800 1rem/1 system-ui, sans-serif; letter-spacing: .04em;
+  background: linear-gradient(180deg, #b9a8ff, #7c5cff); box-shadow: 0 5px 0 #4a32b0, 0 10px 26px rgba(124,92,255,.35); }
+button:active { transform: translateY(2px); box-shadow: 0 3px 0 #4a32b0; }
+button[disabled] { opacity: .6; cursor: wait; }
+.err { min-height: 1.4em; margin: 2px 0 0; color: #ff8a9a; font-weight: 700; }
+.more { margin-top: 14px; display: grid; gap: 6px; font-size: .92rem; }
+.more a { color: #9ad4ff; text-decoration: none; font-weight: 700; }
+.more a:hover { text-decoration: underline; }
+.small { margin-top: 16px; font-size: .78rem; color: #7d86a8; }
+</style>
+</head>
+<body class="wait">
+<main class="card" id="sgGate">
+  <img class="logo" src="media/kinearbyte.png" alt="">
+  <h1>Salvage &amp; Grind</h1>
+  <div class="tag" data-t="tag">Closed Beta</div>
+  <p data-t="lead">Die Testphase ist nur für eingeladene Spieler. Gib deinen Beta-Key ein.</p>
+  <form id="sgForm" autocomplete="off">
+    <input id="sgKey" placeholder="SG-XXXXX-XXXXX-XXXXX-XXXXX" maxlength="40" spellcheck="false" autocapitalize="characters" aria-label="Beta-Key">
+    <button id="sgGo" type="submit" data-t="go">Spiel starten</button>
+    <div class="err" id="sgErr" role="alert"></div>
+  </form>
+  <div class="more">
+    <a href="demo.html" data-t="demo" id="sgDemo">Ohne Key: Demo spielen</a>
+    <span data-t="ask">Noch keinen Key? Schreib uns: <a href="mailto:kinearbyte@icloud.com">kinearbyte@icloud.com</a></span>
+  </div>
+  <div class="small" data-t="by">ein Spiel von <b>KIneArbyte</b> · nur Spielgeld, kein Echtgeld</div>
+</main>
+<script>
+(function () {
+  "use strict";
+  var ROOT = "", UP = "./";
+  window.SG_GATE = { root: ROOT };
+  var EN = !/^de/i.test(navigator.language || "de");
+  var T = { tag: "Closed Beta", lead: "The test phase is for invited players only. Enter your beta key.", go: "Start game", demo: "No key: play the demo",
+    by: "a game by <b>KIneArbyte</b> · play money only, no real money", ask: 'No key yet? Write to us: <a href="mailto:kinearbyte@icloud.com">kinearbyte@icloud.com</a>' };
+  var ERR = EN ? { format: "That doesn't look like a key (SG- and 20 characters).", invalid: "This key is not valid (anymore).", net: "No connection. Please try again.", old: "Your browser is too old for this game." }
+    : { format: "Das sieht nicht wie ein Key aus (SG- und 20 Zeichen).", invalid: "Dieser Key ist nicht (mehr) gültig.", net: "Keine Verbindung. Bitte nochmal versuchen.", old: "Dein Browser ist zu alt für dieses Spiel." };
+  if (EN) document.querySelectorAll("[data-t]").forEach(function (el) { el.innerHTML = T[el.dataset.t]; });
+  var $ = function (id) { return document.getElementById(id); };
+  var store = { get: function () { try { return localStorage.getItem("sg-key") || ""; } catch (e) { return ""; } },
+    set: function (v) { try { v ? localStorage.setItem("sg-key", v) : localStorage.removeItem("sg-key"); } catch (e) {} } };
+  var enc = new TextEncoder();
+  function b64(s) { var b = atob(s), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
+  function sha(s) { return crypto.subtle.digest("SHA-256", enc.encode(s)).then(function (h) { return new Uint8Array(h); }); }
+  function hex(a) { return Array.prototype.map.call(a, function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }
+  function norm(k) {
+    var n = String(k || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (n.length === 22 && n.slice(0, 2) === "SG") n = n.slice(2);
+    return n.replace(/O/g, "0").replace(/[IL]/g, "1").replace(/U/g, "V");
+  }
+  function getJSON(url, ms) {
+    var c = window.AbortController ? new AbortController() : null, t = c && setTimeout(function () { c.abort(); }, ms || 8000);
+    return fetch(url, { cache: "no-store", signal: c && c.signal }).then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); }).finally(function () { t && clearTimeout(t); });
+  }
+  // Keys liegen in Firebase (betakeys/<id>, nur einzeln abrufbar; verwaltet im Dashboard admin.html). Der letzte gültige Eintrag
+  // wird gemerkt, damit das Spiel auch offline startet; online wird jedes Mal neu geprüft (gesperrt = sofort aus).
+  var DB = "https://salvage-grind-default-rtdb.europe-west1.firebasedatabase.app";
+  var cache = { get: function () { try { return JSON.parse(localStorage.getItem("sg-kw") || "null"); } catch (e) { return null; } },
+    set: function (v) { try { v ? localStorage.setItem("sg-kw", JSON.stringify(v)) : localStorage.removeItem("sg-kw"); } catch (e) {} } };
+  function entry(id) {
+    return getJSON(DB + "/betakeys/" + id + ".json", 6000).then(function (e) {
+      if (!e || !e.iv) { var c = cache.get(); if (c && c.id === id) cache.set(null); throw new Error("invalid"); }
+      cache.set({ id: id, iv: e.iv, w: e.w }); return e;
+    }, function () { var c = cache.get(); if (c && c.id === id) return c; throw new Error("net"); });
+  }
+  function logUse(id) {
+    try { if (sessionStorage.getItem("sg-kl")) return; sessionStorage.setItem("sg-kl", "1"); } catch (e) {}
+    var w = (location.pathname.match(/(treibgut|eisenfront|neustadt|neonkueste)\/?$/) || [, "sternenwrack"])[1] + (/\/beta\//.test(location.pathname) ? " (Beta)" : "");
+    fetch(DB + "/keyuse/" + id + "/log.json", { method: "POST", body: JSON.stringify({ t: { ".sv": "timestamp" }, w: w, p: window.sgDesk ? "App" : (/Mobi|Android|iPhone|iPad/.test(navigator.userAgent) ? "Handy" : "Browser") }) }).catch(function () {});
+  }
+  function unlock(key) {
+    var n = norm(key);
+    if (n.length !== 20) return Promise.reject(new Error("format"));
+    return Promise.all([sha("sg-id:" + n), sha("sg-kek:" + n)]).then(function (h) {
+      var id = hex(h[0]).slice(0, 16);
+      return entry(id).then(function (e) {
+        return crypto.subtle.importKey("raw", h[1], "AES-GCM", false, ["decrypt"])
+          .then(function (kek) { return crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(e.iv) }, kek, b64(e.w)); })
+          .then(function (raw) { logUse(id); return crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]); })
+          .catch(function () { throw new Error("invalid"); });
+      });
+    });
+  }
+  function play(K) {
+    return fetch("spiel.bin?v=20261102140117", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error("net"); return r.arrayBuffer(); }).then(function (buf) {
+      var b = new Uint8Array(buf);
+      return crypto.subtle.decrypt({ name: "AES-GCM", iv: b.slice(0, 12) }, K, b.slice(12));
+    }).then(function (pt) {
+      return new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+    }).then(function (html) {
+      if (!/github\.io$/.test(location.hostname)) {
+        // In der App: Links zwischen den Welten auf die lokalen Dateien umstellen (früher in desktop/prepare.js)
+        html = html.replace(/https:\/\/heinr2ch\.github\.io\/(?:SALVAGE-GRIND|salvage-grind|STERNENWRACK|salvage-and-grind)\/((?:treibgut|eisenfront|neustadt|neonkueste)\/)?/g, function (m, sub) { return UP + (sub || "") + "index.html"; })
+          .replace('/github\\.io$/.test(location.hostname) ? "_self" : "_blank"', '"_self"');
+      }
+      document.open(); document.write(html); document.close();
+    });
+  }
+  function fail(e) {
+    document.body.classList.remove("wait");
+    var c = (e && e.message) || "net"; $("sgErr").textContent = ERR[c] || ERR.net; $("sgGo").disabled = false;
+    if (c === "invalid") store.set("");
+  }
+  function start(key, quiet) {
+    $("sgGo").disabled = true; $("sgErr").textContent = "";
+    return unlock(key).then(function (K) { store.set(norm(key)); return play(K); }).catch(function (e) { if (quiet && e && e.message !== "invalid") { document.body.classList.remove("wait"); $("sgGo").disabled = false; return; } fail(e); });
+  }
+  if (window.SG_DEMO || (window.sgDesk && !/github\.io$/.test(location.hostname))) { $("sgDemo").hidden = true; }
+  if (!(window.crypto && crypto.subtle && window.DecompressionStream && window.fetch)) { document.body.classList.remove("wait"); $("sgErr").textContent = ERR.old; $("sgGo").disabled = true; return; }
+  $("sgForm").addEventListener("submit", function (ev) { ev.preventDefault(); start($("sgKey").value, false); });
+  var saved = store.get();
+  if (saved) { $("sgKey").value = saved; start(saved, true); } else document.body.classList.remove("wait");
+})();
+</script>
+</body>
+</html>

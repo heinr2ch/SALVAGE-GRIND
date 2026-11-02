@@ -1,0 +1,9 @@
+"lang"
+{
+	"Language"	"english"
+	"Tokens"
+	{
+		"#Status"	"%world% · %credits% %cur%"
+		"#Menu"	"In the main menu"
+	}
+}

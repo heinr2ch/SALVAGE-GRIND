@@ -1,0 +1,35 @@
+Steam-Anbindung – was wo hingehört
+===================================
+
+1) IDs als GitHub-Variablen eintragen (Settings → Secrets and variables → Actions → Variables):
+   STEAM_APPID        = App-ID der Vollversion
+   STEAM_DEMO_APPID   = App-ID der Demo
+   DISCORD_APPID      = Application-ID aus dem Discord Developer Portal (für „Spielt gerade“)
+   Danach baut GitHub alle Versionen neu (Workflow „Desktop-Versionen bauen“). Ohne IDs laufen die Versionen einfach ohne Steam/Discord.
+
+2) Steam nimmt NICHT den Installer, sondern den entpackten Ordner:
+   Windows: …-steam-windows.zip   → entpacken nach steampipe/../content/windows/
+   Mac:     …-mac-x64.zip         → entpacken nach content/mac/ (enthält „Salvage & Grind.app“)
+   Linux:   …-steam-linux.zip     → entpacken nach content/linux/
+   In steampipe/*.vdf APPID_HIER und DEPOT_… durch die echten Nummern ersetzen, dann mit steamcmd hochladen:
+   steamcmd +login <name> +run_app_build ../steampipe/app_build.vdf +quit
+
+3) Startoptionen in Steamworks (Installation → Allgemein → Startoptionen):
+   Windows: Salvage & Grind.exe
+   Mac:     Salvage & Grind.app
+   Linux:   salvage-and-grind
+   (Demo: „Salvage & Grind Demo.exe“ / „Salvage & Grind Demo.app“ / „salvage-and-grind-demo“)
+
+4) „Spielt gerade“ in der Steam-Freundesliste (Welt + Credits):
+   Steamworks → Community → Rich Presence → Dateien aus richpresence/ hochladen (german.vdf, english.vdf).
+
+5) Erfolge: In Steamworks mit API-Namen ACH_<KENNUNG> anlegen (Kennungen aus der Liste ACH im Spiel, z. B. ACH_FIRSTWIN).
+
+6) Steam Cloud: „Auto-Cloud“ einschalten. Spielstände liegen im Ordner der App-Daten:
+   Windows: %APPDATA%/Salvage & Grind/Local Storage/
+   Mac:     ~/Library/Application Support/Salvage & Grind/Local Storage/
+   Linux:   ~/.config/Salvage & Grind/Local Storage/
+   Zusätzlich speichert das Spiel online im Konto (Anmeldename + Passwort).
+
+7) Discord: Im Developer Portal unter „Rich Presence → Art Assets“ ein Bild mit dem Namen „logo“ hochladen
+   (steam-assets/discord_logo_1024.png).

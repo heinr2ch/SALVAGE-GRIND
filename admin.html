@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Salvage &amp; Grind · Dashboard</title>
+<link rel="icon" href="media/kinearbyte.png">
+<style>
+/* Dashboard für KIneArbyte: Spieler, Aktivität, Keys (erzeugen/sperren), Key-Starts, Feedback. Zugang nur mit dem Admin-Konto (Firebase Auth, Regeln in tools/firebase_rules.json). */
+:root { --bg: #0b0e1a; --panel: #141a2e; --panel2: #1b2340; --line: rgba(200,210,255,.12); --ink: #eef2fb; --soft: #9aa5c8; --mute: #6c769a;
+  --acc: #7c5cff; --acc2: #37d6ff; --ok: #4ade80; --warn: #ffc94a; --bad: #ff6b7a; --r: 14px; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+button, input, select { font: inherit; color: inherit; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 18px 16px 60px; }
+header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+header img { width: 36px; height: 36px; border-radius: 9px; }
+header h1 { margin: 0; font-size: 1.15rem; letter-spacing: .02em; }
+header .who { margin-left: auto; color: var(--soft); font-size: .85rem; display: flex; gap: 10px; align-items: center; }
+nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+nav button { border: 1px solid var(--line); background: var(--panel); padding: 8px 14px; border-radius: 99px; cursor: pointer; color: var(--soft); font-weight: 600; }
+nav button[aria-selected="true"] { background: var(--acc); border-color: var(--acc); color: #fff; }
+.btn { border: 0; border-radius: 10px; padding: 9px 14px; cursor: pointer; background: var(--acc); color: #fff; font-weight: 700; }
+.btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--soft); }
+.btn.bad { background: rgba(255,107,122,.15); color: var(--bad); border: 1px solid rgba(255,107,122,.35); }
+.btn.ok { background: rgba(74,222,128,.13); color: var(--ok); border: 1px solid rgba(74,222,128,.35); }
+.btn.sm { padding: 5px 10px; font-size: .8rem; border-radius: 8px; }
+.btn[disabled] { opacity: .5; cursor: wait; }
+input, select { background: #0a0d18; border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; outline: none; }
+input:focus, select:focus { border-color: var(--acc); }
+.grid { display: grid; gap: 12px; }
+.kpis { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 14px; }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; }
+.kpi span { display: block; color: var(--soft); font-size: .78rem; font-weight: 600; }
+.kpi b { display: block; font-size: 1.7rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.kpi small { color: var(--mute); font-size: .75rem; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; min-width: 0; }
+.card h2 { margin: 0 0 10px; font-size: .95rem; }
+.card h2 small { color: var(--mute); font-weight: 500; margin-left: 6px; }
+.two { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin-bottom: 12px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--soft); font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; cursor: pointer; white-space: nowrap; }
+td.num, th.num { text-align: right; }
+.tbl { overflow-x: auto; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 99px; font-size: .72rem; font-weight: 700; }
+.pill.on { background: rgba(74,222,128,.14); color: var(--ok); } .pill.off { background: rgba(255,107,122,.14); color: var(--bad); }
+.pill.n { background: rgba(124,92,255,.16); color: #c4b5ff; }
+.key { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 700; letter-spacing: .03em; }
+.muted { color: var(--mute); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.bars { display: grid; gap: 6px; }
+.bar { display: grid; grid-template-columns: 110px 1fr 54px; gap: 8px; align-items: center; font-size: .85rem; }
+.bar i { display: block; height: 10px; border-radius: 99px; background: linear-gradient(90deg, var(--acc), var(--acc2)); min-width: 2px; }
+.bar em { font-style: normal; text-align: right; color: var(--soft); font-variant-numeric: tabular-nums; }
+svg.chart { width: 100%; height: 170px; display: block; }
+.newkeys { margin-top: 12px; padding: 12px; border-radius: 12px; background: rgba(74,222,128,.08); border: 1px solid rgba(74,222,128,.3); }
+.newkeys div { display: flex; gap: 10px; align-items: center; padding: 4px 0; }
+.msg { white-space: pre-wrap; word-break: break-word; }
+#login { max-width: 360px; margin: 12vh auto 0; text-align: center; }
+#login form { display: grid; gap: 10px; margin-top: 14px; }
+#err { color: var(--bad); min-height: 1.3em; font-weight: 600; }
+[hidden] { display: none !important; }
+.toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #fff; color: #111; padding: 8px 16px; border-radius: 99px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+@media (max-width: 600px) { .bar { grid-template-columns: 84px 1fr 44px; } th, td { padding: 6px 5px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="login" class="card">
+    <img src="media/kinearbyte.png" alt="" style="width:56px;border-radius:12px">
+    <h1 style="margin:10px 0 0;font-size:1.2rem">Salvage &amp; Grind · Dashboard</h1>
+    <div class="muted">Nur für KIneArbyte</div>
+    <form id="lf">
+      <input id="lm" type="email" placeholder="E-Mail" autocomplete="username" required>
+      <input id="lp" type="password" placeholder="Passwort" autocomplete="current-password" required>
+      <button class="btn" id="lb">Anmelden</button>
+      <div id="err"></div>
+    </form>
+  </section>
+
+  <div id="app" hidden>
+    <header>
+      <img src="media/kinearbyte.png" alt="">
+      <h1>Salvage &amp; Grind · Dashboard</h1>
+      <div class="who"><span id="stamp" class="muted"></span><button class="btn ghost sm" id="reload">Aktualisieren</button><button class="btn ghost sm" id="logout">Abmelden</button></div>
+    </header>
+    <nav role="tablist">
+      <button role="tab" data-tab="ov" aria-selected="true">Übersicht</button>
+      <button role="tab" data-tab="pl">Spieler</button>
+      <button role="tab" data-tab="ke">Keys</button>
+      <button role="tab" data-tab="lo">Anmeldungen</button>
+      <button role="tab" data-tab="fb">Feedback</button>
+    </nav>
+
+    <section data-pane="ov">
+      <div class="grid kpis" id="kpis"></div>
+      <div class="grid two">
+        <div class="card"><h2>Aktive Spieler pro Tag <small>letzte 30 Tage</small></h2><svg class="chart" id="dauChart"></svg></div>
+        <div class="card"><h2>Neue Spieler pro Tag <small>erster Besuch, letzte 30 Tage</small></h2><svg class="chart" id="newChart"></svg></div>
+      </div>
+      <div class="grid two">
+        <div class="card"><h2>Welten <small>Spieler mit Fortschritt · Ø Level</small></h2><div class="bars" id="worldBars"></div></div>
+        <div class="card"><h2>Gerade gespielt <small>zuletzt geöffnete Welt</small></h2><div class="bars" id="cwBars"></div></div>
+      </div>
+      <div class="grid two">
+        <div class="card"><h2>Plattform <small>Spieler</small></h2><div class="bars" id="pfBars"></div></div>
+        <div class="card"><h2>Version <small>Spieler</small></h2><div class="bars" id="verBars"></div></div>
+      </div>
+      <div class="card"><h2>Bestenliste <small>höchstes Level über alle Welten</small></h2><div class="tbl"><table id="topT"></table></div></div>
+    </section>
+
+    <section data-pane="pl" hidden>
+      <div class="card">
+        <div class="row" style="margin-bottom:10px"><input id="plQ" placeholder="Name suchen" style="flex:1;min-width:160px"><select id="plF"><option value="">Alle</option><option value="1">Aktiv (7 Tage)</option><option value="acct">Mit Konto</option><option value="guest">Gäste</option></select></div>
+        <div class="tbl"><table id="plT"></table></div>
+      </div>
+    </section>
+
+    <section data-pane="ke" hidden>
+      <div class="card" style="margin-bottom:12px">
+        <h2>Neue Keys erzeugen</h2>
+        <form class="row" id="kf"><input id="kn" placeholder="Für wen? (Name)" required style="flex:1;min-width:180px"><input id="kc" type="number" min="1" max="50" value="1" style="width:80px" aria-label="Anzahl"><button class="btn" id="kb">Erzeugen</button></form>
+        <div id="newKeys"></div>
+      </div>
+      <div class="card">
+        <div class="row" style="margin-bottom:10px"><h2 style="margin:0;flex:1">Alle Keys <small id="keyCount"></small></h2><input id="kQ" placeholder="Suchen" style="min-width:160px"></div>
+        <div class="tbl"><table id="keT"></table></div>
+      </div>
+    </section>
+
+    <section data-pane="lo" hidden>
+      <div class="grid kpis" id="loKpis"></div>
+      <div class="card" style="margin-bottom:12px"><h2>Spielstarts mit Key pro Tag <small>letzte 30 Tage</small></h2><svg class="chart" id="loChart"></svg></div>
+      <div class="card"><h2>Letzte Starts</h2><div class="tbl"><table id="loT"></table></div></div>
+    </section>
+
+    <section data-pane="fb" hidden>
+      <div class="card"><h2>Feedback und Fehlermeldungen <small id="fbCount"></small></h2><div class="tbl"><table id="fbT"></table></div></div>
+    </section>
+  </div>
+</div>
+<script src="vendor/firebase/firebase-app-compat.js"></script>
+<script src="vendor/firebase/firebase-auth-compat.js"></script>
+<script src="vendor/firebase/firebase-database-compat.js"></script>
+<script>
+(function () {
+  "use strict";
+  const FB = { apiKey: "AIzaSyBcnwWCg5qhD-g8DWnsNh-teUZihc4CKtM", authDomain: "salvage-grind.firebaseapp.com", databaseURL: "https://salvage-grind-default-rtdb.europe-west1.firebasedatabase.app", projectId: "salvage-grind" };
+  firebase.initializeApp(FB);
+  const auth = firebase.auth(), db = firebase.database(), TS = firebase.database.ServerValue.TIMESTAMP;
+  const $ = id => document.getElementById(id), DAY = 86400000;
+  const WORLDS = { sternenwrack: "Sternenwrack", treibgut: "Treibgut", eisenfront: "Eisenfront", neustadt: "Neustadt", neonkueste: "Neonküste" };
+  const KIND = { bug: "Fehler", idea: "Idee", love: "Lob" };
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const fmt = n => (n || 0).toLocaleString("de-DE");
+  const when = t => { if (!t) return "–"; const d = Date.now() - t; if (d < 60000) return "gerade eben"; if (d < 3600000) return "vor " + Math.round(d / 60000) + " Min."; if (d < DAY) return "vor " + Math.round(d / 3600000) + " Std."; if (d < 30 * DAY) return "vor " + Math.round(d / DAY) + " Tagen"; return new Date(t).toLocaleDateString("de-DE"); };
+  const dt = t => t ? new Date(t).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }) : "–";
+  const dayKey = t => new Date(t).toISOString().slice(0, 10);
+  const toast = m => { const d = document.createElement("div"); d.className = "toast"; d.textContent = m; document.body.appendChild(d); setTimeout(() => d.remove(), 1800); };
+  const copy = t => (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast("Kopiert"), () => prompt("Kopieren:", t));
+  let D = { players: {}, keys: {}, use: {}, logs: [], reports: [], names: 0, daily: {}, master: null };
+
+  /* ---------- Anmeldung ---------- */
+  $("lf").addEventListener("submit", e => {
+    e.preventDefault(); $("lb").disabled = true; $("err").textContent = "";
+    auth.signInWithEmailAndPassword($("lm").value.trim(), $("lp").value).catch(er => { $("err").textContent = /password|credential|user/.test(er.code || "") ? "E-Mail oder Passwort falsch." : "Anmeldung fehlgeschlagen (" + (er.code || er.message) + ")."; $("lb").disabled = false; });
+  });
+  $("logout").onclick = () => auth.signOut();
+  $("reload").onclick = () => load();
+  auth.onAuthStateChanged(u => {
+    $("lb").disabled = false;
+    if (!u || u.isAnonymous) { $("login").hidden = false; $("app").hidden = true; return; }
+    $("login").hidden = true; $("app").hidden = false; load();
+  });
+  document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
+    document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
+    document.querySelectorAll("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab);
+  });
+
+  /* ---------- Daten laden ---------- */
+  async function shallowCount(path) {
+    const tok = await auth.currentUser.getIdToken();
+    const r = await fetch(`${FB.databaseURL}/${path}.json?shallow=true&auth=${tok}`); if (!r.ok) throw new Error(path + " " + r.status);
+    const j = await r.json(); return j ? Object.keys(j).length : 0;
+  }
+  async function get(path) { try { return (await db.ref(path).get()).val(); } catch (e) { console.warn(path, e.message); return null; } }
+  async function load() {
+    $("reload").disabled = true; $("stamp").textContent = "lädt …";
+    try {
+      const [players, keys, use, rlog, rnew, master] = await Promise.all([get("players"), get("admin/keys"), get("keyuse"), get("reportsLog"), get("reports"), get("admin/master")]);
+      if (master === null && keys === null && players === null) throw new Error("Kein Zugriff. Ist dieses Konto als Admin eingetragen?");
+      D.players = players || {}; D.keys = keys || {}; D.use = use || {}; D.master = master;
+      D.reports = Object.entries(Object.assign({}, rlog || {}, rnew || {})).map(([id, r]) => Object.assign({ id, neu: !!(rnew && rnew[id]) }, r)).sort((a, b) => (b.t || 0) - (a.t || 0));
+      D.logs = []; Object.entries(D.use).forEach(([id, u]) => Object.values((u && u.log) || {}).forEach(l => D.logs.push(Object.assign({ id }, l)))); D.logs.sort((a, b) => (b.t || 0) - (a.t || 0));
+      try { D.names = await shallowCount("names"); } catch (e) { D.names = null; }
+      const days = Array.from({ length: 30 }, (_, i) => dayKey(Date.now() - (29 - i) * DAY));
+      D.daily = {}; await Promise.all(days.map(async d => { try { D.daily[d] = await shallowCount("daily/" + d); } catch (e) { D.daily[d] = 0; } }));
+      render(); $("stamp").textContent = "Stand " + new Date().toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+    } catch (e) { $("stamp").textContent = ""; alert(e.message); }
+    $("reload").disabled = false;
+  }
+
+  /* ---------- Darstellung ---------- */
+  function bars(el, rows) {
+    const max = Math.max(1, ...rows.map(r => r[1]));
+    $(el).innerHTML = rows.length ? rows.map(([l, v, extra]) => `<div class="bar"><span>${esc(l)}</span><i style="width:${(v / max * 100).toFixed(1)}%"></i><em>${fmt(v)}${extra ? " · " + extra : ""}</em></div>`).join("") : '<div class="muted">Noch keine Daten</div>';
+  }
+  function chart(el, days, vals, col) {
+    const W = 600, H = 170, P = 26, max = Math.max(1, ...vals), bw = (W - P) / days.length;
+    let s = `<line x1="${P}" y1="${H - 20}" x2="${W}" y2="${H - 20}" stroke="rgba(200,210,255,.15)"/>`;
+    [0, .5, 1].forEach(f => { const y = H - 20 - f * (H - 40); s += `<text x="${P - 4}" y="${y + 4}" fill="#6c769a" font-size="10" text-anchor="end">${Math.round(max * f)}</text>`; if (f) s += `<line x1="${P}" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(200,210,255,.06)"/>`; });
+    vals.forEach((v, i) => { const h = v / max * (H - 40), x = P + i * bw + 2; s += `<rect x="${x}" y="${H - 20 - h}" width="${bw - 4}" height="${h}" rx="2" fill="${col}"><title>${days[i]}: ${v}</title></rect>`; if (i % 5 === 4 || i === days.length - 1) s += `<text x="${x + bw / 2 - 2}" y="${H - 6}" fill="#6c769a" font-size="10" text-anchor="middle">${days[i].slice(8)}.${days[i].slice(5, 7)}.</text>`; });
+    $(el).setAttribute("viewBox", `0 0 ${W} ${H}`); $(el).innerHTML = s;
+  }
+  const maxLevel = p => Math.max(0, ...Object.values(p.w || {}).map(w => (w && w.l) || 0));
+  function render() {
+    const P = Object.entries(D.players).map(([uid, p]) => Object.assign({ uid }, p || {})), now = Date.now();
+    const act = d => P.filter(p => p.on && now - p.on < d).length;
+    const keysAll = Object.entries(D.keys), keysOn = keysAll.filter(([, k]) => k && k.active);
+    const kpi = (l, v, sub) => `<div class="kpi"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
+    $("kpis").innerHTML = kpi("Konten", D.names == null ? "–" : fmt(D.names), "angemeldete Spielnamen") + kpi("Spieler-Geräte", fmt(P.length), "online gesehen") + kpi("Aktiv heute", fmt(act(DAY))) + kpi("Aktiv 7 Tage", fmt(act(7 * DAY))) + kpi("Aktiv 30 Tage", fmt(act(30 * DAY)))
+      + kpi("Keys aktiv", fmt(keysOn.length), keysAll.length - keysOn.length ? (keysAll.length - keysOn.length) + " gesperrt" : "") + kpi("Feedback", fmt(D.reports.length), D.reports.filter(r => r.neu).length ? D.reports.filter(r => r.neu).length + " noch nicht in Discord" : "");
+    const days = Object.keys(D.daily).sort();
+    chart("dauChart", days, days.map(d => D.daily[d]), "#7c5cff");
+    const nw = {}; P.forEach(p => { if (p.f) { const k = dayKey(p.f); nw[k] = (nw[k] || 0) + 1; } });
+    chart("newChart", days, days.map(d => nw[d] || 0), "#37d6ff");
+    bars("worldBars", Object.keys(WORLDS).map(w => { const ps = P.filter(p => p.w && p.w[w] && p.w[w].l); const avg = ps.length ? Math.round(ps.reduce((a, p) => a + p.w[w].l, 0) / ps.length) : 0; return [WORLDS[w], ps.length, "Ø Lv " + avg]; }));
+    const cnt = (f) => { const m = {}; P.forEach(p => { const k = f(p); if (k) m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+    bars("cwBars", cnt(p => WORLDS[p.cw] || p.cw));
+    bars("pfBars", cnt(p => ({ app: "App (exe)", handy: "Handy", web: "Browser" })[p.pf] || "unbekannt (alt)"));
+    bars("verBars", cnt(p => p.v || "vor 1.9.6").slice(0, 8));
+    const top = P.slice().sort((a, b) => maxLevel(b) - maxLevel(a)).slice(0, 10);
+    $("topT").innerHTML = `<tr><th>#</th><th>Name</th><th class="num">Level</th><th>Welten</th><th>Zuletzt</th></tr>` + top.map((p, i) => `<tr><td>${i + 1}</td><td>${esc(p.n || "?")}</td><td class="num">${maxLevel(p)}</td><td>${Object.keys(p.w || {}).map(w => (WORLDS[w] || w).slice(0, 2)).join(" ")}</td><td>${when(p.on)}</td></tr>`).join("");
+    renderPlayers(); renderKeys(); renderLogins(); renderReports();
+  }
+  let plSort = "on";
+  function renderPlayers() {
+    const q = $("plQ").value.trim().toLowerCase(), f = $("plF").value, now = Date.now();
+    let P = Object.entries(D.players).map(([uid, p]) => Object.assign({ uid }, p || {}));
+    if (q) P = P.filter(p => (p.n || "").toLowerCase().includes(q));
+    if (f === "1") P = P.filter(p => p.on && now - p.on < 7 * DAY); if (f === "acct") P = P.filter(p => p.acct); if (f === "guest") P = P.filter(p => p.acct === false);
+    const key = { on: p => -(p.on || 0), n: p => (p.n || "").toLowerCase(), lv: p => -maxLevel(p), f: p => -(p.f || 0) }[plSort];
+    P.sort((a, b) => { const x = key(a), y = key(b); return x < y ? -1 : x > y ? 1 : 0; });
+    $("plT").innerHTML = `<tr><th data-s="n">Name</th><th data-s="lv" class="num">Max. Level</th>${Object.values(WORLDS).map(w => `<th class="num">${w.slice(0, 5)}.</th>`).join("")}<th>Welt</th><th>Gerät</th><th data-s="on">Zuletzt</th><th data-s="f">Erster Besuch</th></tr>`
+      + P.slice(0, 500).map(p => `<tr><td>${esc(p.n || "?")} ${p.acct ? '<span class="pill n">Konto</span>' : ""}</td><td class="num">${maxLevel(p)}</td>${Object.keys(WORLDS).map(w => `<td class="num">${(p.w && p.w[w] && p.w[w].l) || '<span class="muted">–</span>'}</td>`).join("")}<td>${esc(WORLDS[p.cw] || p.cw || "–")}</td><td>${esc(p.pf || "–")}${p.v ? ` <span class="muted">${esc(p.v)}</span>` : ""}</td><td>${when(p.on)}</td><td>${p.f ? dt(p.f) : '<span class="muted">–</span>'}</td></tr>`).join("")
+      + (P.length > 500 ? `<tr><td colspan="12" class="muted">… ${P.length - 500} weitere</td></tr>` : "");
+    $("plT").querySelectorAll("th[data-s]").forEach(th => th.onclick = () => { plSort = th.dataset.s; renderPlayers(); });
+  }
+  $("plQ").oninput = renderPlayers; $("plF").onchange = renderPlayers;
+
+  /* ---------- Keys ---------- */
+  const ALPHA = "0123456789ABCDEFGHJKMNPQRSTVWXYZ", enc = new TextEncoder();
+  const b64 = a => btoa(String.fromCharCode.apply(null, new Uint8Array(a))), unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const pretty = n => "SG-" + n.match(/.{5}/g).join("-");
+  const sha = async s => new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(s)));
+  const hex = a => Array.from(a, x => x.toString(16).padStart(2, "0")).join("");
+  async function wrap(n) {
+    if (!D.master) throw new Error("Spielschlüssel fehlt in Firebase (admin/master). Einrichtung noch nicht abgeschlossen.");
+    const id = hex(await sha("sg-id:" + n)).slice(0, 16), kek = await crypto.subtle.importKey("raw", await sha("sg-kek:" + n), "AES-GCM", false, ["encrypt"]);
+    const iv = crypto.getRandomValues(new Uint8Array(12)), w = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, kek, unb64(D.master));
+    return { id, entry: { iv: b64(iv), w: b64(w) } };
+  }
+  $("kf").addEventListener("submit", async e => {
+    e.preventDefault(); const name = $("kn").value.trim(), n = Math.max(1, Math.min(50, +$("kc").value || 1)); if (!name) return;
+    $("kb").disabled = true; const made = [];
+    try {
+      const up = {};
+      for (let i = 0; i < n; i++) {
+        const r = crypto.getRandomValues(new Uint8Array(20)), k = Array.from(r, x => ALPHA[x & 31]).join("");
+        const { id, entry } = await wrap(k), nm = n > 1 ? `${name} ${i + 1}` : name;
+        up["betakeys/" + id] = entry; up["admin/keys/" + id] = { key: k, name: nm, created: TS, active: true };
+        made.push([pretty(k), nm]);
+      }
+      await db.ref().update(up);
+      $("newKeys").innerHTML = `<div class="newkeys"><b>Neue Keys</b> – gelten ab sofort:${made.map(([k, nm]) => `<div><span class="key">${k}</span><span class="muted">${esc(nm)}</span><button class="btn ghost sm" data-copy="${k}">Kopieren</button></div>`).join("")}${made.length > 1 ? `<div><button class="btn ghost sm" data-copy="${made.map(m => m[0] + "  " + m[1]).join("\n")}">Alle kopieren</button></div>` : ""}</div>`;
+      $("kn").value = ""; $("kc").value = 1; await load();
+    } catch (er) { alert(er.message); }
+    $("kb").disabled = false;
+  });
+  document.addEventListener("click", e => { const c = e.target.closest("[data-copy]"); if (c) copy(c.dataset.copy); });
+  async function setActive(id, on) {
+    const k = D.keys[id]; if (!k) return;
+    if (!on && !confirm(`Key von „${k.name}“ sperren? Das Spiel startet damit sofort nicht mehr.`)) return;
+    const up = { ["admin/keys/" + id + "/active"]: on };
+    up["betakeys/" + id] = on ? (await wrap(k.key)).entry : null;
+    await db.ref().update(up); toast(on ? "Entsperrt" : "Gesperrt"); await load();
+  }
+  async function delKey(id) {
+    const k = D.keys[id]; if (!k || !confirm(`Key von „${k.name}“ endgültig löschen?`)) return;
+    await db.ref().update({ ["betakeys/" + id]: null, ["admin/keys/" + id]: null }); toast("Gelöscht"); await load();
+  }
+  function renderKeys() {
+    const q = $("kQ").value.trim().toLowerCase();
+    const K = Object.entries(D.keys).map(([id, k]) => { const lg = Object.values((D.use[id] && D.use[id].log) || {}); const last = lg.reduce((a, l) => (l.t || 0) > ((a && a.t) || 0) ? l : a, null); return Object.assign({ id, n: lg.length, last }, k); })
+      .filter(k => !q || (k.name || "").toLowerCase().includes(q) || pretty(k.key).toLowerCase().includes(q)).sort((a, b) => (b.created || 0) - (a.created || 0));
+    $("keyCount").textContent = `${Object.values(D.keys).filter(k => k.active).length} aktiv von ${Object.keys(D.keys).length}`;
+    $("keT").innerHTML = `<tr><th>Key</th><th>Für</th><th>Status</th><th>Erstellt</th><th class="num">Starts</th><th>Zuletzt benutzt</th><th></th></tr>` + K.map(k => `<tr><td class="key">${pretty(k.key)}</td><td>${esc(k.name)}</td><td><span class="pill ${k.active ? "on" : "off"}">${k.active ? "aktiv" : "gesperrt"}</span></td><td>${dt(k.created)}</td><td class="num">${k.n}</td><td>${k.last ? when(k.last.t) + ` <span class="muted">${esc(k.last.p || "")} · ${esc(k.last.w || "")}</span>` : '<span class="muted">nie</span>'}</td>
+      <td style="white-space:nowrap"><button class="btn ghost sm" data-copy="${pretty(k.key)}">Kopieren</button> ${k.active ? `<button class="btn bad sm" data-act="off" data-id="${k.id}">Sperren</button>` : `<button class="btn ok sm" data-act="on" data-id="${k.id}">Entsperren</button> <button class="btn ghost sm" data-act="del" data-id="${k.id}">Löschen</button>`}</td></tr>`).join("")
+      || '<tr><td class="muted">Noch keine Keys</td></tr>';
+    $("keT").querySelectorAll("[data-act]").forEach(b => b.onclick = () => { b.disabled = true; (b.dataset.act === "del" ? delKey(b.dataset.id) : setActive(b.dataset.id, b.dataset.act === "on")).catch(er => { alert(er.message); b.disabled = false; }); });
+  }
+  $("kQ").oninput = renderKeys;
+
+  /* ---------- Anmeldungen (Spielstarts mit Key) ---------- */
+  function renderLogins() {
+    const L = D.logs, now = Date.now(), name = id => (D.keys[id] && D.keys[id].name) || id;
+    const uniq = d => new Set(L.filter(l => now - (l.t || 0) < d).map(l => l.id)).size;
+    const kpi = (l, v, sub) => `<div class="kpi"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
+    $("loKpis").innerHTML = kpi("Starts heute", fmt(L.filter(l => now - l.t < DAY).length)) + kpi("Spieler heute", fmt(uniq(DAY)), "verschiedene Keys") + kpi("Spieler 7 Tage", fmt(uniq(7 * DAY))) + kpi("Starts gesamt", fmt(L.length))
+      + kpi("Keys nie benutzt", fmt(Object.keys(D.keys).filter(id => !(D.use[id] && D.use[id].log)).length));
+    const days = Array.from({ length: 30 }, (_, i) => dayKey(now - (29 - i) * DAY)), per = {}; L.forEach(l => { const k = dayKey(l.t || 0); per[k] = (per[k] || 0) + 1; });
+    chart("loChart", days, days.map(d => per[d] || 0), "#4ade80");
+    $("loT").innerHTML = `<tr><th>Wann</th><th>Wer (Key)</th><th>Welt</th><th>Gerät</th></tr>` + L.slice(0, 200).map(l => `<tr><td>${dt(l.t)}</td><td>${esc(name(l.id))}</td><td>${esc(l.w || "–")}</td><td>${esc(l.p || "–")}</td></tr>`).join("") || '<tr><td class="muted">Noch keine Starts</td></tr>';
+  }
+
+  /* ---------- Feedback ---------- */
+  function renderReports() {
+    $("fbCount").textContent = D.reports.length + " Meldungen";
+    $("fbT").innerHTML = `<tr><th>Wann</th><th>Art</th><th>Von</th><th>Welt · Version</th><th>Nachricht</th></tr>` + D.reports.slice(0, 300).map(r => `<tr><td style="white-space:nowrap">${dt(r.t)}${r.neu ? ' <span class="pill n">neu</span>' : ""}</td><td>${esc(KIND[r.k] || r.k || "–")}</td><td>${esc(r.n || "–")}</td><td>${esc(WORLDS[r.w] || r.w || "–")} · ${esc(r.v || "")}</td><td class="msg">${esc(r.m)}</td></tr>`).join("") || '<tr><td class="muted">Noch nichts</td></tr>';
+  }
+})();
+</script>
+</body>
+</html>
