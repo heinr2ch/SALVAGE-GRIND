@@ -2,6 +2,12 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.15.0 · Koop-Automat (Alpha) · 02.11.2026
+- Neu: Koop-Automat für 1 bis 4 Spieler – ein Automat, eine gemeinsame Kasse und ein neues Fahrzeug, der Koop-Truck.
+- Rollen wechseln jede Runde: der Pilot wählt den Einsatz und zieht den Hebel, der Mechaniker hält eine Walze und dreht den Rest nach.
+- Drei Sirenen öffnen den Tresor: alle wählen gleichzeitig eine Truhe, gleiche Schätze bringen 30×.
+- Jede fertige Truck-Stufe bringt jedem Spieler einen Bonus. Start über die Kachel „Koop-Automat“, Mitspieler treten mit dem 5-stelligen Code bei.
+
 ## Beta 1.14.0 · Wochen-Herausforderung, Crew-Garage, Anfeuern · 02.11.2026
 - Wochen-Herausforderung für alle (Tab Sammlung): jede Woche eine neue Aufgabe mit Bestenliste und einer Lackierung, die es nur in dieser Woche gibt.
 - Crew-Garage: die Crew baut mit jedem Gewinn zusammen an einem großen Fahrzeug, jede neue Stufe bringt allen einen Bonus.
