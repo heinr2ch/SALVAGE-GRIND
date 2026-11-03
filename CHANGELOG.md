@@ -2,6 +2,13 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.17.0 · Mehr Sicherheit und Jugendschutz · 03.11.2026
+- Konten ab 18 Jahren (passend zur Spielmechanik).
+- Namen werden auf beleidigende und extremistische Wörter geprüft.
+- Neu im Feedback: „Spieler oder Inhalt melden“, auch direkt beim Zuschauen.
+- Passwörter sind jetzt deutlich besser geschützt. Ältere Konten werden beim nächsten Anmelden automatisch umgestellt.
+- Impressum und Nutzungsbedingungen um Meldeweg und Kontaktstelle (Digital Services Act) ergänzt.
+
 ## Beta 1.16.0 · Online neu verpackt, Speichern-Knopf, Datenschutz · 03.11.2026
 - Online-Menü neu gestaltet: großer Status oben, alle Online-Funktionen als übersichtliche Kacheln (inklusive Koop-Automat).
 - Neue Anzeige oben: Einzelspieler, Online, Crew oder Team-Spielstand – man sieht jetzt immer, wie man gerade spielt.

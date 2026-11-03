@@ -5707,9 +5707,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.16.0";
+const GAME_VERSION = "1.17.0";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.17.0", date: "03.11.2026", title: "Mehr Sicherheit und Jugendschutz", items: ["Konten ab 18 Jahren (passend zur Spielmechanik).", "Namen werden auf beleidigende und extremistische Wörter geprüft.", "Neu im Feedback: „Spieler oder Inhalt melden“, auch direkt beim Zuschauen.", "Passwörter sind jetzt deutlich besser geschützt. Ältere Konten werden beim nächsten Anmelden automatisch umgestellt.", "Impressum und Nutzungsbedingungen um Meldeweg und Kontaktstelle (Digital Services Act) ergänzt."] },
   { v: "1.16.0", date: "03.11.2026", title: "Online neu verpackt, Speichern-Knopf, Datenschutz", items: ["Online-Menü neu gestaltet: großer Status oben, alle Online-Funktionen als übersichtliche Kacheln (inklusive Koop-Automat).", "Neue Anzeige oben: Einzelspieler, Online, Crew oder Team-Spielstand – man sieht jetzt immer, wie man gerade spielt.", "Neuer Knopf „Speichern“ (oder Strg+S): speichert sofort auf dem Gerät und in der Cloud.", "Anmeldung übersichtlicher: getrennt „Anmelden“ und „Neues Konto“, beim neuen Konto alles auf einer Seite inklusive Beta-Key, Passwort anzeigen, Key einfügen.", "Neue Nutzungsbedingungen und ausführliche Datenschutzhinweise. Unter „Meine Daten“ kannst du alle deine Daten herunterladen oder dein Konto vollständig löschen. Die anonyme Klick-Statistik lässt sich abschalten."] },
   { v: "1.15.1", date: "03.11.2026", title: "Spiel als App installieren", items: ["Neu: Salvage & Grind lässt sich direkt aus dem Browser als App installieren (Chrome, Edge, iPhone) – eigenes Symbol und Fenster, ohne .exe-Download und ohne Virenscanner-Warnung. Knopf auf der Startseite und in den Einstellungen.", "Die Windows-, Mac- und Linux-Downloads gibt es künftig gesammelt bei größeren Versionen."] },
   { v: "1.15.0", date: "02.11.2026", title: "Koop-Automat (Alpha)", items: ["Neu: Koop-Automat für 1 bis 4 Spieler – ein Automat, eine gemeinsame Kasse und ein neues Fahrzeug, der Koop-Truck.", "Rollen wechseln jede Runde: der Pilot wählt den Einsatz und zieht den Hebel, der Mechaniker hält eine Walze und dreht den Rest nach.", "Drei Sirenen öffnen den Tresor: alle wählen gleichzeitig eine Truhe, gleiche Schätze bringen 30×.", "Jede fertige Truck-Stufe bringt jedem Spieler einen Bonus. Start über die Kachel „Koop-Automat“, Mitspieler treten mit dem 5-stelligen Code bei."] },
@@ -9414,11 +9415,12 @@ function plFpsAsk() {
 function bugMeta() { return `Version ${GAME_VERSION} · ${WORLD_ID} · ${innerWidth}×${innerHeight} @${devicePixelRatio} · ${LANG} · ${navigator.userAgent.replace(/\s+/g, " ").slice(0, 160)}`; }
 function bugOpen() {
   const el = fnDlg("bugD", "Feedback und Fehler", "Fehler gefunden, Idee oder Lob? Schreib es uns. Version, Welt und Gerät schicken wir automatisch mit – keine persönlichen Daten.");
-  fnBody("bugD").innerHTML = `<div class="fn-row" id="bugKind" style="margin-bottom:8px;gap:6px">${[["bug", "🐞 Fehler"], ["idea", "💡 Idee"], ["love", "❤️ Lob"]].map(([k, t], i) => `<button type="button" class="fn-btn${i ? "" : " hot"}" data-k="${k}">${t}</button>`).join("")}</div>`
+  fnBody("bugD").innerHTML = `<div class="fn-row" id="bugKind" style="margin-bottom:8px;gap:6px">${[["bug", "🐞 Fehler"], ["idea", "💡 Idee"], ["love", "❤️ Lob"], ["player", "🚩 Spieler oder Inhalt melden"]].map(([k, t], i) => `<button type="button" class="fn-btn${(bugOpen.kind || "bug") === k ? " hot" : ""}" data-k="${k}">${t}</button>`).join("")}</div>`
     + `<textarea id="bugTxt" maxlength="1500" placeholder="Zum Beispiel: Nach dem Freispiel-Kauf blieb die Anzeige hängen …"></textarea><p class="meta">${escapeHTML(bugMeta())}</p><div class="fn-row" style="margin-top:10px"><button type="button" class="fn-btn hot" id="bugSend">Senden</button><button type="button" class="fn-btn" id="bugCopy">Text kopieren</button><span id="bugMsg" style="font-size:13px"></span></div>`;
   $("bugSend").addEventListener("click", bugSend);
   $("bugKind").addEventListener("click", e => { const b = e.target.closest("[data-k]"); if (!b) return; $("bugKind").querySelectorAll("[data-k]").forEach(x => x.classList.toggle("hot", x === b)); });
   $("bugCopy").addEventListener("click", async () => { try { await navigator.clipboard.writeText(($("bugTxt").value || "") + "\n\n" + bugMeta()); $("bugMsg").textContent = "Kopiert."; } catch (e) { $("bugMsg").textContent = "Kopieren nicht erlaubt."; } });
+  if (bugOpen.text) { $("bugTxt").value = bugOpen.text; } bugOpen.kind = bugOpen.text = null;
   fnOpen("bugD"); setTimeout(() => $("bugTxt").focus(), 50);
 }
 async function bugSend() {
@@ -9594,7 +9596,11 @@ try { ACCT.name = localStorage.getItem("welten-acct") || null; } catch (e) {}
 const acctLoggedIn = () => !!ACCT.name;
 const acctKey = n => n.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.#$\[\]\/]/g, "_");
 async function acctSha(raw) { const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)); return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, "0")).join(""); }
-const acctHash = (name, pw) => acctSha("sg1|" + name.trim().toLowerCase().replace(/\s+/g, " ") + "|" + pw);
+// Prüfwert v2 (seit 1.17.0): PBKDF2-SHA256, 150 000 Runden, Salz aus dem Namen. Alte Konten (v1 = SHA-256) zieht die Startseite beim Anmelden um.
+async function acctHash(name, pw) { const enc = new TextEncoder(), k = await crypto.subtle.importKey("raw", enc.encode(pw), "PBKDF2", false, ["deriveBits"]);
+  const b = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: enc.encode("sg2|" + name.trim().toLowerCase().replace(/\s+/g, " ")), iterations: 150000 }, k, 256);
+  return Array.from(new Uint8Array(b), x => x.toString(16).padStart(2, "0")).join(""); }
+const acctHashOld = (name, pw) => acctSha("sg1|" + name.trim().toLowerCase().replace(/\s+/g, " ") + "|" + pw);
 const acctOwner = h => acctSha("own|" + h);   // öffentlich sichtbarer Besitznachweis für den Namen, verrät den Speicherschlüssel nicht
 document.body.insertAdjacentHTML("beforeend", `<div class="acct" id="acct" hidden role="dialog" aria-modal="true" aria-labelledby="acctT"><form class="acct-card" id="acctForm" autocomplete="on">
   <h2 id="acctT">Anmelden</h2>
@@ -9638,7 +9644,7 @@ $("acctForm").addEventListener("submit", async e => {
     if (typeof olInit === "function" && !(typeof OL !== "undefined" && OL.ready)) { try { olInit(); } catch (x) {} }
     if (!(await acctWaitOnline())) { acctMsg("Keine Verbindung zum Server. Versuch es später nochmal oder spiel offline (dann wird nichts gespeichert)."); $("acctGuest").hidden = false; return; }
     const h = await acctHash(name, pw), snap = (await OL.db.ref("vault/" + h).get()).val();
-    if (!(await acctClaim(name, h))) { acctMsg("Diesen Anmeldenamen gibt es schon. Falsches Passwort oder ein anderer Name?"); return; }
+    if (!(await acctClaim(name, h))) { acctMsg("Diesen Anmeldenamen gibt es schon. Falsches Passwort oder ein anderer Name? Älteres Konto: bitte einmal über die Startseite anmelden."); return; }
     if (snap && snap.s) {
       // Konto gibt es schon: Spielstand von dort holen
       if ((state.spins || 0) > 0 && !ACCT.confirm) { ACCT.confirm = true; acctMsg("Konto gefunden. Dein Spielstand auf diesem Gerät wird durch den gespeicherten ersetzt. Zum Bestätigen nochmal tippen."); return; }
@@ -11374,7 +11380,7 @@ if (typeof INFO === "object") {
     <li><b>Streamer-Modus:</b> nur wenn du einen Kanal einträgst, Verbindung zum Twitch-Chat.</li></ul>
     <div class="md-links">${sgLegal("datenschutz")}Vollständige Datenschutzhinweise</a>${sgLegal("nutzungsbedingungen")}Nutzungsbedingungen</a>${sgLegal("impressum")}Impressum</a><a href="#" data-mdopen="1">Meine Daten herunterladen oder löschen</a></div>
     <p class="meta">Verwendete Software: Schriften unter SIL Open Font License, Firebase JavaScript SDK (Apache 2.0)${navigator.userAgent.includes("Electron") ? ", Electron und Chromium (MIT/BSD)" : ""}. Details in THIRD_PARTY_NOTICES.</p>`;
-  INFO.terms = () => `<p><b>Kurz gesagt:</b> Salvage &amp; Grind ist kostenlos und nur mit Spielgeld. Spielgeld hat keinen echten Wert und wird nie ausgezahlt, Handel gegen echtes Geld ist verboten. Konten ab 16 Jahren, empfohlen ab 18. Spiel fair (keine Cheats oder Bots, Fehler bitte melden), sei freundlich bei Namen, gib deinen Beta-Key nicht weiter. In der Beta können Spielstände zurückgesetzt werden. Du kannst dein Konto jederzeit selbst löschen.</p>
+  INFO.terms = () => `<p><b>Kurz gesagt:</b> Salvage &amp; Grind ist kostenlos und nur mit Spielgeld. Spielgeld hat keinen echten Wert und wird nie ausgezahlt, Handel gegen echtes Geld ist verboten. Erst ab 18 Jahren. Spiel fair (keine Cheats oder Bots, Fehler bitte melden), sei freundlich bei Namen, gib deinen Beta-Key nicht weiter. In der Beta können Spielstände zurückgesetzt werden. Du kannst dein Konto jederzeit selbst löschen.</p>
     <div class="md-links">${sgLegal("nutzungsbedingungen")}Nutzungsbedingungen vollständig lesen</a>${sgLegal("datenschutz")}Datenschutzhinweise</a></div>`;
   INFO.data = () => {
     const name = (typeof ACCT === "object" && ACCT && ACCT.name) || "";
@@ -11442,7 +11448,8 @@ async function mdDelete() {
   try {
     mdMsg("Prüfe Anmeldedaten …", true);
     if (!(await mdOnline())) throw new Error("Keine Verbindung zum Server. Bitte später nochmal versuchen.");
-    const h = await acctHash(name, pw), nk = acctKey(name), ak = await mdGet(`acctkey/${h}`);
+    let h = await acctHash(name, pw), ak = await mdGet(`acctkey/${h}`); const nk = acctKey(name);
+    if ((!ak || typeof ak !== "object") && typeof acctHashOld === "function") { h = await acctHashOld(name, pw); ak = await mdGet(`acctkey/${h}`); }
     if (!ak || typeof ak !== "object") throw new Error("Anmeldename oder Passwort stimmen nicht.");
     mdMsg("Lösche deine Daten …", true);
     const db = OL.db, u = OL.uid, kid = ak.k;
@@ -11486,6 +11493,41 @@ async function mdDelete() {
     $("mdOpen").addEventListener("click", () => { try { $("mmSet").hidden = true; } catch (e) {} openInfo("data"); });
   }
 })();
+
+const SG_BAD = ["nazi", "hitler", "siegheil", "heilhitler", "nsdap", "auschwitz", "vergas", "holocaust", "kkk", "isis", "jihad", "terror", "hure", "hurensohn", "fotze", "wichser", "schlampe", "nutte", "arschloch", "fick", "fuck", "bitch", "cunt", "whore", "nigger", "nigga", "neger", "kanake", "schwuchtel", "faggot", "retard", "spast", "porn", "penis", "vagina", "pussy", "titten", "rape", "vergewalt", "pedo", "paedo", "kinderporn", "cock", "slut", "kys"];
+function sgBadName(s) {
+  const t = String(s || "").toLowerCase().replace(/[äàá]/g, "a").replace(/[öò]/g, "o").replace(/[üù]/g, "u").replace(/ß/g, "ss").replace(/0/g, "o").replace(/[1!|]/g, "i").replace(/3/g, "e").replace(/[4@]/g, "a").replace(/[5$]/g, "s").replace(/7/g, "t").replace(/[^a-z]/g, "");
+  return SG_BAD.some(w => t.includes(w));
+}
+(function sgNameGuard() {
+  const block = (e, ids) => {
+    const bad = ids.map(id => $(id)).find(i => i && i.offsetParent !== null && sgBadName(i.value)); if (!bad) return false;
+    e.preventDefault(); e.stopImmediatePropagation(); bad.focus(); bad.select && bad.select();
+    toast("Dieser Name enthält ein unerlaubtes Wort. Bitte wähle einen anderen.", "#ff5a6a"); try { sfx.click(); } catch (x) {} return true;
+  };
+  document.addEventListener("submit", e => { const f = e.target; if (!f || !f.id) return;
+    if (f.id === "nameForm") block(e, ["nameInput"]); else if (f.id === "acctForm") block(e, ["acctName"]); }, true);
+  document.addEventListener("click", e => {
+    if (e.target.closest("#namingBtn")) block(e, ["shipInput", "capInput"]);
+    else if (e.target.closest('[data-a="tnew"]')) block(e, ["olTeamName"]);
+    else if (e.target.closest("#capEdit")) block(e, ["capInput"]);
+  }, true);
+  document.addEventListener("keydown", e => { if (e.key !== "Enter") return; const id = e.target && e.target.id;
+    if (["shipInput", "capInput", "olTeamName"].includes(id)) block(e, [id]); }, true);
+})();
+// „Melden“ im Zuschau-Fenster: öffnet die Meldung mit Name vorausgefüllt
+function sgReport(name) { try { bugOpen.kind = "player"; bugOpen.text = `Gemeldeter Spieler: ${name}\nWo gesehen: \nWarum: `; bugOpen(); } catch (e) {} }
+if (typeof fnWatch === "function") {
+  const fw1 = fnWatch;
+  fnWatch = async function (uid) {
+    const r = await fw1.apply(this, arguments);
+    try { const body = fnBody("fnWatch"); if (body && !body.querySelector(".sg-rep")) {
+      const p = (OL.people || {})[uid] || {}, n = p.n || (OL.crewM || {})[uid] || (OL.teamM || {})[uid] || "Mitspieler";
+      body.insertAdjacentHTML("beforeend", `<p class="sg-rep" style="margin:12px 0 0;font-size:12px;opacity:.75">Unpassender Name oder Inhalt? <a href="#" data-rep="1">Spieler melden</a></p>`);
+      body.querySelector("[data-rep]").addEventListener("click", ev => { ev.preventDefault(); try { fnClose("fnWatch"); } catch (x) {} sgReport(`${n} (${uid})`); }); } } catch (e) {}
+    return r;
+  };
+}
 /*MENU-JS-END*/
 /* ---------- Start-Knopf: Feedback beim Drücken, Drehen, Gewinnen ---------- */
 (function () {

@@ -414,7 +414,8 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
   $("kQ").oninput = renderKeys;
 
   /* ---------- Konten: Passwort zurücksetzen (123456 + Pflichtwechsel), Key lösen ---------- */
-  const acctHash = (n, pw) => sha("sg1|" + String(n).trim().replace(/\s+/g, " ").toLowerCase() + "|" + pw).then(hex);
+  const acctHash = async (n, pw) => { const enc = new TextEncoder(), k = await crypto.subtle.importKey("raw", enc.encode(pw), "PBKDF2", false, ["deriveBits"]);   // wie im Spiel (v2)
+    const b = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: enc.encode("sg2|" + String(n).trim().replace(/\s+/g, " ").toLowerCase()), iterations: 150000 }, k, 256); return hex(new Uint8Array(b)); };
   const ownOf = h => sha("own|" + h).then(hex);
   function renderAccounts() {
     const q = $("acQ").value.trim().toLowerCase();

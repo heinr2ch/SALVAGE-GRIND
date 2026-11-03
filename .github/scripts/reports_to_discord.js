@@ -11,7 +11,7 @@ async function once() {
   const r = await fetch(`${DB}/reports.json?auth=${encodeURIComponent(SEC)}`); if (!r.ok) throw new Error("Firebase " + r.status);
   const all = await r.json() || {}; const ids = Object.keys(all).sort((a, b) => (all[a].t || 0) - (all[b].t || 0));
   if (ids.length) console.log(new Date().toISOString(), ids.length, "neue Meldungen");
-  const KIND = { bug: ["🐞 Fehler", 0xff5a6a], idea: ["💡 Idee", 0xffc94a], love: ["❤️ Lob", 0x8fe9a8] };
+  const KIND = { bug: ["🐞 Fehler", 0xff5a6a], idea: ["💡 Idee", 0xffc94a], love: ["❤️ Lob", 0x8fe9a8], player: ["🚩 Gemeldeter Spieler/Inhalt (DSA)", 0xff2d55] };
   for (const id of ids.slice(0, 25)) {
     const x = all[id] || {}, [title, color] = KIND[x.k] || KIND.bug;
     const body = { username: "Salvage & Grind", avatar_url: "https://raw.githubusercontent.com/heinr2ch/SALVAGE-GRIND/main/desktop/build/icon.png", content: `<@&${ROLE}>`, allowed_mentions: { roles: [ROLE] }, embeds: [{ title: `${title} · ${x.w || "?"} · ${x.v || "?"}`, description: String(x.m || "").slice(0, 3800), color,
