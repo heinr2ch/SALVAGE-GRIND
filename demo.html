@@ -5707,9 +5707,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.15.0";
+const GAME_VERSION = "1.15.1";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.15.1", date: "03.11.2026", title: "Spiel als App installieren", items: ["Neu: Salvage & Grind lässt sich direkt aus dem Browser als App installieren (Chrome, Edge, iPhone) – eigenes Symbol und Fenster, ohne .exe-Download und ohne Virenscanner-Warnung. Knopf auf der Startseite und in den Einstellungen.", "Die Windows-, Mac- und Linux-Downloads gibt es künftig gesammelt bei größeren Versionen."] },
   { v: "1.15.0", date: "02.11.2026", title: "Koop-Automat (Alpha)", items: ["Neu: Koop-Automat für 1 bis 4 Spieler – ein Automat, eine gemeinsame Kasse und ein neues Fahrzeug, der Koop-Truck.", "Rollen wechseln jede Runde: der Pilot wählt den Einsatz und zieht den Hebel, der Mechaniker hält eine Walze und dreht den Rest nach.", "Drei Sirenen öffnen den Tresor: alle wählen gleichzeitig eine Truhe, gleiche Schätze bringen 30×.", "Jede fertige Truck-Stufe bringt jedem Spieler einen Bonus. Start über die Kachel „Koop-Automat“, Mitspieler treten mit dem 5-stelligen Code bei."] },
   { v: "1.14.0", date: "02.11.2026", title: "Wochen-Herausforderung, Crew-Garage, Anfeuern", items: ["Wochen-Herausforderung für alle (Tab Sammlung): jede Woche eine neue Aufgabe mit Bestenliste und einer Lackierung, die es nur in dieser Woche gibt.", "Crew-Garage: die Crew baut mit jedem Gewinn zusammen an einem großen Fahrzeug, jede neue Stufe bringt allen einen Bonus.", "Zuschauen und anfeuern: Hinweis, wenn ein Freund Freispiele hat, live zuschauen und Emojis schicken, die bei ihm auf dem Bildschirm aufsteigen.", "Das Foto-Symbol am Fahrzeug ist jetzt der neue Knopf „Foto“."] },
   { v: "1.13.0", date: "02.11.2026", title: "Foto, Gewinn-Film, Wetter, Sammelbuch, Streamer-Modus", items: ["Fotomodus: Knopf „Foto“ am Fahrzeug macht ein schönes Bild zum Speichern, Kopieren oder Teilen.", "Große Gewinne zeigen jetzt einen kurzen Film mit deinem Fahrzeug.", "Wetter und Tageszeit: abends und nachts ändert sich die Stimmung, je nach Welt gibt es Schnee, Regen, Sternschnuppen oder Glühwürmchen.", "Sammelbuch (Tab Sammlung): volle Seiten bringen einmalig einen Bonus.", "Streamer-Modus in den Einstellungen: Kontoname verschwommen, größere Gewinne und Twitch-Chat-Abstimmungen mit !1, !2 …"] },
@@ -11232,6 +11233,18 @@ document.addEventListener("keydown", e => { const el = $("coop"); if (el && !el.
 (function coEntry() {
   const grid = document.querySelector(".dock .xtiles");
   if (grid) { grid.insertAdjacentHTML("afterbegin", `<button type="button" class="xtile" id="coTile" style="--xc:#ffc94a"><svg viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="17" text-anchor="middle" font-size="15">🤝</text></svg><span><b>Koop-Automat <small style="color:#ff4fa8">Alpha</small></b><small>Ein Automat, eine Kasse, ein Truck – zusammen spielen</small></span></button>`); $("coTile").addEventListener("click", coOpen); }
+})();
+
+(function pwaUi() {
+  const sec = $("mmsSave"); if (!sec || window.sgDesk) return;
+  const standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone; if (standalone) return;
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  sec.insertAdjacentHTML("beforeend", `<div class="mms-row" id="pwaRow" hidden><span>Als App installieren<small>${ios ? "Teilen-Knopf → „Zum Home-Bildschirm“. Dann startet das Spiel wie eine App." : "Eigenes Symbol auf dem Desktop, eigenes Fenster, ohne Download und ohne Virenscanner-Warnung."}</small></span>${ios ? "" : `<button type="button" class="ghost" id="pwaBtn">Installieren</button>`}</div>`);
+  const row = $("pwaRow"), show = () => { row.hidden = !(ios || window.__sgPWA); };
+  addEventListener("beforeinstallprompt", e => { e.preventDefault(); window.__sgPWA = e; show(); });
+  addEventListener("appinstalled", () => { window.__sgPWA = null; show(); toast("Installiert! Du findest Salvage & Grind jetzt als App.", "#4fe3ff"); });
+  const b = $("pwaBtn"); if (b) b.addEventListener("click", () => { const p = window.__sgPWA; if (!p) return; p.prompt(); p.userChoice.then(() => { window.__sgPWA = null; show(); }).catch(() => {}); });
+  show();
 })();
 /*MENU-JS-END*/
 /* ---------- Start-Knopf: Feedback beim Drücken, Drehen, Gewinnen ---------- */

@@ -9,10 +9,7 @@ name: Desktop-Versionen bauen (Windows, Mac, Linux · Vollversion und Demo)
 #   STEAM_APPID, STEAM_DEMO_APPID, DISCORD_APPID   (fehlen sie, laufen die Versionen ohne Steam/Discord)
 
 on:
-  workflow_dispatch:
-  push:
-    branches: [main, experimente]
-    paths: ["desktop/**", ".github/workflows/desktop.yml", "index.html", "treibgut/index.html", "eisenfront/index.html", "neustadt/index.html", "neonkueste/index.html", "fonts/**", "vendor/**", "media/**", "**/spiel.bin", "keys.json", "demo.html"]
+  workflow_dispatch:   # nur noch auf Knopfdruck (Norton/SmartScreen: seltener neue .exe, Speicherplatz)
 
 permissions:
   contents: write
@@ -81,6 +78,7 @@ jobs:
         with:
           name: SG-${{ matrix.edition }}-${{ runner.os }}
           if-no-files-found: error
+          retention-days: 1
           path: |
             desktop/dist/*.exe
             desktop/dist/*.zip

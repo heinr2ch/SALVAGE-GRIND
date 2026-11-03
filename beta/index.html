@@ -6,6 +6,9 @@
 <meta name="robots" content="noindex">
 <title>Salvage &amp; Grind</title>
 <link rel="icon" href="../media/app-icon.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#0d1022">
+<link rel="apple-touch-icon" href="../media/icon-192.png">
 <link rel="stylesheet" href="../fonts/sw.css">
 <style>
 /* Schlüssel-Tor (Closed Beta): das Spiel liegt verschlüsselt neben dieser Seite (spiel.bin) und startet nur mit gültigem Key. Erzeugt von tools/seal.py. */
@@ -39,6 +42,20 @@ button[disabled] { opacity: .6; cursor: wait; }
 .more a:hover { text-decoration: underline; }
 .small { margin-top: 16px; font-size: .78rem; color: #7d86a8; }
 </style>
+<script>
+/* Browser-App (PWA): Service Worker anmelden, Installations-Angebot merken (bleibt auf window erhalten, auch nach dem Spielstart) */
+(function () { try {
+  if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("../sw.js", { scope: "../" || "./" }).catch(function () {});
+  var standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone;
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); window.__sgPWA = e; var b = document.getElementById("sgInstall"); if (b) b.hidden = false; });
+  window.addEventListener("appinstalled", function () { window.__sgPWA = null; var b = document.getElementById("sgInstall"); if (b) b.hidden = true; });
+  document.addEventListener("DOMContentLoaded", function () {
+    var b = document.getElementById("sgInstall"), i = document.getElementById("sgIos");
+    if (i && !standalone && /iPhone|iPad|iPod/.test(navigator.userAgent)) i.hidden = false;
+    if (b) b.addEventListener("click", function (ev) { ev.preventDefault(); var p = window.__sgPWA; if (!p) return; p.prompt(); p.userChoice.then(function () { window.__sgPWA = null; b.hidden = true; }); });
+  });
+} catch (e) {} })();
+</script>
 </head>
 <body class="wait">
 <main class="card" id="sgGate">
@@ -74,6 +91,8 @@ button[disabled] { opacity: .6; cursor: wait; }
 
   <div class="err" id="sgErr" role="alert"></div>
   <div class="more">
+    <a href="#" id="sgInstall" hidden style="color:#ffd34a;font-weight:700">Als App installieren – ohne Download, startet wie ein Programm</a>
+    <span id="sgIos" hidden>iPhone/iPad: Teilen-Knopf → „Zum Home-Bildschirm“ – dann startet das Spiel wie eine App.</span>
     <a href="../demo.html" data-t="demo" id="sgDemo">Ohne Konto: Demo spielen</a>
     <span data-t="ask">Noch keinen Key? Schreib uns: <a href="mailto:kinearbyte@icloud.com">kinearbyte@icloud.com</a></span>
   </div>
@@ -161,7 +180,7 @@ button[disabled] { opacity: .6; cursor: wait; }
     fetch(DB + "/keyuse/" + id + "/log.json", { method: "POST", body: JSON.stringify({ t: { ".sv": "timestamp" }, w: w, n: String(name || "").slice(0, 30), p: window.sgDesk ? "App" : (/Mobi|Android|iPhone|iPad/.test(navigator.userAgent) ? "Handy" : "Browser") }) }).catch(function () {});
   }
   async function play(K) {
-    var r = await fetch("spiel.bin?v=20261102220659", { cache: "no-cache" }); if (!r.ok) throw new Error("net");
+    var r = await fetch("spiel.bin?v=20261103095911", { cache: "no-cache" }); if (!r.ok) throw new Error("net");
     var b = new Uint8Array(await r.arrayBuffer());
     var pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b.slice(0, 12) }, K, b.slice(12));
     var html = await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream("gzip"))).text();

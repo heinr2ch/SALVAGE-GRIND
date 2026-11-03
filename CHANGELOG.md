@@ -2,6 +2,10 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.15.1 · Spiel als App installieren · 03.11.2026
+- Neu: Salvage & Grind lässt sich direkt aus dem Browser als App installieren (Chrome, Edge, iPhone) – eigenes Symbol und Fenster, ohne .exe-Download und ohne Virenscanner-Warnung. Knopf auf der Startseite und in den Einstellungen.
+- Die Windows-, Mac- und Linux-Downloads gibt es künftig gesammelt bei größeren Versionen.
+
 ## Beta 1.15.0 · Koop-Automat (Alpha) · 02.11.2026
 - Neu: Koop-Automat für 1 bis 4 Spieler – ein Automat, eine gemeinsame Kasse und ein neues Fahrzeug, der Koop-Truck.
 - Rollen wechseln jede Runde: der Pilot wählt den Einsatz und zieht den Hebel, der Mechaniker hält eine Walze und dreht den Rest nach.
