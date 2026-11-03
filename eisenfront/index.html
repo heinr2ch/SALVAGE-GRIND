@@ -39,6 +39,26 @@ button[disabled] { opacity: .6; cursor: wait; }
 .err { min-height: 1.4em; margin: 2px 0 0; color: #ff8a9a; font-weight: 700; }
 .more { margin-top: 14px; display: grid; gap: 6px; font-size: .92rem; }
 .more a { color: #9ad4ff; text-decoration: none; font-weight: 700; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 0 0 14px; border-radius: 99px; background: rgba(5,7,16,.55); border: 1px solid rgba(200,210,255,.14); }
+.seg button { padding: 10px 6px; border-radius: 99px; background: transparent; box-shadow: none; color: #b8c0dc; font-size: .92rem; }
+.seg button[aria-pressed="true"] { background: linear-gradient(180deg, #b9a8ff, #7c5cff); color: #120b2a; box-shadow: 0 3px 12px rgba(124,92,255,.4); }
+.seg button:active { transform: none; }
+.pwrap { position: relative; }
+.pwrap input { padding-right: 46px; }
+.eye { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; padding: 0; border-radius: 10px; background: transparent; box-shadow: none; color: #b8c0dc; font-size: 18px; }
+.eye:active { transform: translateY(-50%); box-shadow: none; }
+.keybox { text-align: left; padding: 12px; border-radius: 14px; background: rgba(255,211,74,.07); border: 1px dashed rgba(255,211,74,.4); display: grid; gap: 8px; }
+.keybox b { color: #ffd34a; font-size: .9rem; }
+.keybox small { color: #b8c0dc; font-size: .82rem; line-height: 1.35; }
+.krow { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+.krow input { font-size: 14px; letter-spacing: .02em; padding: 13px 10px; }
+.krow button { padding: 0 12px; border-radius: 12px; font-size: .8rem; background: rgba(255,255,255,.1); color: #fff; box-shadow: none; }
+.steps { display: flex; justify-content: center; gap: 6px; margin: -6px 0 12px; font: 700 .75rem system-ui, sans-serif; color: #9aa5c8; }
+.steps i { width: 22px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.18); align-self: center; }
+.steps i.on { background: #ffd34a; }
+[hidden] { display: none !important; }
+input[type=checkbox] { width: 18px; height: 18px; padding: 0; accent-color: #7c5cff; }
+.chk a { color: #9ad4ff; }
 .more a:hover { text-decoration: underline; }
 .small { margin-top: 16px; font-size: .78rem; color: #7d86a8; }
 </style>
@@ -63,18 +83,27 @@ button[disabled] { opacity: .6; cursor: wait; }
   <h1>Salvage &amp; Grind</h1>
   <div class="tag" data-t="tag">Closed Beta</div>
 
+  <div class="seg" role="tablist" id="sgSeg"><button type="button" id="mLogin" aria-pressed="true" data-t="tLogin">Anmelden</button><button type="button" id="mReg" aria-pressed="false" data-t="tReg">Neues Konto</button></div>
   <form id="fLogin" autocomplete="on">
-    <p data-t="lead">Melde dich mit deinem Spielkonto an. Neu hier? Dann wird dein Konto angelegt und du brauchst einen Beta-Key.</p>
+    <p id="sgLead" data-t="lead">Schön, dass du wieder da bist! Melde dich mit deinem Spielkonto an.</p>
     <label for="sgName" data-t="lName">Anmeldename</label>
     <input class="plain" id="sgName" name="username" autocomplete="username" maxlength="20" spellcheck="false" autocapitalize="off" placeholder="z. B. Sternenfuchs77">
     <label for="sgPw" data-t="lPw">Passwort (mindestens 6 Zeichen)</label>
-    <input class="plain" id="sgPw" name="password" type="password" autocomplete="current-password" maxlength="40">
+    <div class="pwrap"><input class="plain" id="sgPw" name="password" type="password" autocomplete="current-password" maxlength="40"><button type="button" class="eye" data-eye="sgPw" aria-label="Passwort zeigen">👁</button></div>
+    <div id="regOnly" hidden style="display:grid;gap:10px">
+      <label for="sgPwR" data-t="lPwR">Passwort wiederholen</label>
+      <input class="plain" id="sgPwR" type="password" autocomplete="new-password" maxlength="40">
+      <div class="keybox"><b data-t="kTitle">🔑 Dein Beta-Key</b><small data-t="kHelp">Während der Closed Beta brauchst du einen persönlichen Key. Er wird einmal mit deinem Konto verknüpft – danach musst du ihn nie wieder eingeben.</small>
+        <div class="krow"><input id="sgKeyR" placeholder="SG-XXXXX-XXXXX-XXXXX-XXXXX" maxlength="30" spellcheck="false" autocapitalize="characters" aria-label="Beta-Key"><button type="button" data-paste="sgKeyR" data-t="paste">Einfügen</button></div></div>
+      <label class="chk" style="display:flex;gap:9px;align-items:flex-start;text-align:left;font-weight:500;font-size:.85rem;margin:2px"><input type="checkbox" id="sgAgree" style="width:18px;height:18px;flex:none;margin-top:2px"><span data-t="agree">Ich bin mindestens 16 Jahre alt und akzeptiere die <a href="../nutzungsbedingungen.html" target="_blank">Nutzungsbedingungen</a>. Die <a href="../datenschutz.html" target="_blank">Datenschutzhinweise</a> habe ich gelesen.</span></label>
+    </div>
     <button id="bLogin" type="submit" data-t="go">Anmelden</button>
   </form>
 
   <form id="fKey" autocomplete="off" hidden>
+    <div class="steps"><span data-t="step2">Letzter Schritt</span></div>
     <p id="keyLead"></p>
-    <input id="sgKey" placeholder="SG-XXXXX-XXXXX-XXXXX-XXXXX" maxlength="40" spellcheck="false" autocapitalize="characters" aria-label="Beta-Key">
+    <div class="krow"><input id="sgKey" placeholder="SG-XXXXX-XXXXX-XXXXX-XXXXX" maxlength="30" spellcheck="false" autocapitalize="characters" aria-label="Beta-Key"><button type="button" data-paste="sgKey" data-t="paste">Einfügen</button></div>
     <button id="bKey" type="submit" data-t="link">Key verknüpfen und spielen</button>
     <a href="#" id="kBack" class="small" data-t="back">Zurück</a>
   </form>
@@ -98,6 +127,7 @@ button[disabled] { opacity: .6; cursor: wait; }
   </div>
   <div class="small" style="margin-top:12px;color:#ffd34a;font-weight:700" data-t="soon">Demnächst: zwei neue Welten – Brutzelküche &amp; Chromgarage</div>
   <div class="small" data-t="by">ein Spiel von <b>KIneArbyte</b> · nur Spielgeld, kein Echtgeld</div>
+  <div class="small" style="margin-top:8px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a href="../impressum.html" style="color:#9aa5c8">Impressum</a><a href="../datenschutz.html" style="color:#9aa5c8" data-t="lPriv">Datenschutz</a><a href="../nutzungsbedingungen.html" style="color:#9aa5c8" data-t="lTerms">Nutzungsbedingungen</a></div>
 </main>
 <script>
 (function () {
@@ -113,19 +143,19 @@ button[disabled] { opacity: .6; cursor: wait; }
   var DB = "https://salvage-grind-default-rtdb.europe-west1.firebasedatabase.app";
   var FB = { apiKey: "AIzaSyBcnwWCg5qhD-g8DWnsNh-teUZihc4CKtM", authDomain: "salvage-grind.firebaseapp.com", databaseURL: DB, projectId: "salvage-grind" };
   var EN = !/^de/i.test(navigator.language || "de");
-  var T = { tag: "Closed Beta", lead: "Sign in with your game account. New here? Your account will be created and you need a beta key.", lName: "Username", lPw: "Password (at least 6 characters)",
+  var T = { tag: "Closed Beta", lead: "Welcome back! Sign in with your game account.", tLogin: "Sign in", tReg: "New account", lPwR: "Repeat password", kTitle: "🔑 Your beta key", kHelp: "During the closed beta you need a personal key. It is linked to your account once – you never have to enter it again.", paste: "Paste", step2: "Last step", agree: 'I am at least 16 years old and accept the <a href="../nutzungsbedingungen.html" target="_blank">terms of use</a> (German). I have read the <a href="../datenschutz.html" target="_blank">privacy notice</a>.', lPriv: "Privacy", lTerms: "Terms of use", leadReg: "Create your account: choose a name and password and enter your beta key.", goReg: "Create account and play", lName: "Username", lPw: "Password (at least 6 characters)",
     go: "Sign in", link: "Link key and play", back: "Back", pwLead: "Your password was reset. Please choose a new one now.", lNew: "New password (at least 6 characters)", lNew2: "Repeat new password",
     save: "Save and play", soon: "Coming soon: two new worlds – Sizzle Kitchen &amp; Chrome Garage", demo: "No account: play the demo", by: "a game by <b>KIneArbyte</b> · play money only, no real money", ask: 'No key yet? Write to us: <a href="mailto:kinearbyte@icloud.com">kinearbyte@icloud.com</a>' };
   var M = EN ? {
     name: "Usernames need 3 to 20 characters (letters, numbers, space, - _ .).", mail: "Please don't use an e-mail address or phone number as your username.", pw: "The password needs at least 6 characters.",
     taken: "This username already exists. Wrong password or a different name?", conn: "Connecting …", net: "No connection to the server. Please try again.",
     newAcct: "Welcome, <b>%s</b>! New account: please enter your personal beta key. It will be linked to your account for good.", oldAcct: "Hello <b>%s</b>! Your account has no beta key yet. Please enter it once, it will be linked to your account.",
-    format: "That doesn't look like a key (SG- and 20 characters).", invalid: "This key is not valid.", used: "This key already belongs to another account.", blocked: "Your beta key has been blocked. Please contact us.",
+    agreeM: "Please confirm the terms of use first.", noacct: "There is no account with this name yet. Tap „New account“ to create it.", needKey: "Please enter your beta key.", format: "That doesn't look like a key (SG- and 20 characters).", invalid: "This key is not valid.", used: "This key already belongs to another account.", blocked: "Your beta key has been blocked. Please contact us.",
     pwSame: "The passwords do not match.", pw123: "Please choose a password other than 123456.", old: "Your browser is too old for this game.", start: "Starting game …" } : {
     name: "Der Anmeldename braucht 3 bis 20 Zeichen (Buchstaben, Zahlen, Leerzeichen, - _ .).", mail: "Bitte keine E-Mail-Adresse oder Telefonnummer als Anmeldenamen.", pw: "Das Passwort braucht mindestens 6 Zeichen.",
     taken: "Diesen Anmeldenamen gibt es schon. Falsches Passwort oder ein anderer Name?", conn: "Verbinde …", net: "Keine Verbindung zum Server. Bitte nochmal versuchen.",
     newAcct: "Willkommen, <b>%s</b>! Neues Konto: Gib bitte deinen persönlichen Beta-Key ein. Er wird fest mit deinem Konto verknüpft.", oldAcct: "Hallo <b>%s</b>! Mit deinem Konto ist noch kein Beta-Key verknüpft. Gib ihn bitte einmal ein, dann bleibt er hinterlegt.",
-    format: "Das sieht nicht wie ein Key aus (SG- und 20 Zeichen).", invalid: "Dieser Key ist nicht gültig.", used: "Dieser Key gehört schon zu einem anderen Konto.", blocked: "Dein Beta-Key wurde gesperrt. Bitte melde dich bei uns.",
+    agreeM: "Bitte bestätige zuerst die Nutzungsbedingungen.", noacct: "Ein Konto mit diesem Namen gibt es noch nicht. Tippe oben auf „Neues Konto“, um es anzulegen.", needKey: "Bitte gib noch deinen Beta-Key ein.", format: "Das sieht nicht wie ein Key aus (SG- und 20 Zeichen).", invalid: "Dieser Key ist nicht gültig.", used: "Dieser Key gehört schon zu einem anderen Konto.", blocked: "Dein Beta-Key wurde gesperrt. Bitte melde dich bei uns.",
     pwSame: "Die beiden Passwörter sind nicht gleich.", pw123: "Bitte ein anderes Passwort als 123456 wählen.", old: "Dein Browser ist zu alt für dieses Spiel.", start: "Spiel startet …" };
   if (EN) document.querySelectorAll("[data-t]").forEach(function (el) { el.innerHTML = T[el.dataset.t]; });
   var $ = function (id) { return document.getElementById(id); };
@@ -145,7 +175,7 @@ button[disabled] { opacity: .6; cursor: wait; }
   var keyId = async function (n) { return (await shaH("sg-id:" + n)).slice(0, 16); };
   function msg(t, ok) { var e = $("sgErr"); e.innerHTML = t || ""; e.className = "err" + (ok ? " ok" : ""); }
   function busy(on) { ["bLogin", "bKey", "bPw"].forEach(function (id) { $(id).disabled = on; }); }
-  function show(f) { var wpe = document.getElementById("sgWipe"); if (wpe) wpe.remove();  ["fLogin", "fKey", "fPw"].forEach(function (id) { $(id).hidden = id !== f; }); document.body.classList.remove("wait"); var first = $(f).querySelector("input:not([hidden])"); if (first) setTimeout(function () { first.focus(); }, 30); }
+  function show(f) { var wpe = document.getElementById("sgWipe"); if (wpe) wpe.remove();  ["fLogin", "fKey", "fPw"].forEach(function (id) { $(id).hidden = id !== f; }); if ($("sgSeg")) $("sgSeg").hidden = f !== "fLogin"; document.body.classList.remove("wait"); var first = $(f).querySelector("input:not([hidden])"); if (first) setTimeout(function () { first.focus(); }, 30); }
 
   /* ---------- Firebase (dieselbe Bibliothek und derselbe anonyme Zugang wie im Spiel) ---------- */
   var db = null;
@@ -180,7 +210,7 @@ button[disabled] { opacity: .6; cursor: wait; }
     fetch(DB + "/keyuse/" + id + "/log.json", { method: "POST", body: JSON.stringify({ t: { ".sv": "timestamp" }, w: w, n: String(name || "").slice(0, 30), p: window.sgDesk ? "App" : (/Mobi|Android|iPhone|iPad/.test(navigator.userAgent) ? "Handy" : "Browser") }) }).catch(function () {});
   }
   async function play(K) {
-    var r = await fetch("spiel.bin?v=20261103095911", { cache: "no-cache" }); if (!r.ok) throw new Error("net");
+    var r = await fetch("spiel.bin?v=20261103101042", { cache: "no-cache" }); if (!r.ok) throw new Error("net");
     var b = new Uint8Array(await r.arrayBuffer());
     var pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b.slice(0, 12) }, K, b.slice(12));
     var html = await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
@@ -203,15 +233,33 @@ button[disabled] { opacity: .6; cursor: wait; }
 
   /* ---------- Ablauf ---------- */
   var cur = null;   // { name, h, own, nk, isNew }
-  async function login(name, pw) {
+  var MODE = "login";
+  function setMode(m) {
+    MODE = m; var reg = m === "reg";
+    $("mLogin").setAttribute("aria-pressed", String(!reg)); $("mReg").setAttribute("aria-pressed", String(reg)); $("regOnly").hidden = !reg;
+    $("sgLead").innerHTML = reg ? (EN ? T.leadReg : "Leg dein Konto an: Name und Passwort ausdenken, Beta-Key eingeben – fertig.") : (EN ? T.lead : "Schön, dass du wieder da bist! Melde dich mit deinem Spielkonto an.");
+    $("bLogin").innerHTML = reg ? (EN ? T.goReg : "Konto anlegen und spielen") : (EN ? T.go : "Anmelden");
+    $("sgPw").autocomplete = reg ? "new-password" : "current-password"; msg("");
+  }
+  $("mLogin").addEventListener("click", function () { setMode("login"); }); $("mReg").addEventListener("click", function () { setMode("reg"); });
+  document.addEventListener("click", function (ev) {
+    var e = ev.target.closest("[data-eye]"); if (e) { var i = $(e.dataset.eye); i.type = i.type === "password" ? "text" : "password"; if ($("sgPwR")) $("sgPwR").type = i.type; e.textContent = i.type === "password" ? "👁" : "🙈"; }
+    var p = ev.target.closest("[data-paste]"); if (p) { var t = $(p.dataset.paste); try { navigator.clipboard.readText().then(function (x) { t.value = fmtKey(x); t.focus(); }).catch(function () { t.focus(); }); } catch (x) { t.focus(); } }
+  });
+  function fmtKey(v) { var n = String(v || "").toUpperCase().replace(/[^A-Z0-9]/g, ""), pre = ""; if (n === "S" || n === "SG") return n; if (n.slice(0, 2) === "SG" && n.length > 2) { pre = "SG-"; n = n.slice(2); } n = n.slice(0, 20); if (n.length === 20) pre = "SG-"; return pre + (n.match(/.{1,5}/g) || []).join("-"); }
+  ["sgKey", "sgKeyR"].forEach(function (id) { var i = $(id); i.addEventListener("input", function () { var c = i.selectionStart === i.value.length; i.value = fmtKey(i.value); if (c) i.setSelectionRange(i.value.length, i.value.length); }); });
+  async function login(name, pw, mode, key) {
     var h = await acctHash(name, pw), own = await ownOf(h), nk = nameKey(name);
     await fb();
     var owner = await get("names/" + nk);
     if (owner && owner !== own) throw new Error("taken");
     cur = { name: name, h: h, own: own, nk: nk, isNew: !owner };
+    if (!owner && mode === "login") throw new Error("noacct");
+    if (!owner && mode === "reg") return linkKey(key);
     var ak = owner ? await get("acctkey/" + h) : null;
     if (ak && ak.mc) { $("pwUser").value = name; msg(""); show("fPw"); return; }
     if (ak && ak.key) { await restore(h); return launch(name, h, ak.key, true); }
+    if (mode === "reg" && norm(key).length === 20) return linkKey(key);
     $("keyLead").innerHTML = (cur.isNew ? M.newAcct : M.oldAcct).replace("%s", name.replace(/[<>&]/g, "")); msg(""); show("fKey");
   }
   // Spielstand des Kontos auf dieses Gerät holen (wie die Anmeldung im Spiel)
@@ -265,8 +313,9 @@ button[disabled] { opacity: .6; cursor: wait; }
     if (name.length < 3 || name.length > 20 || !/^[\p{L}\p{N} _.\-]+$/u.test(name)) return msg(M.name);
     if (/@/.test(name) || /\d{6,}/.test(name)) return msg(M.mail);
     if (pw.length < 6) return msg(M.pw);
+    if (MODE === "reg") { if (pw !== $("sgPwR").value) return msg(M.pwSame); if (!$("sgAgree").checked) return msg(M.agreeM); if (pw === "123456") return msg(M.pw123); if (norm($("sgKeyR").value).length !== 20) return msg($("sgKeyR").value ? M.format : M.needKey); }
     busy(true); msg(M.conn, true);
-    login(name, pw).catch(fail).finally(function () { busy(false); });
+    login(name, pw, MODE, $("sgKeyR").value).catch(function (e) { fail(e); if (e && e.message === "noacct") { $("mReg").animate([{ transform: "scale(1)" }, { transform: "scale(1.08)" }, { transform: "scale(1)" }], { duration: 500, iterations: 2 }); } }).finally(function () { busy(false); });
   });
   $("fKey").addEventListener("submit", function (ev) { ev.preventDefault(); busy(true); msg(M.conn, true); linkKey($("sgKey").value).catch(fail).finally(function () { busy(false); }); });
   $("kBack").addEventListener("click", function (ev) { ev.preventDefault(); msg(""); show("fLogin"); });

@@ -2,6 +2,13 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.16.0 · Online neu verpackt, Speichern-Knopf, Datenschutz · 03.11.2026
+- Online-Menü neu gestaltet: großer Status oben, alle Online-Funktionen als übersichtliche Kacheln (inklusive Koop-Automat).
+- Neue Anzeige oben: Einzelspieler, Online, Crew oder Team-Spielstand – man sieht jetzt immer, wie man gerade spielt.
+- Neuer Knopf „Speichern“ (oder Strg+S): speichert sofort auf dem Gerät und in der Cloud.
+- Anmeldung übersichtlicher: getrennt „Anmelden“ und „Neues Konto“, beim neuen Konto alles auf einer Seite inklusive Beta-Key, Passwort anzeigen, Key einfügen.
+- Neue Nutzungsbedingungen und ausführliche Datenschutzhinweise. Unter „Meine Daten“ kannst du alle deine Daten herunterladen oder dein Konto vollständig löschen. Die anonyme Klick-Statistik lässt sich abschalten.
+
 ## Beta 1.15.1 · Spiel als App installieren · 03.11.2026
 - Neu: Salvage & Grind lässt sich direkt aus dem Browser als App installieren (Chrome, Edge, iPhone) – eigenes Symbol und Fenster, ohne .exe-Download und ohne Virenscanner-Warnung. Knopf auf der Startseite und in den Einstellungen.
 - Die Windows-, Mac- und Linux-Downloads gibt es künftig gesammelt bei größeren Versionen.
