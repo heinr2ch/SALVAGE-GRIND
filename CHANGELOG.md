@@ -2,6 +2,15 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.18.0 · Koop-Automat lebendiger, Linkshänder, iPad · 07.11.2026
+- Koop-Automat: echte Walzen-Animation, Gewinn-Zähler, große Gewinne mit Effekten, Combo-Multiplikator für Gewinnserien, Mechaniker kann jetzt auch stupsen, Auto-Pilot, Bedienleiste wie im normalen Spiel, Leertaste dreht.
+- Neu: Linkshändermodus (Einstellungen → Spiel) – der Dreh-Knopf sitzt auf Handy und Tablet links.
+- iPad und Tablets quer: Walzen und Fahrzeug passen gleichzeitig auf den Bildschirm.
+- Bip weicht auf dem Handy aus, sobald Risiko oder Leiter angeboten werden.
+- Online-Menü: die Kacheln blinken nicht mehr.
+- Die Musik der kommenden Welten folgt jetzt dem Musik-Regler statt der Soundeffekte.
+- Zweitwährung zwischen den Welten angeglichen, Boosts halten 60 % länger.
+
 ## Beta 1.17.0 · Mehr Sicherheit und Jugendschutz · 03.11.2026
 - Konten ab 18 Jahren (passend zur Spielmechanik).
 - Namen werden auf beleidigende und extremistische Wörter geprüft.

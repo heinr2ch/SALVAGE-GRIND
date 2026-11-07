@@ -155,6 +155,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
       <button role="tab" data-tab="lo"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg><span>Anmeldungen</span></button>
       <button role="tab" data-tab="hm"><svg viewBox="0 0 24 24"><path d="M3 3l7 18 2.5-7.5L20 11z"/><circle cx="17" cy="17" r="3"/></svg><span>Heatmap</span></button>
       <button role="tab" data-tab="fb"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Feedback</span></button>
+      <button role="tab" data-tab="id"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg><span>Ideen</span></button>
     </nav>
     <div class="foot">
       <span class="stamp" id="stamp"></span>
@@ -236,6 +237,18 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
     <section data-pane="fb" hidden>
       <div class="card"><h2>Feedback und Fehlermeldungen <small id="fbCount"></small></h2><div class="tbl"><table id="fbT"></table></div></div>
     </section>
+    <section data-pane="id" hidden>
+      <div class="card"><h2>Neue Ideen und Änderungswünsche</h2>
+        <p class="muted" style="margin:0 0 10px">Eine Zeile = ein Punkt. Claude liest die Liste auf Zuruf („Setz die offenen Ideen um“) und hakt Erledigtes ab.</p>
+        <textarea id="idIn" rows="5" placeholder="z. B.&#10;Neonküste: Freispiele sollen länger dauern&#10;Rangliste: Platz 1 bekommt eine Krone" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:inherit;font:inherit;resize:vertical"></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px">
+          <select id="idPrio" class="btn ghost sm"><option value="2">Normal</option><option value="1">Wichtig</option><option value="3">Irgendwann</option></select>
+          <input id="idTag" placeholder="Bereich (optional, z. B. Neonküste)" maxlength="30" style="padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:inherit;font:inherit;min-width:220px">
+          <button class="btn" id="idAdd">Hinzufügen</button><span id="idMsg" class="muted"></span></div></div>
+      <div class="card"><h2>Übersicht <small id="idCount"></small></h2>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px" id="idFilter"><button class="btn ghost sm" data-f="open" aria-pressed="true">Offen</button><button class="btn ghost sm" data-f="doing">In Arbeit</button><button class="btn ghost sm" data-f="done">Erledigt</button><button class="btn ghost sm" data-f="all">Alle</button></div>
+        <div class="tbl"><table id="idT"></table></div></div>
+    </section>
   </main>
 </div>
 <script src="vendor/firebase/firebase-app-compat.js"></script>
@@ -274,7 +287,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
   document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
     document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
     document.querySelectorAll("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab);
-    const SUB = { ov: "Alles über das Spiel auf einen Blick", pl: "Alle Spieler, die online gesehen wurden", ac: "Konten mit Beta-Key, Passwort zurücksetzen", ke: "Beta-Keys erzeugen, sperren und entsperren", lo: "Jeder Spielstart mit Key", hm: "Wohin Spieler klicken und zeigen", fb: "Ideen, Lob und Fehlermeldungen aus dem Spiel" };
+    const SUB = { ov: "Alles über das Spiel auf einen Blick", pl: "Alle Spieler, die online gesehen wurden", ac: "Konten mit Beta-Key, Passwort zurücksetzen", ke: "Beta-Keys erzeugen, sperren und entsperren", lo: "Jeder Spielstart mit Key", id: "Ideen und Änderungswünsche für Claude", hm: "Wohin Spieler klicken und zeigen", fb: "Ideen, Lob und Fehlermeldungen aus dem Spiel" };
     $("pageTitle").textContent = b.textContent.trim(); $("pageSub").textContent = SUB[b.dataset.tab] || ""; window.scrollTo(0, 0);
   });
 
@@ -513,6 +526,29 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
     chart("loChart", days, days.map(d => per[d] || 0), "#4fe39a");
     $("loT").innerHTML = `<tr><th>Wann</th><th>Konto</th><th>Key für</th><th>Welt</th><th>Gerät</th></tr>` + L.slice(0, 200).map(l => `<tr><td>${dt(l.t)}</td><td>${esc(l.n || "–")}</td><td>${esc(name(l.id))}</td><td>${esc(l.w || "–")}</td><td>${esc(l.p || "–")}</td></tr>`).join("") || '<tr><td class="muted">Noch keine Starts</td></tr>';
   }
+
+  /* ---------- Ideen und Änderungswünsche (admin/ideas/<id>: {text, tag, prio, st: open|doing|done|no, t, note, done}) ---------- */
+  const ID = { list: {}, f: "open", ref: null };
+  const ST = { open: ["offen", "n"], doing: ["in Arbeit", "on"], done: ["erledigt", "on"], no: ["verworfen", "off"] };
+  function idListen() { if (ID.ref) return; ID.ref = db.ref("admin/ideas"); ID.ref.on("value", s => { ID.list = s.val() || {}; idRender(); }); }
+  function idRender() {
+    const all = Object.entries(ID.list).map(([id, x]) => ({ id, ...x })).sort((a, b) => (a.st === "done") - (b.st === "done") || (a.prio || 2) - (b.prio || 2) || (b.t || 0) - (a.t || 0));
+    const rows = all.filter(x => ID.f === "all" || (ID.f === "open" ? (x.st || "open") === "open" : x.st === ID.f));
+    const cnt = k => all.filter(x => (x.st || "open") === k).length;
+    $("idCount").textContent = `${cnt("open")} offen · ${cnt("doing")} in Arbeit · ${cnt("done")} erledigt`;
+    $("idT").innerHTML = `<tr><th>Wann</th><th>Prio</th><th>Bereich</th><th>Idee</th><th>Status</th><th></th></tr>` + (rows.map(x => `<tr><td style="white-space:nowrap">${dt(x.t)}</td><td>${["", "⭐ wichtig", "normal", "irgendwann"][x.prio || 2]}</td><td>${esc(x.tag || "")}</td><td>${esc(x.text)}${x.note ? `<br><small class="muted">↳ ${esc(x.note)}</small>` : ""}</td>
+      <td><span class="pill ${(ST[x.st || "open"] || ST.open)[1]}">${(ST[x.st || "open"] || ST.open)[0]}</span>${x.done ? `<br><small class="muted">${dt(x.done)}</small>` : ""}</td>
+      <td style="white-space:nowrap"><select class="btn ghost sm" data-ist="${x.id}">${Object.entries(ST).map(([k, v]) => `<option value="${k}" ${k === (x.st || "open") ? "selected" : ""}>${v[0]}</option>`).join("")}</select> <button class="btn ghost sm" data-idel="${x.id}" title="Löschen">✕</button></td></tr>`).join("") || `<tr><td class="muted">Nichts in dieser Ansicht.</td></tr>`);
+    $("idT").querySelectorAll("[data-ist]").forEach(el => el.onchange = () => db.ref("admin/ideas/" + el.dataset.ist).update({ st: el.value, done: el.value === "done" ? TS : null }).catch(e => alert(e.message)));
+    $("idT").querySelectorAll("[data-idel]").forEach(el => el.onclick = () => { if (confirm("Diesen Punkt löschen?")) db.ref("admin/ideas/" + el.dataset.idel).remove(); });
+  }
+  $("idAdd").onclick = async () => {
+    const lines = $("idIn").value.split("\n").map(l => l.replace(/^[\s•*\-–]+/, "").trim()).filter(Boolean); if (!lines.length) return;
+    const up = {}; lines.forEach(l => { up[db.ref("admin/ideas").push().key] = { text: l.slice(0, 600), tag: $("idTag").value.trim().slice(0, 30), prio: +$("idPrio").value, st: "open", t: TS }; });
+    try { await db.ref("admin/ideas").update(up); $("idIn").value = ""; $("idMsg").textContent = lines.length + " Punkt(e) gespeichert ✓"; setTimeout(() => $("idMsg").textContent = "", 2500); } catch (e) { alert(e.message); }
+  };
+  $("idFilter").onclick = e => { const b = e.target.closest("[data-f]"); if (!b) return; ID.f = b.dataset.f; $("idFilter").querySelectorAll("[data-f]").forEach(x => x.setAttribute("aria-pressed", x === b)); idRender(); };
+  document.querySelector('nav button[data-tab="id"]').addEventListener("click", idListen);
 
   /* ---------- Feedback ---------- */
   function renderReports() {

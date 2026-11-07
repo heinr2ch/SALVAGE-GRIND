@@ -5707,9 +5707,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.17.0";
+const GAME_VERSION = "1.18.0";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.18.0", date: "07.11.2026", title: "Koop-Automat lebendiger, Linkshänder, iPad", items: ["Koop-Automat: echte Walzen-Animation, Gewinn-Zähler, große Gewinne mit Effekten, Combo-Multiplikator für Gewinnserien, Mechaniker kann jetzt auch stupsen, Auto-Pilot, Bedienleiste wie im normalen Spiel, Leertaste dreht.", "Neu: Linkshändermodus (Einstellungen → Spiel) – der Dreh-Knopf sitzt auf Handy und Tablet links.", "iPad und Tablets quer: Walzen und Fahrzeug passen gleichzeitig auf den Bildschirm.", "Bip weicht auf dem Handy aus, sobald Risiko oder Leiter angeboten werden.", "Online-Menü: die Kacheln blinken nicht mehr.", "Die Musik der kommenden Welten folgt jetzt dem Musik-Regler statt der Soundeffekte.", "Zweitwährung zwischen den Welten angeglichen, Boosts halten 60 % länger."] },
   { v: "1.17.0", date: "03.11.2026", title: "Mehr Sicherheit und Jugendschutz", items: ["Konten ab 18 Jahren (passend zur Spielmechanik).", "Namen werden auf beleidigende und extremistische Wörter geprüft.", "Neu im Feedback: „Spieler oder Inhalt melden“, auch direkt beim Zuschauen.", "Passwörter sind jetzt deutlich besser geschützt. Ältere Konten werden beim nächsten Anmelden automatisch umgestellt.", "Impressum und Nutzungsbedingungen um Meldeweg und Kontaktstelle (Digital Services Act) ergänzt."] },
   { v: "1.16.0", date: "03.11.2026", title: "Online neu verpackt, Speichern-Knopf, Datenschutz", items: ["Online-Menü neu gestaltet: großer Status oben, alle Online-Funktionen als übersichtliche Kacheln (inklusive Koop-Automat).", "Neue Anzeige oben: Einzelspieler, Online, Crew oder Team-Spielstand – man sieht jetzt immer, wie man gerade spielt.", "Neuer Knopf „Speichern“ (oder Strg+S): speichert sofort auf dem Gerät und in der Cloud.", "Anmeldung übersichtlicher: getrennt „Anmelden“ und „Neues Konto“, beim neuen Konto alles auf einer Seite inklusive Beta-Key, Passwort anzeigen, Key einfügen.", "Neue Nutzungsbedingungen und ausführliche Datenschutzhinweise. Unter „Meine Daten“ kannst du alle deine Daten herunterladen oder dein Konto vollständig löschen. Die anonyme Klick-Statistik lässt sich abschalten."] },
   { v: "1.15.1", date: "03.11.2026", title: "Spiel als App installieren", items: ["Neu: Salvage & Grind lässt sich direkt aus dem Browser als App installieren (Chrome, Edge, iPhone) – eigenes Symbol und Fenster, ohne .exe-Download und ohne Virenscanner-Warnung. Knopf auf der Startseite und in den Einstellungen.", "Die Windows-, Mac- und Linux-Downloads gibt es künftig gesammelt bei größeren Versionen."] },
@@ -10351,13 +10352,16 @@ function tzTick() {
   const kitchen = TZ.k === "k", sp = 60 / (kitchen ? TZ_K.bpm : TZ_G.bpm) / (kitchen ? 2 : 4);
   while (TZ.next < ctx.currentTime + .15) { try { (kitchen ? tzKitchen : tzGarage)(TZ.next, TZ.step, sp); } catch (e) {} TZ.next += sp; TZ.step++; }
 }
+// Lautstärke der Teaser-Musik hängt am Musik-Regler (und am Musik-Schalter), nicht an den Soundeffekten
+const tzLevel = () => (state.sound === false || state.music === false) ? 0 : .55 * (state.musicVol ?? 1);
+if (typeof applyVolumes === "function") { const av0 = applyVolumes; applyVolumes = function () { const r = av0.apply(this, arguments); try { if (TZ.on && TZ.bus && ctx) TZ.bus.gain.setTargetAtTime(tzLevel(), ctx.currentTime, .1); } catch (e) {} return r; }; }
 function tzPlay(k) {
   if (state.sound === false) return;
   const c = getCtx(); if (!c) return; try { c.resume(); } catch (e) {}
   tzStop(true);
   TZ.resume = !!(typeof mus !== "undefined" && mus.playing); if (TZ.resume) stopMusic();
   TZ.bus = c.createGain(); TZ.bus.gain.value = 0; const cp = c.createDynamicsCompressor(); cp.threshold.value = -16; cp.ratio.value = 4; TZ.bus.connect(cp).connect(c.destination);
-  TZ.bus.gain.setTargetAtTime(.55 * (state.musicVol ?? 1) + .1, c.currentTime, .4);
+  TZ.bus.gain.setTargetAtTime(tzLevel(), c.currentTime, .4);
   TZ.k = k; TZ.step = 0; TZ.next = c.currentTime + .08; TZ.on = true; TZ.timer = setInterval(tzTick, 25); tzTick();
 }
 function tzStop(quick) {
@@ -10998,12 +11002,57 @@ setInterval(() => { try { const d = ixWk(); if (d.p && !d.done) ixWkRender(); } 
 .co-bub { position: fixed; z-index: 2147480500; pointer-events: none; padding: 8px 14px; border-radius: 14px; background: #fff; color: #111; font: 800 16px system-ui, sans-serif; box-shadow: 0 8px 24px rgba(0,0,0,.4); animation: coBub 2s ease forwards; }
 @keyframes coBub { 0% { transform: translate(-50%, 10px) scale(.6); opacity: 0; } 12% { transform: translate(-50%, 0) scale(1.08); opacity: 1; } 80% { opacity: 1; } 100% { transform: translate(-50%, -30px); opacity: 0; } }
 @media (max-width: 560px) { #coop .parts { grid-template-columns: repeat(3, 1fr); } }
+/* 1.18.0: dynamischer, näher am normalen Spiel */
+#coop .cw { max-width: 1080px; padding-bottom: 150px; }
+#coop .co-main { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 860px) { #coop .co-main { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: start; } }
+#coop .co-side { display: grid; gap: 10px; }
+#coop .co-mach { position: relative; border-radius: 20px; padding: 12px; background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--cyan, #4fe3ff) 14%, transparent), rgba(0,0,0,.35) 70%); border: 2px solid color-mix(in srgb, var(--gold, #ffc94a) 45%, transparent); box-shadow: 0 0 40px rgba(0,0,0,.5) inset; }
+#coop .co-mach.shake { animation: coShake .5s cubic-bezier(.36,.07,.19,.97); }
+@keyframes coShake { 10%, 90% { transform: translate(-2px, 1px); } 30%, 70% { transform: translate(-5px, -1px); } 50% { transform: translate(5px, 2px); } }
+#coop .co-turn { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 0 8px; padding: 7px 12px; border-radius: 99px; font: 700 13px system-ui, sans-serif; background: rgba(255,255,255,.06); }
+#coop .co-turn.me { background: linear-gradient(90deg, rgba(255,201,74,.25), rgba(255,122,60,.25)); color: #ffd98a; box-shadow: 0 0 18px rgba(255,201,74,.25); animation: coPulse 1.6s ease-in-out infinite; }
+@keyframes coPulse { 50% { box-shadow: 0 0 4px rgba(255,201,74,.1); } }
+#coop .co-tbar { height: 4px; border-radius: 4px; background: rgba(255,255,255,.08); margin: -2px 0 8px; overflow: hidden; }
+#coop .co-tbar i { display: block; height: 100%; background: linear-gradient(90deg, #ffc94a, #ff4fa8); transform-origin: left; }
+#coop .reels { --cc: 80px; gap: 6px; padding: 6px; border: 0; background: rgba(0,0,0,.35); }
+#coop .reel { position: relative; height: calc(var(--cc) * 3); padding: 0; overflow: hidden; display: block; }
+#coop .co-strip { display: grid; grid-auto-rows: var(--cc); will-change: transform; }
+#coop .cell { aspect-ratio: auto; height: var(--cc); margin: 0; background: transparent; border-radius: 10px; }
+#coop .cell.win { animation: coWin .7s ease-in-out infinite alternate; }
+@keyframes coWin { from { background: rgba(255,201,74,.12); } to { background: rgba(255,201,74,.38); box-shadow: 0 0 0 2px #ffc94a inset, 0 0 18px rgba(255,201,74,.5); } }
+#coop .reel.held::after { content: "GEHALTEN"; position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); font: 800 9px system-ui; letter-spacing: .08em; padding: 2px 6px; border-radius: 6px; background: #4fe3ff; color: #06202a; }
+#coop .co-hold { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 6px 6px 0; }
+#coop .co-hold div { display: grid; gap: 4px; }
+#coop .co-hold button { padding: 8px 0; border-radius: 9px; border: 0; font: 800 11px system-ui; cursor: pointer; }
+#coop .co-hold .h { background: #4fe3ff; color: #06202a; }
+#coop .co-hold .n { background: rgba(255,255,255,.14); color: #fff; font-weight: 700; }
+#coop .co-float { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); z-index: 6; pointer-events: none; font: 900 clamp(26px, 6vw, 44px) system-ui; color: #ffd34a; text-shadow: 0 0 18px rgba(255,201,74,.8), 0 3px 0 #7a4a00; animation: coFloat 1.6s ease-out forwards; white-space: nowrap; }
+#coop .co-float small { display: block; font-size: .4em; letter-spacing: .14em; text-align: center; color: #fff; }
+@keyframes coFloat { 0% { transform: translate(-50%, -30%) scale(.4); opacity: 0; } 18% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; } 75% { opacity: 1; } 100% { transform: translate(-50%, -90%) scale(1); opacity: 0; } }
+#coop .co-deck { position: fixed; left: 50%; bottom: max(10px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 5; width: min(1060px, calc(100vw - 20px)); display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 10px 16px; padding: 10px 16px; border-radius: 22px; background: linear-gradient(180deg, rgba(20,18,44,.96), rgba(8,7,18,.98)); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 -10px 30px rgba(0,0,0,.6); }
+#coop .co-stats { display: flex; gap: 14px; min-width: 0; }
+#coop .co-stats div { display: grid; min-width: 0; }
+#coop .co-stats span { font: 700 10px system-ui; letter-spacing: .12em; text-transform: uppercase; opacity: .65; }
+#coop .co-stats b { font: 800 20px ui-monospace, monospace; white-space: nowrap; }
+#coop .co-stats .combo b { color: #ff4fa8; }
+#coop .co-stats .co-combo.on b { text-shadow: 0 0 12px #ff4fa8; animation: coPulse 1s infinite; }
+#coop .co-big { width: 92px; height: 92px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; font: 900 13px system-ui; letter-spacing: .1em; text-transform: uppercase; color: #1a0f00; background: radial-gradient(circle at 50% 35%, #ffe08a, #ff9a3c 70%); box-shadow: 0 0 0 5px rgba(255,201,74,.25), 0 8px 24px rgba(255,140,60,.45); transition: transform .12s; }
+#coop .co-big:active { transform: scale(.94); }
+#coop .co-big.pass { background: radial-gradient(circle at 50% 35%, #b8f6ff, #4fe3ff 70%); color: #04202a; box-shadow: 0 0 0 5px rgba(79,227,255,.25), 0 8px 24px rgba(79,227,255,.4); }
+#coop .co-big:disabled { filter: grayscale(.8) brightness(.6); cursor: default; }
+#coop .co-bet { display: flex; gap: 6px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+#coop .co-bet .cb { padding: 7px 10px; }
+#coop .co-bet output { font: 800 18px ui-monospace, monospace; min-width: 44px; text-align: center; }
+#coop .cb[aria-pressed="true"] { border-color: #ffc94a; color: #ffc94a; }
+@media (max-width: 640px) { #coop .co-deck { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "st btn" "bet btn"; padding: 8px 10px; } #coop .co-stats { grid-area: st; gap: 10px; } #coop .co-stats b { font-size: 16px; } #coop .co-bet { grid-area: bet; justify-content: flex-start; } #coop .co-big { grid-area: btn; width: 76px; height: 76px; } }
 `;
   document.head.appendChild(st);
 })();
 
 const CO = { tid: null, m: {}, s: null, ref: null, mref: null, anim: 0, shownRound: -1, held: -1, beat: null, lastEmo: 0, lastStage: -1 };
-const CO_BETS = [10, 20, 50, 100], CO_START = 2000, CO_T = 20000;
+const CO_BETS = [10, 20, 50, 100], CO_START = 2000, CO_T = 20000, CO_TH = 12000;
+const CO_COMBO = [1, 1, 1.2, 1.5, 2, 2.5];
 const CO_PARTS = [{ id: "ch", n: "Fahrgestell" }, { id: "mo", n: "Motor" }, { id: "ra", n: "Räder" }, { id: "ka", n: "Kabine" }, { id: "la", n: "Ladung" }];
 const CO_LINES = [[1, 1, 1, 1, 1], [0, 0, 0, 0, 0], [2, 2, 2, 2, 2], [0, 1, 2, 1, 0], [2, 1, 0, 1, 2]];
 const coCost = l => 300 * (l + 1) * (l + 1);
@@ -11096,8 +11145,9 @@ function coTick() {
   if (!CO.tid || !CO.s) return;
   if (++coBeatN % 10 === 0) OL.db.ref(`coop/${CO.tid}/m/${OL.uid}/on`).set(Date.now()).catch(() => {});
   const s = CO.s, R = coRoles(s), age = Date.now() - (s.t0 || 0), first = coOrder().find(coAlive);
+  if (CO.auto && s.phase === "bet" && (R.pilot === OL.uid || coOrder().length <= 1) && !CO.animating && age > 900 && s.kasse >= s.bet) coSpin();
   if (first !== OL.uid) { coRenderTimer(); return; }   // nur einer kümmert sich um Zeitüberschreitungen
-  if (s.phase === "hold" && age > CO_T) coPass("bip");
+  if (s.phase === "hold" && age > CO_TH) coPass("bip");
   else if (s.phase === "vault" && age > CO_T) coVaultResolve();
   else if (s.phase === "bet" && !coAlive(R.pilot) && age > 8000) coSpin("bip");
   coRenderTimer();
@@ -11109,22 +11159,31 @@ async function coSpin(by) {
   await coTx(s => {
     const R = coRoles(s); if (s.phase !== "bet" || (by !== "bip" && R.pilot !== OL.uid && coOrder().length > 1)) return;
     if (s.kasse < s.bet) return;
-    s.kasse -= s.bet; s.g = [coReel(), coReel(), coReel(), coReel(), coReel()]; s.hold = -1; s.win = 0; s.wins = [];
+    s.kasse -= s.bet; s.g = [coReel(), coReel(), coReel(), coReel(), coReel()]; s.hold = -1; s.nudge = -1; s.win = 0; s.wins = [];
     s.phase = "hold"; s.t0 = Date.now(); s.spin = (s.spin || 0) + 1; s.by = by === "bip" ? "bip" : OL.uid;
     coLog(s, `${by === "bip" ? "Bip" : coName(OL.uid)} dreht mit ${s.bet}.`); return s;
   });
 }
 function coFinish(s) {
-  const e = coEval(s.g, s.bet); s.win = e.tot; s.wins = e.wins.map(w => w.cells); s.kasse += e.tot;
-  if (e.tot) coLog(s, `Gewinn: +${e.tot} in die Kasse.`);
+  const e = coEval(s.g, s.bet); s.combo = e.tot > 0 ? Math.min(5, (s.combo || 0) + 1) : 0;
+  const mult = CO_COMBO[s.combo] || 1, tot = Math.round(e.tot * mult);
+  s.win = tot; s.mult = mult; s.wins = e.wins.map(w => w.cells); s.kasse += tot;
+  if (tot) coLog(s, `Gewinn: +${tot} in die Kasse${mult > 1 ? ` (Combo ×${mult})` : ""}.`);
   if (e.sc >= 3) { s.phase = "vault"; s.t0 = Date.now(); s.pick = {}; const syms = ["relic", "crystal", "core", "chip"]; s.chest = [0, 1, 2, 3].map(() => syms[Math.floor(Math.random() * 3)]); coLog(s, "TRESOR! Alle wählen gleichzeitig eine Truhe."); }
   else { s.phase = "bet"; s.round = (s.round || 0) + 1; s.t0 = Date.now(); }
 }
 async function coHold(reel) {
   await coTx(s => {
     const R = coRoles(s); if (s.phase !== "hold" || (R.mech !== OL.uid && coOrder().length > 1)) return;
-    s.hold = reel; for (let c = 0; c < 5; c++) if (c !== reel) s.g[c] = coReel();
+    s.hold = reel; s.nudge = -1; for (let c = 0; c < 5; c++) if (c !== reel) s.g[c] = coReel();
     s.re = (s.re || 0) + 1; coLog(s, `${coName(OL.uid)} hält Walze ${reel + 1} und dreht den Rest nach.`); coFinish(s); return s;
+  });
+}
+async function coNudge(reel) {
+  await coTx(s => {
+    const R = coRoles(s); if (s.phase !== "hold" || (R.mech !== OL.uid && coOrder().length > 1)) return;
+    const col = s.g[reel]; s.g[reel] = [coPick(), col[0], col[1]]; s.hold = -1; s.nudge = reel; s.re = (s.re || 0) + 1;
+    coLog(s, `${coName(OL.uid)} stupst Walze ${reel + 1} eine Position weiter.`); coFinish(s); return s;
   });
 }
 async function coPass(by) {
@@ -11160,25 +11219,50 @@ function coBubble(e, n) {
 
 /* ---------- Reaktion auf neuen Zustand: Walzen animieren, Klänge, Belohnungen ---------- */
 async function coOnState(prev, s) {
-  const spun = !prev || prev.spin !== s.spin || prev.re !== s.re;
-  if (prev && spun) {
-    CO.anim++; const id = CO.anim; coRender(true);
-    const cols = [...document.querySelectorAll("#coop .reel")];
-    cols.forEach((c, i) => { if (i !== s.hold) c.classList.add("spin"); });
-    try { sfx.spin && sfx.spin(); } catch (e) {}
-    for (let i = 0; i < 5; i++) { await new Promise(r => setTimeout(r, i === 0 ? 450 : 180)); if (id !== CO.anim) return; if (cols[i]) cols[i].classList.remove("spin"); try { sfx.stop(); } catch (e) {} }
-    if (s.win > 0) { try { sfx.small(); } catch (e) {} }
+  const spun = prev && (prev.spin !== s.spin || prev.re !== s.re);
+  if (spun) {
+    CO.anim++; const id = CO.anim; CO.animating = true; coRender(); await coAnimate(s, id); if (id !== CO.anim) return; CO.animating = false;
+    coRender(); coWinFx(s);
   }
-  if (prev && s.vres && (!prev.vres || prev.vres.t !== s.vres.t)) { try { s.vres.same ? sfx.fanfare(2) : sfx.fanfare(0); } catch (e) {} }
+  if (prev && s.vres && (!prev.vres || prev.vres.t !== s.vres.t)) { try { s.vres.same ? sfx.fanfare(2) : sfx.fanfare(0); } catch (e) {} if (s.vres.win) coFloat(s.vres.win, s.vres.same ? "Tresor-Jackpot" : "Tresor"); }
   // Belohnung für jeden Spieler, wenn der Truck eine neue Ausbau-Stufe (alle 5 Teile) erreicht
   const st = Math.floor(coSteps(s.v || {}) / 5); let seen = -1; try { seen = +(localStorage.getItem("welten-coopst-" + CO.tid) ?? -1); } catch (e) {}
   if (seen < 0) { try { localStorage.setItem("welten-coopst-" + CO.tid, st); } catch (e) {} }
   else if (st > seen) { try { localStorage.setItem("welten-coopst-" + CO.tid, st); } catch (e) {} const amt = Math.round(Math.max(1, bet()) * 25 * st); state.credits += amt; try { countCredits(state.credits, 500); saveGame(); render(); sfx.fanfare(1); } catch (e) {} toast(`Koop-Truck Stufe ${st}! +${fmtN(amt)} für dich.`, "#ffc94a"); }
-  coRender();
+  if (!spun) coRender();
+}
+// Walzen laufen wie im normalen Spiel: Streifen mit Zufallssymbolen, gestaffelter Stopp mit kleinem Nachfedern
+async function coAnimate(s, id) {
+  const cols = [...document.querySelectorAll("#coop .reel")]; if (!cols.length) return;
+  const cc = cols[0].clientHeight / 3, quick = reduced || state.lowfx, onlyNudge = s.nudge >= 0 && s.nudge != null;
+  try { sfx.spin && sfx.spin(); } catch (e) {}
+  const runs = cols.map((col, i) => new Promise(res => {
+    if (i === s.hold || (onlyNudge && i !== s.nudge)) return res();
+    const strip = col.querySelector(".co-strip"), K = onlyNudge ? 1 : 8 + i * 3;
+    const extra = Array.from({ length: K }, () => coPick());
+    strip.innerHTML = s.g[i].concat(extra).map(x => `<div class="cell">${coSvg(x)}</div>`).join("");
+    strip.style.transition = "none"; strip.style.transform = `translateY(${-K * cc}px)`; void strip.offsetHeight;
+    const d = quick ? 120 : (onlyNudge ? 280 : 520 + i * 170);
+    strip.style.transition = `transform ${d}ms cubic-bezier(.25,.75,.3,1.12)`; strip.style.transform = "translateY(0)";
+    setTimeout(() => { if (id !== CO.anim) return res(); try { sfx.stop(); } catch (e) {} strip.innerHTML = s.g[i].map(x => `<div class="cell">${coSvg(x)}</div>`).join(""); strip.style.transition = "none"; strip.style.transform = ""; res(); }, d);
+  }));
+  await Promise.all(runs);
+}
+function coFloat(amount, label) {
+  const m = document.querySelector("#coop .co-mach"); if (!m) return;
+  const f = document.createElement("div"); f.className = "co-float"; f.innerHTML = `+${fmtN(amount)}${label ? `<small>${label}</small>` : ""}`; m.appendChild(f); setTimeout(() => f.remove(), 1700);
+}
+function coWinFx(s) {
+  const m = document.querySelector("#coop .co-mach"), w = $("coWin"); if (!s.win) return;
+  const x = s.win / Math.max(1, s.bet), big = x >= 10, mega = x >= 25;
+  try { mega ? sfx.fanfare(2) : big ? sfx.fanfare(1) : sfx.small(); } catch (e) {}
+  if (w) { const t0 = performance.now(), dur = big ? 1200 : 500; const step = t => { const k = Math.min(1, (t - t0) / dur); w.textContent = fmtN(Math.round(s.win * k)); if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
+  coFloat(s.win, mega ? "Mega-Gewinn" : big ? "Großer Gewinn" : s.mult > 1 ? `Combo ×${s.mult}` : "");
+  if (m && !reduced) { try { burstAt(m, mega ? 70 : big ? 40 : 14, ["#ffc94a", "#ffffff", "#ff4fa8"], big ? 1.2 : .7); } catch (e) {} if (big) { m.classList.remove("co-shake"); void m.offsetWidth; m.classList.add("co-shake"); } }
 }
 
 /* ---------- Oberfläche ---------- */
-function coRenderTimer() { const t = document.querySelector("#coop [data-timer]"); if (!t || !CO.s) return; const left = Math.max(0, Math.ceil((CO_T - (Date.now() - CO.s.t0)) / 1000)); t.textContent = left ? `(${left} s)` : ""; }
+function coRenderTimer() { const t = document.querySelector("#coop [data-tbar]"); if (!t || !CO.s) return; const lim = CO.s.phase === "hold" ? CO_TH : CO_T; t.style.transform = `scaleX(${Math.max(0, 1 - (Date.now() - CO.s.t0) / lim)})`; t.style.transition = "transform 1s linear"; }
 function coRender(keepSpin) {
   const el = $("coop"); if (!el || el.hidden) return; const box = el.querySelector(".cw");
   if (!CO.tid || !CO.s) {
@@ -11191,25 +11275,28 @@ function coRender(keepSpin) {
     return;
   }
   const s = CO.s, R = coRoles(s), o = coOrder(), solo = o.length <= 1, me = OL.uid, isP = solo || R.pilot === me, isM = solo || R.mech === me;
-  const winCells = new Set((s.wins || []).flat().map(([c, r]) => c + "," + r)), spinning = keepSpin && document.querySelector("#coop .reel.spin");
-  const vbusy = s.phase === "vault";
-  let ctrl = "";
-  if (s.phase === "bet") ctrl = isP ? `<div class="co-msg">Du bist Pilot: Einsatz wählen und drehen!</div><div class="row bets">${CO_BETS.map(b => `<button type="button" class="cb" data-bet="${b}" aria-pressed="${s.bet === b}">${b}</button>`).join("")}<button type="button" class="cb main" data-co="spin" ${s.kasse < s.bet ? "disabled" : ""}>Hebel ziehen</button></div>${s.kasse < CO_BETS[0] ? `<button type="button" class="cb" data-co="refill">Kasse leer – neu auffüllen (Alpha)</button>` : ""}`
-    : `<div class="co-msg">${coName(R.pilot)} ist Pilot und zieht gleich den Hebel …</div>`;
-  if (s.phase === "hold") ctrl = isM ? `<div class="co-msg">Du bist Mechaniker: Tippe eine Walze an, um sie zu halten – der Rest wird nachgedreht. <span data-timer></span></div><div class="row"><button type="button" class="cb" data-co="pass">Passt so</button></div>`
-    : `<div class="co-msg">${coName(R.mech)} ist Mechaniker und entscheidet, welche Walze gehalten wird … <span data-timer></span></div>`;
-  if (vbusy) { const mine = (s.pick || {})[me]; ctrl = `<div class="co-msg">TRESOR! Wählt alle gleichzeitig eine Truhe – gleiche Schätze bringen 30×. <span data-timer></span></div><div class="vault">${[0, 1, 2, 3].map(i => `<button type="button" data-vault="${i}" class="${mine === i ? "mine" : ""}" ${mine != null ? "disabled" : ""}>${mine === i ? "✓" : "?"}</button>`).join("")}</div><small>${Object.keys(s.pick || {}).length} von ${o.filter(coAlive).length} haben gewählt.</small>`; }
+  const winCells = new Set((s.wins || []).flat().map(([c, r]) => c + "," + r)), vbusy = s.phase === "vault", st = coSteps(s.v || {});
+  const spinLbl = (($("spin") && $("spin").textContent) || "Drehen").trim() || "Drehen";
+  let turn = "", ctrl = "", big = "", lim = 0;
+  if (s.phase === "bet") { turn = isP ? "Du bist Pilot: Einsatz wählen und drehen!" : `${coName(R.pilot)} ist Pilot und dreht gleich …`; big = `<button type="button" class="co-big" data-co="spin" ${!isP || s.kasse < s.bet || CO.animating ? "disabled" : ""}>${coEsc(spinLbl)}</button>`; }
+  if (s.phase === "hold") { turn = isM ? "Du bist Mechaniker: Walze halten (Rest dreht nach) oder eine Walze stupsen!" : `${coName(R.mech)} ist Mechaniker und entscheidet …`; lim = CO_TH; big = `<button type="button" class="co-big pass" data-co="pass" ${!isM || CO.animating ? "disabled" : ""}>Passt so</button>`; }
+  if (vbusy) { const mine = (s.pick || {})[me]; lim = CO_T; turn = "TRESOR! Wählt alle gleichzeitig eine Truhe – gleiche Schätze bringen 30×."; ctrl = `<div class="vault">${[0, 1, 2, 3].map(i => `<button type="button" data-vault="${i}" class="${mine === i ? "mine" : ""}" ${mine != null ? "disabled" : ""}>${mine === i ? "✓" : "?"}</button>`).join("")}</div><small>${Object.keys(s.pick || {}).length} von ${o.filter(coAlive).length} haben gewählt.</small>`; big = `<button type="button" class="co-big" disabled>Tresor</button>`; }
   const vr = s.vres && Date.now() - s.vres.t < 6000 ? `<div class="vault">${s.vres.syms.map(x => `<button type="button" disabled>${coSvg(x)}</button>`).join("")}</div>` : "";
-  const st = coSteps(s.v || {});
+  const myTurn = (s.phase === "bet" && isP) || (s.phase === "hold" && isM) || vbusy;
+  const reelsHtml = `<div class="reels" id="coReels">${s.g.map((col, c) => `<div class="reel ${s.hold === c ? "held" : ""}" data-reel="${c}"><div class="co-strip">${col.map((id, r) => `<div class="cell ${winCells.has(c + "," + r) && s.phase !== "hold" && !CO.animating ? "win" : ""}">${coSvg(id)}</div>`).join("")}</div></div>`).join("")}</div>${s.phase === "hold" && isM && !CO.animating ? `<div class="co-hold">${s.g.map((x, c) => `<div><button type="button" class="h" data-hold="${c}">Halten</button><button type="button" class="n" data-nudge="${c}" aria-label="Walze ${c + 1} stupsen">▼ Stupsen</button></div>`).join("")}</div>` : ""}`;
+  const keep = CO.animating && $("coReels");
   box.innerHTML = `<div class="top"><h2>Koop-Automat<small>ALPHA</small></h2><span class="code" data-co="copy" title="Code kopieren">${CO.tid}</span><button type="button" class="cb" data-co="close">Pause</button><button type="button" class="cb" data-co="leave">Tisch verlassen</button></div>
     <div class="players">${o.map(u => `<span class="pl ${coAlive(u) ? "" : "off"} ${(s.phase === "bet" && u === R.pilot) || (s.phase === "hold" && u === R.mech) ? "act" : ""}"><i></i>${coName(u)}${u === R.pilot ? "<b>Pilot</b>" : ""}${u === R.mech && !solo ? "<b>Mechaniker</b>" : ""}</span>`).join("")}${o.length < 4 ? `<span class="pl off">Code ${CO.tid} an Freunde geben</span>` : ""}</div>
-    <div class="truck"><span class="stage">Koop-Truck · Ausbau ${st}/15</span><span class="kasse">Gemeinsame Kasse<b>${fmtN(s.kasse)}</b>${s.win ? `<small>+${fmtN(s.win)}</small>` : ""}</span>${coTruckSVG(s.v || {})}</div>
-    <div class="parts">${CO_PARTS.map(p => { const l = (s.v || {})[p.id] || 0; return `<button type="button" class="part" data-build="${p.id}" ${l >= 3 || s.kasse < coCost(l) ? "disabled" : ""}><b>${p.n}</b><span class="pips">${[0, 1, 2].map(i => `<i class="${i < l ? "on" : ""}"></i>`).join("")}</span>${l >= 3 ? "fertig" : fmtN(coCost(l))}</button>`; }).join("")}</div>
-    <div class="reels">${s.g.map((col, c) => `<div class="reel ${s.hold === c ? "held" : ""} ${s.phase === "hold" && isM ? "pick" : ""}" data-reel="${c}">${col.map((id, r) => `<div class="cell ${winCells.has(c + "," + r) && s.phase !== "hold" ? "win" : ""}">${coSvg(id)}</div>`).join("")}</div>`).join("")}</div>
-    <div class="ctrl">${ctrl}${vr}</div>
-    <div class="emos">${["Halten!", "Jetzt!", "Nochmal!", "👍", "🔥", "😱", "🍀"].map(e => `<button type="button" data-emo="${e}">${e}</button>`).join("")}</div>
-    <div class="log">${(s.log || []).map(l => `<div>${l}</div>`).join("")}</div>`;
-  if (spinning) document.querySelectorAll("#coop .reel").forEach((c, i) => { if (i !== s.hold) c.classList.add("spin"); });
+    <div class="co-main"><div class="co-mach"><div class="co-turn ${myTurn ? "me" : ""}">${turn}</div>${lim ? `<div class="co-tbar"><i data-tbar style="transform:scaleX(${Math.max(0, 1 - (Date.now() - s.t0) / lim)})"></i></div>` : ""}<div data-reels></div>${ctrl || vr ? `<div class="ctrl" style="margin-top:10px">${ctrl}${vr}</div>` : ""}</div>
+      <div class="co-side"><div class="truck"><span class="stage">Koop-Truck · Ausbau ${st}/15</span>${coTruckSVG(s.v || {})}</div>
+        <div class="parts">${CO_PARTS.map(p => { const l = (s.v || {})[p.id] || 0; return `<button type="button" class="part" data-build="${p.id}" ${l >= 3 || s.kasse < coCost(l) ? "disabled" : ""}><b>${p.n}</b><span class="pips">${[0, 1, 2].map(i => `<i class="${i < l ? "on" : ""}"></i>`).join("")}</span>${l >= 3 ? "fertig" : fmtN(coCost(l))}</button>`; }).join("")}</div>
+        <div class="emos">${["Halten!", "Jetzt!", "Nochmal!", "👍", "🔥", "😱", "🍀"].map(e => `<button type="button" data-emo="${e}">${e}</button>`).join("")}</div>
+        <div class="log">${(s.log || []).map(l => `<div>${l}</div>`).join("")}</div></div></div>
+    <div class="co-deck"><div class="co-stats"><div><span>Kasse</span><b>${fmtN(s.kasse)}</b></div><div><span>Gewinn</span><b id="coWin">${CO.animating ? 0 : fmtN(s.win || 0)}</b></div><div class="co-combo ${(s.combo || 0) >= 2 ? "on" : ""}"><span>Combo</span><b>×${CO_COMBO[s.combo || 0] || 1}</b></div></div>${big}
+      <div class="co-bet">${isP && s.phase === "bet" ? `<button type="button" class="cb" data-betd="-1" aria-label="Einsatz runter">−</button><output>${s.bet}</output><button type="button" class="cb" data-betd="1" aria-label="Einsatz hoch">+</button>` : `<span style="opacity:.7">Einsatz <b>${s.bet}</b></span>`}<button type="button" class="cb" data-co="auto" aria-pressed="${!!CO.auto}" title="Als Pilot automatisch drehen">Auto</button>${s.kasse < CO_BETS[0] ? `<button type="button" class="cb" data-co="refill">Kasse auffüllen</button>` : ""}</div></div>`;
+  const slot = box.querySelector("[data-reels]");
+  if (keep) slot.replaceWith(keep); else { slot.outerHTML = reelsHtml; }
+  const rs = $("coReels"); if (rs && !keep) rs.style.setProperty("--cc", Math.max(44, Math.min(110, Math.floor((rs.clientWidth - 12 - 24) / 5))) + "px");
   coRenderTimer();
 }
 function coOpen() {
@@ -11217,16 +11304,17 @@ function coOpen() {
   if (!el) {
     document.body.insertAdjacentHTML("beforeend", `<div id="coop" role="dialog" aria-modal="true" aria-label="Koop-Automat" hidden><div class="cw"></div></div>`); el = $("coop");
     el.addEventListener("click", e => {
-      const a = e.target.closest("[data-co]"), b = e.target.closest("[data-bet]"), rl = e.target.closest(".reel.pick"), v = e.target.closest("[data-vault]"), bu = e.target.closest("[data-build]"), em = e.target.closest("[data-emo]");
+      const a = e.target.closest("[data-co]"), b = e.target.closest("[data-betd]"), hd = e.target.closest("[data-hold]"), nd = e.target.closest("[data-nudge]"), v = e.target.closest("[data-vault]"), bu = e.target.closest("[data-build]"), em = e.target.closest("[data-emo]");
       if (a) { const k = a.dataset.co;
         if (k === "close") { el.hidden = true; return; }
         if (k === "leave") { if (confirm("Tisch wirklich verlassen?")) coLeave(); return; }
         if (k === "new") coCreate(); if (k === "join") coJoin(($("coCode") || {}).value);
-        if (k === "spin") coSpin(); if (k === "pass") coPass(); if (k === "refill") coRefill();
+        if (k === "spin") coSpin(); if (k === "pass") coPass(); if (k === "refill") coRefill(); if (k === "auto") { CO.auto = !CO.auto; coRender(); }
         if (k === "copy") { try { navigator.clipboard.writeText(CO.tid); toast("Code kopiert: " + CO.tid, "#4fe3ff"); } catch (x) {} }
         try { sfx.click(); } catch (x) {} return; }
-      if (b) return coBet(+b.dataset.bet);
-      if (rl) return coHold(+rl.dataset.reel);
+      if (b) { const i = CO_BETS.indexOf(CO.s.bet) + +b.dataset.betd; return coBet(CO_BETS[Math.max(0, Math.min(CO_BETS.length - 1, i))]); }
+      if (hd) return coHold(+hd.dataset.hold);
+      if (nd) return coNudge(+nd.dataset.nudge);
       if (v && !v.disabled) return coVaultPick(+v.dataset.vault);
       if (bu && !bu.disabled) return coBuild(bu.dataset.build);
       if (em) return coEmo(em.dataset.emo);
@@ -11236,7 +11324,7 @@ function coOpen() {
   if (!CO.tid && coOn()) { let t = null; try { t = localStorage.getItem("welten-coop"); } catch (e) {} if (t) coJoin(t); }
 }
 // Haupt-Automat sperren, solange der Koop-Automat offen ist
-document.addEventListener("keydown", e => { const el = $("coop"); if (el && !el.hidden && (e.code === "Space" || e.key === "Enter") && !/INPUT|TEXTAREA/.test((e.target || {}).tagName || "")) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+document.addEventListener("keydown", e => { const el = $("coop"); if (el && !el.hidden && (e.code === "Space" || e.key === "Enter") && !/INPUT|TEXTAREA|BUTTON/.test((e.target || {}).tagName || "")) { e.stopImmediatePropagation(); e.preventDefault(); if (e.code === "Space" && !e.repeat) { const b = el.querySelector(".co-big:not(:disabled)"); if (b) b.click(); } } }, true);
 (function coEntry() {
   const grid = document.querySelector(".dock .xtiles");
   if (grid) { grid.insertAdjacentHTML("afterbegin", `<button type="button" class="xtile" id="coTile" style="--xc:#ffc94a"><svg viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="17" text-anchor="middle" font-size="15">🤝</text></svg><span><b>Koop-Automat <small style="color:#ff4fa8">Alpha</small></b><small>Ein Automat, eine Kasse, ein Truck – zusammen spielen</small></span></button>`); $("coTile").addEventListener("click", coOpen); }
@@ -11278,20 +11366,20 @@ document.addEventListener("keydown", e => { const el = $("coop"); if (el && !el.
 #olHead .me small { display: block; opacity: .7; font-size: 11px; }
 #olHead .me code { font: 800 15px ui-monospace, monospace; letter-spacing: .12em; }
 #olHead .me button { margin-left: 4px; }
-#online .ol-tabs.nav { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; margin: 0 0 14px; }
-#online .ol-tabs.nav button { display: grid; justify-items: start; gap: 2px; text-align: left; padding: 10px 11px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); color: inherit; cursor: pointer; transition: transform .12s, border-color .15s, background .15s; position: relative; }
-#online .ol-tabs.nav button:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.3); }
-#online .ol-tabs.nav button .ic { font-size: 22px; line-height: 1; }
-#online .ol-tabs.nav button b { font: 700 13px var(--f-body, system-ui); }
-#online .ol-tabs.nav button small { font: 500 11px/1.25 var(--f-body, system-ui); opacity: .65; }
-#online .ol-tabs.nav button[aria-pressed="true"] { border-color: var(--gold, #ffc94a); background: linear-gradient(160deg, rgba(255,201,74,.2), rgba(255,201,74,.04)); box-shadow: 0 0 18px rgba(255,201,74,.18); }
-#online .ol-tabs.nav button.new::after { content: "NEU"; position: absolute; top: 7px; right: 8px; font: 800 9px system-ui; padding: 2px 5px; border-radius: 5px; background: #ff4fa8; color: #fff; }
+#online .ol-tabs.olnav { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; margin: 0 0 14px; }
+#online .ol-tabs.olnav button { display: grid; justify-items: start; gap: 2px; text-align: left; padding: 10px 11px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); color: inherit; cursor: pointer; transition: transform .12s, border-color .15s, background .15s; position: relative; }
+#online .ol-tabs.olnav button:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.3); }
+#online .ol-tabs.olnav button .ic { font-size: 22px; line-height: 1; }
+#online .ol-tabs.olnav button b { font: 700 13px var(--f-body, system-ui); }
+#online .ol-tabs.olnav button small { font: 500 11px/1.25 var(--f-body, system-ui); opacity: .65; }
+#online .ol-tabs.olnav button[aria-pressed="true"] { border-color: var(--gold, #ffc94a); background: linear-gradient(160deg, rgba(255,201,74,.2), rgba(255,201,74,.04)); box-shadow: 0 0 18px rgba(255,201,74,.18); }
+#online .ol-tabs.olnav button.new::after { content: "NEU"; position: absolute; top: 7px; right: 8px; font: 800 9px system-ui; padding: 2px 5px; border-radius: 5px; background: #ff4fa8; color: #fff; }
 #online .ol-pane { border-radius: 16px; padding: 14px; background: rgba(0,0,0,.22); border: 1px solid rgba(255,255,255,.08); min-height: 160px; }
 #online .ol-item { border-radius: 12px; }
 @media (max-width: 640px) {
   #olHead { grid-template-columns: 1fr; }
-  #online .ol-tabs.nav { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
-  #online .ol-tabs.nav button { flex: 0 0 112px; scroll-snap-align: start; }
+  #online .ol-tabs.olnav { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
+  #online .ol-tabs.olnav button { flex: 0 0 112px; scroll-snap-align: start; }
   #olChip.mp .mp-l { max-width: 130px; }
 }
 `;
@@ -11326,7 +11414,7 @@ function mpRender() {
   const tabs = $("olTabs"); if (!tabs) return;
   const T = [["friends", "👥", "Freunde", "Code, Anfragen, Geschenke"], ["coopm", "🎰", "Koop-Automat", "Ein Automat, eine Kasse", "new"], ["team", "🤝", "Team-Spielstand", "Gemeinsamer Spielstand"], ["coop", "🛠️", "Koop-Crew", "+20 % von allen Gewinnen"],
     ["vs", "⚔️", "VS-Duell", "5 Minuten gegeneinander"], ["board", "🏆", "Rangliste", "Freunde, Welt, Tag"], ["save", "☁️", "Spielstand", "Sichern und laden"]];
-  tabs.classList.add("nav");
+  tabs.classList.add("olnav");
   tabs.innerHTML = T.map(([t, ic, n, d, cl]) => `<button type="button" ${t === "coopm" ? 'data-open="coop"' : `data-t="${t}"`} class="${cl || ""}"><span class="ic">${ic}</span><b>${n}</b><small>${d}</small></button>`).join("");
   tabs.addEventListener("click", e => { const b = e.target.closest("[data-open]"); if (!b) return; e.stopPropagation(); try { $("online").hidden = true; coOpen(); } catch (x) {} }, true);
   tabs.insertAdjacentHTML("beforebegin", `<div id="olHead"></div>`);
@@ -11528,6 +11616,51 @@ if (typeof fnWatch === "function") {
     return r;
   };
 }
+
+(function fixCss() { const st = document.createElement("style"); st.textContent = `
+/* Bip und Hinweise weichen aus, sobald Risiko/Leiter angeboten werden */
+html body:has(.gbtns .gamble:not([hidden])) .bip { transform: translateY(-64px); opacity: .25; pointer-events: none; transition: transform .3s, opacity .3s; }
+html body:has(.gbtns .gamble:not([hidden])) .bip .bip-bubble, html body:has(.gbtns .gamble:not([hidden])) #bipBubble { display: none !important; }
+html body .gbtns { z-index: 90; }
+html body .gbtns .gamble { box-shadow: 0 6px 18px rgba(0,0,0,.55); }
+/* Linkshändermodus: Dreh-Knopf links (Handy und Tablet) */
+@media (max-width: 1100px) {
+  html.lefty body .deck { grid-template-columns: auto minmax(0, 1fr) !important; grid-template-areas: "spin wallet" "spin bets" !important; }
+  html.lefty body .spinwrap { margin-right: 0 !important; margin-left: 2px; }
+  html.lefty body .bip { left: auto !important; right: 8px !important; }
+  html.lefty body .bip .bip-bubble { right: 0; left: auto; }
+}
+/* Tablet quer (iPad): Walzen und Fahrzeug passen gleichzeitig auf den Bildschirm */
+@media (min-width: 900px) and (max-width: 1400px) and (orientation: landscape) and (max-height: 1050px) {
+  html body .frame { --cell: min(112px, calc((100cqw - 124px) / 5), max(62px, calc((100dvh - var(--deckH, 104px) - 400px) / 3))) !important; }
+  html body .machine { gap: 8px; padding-top: 12px; padding-bottom: 12px; }
+  html body .topbar { gap: 6px; }
+  html body .brand .emblem { width: 40px; height: 40px; }
+  html body .brand h1 { font-size: clamp(1.3rem, 2.4vw, 1.8rem); }
+  html body .ver, html body .hint, html body .brand small, html body .radio { display: none; }
+  html body .toggles .chip { padding-top: 5px; padding-bottom: 5px; }
+  html body .msg { min-height: 0; margin: 2px 0; }
+  html body .app { gap: 12px; grid-template-columns: minmax(0, 1fr) clamp(340px, 36vw, 470px) !important; grid-template-rows: auto 1fr; grid-template-areas: "machine hangar" "dock hangar" !important; }
+  html body #shipview { max-height: calc(100dvh - var(--deckH, 104px) - 240px); }
+  html body .bip { left: auto !important; right: max(18px, env(safe-area-inset-right, 0px)) !important; flex-direction: row-reverse; }
+}
+`; document.head.appendChild(st); })();
+(function lefty() {
+  let on = false; try { on = localStorage.getItem("sw-lefty") === "1"; } catch (e) {}
+  document.documentElement.classList.toggle("lefty", on);
+  const g = $("mmsGame"); if (!g) return;
+  g.insertAdjacentHTML("beforeend", `<div class="mms-row"><span>Linkshändermodus<small>Der Dreh-Knopf sitzt auf Handy und Tablet links.</small></span><button type="button" class="mms-sw" role="switch" id="leftySw" aria-label="Linkshändermodus"></button></div>`);
+  const sw = $("leftySw"), sync = () => { sw.setAttribute("aria-checked", String(on)); sw.classList.toggle("on", on); document.documentElement.classList.toggle("lefty", on); };
+  sw.addEventListener("click", () => { on = !on; try { localStorage.setItem("sw-lefty", on ? "1" : "0"); } catch (e) {} sync(); }); sync();
+})();
+
+(function econ() {
+  try { BOOSTS.forEach(b => { b.min = Math.round(b.min * 1.6); }); } catch (e) {}
+  // Ertrag pro Dreh angleichen (vorher: Sternenwrack ~1 je 9 Drehs, Eisenfront ~1 je 20, Neonküste ~1 je 8) → überall etwa 1 je 11–13 Drehs
+  const F = { eisenfront: 2, neonkueste: .62 }[WORLD_ID] || 1;
+  if (F !== 1 && typeof netDust === "function") { const n0 = netDust; netDust = function (pts) { return n0.call(this, Math.round((pts || 0) * F)); }; }
+  try { renderBoostBar(); } catch (e) {}
+})();
 /*MENU-JS-END*/
 /* ---------- Start-Knopf: Feedback beim Drücken, Drehen, Gewinnen ---------- */
 (function () {
