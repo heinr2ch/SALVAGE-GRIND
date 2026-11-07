@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.19.0 · Kampagne, Bip-Garderobe, Barrierefreiheit · 07.11.2026
+- Neu: Kampagne „Die verlorene Flotte“ – 5 Akte mit 20 Kapiteln durch alle Welten. Bip erzählt die Geschichte, eine Karte zeigt den Weg, jeder Akt bringt ein Teil des Flaggschiffs Aurora. Am Ende gibt es die Lackierung „Aurora“ und Bips Kapitänsmütze.
+- Neu: Bip-Garderobe – Hüte, Krone, Heiligenschein und Auren für deinen Begleiter, bezahlt mit der Zweitwährung der Welt.
+- Neu: Barrierefreiheit in den Einstellungen – Textgröße, hoher Kontrast, Hilfe bei Farbsehschwäche, Bewegung reduzieren, keine Blitze, langsamer Modus, Gewinne vorlesen, große Knöpfe und Vibration bei Gewinn.
+
 ## Beta 1.18.0 · Koop-Automat lebendiger, Linkshänder, iPad · 07.11.2026
 - Koop-Automat: echte Walzen-Animation, Gewinn-Zähler, große Gewinne mit Effekten, Combo-Multiplikator für Gewinnserien, Mechaniker kann jetzt auch stupsen, Auto-Pilot, Bedienleiste wie im normalen Spiel, Leertaste dreht.
 - Neu: Linkshändermodus (Einstellungen → Spiel) – der Dreh-Knopf sitzt auf Handy und Tablet links.
