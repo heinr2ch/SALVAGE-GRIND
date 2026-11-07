@@ -527,6 +527,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
     $("loT").innerHTML = `<tr><th>Wann</th><th>Konto</th><th>Key für</th><th>Welt</th><th>Gerät</th></tr>` + L.slice(0, 200).map(l => `<tr><td>${dt(l.t)}</td><td>${esc(l.n || "–")}</td><td>${esc(name(l.id))}</td><td>${esc(l.w || "–")}</td><td>${esc(l.p || "–")}</td></tr>`).join("") || '<tr><td class="muted">Noch keine Starts</td></tr>';
   }
 
+  (function () { const st = document.createElement("style"); st.textContent = `.idhow { margin-top: 6px; } .idhow summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--acc, #9ad4ff); list-style: none; } .idhow summary::before { content: "▸ "; } .idhow[open] summary::before { content: "▾ "; } .idhow div { margin-top: 6px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,.05); border-left: 3px solid var(--acc, #9ad4ff); font-size: 13px; line-height: 1.5; }`; document.head.appendChild(st); })();
   /* ---------- Ideen und Änderungswünsche (admin/ideas/<id>: {text, tag, prio, st: open|doing|done|no, t, note, done}) ---------- */
   const ID = { list: {}, f: "open", ref: null };
   const ST = { open: ["offen", "n"], doing: ["in Arbeit", "on"], done: ["erledigt", "on"], no: ["verworfen", "off"] };
@@ -536,7 +537,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
     const rows = all.filter(x => ID.f === "all" || (ID.f === "open" ? (x.st || "open") === "open" : x.st === ID.f));
     const cnt = k => all.filter(x => (x.st || "open") === k).length;
     $("idCount").textContent = `${cnt("open")} offen · ${cnt("doing")} in Arbeit · ${cnt("done")} erledigt`;
-    $("idT").innerHTML = `<tr><th>Wann</th><th>Prio</th><th>Bereich</th><th>Idee</th><th>Status</th><th></th></tr>` + (rows.map(x => `<tr><td style="white-space:nowrap">${dt(x.t)}</td><td>${["", "⭐ wichtig", "normal", "irgendwann"][x.prio || 2]}</td><td>${esc(x.tag || "")}</td><td>${esc(x.text)}${x.note ? `<br><small class="muted">↳ ${esc(x.note)}</small>` : ""}</td>
+    $("idT").innerHTML = `<tr><th>Wann</th><th>Prio</th><th>Bereich</th><th>Idee</th><th>Status</th><th></th></tr>` + (rows.map(x => `<tr><td style="white-space:nowrap">${dt(x.t)}</td><td>${["", "⭐ wichtig", "normal", "irgendwann"][x.prio || 2]}</td><td>${esc(x.tag || "")}</td><td>${esc(x.text)}${x.note ? `<br><small class="muted">↳ ${esc(x.note)}</small>` : ""}${x.how ? `<details class="idhow"><summary>So wurde es umgesetzt${x.ver ? ` · ${esc(x.ver)}` : ""}</summary><div>${esc(x.how).replace(/\n/g, "<br>")}</div></details>` : ""}</td>
       <td><span class="pill ${(ST[x.st || "open"] || ST.open)[1]}">${(ST[x.st || "open"] || ST.open)[0]}</span>${x.done ? `<br><small class="muted">${dt(x.done)}</small>` : ""}</td>
       <td style="white-space:nowrap"><select class="btn ghost sm" data-ist="${x.id}">${Object.entries(ST).map(([k, v]) => `<option value="${k}" ${k === (x.st || "open") ? "selected" : ""}>${v[0]}</option>`).join("")}</select> <button class="btn ghost sm" data-idel="${x.id}" title="Löschen">✕</button></td></tr>`).join("") || `<tr><td class="muted">Nichts in dieser Ansicht.</td></tr>`);
     $("idT").querySelectorAll("[data-ist]").forEach(el => el.onchange = () => db.ref("admin/ideas/" + el.dataset.ist).update({ st: el.value, done: el.value === "done" ? TS : null }).catch(e => alert(e.message)));
