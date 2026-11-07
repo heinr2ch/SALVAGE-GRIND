@@ -5707,9 +5707,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.19.0";
+const GAME_VERSION = "1.19.1";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.19.1", date: "07.11.2026", title: "Kampagne kompakter", items: ["Die Kampagne sitzt jetzt als kleiner Knopf mit Fortschrittsring in der oberen Knopfleiste statt als eigene Zeile – gut sichtbar, aber ohne Platz zu kosten."] },
   { v: "1.19.0", date: "07.11.2026", title: "Kampagne, Bip-Garderobe, Barrierefreiheit", items: ["Neu: Kampagne „Die verlorene Flotte“ – 5 Akte mit 20 Kapiteln durch alle Welten. Bip erzählt die Geschichte, eine Karte zeigt den Weg, jeder Akt bringt ein Teil des Flaggschiffs Aurora. Am Ende gibt es die Lackierung „Aurora“ und Bips Kapitänsmütze.", "Neu: Bip-Garderobe – Hüte, Krone, Heiligenschein und Auren für deinen Begleiter, bezahlt mit der Zweitwährung der Welt.", "Neu: Barrierefreiheit in den Einstellungen – Textgröße, hoher Kontrast, Hilfe bei Farbsehschwäche, Bewegung reduzieren, keine Blitze, langsamer Modus, Gewinne vorlesen, große Knöpfe und Vibration bei Gewinn."] },
   { v: "1.18.0", date: "07.11.2026", title: "Koop-Automat lebendiger, Linkshänder, iPad", items: ["Koop-Automat: echte Walzen-Animation, Gewinn-Zähler, große Gewinne mit Effekten, Combo-Multiplikator für Gewinnserien, Mechaniker kann jetzt auch stupsen, Auto-Pilot, Bedienleiste wie im normalen Spiel, Leertaste dreht.", "Neu: Linkshändermodus (Einstellungen → Spiel) – der Dreh-Knopf sitzt auf Handy und Tablet links.", "iPad und Tablets quer: Walzen und Fahrzeug passen gleichzeitig auf den Bildschirm.", "Bip weicht auf dem Handy aus, sobald Risiko oder Leiter angeboten werden.", "Online-Menü: die Kacheln blinken nicht mehr.", "Die Musik der kommenden Welten folgt jetzt dem Musik-Regler statt der Soundeffekte.", "Zweitwährung zwischen den Welten angeglichen, Boosts halten 60 % länger."] },
   { v: "1.17.0", date: "03.11.2026", title: "Mehr Sicherheit und Jugendschutz", items: ["Konten ab 18 Jahren (passend zur Spielmechanik).", "Namen werden auf beleidigende und extremistische Wörter geprüft.", "Neu im Feedback: „Spieler oder Inhalt melden“, auch direkt beim Zuschauen.", "Passwörter sind jetzt deutlich besser geschützt. Ältere Konten werden beim nächsten Anmelden automatisch umgestellt.", "Impressum und Nutzungsbedingungen um Meldeweg und Kontaktstelle (Digital Services Act) ergänzt."] },
@@ -11839,11 +11840,13 @@ const campCh = () => (CT.acts[CAMP.a] || {}).ch ? CT.acts[CAMP.a].ch[CAMP.c] : n
 #camp .cp-wi b { font-size: 14px; }
 #camp .cp-wi .cp-cbtn { padding: 7px 12px; font-size: 13px; }
 #camp .cp-wi .cp-cost { font: 800 13px ui-monospace, monospace; color: #ffd46a; }
-.camp-pill { display: flex; align-items: center; gap: 10px; width: 100%; margin: 0 0 10px; padding: 9px 14px; border-radius: 14px; border: 1px solid rgba(255,212,106,.45); background: linear-gradient(90deg, rgba(255,212,106,.14), rgba(255,122,217,.1)); color: inherit; font: 600 13px var(--f-body, system-ui); cursor: pointer; text-align: left; }
-.camp-pill .ic { font-size: 18px; } .camp-pill b { color: #ffd46a; white-space: nowrap; } .camp-pill .tx { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.camp-pill .mini { width: 70px; height: 6px; border-radius: 6px; background: rgba(255,255,255,.12); overflow: hidden; flex: none; } .camp-pill .mini i { display: block; height: 100%; background: linear-gradient(90deg, #ff7ad9, #ffd46a); }
-.camp-pill.pop { animation: campPop .7s cubic-bezier(.2,.9,.3,1.4); }
-@keyframes campPop { 40% { transform: scale(1.04); box-shadow: 0 0 24px rgba(255,212,106,.6); } }
+.camp-chip { gap: 6px !important; border-color: rgba(255,212,106,.65) !important; background: linear-gradient(90deg, rgba(255,212,106,.16), rgba(255,122,217,.12)) !important; color: #ffe7a8 !important; white-space: nowrap; }
+.camp-chip .cr { width: 17px; height: 17px; flex: none; }
+.camp-chip b { color: #ffd46a; } .camp-chip .cl { font-weight: 600; opacity: .9; }
+.camp-chip.away .cl { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+.camp-chip.pop { animation: campPop .7s cubic-bezier(.2,.9,.3,1.4); }
+@keyframes campPop { 40% { transform: scale(1.12); box-shadow: 0 0 18px rgba(255,212,106,.7); } }
+@media (max-width: 600px) { .camp-chip.away .cl { max-width: 64px; } }
 #campWin { position: fixed; inset: 0; z-index: 2147482600; display: grid; place-items: center; padding: 16px; background: rgba(4,3,14,.78); backdrop-filter: blur(5px); animation: campFade .3s ease; }
 @keyframes campFade { from { opacity: 0; } }
 #campWin .cp-box { width: min(460px, 100%); border-radius: 26px; padding: 26px 22px 20px; text-align: center; color: #fff; background: radial-gradient(circle at 50% 0%, #4a2a7a, #160f2e 70%); border: 1px solid rgba(255,212,106,.5); box-shadow: 0 0 60px rgba(255,140,220,.35); animation: campIn .55s cubic-bezier(.2,.9,.3,1.3); position: relative; overflow: hidden; }
@@ -11938,10 +11941,13 @@ function campRender() {
 /* ---------- Fortschritt ---------- */
 function campPill() {
   let p = $("campPill");
-  if (!p) { const anchor = document.querySelector(".machine .radio") || document.querySelector(".machine .topbar"); if (!anchor) return; anchor.insertAdjacentHTML("afterend", `<button type="button" class="camp-pill" id="campPill"></button>`); p = $("campPill"); p.addEventListener("click", () => campOpen("camp")); }
-  if (CAMP.fin) { p.innerHTML = `<span class="ic">⭐</span><span class="tx"><b>${CT.fleet}</b> · ${CT.allDone}</span>`; return; }
-  const ch = campCh(), A = CT.acts[CAMP.a], w = campW(A.w), here = w.id === WORLD_ID;
-  p.innerHTML = `<span class="ic">📜</span><b>${CT.ch} ${CAMP.a + 1}.${CAMP.c + 1}</b><span class="tx">${here ? ch.d : CT.pillnext.replace("{w}", w.name) + " – " + ch.t}</span>${here ? `<span class="mini"><i style="width:${Math.min(100, CAMP.p / ch.n * 100)}%"></i></span><b>${CAMP.p}/${ch.n}</b>` : "<b>→</b>"}`;
+  if (!p) { const tg = document.querySelector(".machine .toggles"); if (!tg) return; tg.insertAdjacentHTML("beforeend", `<button type="button" class="chip camp-chip" id="campPill"></button>`); p = $("campPill"); p.addEventListener("click", () => campOpen("camp")); }
+  const ring = k => `<svg class="cr" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="3"/><circle cx="10" cy="10" r="8" fill="none" stroke="url(#campRingG)" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="${Math.round(k * 100)} 100" transform="rotate(-90 10 10)"/><defs><linearGradient id="campRingG"><stop offset="0" stop-color="#ff7ad9"/><stop offset="1" stop-color="#ffd46a"/></linearGradient></defs></svg>`;
+  if (CAMP.fin) { p.innerHTML = `${ring(1)}<b>⭐</b><span class="cl">${CT.camp}</span>`; p.title = CT.allDone; p.setAttribute("aria-label", CT.allDone); return; }
+  const ch = campCh(), A = CT.acts[CAMP.a], w = campW(A.w), here = w.id === WORLD_ID, k = here ? Math.min(1, CAMP.p / ch.n) : 0;
+  p.classList.toggle("away", !here);
+  p.innerHTML = `${ring(k)}<b>${CAMP.a + 1}.${CAMP.c + 1}</b><span class="cl">${here ? `${CAMP.p}/${ch.n}` : `→ ${w.name}`}</span>`;
+  const tip = `${CT.camp} · ${CT.ch} ${CAMP.a + 1}.${CAMP.c + 1}: ${here ? ch.d : CT.pillnext.replace("{w}", w.name) + " – " + ch.t}`; p.title = tip; p.setAttribute("aria-label", tip);
 }
 function campAdd(type, amount, meta) {
   if (CAMP.fin) return; const ch = campCh(), A = CT.acts[CAMP.a]; if (!ch || campW(A.w).id !== WORLD_ID) return;
