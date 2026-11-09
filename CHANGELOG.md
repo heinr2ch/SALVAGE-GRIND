@@ -2,6 +2,12 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.20.0 · Handy: Tabs, kühler, aufgeräumt · 09.11.2026
+- Neue Einstellung Tab-Ansicht (nur Handy): Spiel, Hangar und Bordzentrale als Tabs oben
+- Bordzentrale steht auf dem Handy jetzt unter dem Hangar
+- Einstellungen lassen sich auf dem Handy nicht mehr seitwärts verschieben
+- Handy bleibt kühler: Hangar-Himmel und Animationen ruhen, wenn sie nicht zu sehen sind; Hintergrund und Musik rechnen seltener
+
 ## Beta 1.19.2 · Garderobe je Begleiter, neue Preise, Schneekugel mit Sinn · 09.11.2026
 - Die Garderobe heißt jetzt nach dem Begleiter der Welt (Bips, Kokos, Rex’, Paules, Flos Garderobe), auch die Kampagnen-Texte nennen den richtigen Namen.
 - Kostüme kosten jetzt 30 bis 300 statt 5 bis 24.
