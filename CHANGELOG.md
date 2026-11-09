@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.19.2 · Garderobe je Begleiter, neue Preise, Schneekugel mit Sinn · 09.11.2026
+- Die Garderobe heißt jetzt nach dem Begleiter der Welt (Bips, Kokos, Rex’, Paules, Flos Garderobe), auch die Kampagnen-Texte nennen den richtigen Namen.
+- Kostüme kosten jetzt 30 bis 300 statt 5 bis 24.
+- Schneekugel: Die Aurora aus der Kampagne schwebt mit allen gesammelten Teilen in der Kugel, einmal am Tag gibt Schütteln ein Geschenk, das mit der Kugel wächst, und bei 25/50/75/100 % gibt es Belohnungen samt drei Schnee-Kostümen (Bommelmütze, Schneeflocken-Aura, Eiskrone).
+
 ## Beta 1.19.1 · Kampagne kompakter · 07.11.2026
 - Die Kampagne sitzt jetzt als kleiner Knopf mit Fortschrittsring in der oberen Knopfleiste statt als eigene Zeile – gut sichtbar, aber ohne Platz zu kosten.
 
