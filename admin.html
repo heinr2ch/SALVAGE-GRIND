@@ -178,15 +178,15 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
         <div class="card"><h2>Gerade gespielt <small>zuletzt geöffnete Welt</small></h2><div class="bars" id="cwBars"></div></div>
       </div>
       <div class="grid two">
-        <div class="card"><h2>Plattform <small>Spieler</small></h2><div class="bars" id="pfBars"></div></div>
-        <div class="card"><h2>Version <small>Spieler</small></h2><div class="bars" id="verBars"></div></div>
+        <div class="card"><h2>Plattform <small>Geräte</small></h2><div class="bars" id="pfBars"></div></div>
+        <div class="card"><h2>Version <small>Geräte</small></h2><div class="bars" id="verBars"></div></div>
       </div>
       <div class="card"><h2>Bestenliste <small>höchstes Level über alle Welten</small><button class="btn ghost sm" id="boardReset" style="margin-left:auto">Weltrangliste im Spiel zurücksetzen</button></h2><div class="tbl"><table id="topT"></table></div></div>
     </section>
 
     <section data-pane="pl" hidden>
       <div class="card">
-        <div class="row" style="margin-bottom:14px"><input id="plQ" placeholder="Name suchen …" style="flex:1;min-width:180px"><select id="plF"><option value="">Alle Spieler</option><option value="1">Aktiv (7 Tage)</option><option value="acct">Mit Konto</option><option value="guest">Gäste</option></select></div>
+        <div class="row" style="margin-bottom:14px"><input id="plQ" placeholder="Name suchen …" style="flex:1;min-width:180px"><select id="plF"><option value="">Alle Spieler</option><option value="1">Aktiv (7 Tage)</option><option value="acct">Mit Konto</option><option value="guest">Gäste</option></select><label style="display:flex;align-items:center;gap:6px;white-space:nowrap"><input type="checkbox" id="plM" checked> Gleiche Namen zusammenfassen</label></div>
         <div class="tbl"><table id="plT"></table></div>
       </div>
     </section>
@@ -335,13 +335,30 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
   }
 
   const maxLevel = p => Math.max(0, ...Object.values(p.w || {}).map(w => (w && w.l) || 0));
+  /* Gleiche Spielernamen (mehrere Geräte/Browser) zu einem Profil zusammenfassen */
+  const PF = { app: "App", handy: "Handy", web: "Browser" };
+  function mergeP(list) {
+    const g = new Map(), out = [];
+    list.forEach(p => {
+      const k = String(p.n || "").trim().toLowerCase();
+      if (!k || k === "?") { out.push(Object.assign({ devs: 1, devList: [p] }, p)); return; }
+      const m = g.get(k);
+      if (!m) { const c = Object.assign({}, p, { w: Object.assign({}, p.w || {}), devs: 1, devList: [p] }); g.set(k, c); out.push(c); return; }
+      m.devs++; m.devList.push(p); m.acct = m.acct || p.acct;
+      if ((p.on || 0) > (m.on || 0)) { m.on = p.on; m.cw = p.cw || m.cw; m.pf = p.pf || m.pf; m.v = p.v || m.v; m.n = p.n || m.n; }
+      if (p.f && (!m.f || p.f < m.f)) m.f = p.f;
+      Object.entries(p.w || {}).forEach(([w, x]) => { if (x && (!m.w[w] || (x.l || 0) > (m.w[w].l || 0))) m.w[w] = x; });
+    });
+    return out;
+  }
+  const devPill = p => p.devs > 1 ? ` <span class="pill" title="${esc(p.devList.slice().sort((a, b) => (b.on || 0) - (a.on || 0)).map(d => (PF[d.pf] || d.pf || "Gerät") + (d.v ? " " + d.v : "") + " · zuletzt " + (d.on ? new Date(d.on).toLocaleString("de-DE") : "–")).join("\n"))}">${p.devs} Geräte</span>` : "";
   function render() {
-    const P = Object.entries(D.players).map(([uid, p]) => Object.assign({ uid }, p || {})), now = Date.now();
+    const P0 = Object.entries(D.players).map(([uid, p]) => Object.assign({ uid }, p || {})), P = mergeP(P0), now = Date.now();
     const act = d => P.filter(p => p.on && now - p.on < d).length;
     const keysAll = Object.entries(D.keys), keysOn = keysAll.filter(([, k]) => k && k.active);
     const kpi = (l, v, sub) => `<div class="kpi"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
     const onl = P.filter(p => p.on && now - p.on < 180000).sort((a, b) => b.on - a.on);
-    $("kpis").innerHTML = kpi("Jetzt online", `<span style="color:var(--green)">${fmt(onl.length)}</span>`, "aktiv in den letzten 3 Min.") + kpi("Konten", D.names == null ? "–" : fmt(D.names), "angemeldete Spielnamen") + kpi("Konten mit Key", fmt(Object.keys(D.accounts).length), "seit Closed Beta") + kpi("Spieler-Geräte", fmt(P.length), "online gesehen") + kpi("Aktiv heute", fmt(act(DAY))) + kpi("Aktiv 7 Tage", fmt(act(7 * DAY))) + kpi("Aktiv 30 Tage", fmt(act(30 * DAY)))
+    $("kpis").innerHTML = kpi("Jetzt online", `<span style="color:var(--green)">${fmt(onl.length)}</span>`, "aktiv in den letzten 3 Min.") + kpi("Konten", D.names == null ? "–" : fmt(D.names), "angemeldete Spielnamen") + kpi("Konten mit Key", fmt(Object.keys(D.accounts).length), "seit Closed Beta") + kpi("Spieler", fmt(P.length), "gleiche Namen zusammengefasst") + kpi("Geräte", fmt(P0.length), "online gesehen") + kpi("Aktiv heute", fmt(act(DAY))) + kpi("Aktiv 7 Tage", fmt(act(7 * DAY))) + kpi("Aktiv 30 Tage", fmt(act(30 * DAY)))
       + kpi("Keys aktiv", fmt(keysOn.length), keysAll.length - keysOn.length ? (keysAll.length - keysOn.length) + " gesperrt" : "") + kpi("Feedback", fmt(D.reports.length), D.reports.filter(r => r.neu).length ? D.reports.filter(r => r.neu).length + " noch nicht in Discord" : "");
     const days = Object.keys(D.daily).sort();
     chart("dauChart", days, days.map(d => D.daily[d]), "#ffb238");
@@ -350,10 +367,11 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
     bars("worldBars", Object.keys(WORLDS).map(w => { const ps = P.filter(p => p.w && p.w[w] && p.w[w].l); const avg = ps.length ? Math.round(ps.reduce((a, p) => a + p.w[w].l, 0) / ps.length) : 0; return [WORLDS[w], ps.length, "Ø Lv " + avg]; }));
     const cnt = (f) => { const m = {}; P.forEach(p => { const k = f(p); if (k) m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
     bars("cwBars", cnt(p => WORLDS[p.cw] || p.cw));
-    bars("pfBars", cnt(p => ({ app: "App (exe)", handy: "Handy", web: "Browser" })[p.pf] || "unbekannt (alt)"));
-    bars("verBars", cnt(p => p.v || "vor 1.9.6").slice(0, 8));
+    const cnt0 = (f) => { const m = {}; P0.forEach(p => { const k = f(p); if (k) m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+    bars("pfBars", cnt0(p => ({ app: "App (exe)", handy: "Handy", web: "Browser" })[p.pf] || "unbekannt (alt)"));
+    bars("verBars", cnt0(p => p.v || "vor 1.9.6").slice(0, 8));
     const top = P.slice().sort((a, b) => maxLevel(b) - maxLevel(a)).slice(0, 10);
-    $("topT").innerHTML = `<tr><th>#</th><th>Name</th><th class="num">Level</th><th>Welten</th><th>Zuletzt</th></tr>` + top.map((p, i) => `<tr><td>${i + 1}</td><td>${esc(p.n || "?")}</td><td class="num">${maxLevel(p)}</td><td>${Object.keys(p.w || {}).map(w => (WORLDS[w] || w).slice(0, 2)).join(" ")}</td><td>${when(p.on)}</td></tr>`).join("");
+    $("topT").innerHTML = `<tr><th>#</th><th>Name</th><th class="num">Level</th><th>Welten</th><th>Zuletzt</th></tr>` + top.map((p, i) => `<tr><td>${i + 1}</td><td>${esc(p.n || "?")}${devPill(p)}</td><td class="num">${maxLevel(p)}</td><td>${Object.keys(p.w || {}).map(w => (WORLDS[w] || w).slice(0, 2)).join(" ")}</td><td>${when(p.on)}</td></tr>`).join("");
     $("onCount").textContent = onl.length ? onl.length + " gerade im Spiel · aktualisiert sich alle 30 Sek." : "";
     $("onList").innerHTML = onl.map(p => `<span class="op"><i style="--c:hsl(${[...String(p.n || "?")].reduce((a, ch) => a + ch.charCodeAt(0) * 7, 0) % 360} 55% 42%)">${esc((p.n || "?").slice(0, 1).toUpperCase())}</i><span><b>${esc(p.n || "?")}</b> <small>${esc(WORLDS[p.cw] || p.cw || "")}${p.pf ? " · " + esc({ app: "App", handy: "Handy", web: "Browser" }[p.pf] || p.pf) : ""}</small></span></span>`).join("") || '<span class="muted">Gerade ist niemand online.</span>';
     renderPlayers(); renderAccounts(); renderKeys(); renderLogins(); renderReports();
@@ -362,16 +380,17 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
   function renderPlayers() {
     const q = $("plQ").value.trim().toLowerCase(), f = $("plF").value, now = Date.now();
     let P = Object.entries(D.players).map(([uid, p]) => Object.assign({ uid }, p || {}));
+    if ($("plM").checked) P = mergeP(P); else P.forEach(p => { p.devs = 1; });
     if (q) P = P.filter(p => (p.n || "").toLowerCase().includes(q));
     if (f === "1") P = P.filter(p => p.on && now - p.on < 7 * DAY); if (f === "acct") P = P.filter(p => p.acct); if (f === "guest") P = P.filter(p => p.acct === false);
     const key = { on: p => -(p.on || 0), n: p => (p.n || "").toLowerCase(), lv: p => -maxLevel(p), f: p => -(p.f || 0) }[plSort];
     P.sort((a, b) => { const x = key(a), y = key(b); return x < y ? -1 : x > y ? 1 : 0; });
     $("plT").innerHTML = `<tr><th data-s="n">Name</th><th data-s="lv" class="num">Max. Level</th>${Object.values(WORLDS).map(w => `<th class="num">${w.slice(0, 5)}.</th>`).join("")}<th>Welt</th><th>Gerät</th><th data-s="on">Zuletzt</th><th data-s="f">Erster Besuch</th></tr>`
-      + P.slice(0, 500).map(p => `<tr><td>${esc(p.n || "?")} ${p.acct ? '<span class="pill n">Konto</span>' : ""}</td><td class="num">${maxLevel(p)}</td>${Object.keys(WORLDS).map(w => `<td class="num">${(p.w && p.w[w] && p.w[w].l) || '<span class="muted">–</span>'}</td>`).join("")}<td>${esc(WORLDS[p.cw] || p.cw || "–")}</td><td>${esc(p.pf || "–")}${p.v ? ` <span class="muted">${esc(p.v)}</span>` : ""}</td><td>${when(p.on)}</td><td>${p.f ? dt(p.f) : '<span class="muted">–</span>'}</td></tr>`).join("")
+      + P.slice(0, 500).map(p => `<tr><td>${esc(p.n || "?")} ${p.acct ? '<span class="pill n">Konto</span>' : ""}${devPill(p)}</td><td class="num">${maxLevel(p)}</td>${Object.keys(WORLDS).map(w => `<td class="num">${(p.w && p.w[w] && p.w[w].l) || '<span class="muted">–</span>'}</td>`).join("")}<td>${esc(WORLDS[p.cw] || p.cw || "–")}</td><td>${esc(p.pf || "–")}${p.v ? ` <span class="muted">${esc(p.v)}</span>` : ""}</td><td>${when(p.on)}</td><td>${p.f ? dt(p.f) : '<span class="muted">–</span>'}</td></tr>`).join("")
       + (P.length > 500 ? `<tr><td colspan="12" class="muted">… ${P.length - 500} weitere</td></tr>` : "");
     $("plT").querySelectorAll("th[data-s]").forEach(th => th.onclick = () => { plSort = th.dataset.s; renderPlayers(); });
   }
-  $("plQ").oninput = renderPlayers; $("plF").onchange = renderPlayers;
+  $("plQ").oninput = renderPlayers; $("plF").onchange = renderPlayers; $("plM").onchange = renderPlayers;
 
   /* ---------- Keys ---------- */
   const ALPHA = "0123456789ABCDEFGHJKMNPQRSTVWXYZ", enc = new TextEncoder();

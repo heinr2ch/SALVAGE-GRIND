@@ -5708,9 +5708,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.20.0";
+const GAME_VERSION = "1.20.1";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.20.1", date: "09.11.2026", title: "Web-App-Hinweis, Dashboard", items: ["Auf Handy und Tablet erscheint einmalig ein Hinweis, wie man das Spiel als App auf den Home-Bildschirm legt"] },
   { v: "1.20.0", date: "09.11.2026", title: "Handy: Tabs, kühler, aufgeräumt", items: ["Neue Einstellung Tab-Ansicht (nur Handy): Spiel, Hangar und Bordzentrale als Tabs oben", "Bordzentrale steht auf dem Handy jetzt unter dem Hangar", "Einstellungen lassen sich auf dem Handy nicht mehr seitwärts verschieben", "Handy bleibt kühler: Hangar-Himmel und Animationen ruhen, wenn sie nicht zu sehen sind; Hintergrund und Musik rechnen seltener"] },
   { v: "1.19.2", date: "09.11.2026", title: "Garderobe je Begleiter, neue Preise, Schneekugel mit Sinn", items: ["Die Garderobe heißt jetzt nach dem Begleiter der Welt (Bips, Kokos, Rex’, Paules, Flos Garderobe), auch die Kampagnen-Texte nennen den richtigen Namen.", "Kostüme kosten jetzt 30 bis 300 statt 5 bis 24.", "Schneekugel: Die Aurora aus der Kampagne schwebt mit allen gesammelten Teilen in der Kugel, einmal am Tag gibt Schütteln ein Geschenk, das mit der Kugel wächst, und bei 25/50/75/100 % gibt es Belohnungen samt drei Schnee-Kostümen (Bommelmütze, Schneeflocken-Aura, Eiskrone)."] },
   { v: "1.19.1", date: "07.11.2026", title: "Kampagne kompakter", items: ["Die Kampagne sitzt jetzt als kleiner Knopf mit Fortschrittsring in der oberen Knopfleiste statt als eigene Zeile – gut sichtbar, aber ohne Platz zu kosten."] },
@@ -11346,6 +11347,54 @@ document.addEventListener("keydown", e => { const el = $("coop"); if (el && !el.
   addEventListener("appinstalled", () => { window.__sgPWA = null; show(); toast("Installiert! Du findest Salvage & Grind jetzt als App.", "#4fe3ff"); });
   const b = $("pwaBtn"); if (b) b.addEventListener("click", () => { const p = window.__sgPWA; if (!p) return; p.prompt(); p.userChoice.then(() => { window.__sgPWA = null; show(); }).catch(() => {}); });
   show();
+})();
+/* Einmaliger Hinweis beim Start (Handy/Tablet): Spiel als Web-App auf den Home-Bildschirm legen */
+(function pwaHint() {
+  if (window.sgDesk || !window.SG_ECO) return;
+  if ((window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone) return;
+  try { if (localStorage.getItem("welten-pwahint")) return; } catch (e) { return; }
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const st = document.createElement("style"); st.textContent = `
+#pwHint { position: fixed; inset: 0; z-index: 400; display: grid; align-items: end; justify-items: center; padding: 12px; background: rgba(3,6,14,.55); animation: pwFade .3s ease both; }
+#pwHint .pw-card { width: min(440px, 100%); box-sizing: border-box; padding: 20px 18px 16px; border-radius: 22px; background: linear-gradient(160deg, #13203a, #0a1020); border: 1px solid rgba(79,227,255,.35); box-shadow: 0 20px 50px rgba(0,0,0,.6), 0 0 40px rgba(79,227,255,.12); color: #fff; animation: pwUp .45s cubic-bezier(.2,1.2,.4,1) both; margin-bottom: env(safe-area-inset-bottom, 0px); }
+#pwHint .pw-top { display: flex; gap: 14px; align-items: center; }
+#pwHint .pw-ico { width: 58px; height: 58px; flex: none; border-radius: 15px; background: #0b1626 center/cover; box-shadow: 0 0 0 2px rgba(79,227,255,.5), 0 6px 16px rgba(0,0,0,.5); animation: pwBob 2.4s ease-in-out infinite; }
+#pwHint h3 { margin: 0 0 4px; font: 800 1.1rem system-ui; } #pwHint p { margin: 0; font: 500 .88rem/1.4 system-ui; color: rgba(255,255,255,.78); }
+#pwHint ul { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+#pwHint li { display: flex; gap: 10px; align-items: center; font: 600 .86rem/1.35 system-ui; padding: 9px 11px; border-radius: 12px; background: rgba(255,255,255,.06); }
+#pwHint li b.pw-n { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #4fe3ff; color: #06111a; font: 900 .8rem system-ui; }
+#pwHint li svg { width: 20px; height: 20px; flex: none; vertical-align: -4px; }
+#pwHint .pw-btns { display: flex; gap: 8px; margin-top: 16px; }
+#pwHint .pw-btns button { flex: 1; padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,.2); background: transparent; color: #fff; font: 700 .92rem system-ui; cursor: pointer; }
+#pwHint .pw-btns .pw-go { background: #4fe3ff; color: #06111a; border-color: #4fe3ff; }
+@keyframes pwFade { from { opacity: 0; } } @keyframes pwUp { from { transform: translateY(60px); opacity: 0; } }
+@keyframes pwBob { 50% { transform: translateY(-4px) rotate(-3deg); } }
+html.a11y-rm #pwHint * { animation: none !important; }`;
+  const shareSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="#4fe3ff" stroke-width="2"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M6 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1"/></svg>';
+  const addSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="#4fe3ff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>';
+  const dotsSvg = '<svg viewBox="0 0 24 24" fill="#4fe3ff"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
+  const open = () => {
+    try { localStorage.setItem("welten-pwahint", String(Date.now())); } catch (e) {}
+    document.head.appendChild(st);
+    const icon = (document.querySelector('link[rel="apple-touch-icon"]') || document.querySelector('link[rel~="icon"]') || {}).href || "";
+    const can = !!window.__sgPWA;
+    const steps = ios
+      ? `<li><b class="pw-n">1</b><span>Unten (oder oben) auf ${shareSvg} <b>Teilen</b> tippen</span></li><li><b class="pw-n">2</b><span>${addSvg} <b>„Zum Home-Bildschirm“</b> wählen</span></li><li><b class="pw-n">3</b><span>Oben rechts auf <b>Hinzufügen</b> tippen – fertig!</span></li>`
+      : can ? "" : `<li><b class="pw-n">1</b><span>Oben rechts im Browser auf ${dotsSvg} <b>Menü</b> tippen</span></li><li><b class="pw-n">2</b><span><b>„App installieren“</b> oder <b>„Zum Startbildschirm hinzufügen“</b> wählen</span></li>`;
+    document.body.insertAdjacentHTML("beforeend", `<div id="pwHint" role="dialog" aria-modal="true" aria-labelledby="pwT"><div class="pw-card">
+      <div class="pw-top"><i class="pw-ico"></i><div><h3 id="pwT">Als App auf den Home-Bildschirm</h3><p>Startet mit einem Tipp, im Vollbild ohne Browserleiste – und dein Spielstand bleibt wie gewohnt erhalten.</p></div></div>
+      ${steps ? `<ul>${steps}</ul>` : ""}
+      <div class="pw-btns"><button type="button" class="pw-later">${can ? "Später" : "Verstanden"}</button>${can ? `<button type="button" class="pw-go">Jetzt installieren</button>` : ""}</div>
+      <p style="margin-top:10px;font-size:.75rem;text-align:center;opacity:.6">Findest du jederzeit wieder unter Einstellungen → Speichern.</p></div></div>`);
+    const box = $("pwHint"), close = () => box.remove();
+    if (icon) box.querySelector(".pw-ico").style.backgroundImage = 'url("' + icon.replace(/"/g, "%22") + '")';
+    box.addEventListener("click", e => { if (e.target === box || e.target.closest(".pw-later")) { close(); try { sfx.click(); } catch (x) {} } });
+    const go = box.querySelector(".pw-go"); if (go) go.addEventListener("click", () => { const p = window.__sgPWA; close(); if (!p) return; p.prompt(); p.userChoice.then(() => { window.__sgPWA = null; }).catch(() => {}); });
+  };
+  /* Erst zeigen, wenn das Spiel frei ist (kein Startmenü, kein Fenster offen, nicht mitten im Dreh) */
+  const vis = e => { if (e.closest("[hidden]") || !e.getClientRects().length) return false; const c = getComputedStyle(e); return c.visibility !== "hidden" && +c.opacity > .05 && c.pointerEvents !== "none"; };
+  const busy = () => document.hidden || (typeof spinning !== "undefined" && spinning) || [...document.querySelectorAll('#intro, .acct, .bonus, [role="dialog"], [aria-modal="true"]')].some(e => e.id !== "pwHint" && vis(e));
+  let waited = 0; const t = setInterval(() => { waited += 2; if (waited < 10 || busy()) return; clearInterval(t); open(); }, 2000);
 })();
 
 /* =================== Online neu verpackt + Status-Anzeige + Schnellspeichern =================== */

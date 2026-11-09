@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.20.1 · Web-App-Hinweis, Dashboard · 09.11.2026
+- Auf Handy und Tablet erscheint einmalig ein Hinweis, wie man das Spiel als App auf den Home-Bildschirm legt
+
 ## Beta 1.20.0 · Handy: Tabs, kühler, aufgeräumt · 09.11.2026
 - Neue Einstellung Tab-Ansicht (nur Handy): Spiel, Hangar und Bordzentrale als Tabs oben
 - Bordzentrale steht auf dem Handy jetzt unter dem Hangar
