@@ -2,6 +2,12 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.21.0 · Charaktere · 09.11.2026
+- Pro Konto bis zu 5 Charaktere mit eigenem Namen – jeder mit eigenem Spielstand in allen Welten
+- Charakter wählen, anlegen, umbenennen und löschen (Hauptmenü und Einstellungen)
+- Andere sehen nur den Charakternamen, der Anmeldename bleibt privat
+- Freunde und Crew gehören zum jeweiligen Charakter
+
 ## Beta 1.20.1 · Web-App-Hinweis, Dashboard · 09.11.2026
 - Auf Handy und Tablet erscheint einmalig ein Hinweis, wie man das Spiel als App auf den Home-Bildschirm legt
 

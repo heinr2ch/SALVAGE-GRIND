@@ -91,6 +91,13 @@ td.num, th.num { text-align: right; }
 .pill { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: .7rem; font-weight: 800; letter-spacing: .02em; }
 .pill.on { background: rgba(79,227,154,.13); color: var(--green); } .pill.off { background: rgba(255,107,129,.13); color: var(--bad); }
 .pill.n { background: rgba(155,123,255,.16); color: #c9b8ff; }
+.actree tr.acc { cursor: pointer; } .actree tr.acc:hover td { background: rgba(255,255,255,.03); }
+.actree tr.acc td:first-child { white-space: nowrap; } .actree .tw { display: inline-block; width: 16px; transition: transform .2s; color: var(--muted, #8a93b0); }
+.actree tr.acc.open .tw { transform: rotate(90deg); }
+.actree tr.chr td { background: rgba(70,217,255,.035); font-size: .92em; } .actree tr.chr td:first-child { padding-left: 34px; }
+.actree tr.chr[hidden] { display: none; }
+.actree .cav { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 7px; margin-right: 7px; font-weight: 900; font-size: .78rem; color: #fff; vertical-align: middle; }
+.pill.c { background: rgba(70,217,255,.14); color: #8fe6ff; }
 .key { font: 600 .82rem var(--mono); letter-spacing: .02em; color: var(--gold2); white-space: nowrap; }
 .bars { display: grid; gap: 10px; }
 .bar { display: grid; grid-template-columns: 120px 1fr auto; gap: 12px; align-items: center; font-size: .86rem; }
@@ -149,8 +156,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
     <div class="brand"><img src="media/app-icon.png" alt=""><div><b>Salvage &amp; Grind</b><span>Dashboard</span></div></div>
     <nav role="tablist">
       <button role="tab" data-tab="ov" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/></svg><span>Übersicht</span></button>
-      <button role="tab" data-tab="pl"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 11a3 3 0 1 0 0-6M22 21c0-3-2-5.5-5-6"/></svg><span>Spieler</span></button>
-      <button role="tab" data-tab="ac"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Konten</span></button>
+      <button role="tab" data-tab="ac"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Konten &amp; Charaktere</span></button>
       <button role="tab" data-tab="ke"><svg viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 21 2M16 7l3 3M19 4l2 2"/></svg><span>Keys</span></button>
       <button role="tab" data-tab="lo"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg><span>Anmeldungen</span></button>
       <button role="tab" data-tab="hm"><svg viewBox="0 0 24 24"><path d="M3 3l7 18 2.5-7.5L20 11z"/><circle cx="17" cy="17" r="3"/></svg><span>Heatmap</span></button>
@@ -184,18 +190,16 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
       <div class="card"><h2>Bestenliste <small>höchstes Level über alle Welten</small><button class="btn ghost sm" id="boardReset" style="margin-left:auto">Weltrangliste im Spiel zurücksetzen</button></h2><div class="tbl"><table id="topT"></table></div></div>
     </section>
 
-    <section data-pane="pl" hidden>
-      <div class="card">
-        <div class="row" style="margin-bottom:14px"><input id="plQ" placeholder="Name suchen …" style="flex:1;min-width:180px"><select id="plF"><option value="">Alle Spieler</option><option value="1">Aktiv (7 Tage)</option><option value="acct">Mit Konto</option><option value="guest">Gäste</option></select><label style="display:flex;align-items:center;gap:6px;white-space:nowrap"><input type="checkbox" id="plM" checked> Gleiche Namen zusammenfassen</label></div>
-        <div class="tbl"><table id="plT"></table></div>
-      </div>
-    </section>
 
     <section data-pane="ac" hidden>
       <div class="card">
-        <div class="row" style="margin-bottom:12px"><h2 style="margin:0;flex:1">Spielkonten <small id="acCount"></small></h2><input id="acQ" placeholder="Name suchen …" style="min-width:180px"></div>
-        <p class="note">„Passwort zurücksetzen“ setzt das Passwort auf <b>123456</b>. Beim nächsten Anmelden muss der Spieler ein neues festlegen – Spielstand und Key bleiben erhalten.</p>
-        <div class="tbl"><table id="acT"></table></div>
+        <div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:8px"><h2 style="margin:0;flex:1;min-width:200px">Konten &amp; Charaktere <small id="acCount"></small></h2><input id="acQ" placeholder="Konto oder Charakter suchen …" style="min-width:200px"><select id="acF"><option value="">Alle</option><option value="7">Aktiv (7 Tage)</option><option value="key">Mit Key</option><option value="multi">Mehrere Charaktere</option></select><button class="btn ghost sm" id="acAll">Alle aufklappen</button></div>
+        <p class="note">Jedes Konto kann bis zu 5 Charaktere haben – jeder ist ein eigener Spielstand. Zeile antippen zum Aufklappen. „Passwort zurücksetzen“ setzt das Passwort auf <b>123456</b>; beim nächsten Anmelden muss ein neues festgelegt werden – Spielstände und Key bleiben erhalten.</p>
+        <div class="tbl"><table id="acT" class="actree"></table></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h2>Ohne Konto <small id="gCount">Geräte, die ohne Anmeldung gespielt haben (gleiche Namen zusammengefasst)</small></h2>
+        <div class="tbl"><table id="gT"></table></div>
       </div>
     </section>
 
@@ -287,7 +291,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
   document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
     document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
     document.querySelectorAll("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab);
-    const SUB = { ov: "Alles über das Spiel auf einen Blick", pl: "Alle Spieler, die online gesehen wurden", ac: "Konten mit Beta-Key, Passwort zurücksetzen", ke: "Beta-Keys erzeugen, sperren und entsperren", lo: "Jeder Spielstart mit Key", id: "Ideen und Änderungswünsche für Claude", hm: "Wohin Spieler klicken und zeigen", fb: "Ideen, Lob und Fehlermeldungen aus dem Spiel" };
+    const SUB = { ov: "Alles über das Spiel auf einen Blick", pl: "Alle Spieler, die online gesehen wurden", ac: "Jedes Konto mit seinen Charakteren, Keys und Geräten", ke: "Beta-Keys erzeugen, sperren und entsperren", lo: "Jeder Spielstart mit Key", id: "Ideen und Änderungswünsche für Claude", hm: "Wohin Spieler klicken und zeigen", fb: "Ideen, Lob und Fehlermeldungen aus dem Spiel" };
     $("pageTitle").textContent = b.textContent.trim(); $("pageSub").textContent = SUB[b.dataset.tab] || ""; window.scrollTo(0, 0);
   });
 
@@ -340,7 +344,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
   function mergeP(list) {
     const g = new Map(), out = [];
     list.forEach(p => {
-      const k = String(p.n || "").trim().toLowerCase();
+      const k = p.an ? "a:" + p.an + ":" + (p.ci || "c1") : String(p.n || "").trim().toLowerCase();
       if (!k || k === "?") { out.push(Object.assign({ devs: 1, devList: [p] }, p)); return; }
       const m = g.get(k);
       if (!m) { const c = Object.assign({}, p, { w: Object.assign({}, p.w || {}), devs: 1, devList: [p] }); g.set(k, c); out.push(c); return; }
@@ -374,23 +378,8 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
     $("topT").innerHTML = `<tr><th>#</th><th>Name</th><th class="num">Level</th><th>Welten</th><th>Zuletzt</th></tr>` + top.map((p, i) => `<tr><td>${i + 1}</td><td>${esc(p.n || "?")}${devPill(p)}</td><td class="num">${maxLevel(p)}</td><td>${Object.keys(p.w || {}).map(w => (WORLDS[w] || w).slice(0, 2)).join(" ")}</td><td>${when(p.on)}</td></tr>`).join("");
     $("onCount").textContent = onl.length ? onl.length + " gerade im Spiel · aktualisiert sich alle 30 Sek." : "";
     $("onList").innerHTML = onl.map(p => `<span class="op"><i style="--c:hsl(${[...String(p.n || "?")].reduce((a, ch) => a + ch.charCodeAt(0) * 7, 0) % 360} 55% 42%)">${esc((p.n || "?").slice(0, 1).toUpperCase())}</i><span><b>${esc(p.n || "?")}</b> <small>${esc(WORLDS[p.cw] || p.cw || "")}${p.pf ? " · " + esc({ app: "App", handy: "Handy", web: "Browser" }[p.pf] || p.pf) : ""}</small></span></span>`).join("") || '<span class="muted">Gerade ist niemand online.</span>';
-    renderPlayers(); renderAccounts(); renderKeys(); renderLogins(); renderReports();
+    renderAccounts(); renderKeys(); renderLogins(); renderReports();
   }
-  let plSort = "on";
-  function renderPlayers() {
-    const q = $("plQ").value.trim().toLowerCase(), f = $("plF").value, now = Date.now();
-    let P = Object.entries(D.players).map(([uid, p]) => Object.assign({ uid }, p || {}));
-    if ($("plM").checked) P = mergeP(P); else P.forEach(p => { p.devs = 1; });
-    if (q) P = P.filter(p => (p.n || "").toLowerCase().includes(q));
-    if (f === "1") P = P.filter(p => p.on && now - p.on < 7 * DAY); if (f === "acct") P = P.filter(p => p.acct); if (f === "guest") P = P.filter(p => p.acct === false);
-    const key = { on: p => -(p.on || 0), n: p => (p.n || "").toLowerCase(), lv: p => -maxLevel(p), f: p => -(p.f || 0) }[plSort];
-    P.sort((a, b) => { const x = key(a), y = key(b); return x < y ? -1 : x > y ? 1 : 0; });
-    $("plT").innerHTML = `<tr><th data-s="n">Name</th><th data-s="lv" class="num">Max. Level</th>${Object.values(WORLDS).map(w => `<th class="num">${w.slice(0, 5)}.</th>`).join("")}<th>Welt</th><th>Gerät</th><th data-s="on">Zuletzt</th><th data-s="f">Erster Besuch</th></tr>`
-      + P.slice(0, 500).map(p => `<tr><td>${esc(p.n || "?")} ${p.acct ? '<span class="pill n">Konto</span>' : ""}${devPill(p)}</td><td class="num">${maxLevel(p)}</td>${Object.keys(WORLDS).map(w => `<td class="num">${(p.w && p.w[w] && p.w[w].l) || '<span class="muted">–</span>'}</td>`).join("")}<td>${esc(WORLDS[p.cw] || p.cw || "–")}</td><td>${esc(p.pf || "–")}${p.v ? ` <span class="muted">${esc(p.v)}</span>` : ""}</td><td>${when(p.on)}</td><td>${p.f ? dt(p.f) : '<span class="muted">–</span>'}</td></tr>`).join("")
-      + (P.length > 500 ? `<tr><td colspan="12" class="muted">… ${P.length - 500} weitere</td></tr>` : "");
-    $("plT").querySelectorAll("th[data-s]").forEach(th => th.onclick = () => { plSort = th.dataset.s; renderPlayers(); });
-  }
-  $("plQ").oninput = renderPlayers; $("plF").onchange = renderPlayers; $("plM").onchange = renderPlayers;
 
   /* ---------- Keys ---------- */
   const ALPHA = "0123456789ABCDEFGHJKMNPQRSTVWXYZ", enc = new TextEncoder();
@@ -449,17 +438,63 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
   const acctHash = async (n, pw) => { const enc = new TextEncoder(), k = await crypto.subtle.importKey("raw", enc.encode(pw), "PBKDF2", false, ["deriveBits"]);   // wie im Spiel (v2)
     const b = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: enc.encode("sg2|" + String(n).trim().replace(/\s+/g, " ").toLowerCase()), iterations: 150000 }, k, 256); return hex(new Uint8Array(b)); };
   const ownOf = h => sha("own|" + h).then(hex);
-  function renderAccounts() {
-    const q = $("acQ").value.trim().toLowerCase();
-    const A = Object.entries(D.accounts).map(([nk, a]) => Object.assign({ nk }, a || {})).filter(a => !q || (a.n || a.nk).toLowerCase().includes(q)).sort((a, b) => (b.last || 0) - (a.last || 0));
-    $("acCount").textContent = A.length + " Konten";
-    $("acT").innerHTML = `<tr><th>Name</th><th>Key</th><th>Angelegt</th><th>Zuletzt angemeldet</th><th>Status</th><th></th></tr>` + A.map(a => { const k = D.keys[a.k];
-      return `<tr><td><b>${esc(a.n || a.nk)}</b></td><td>${k ? `<span class="key">${pretty(k.key)}</span> <span class="muted">${esc(k.name)}</span>${k.active ? "" : ' <span class="pill off">gesperrt</span>'}` : '<span class="muted">kein Key</span>'}</td><td>${dt(a.t)}</td><td>${when(a.last)}</td>
-      <td>${a.mc ? '<span class="pill n">muss Passwort ändern</span>' : '<span class="pill on">ok</span>'}</td><td style="white-space:nowrap"><button class="btn ghost sm" data-ac="pw" data-nk="${esc(a.nk)}">Passwort zurücksetzen</button> ${a.k ? `<button class="btn ghost sm" data-ac="unlink" data-nk="${esc(a.nk)}">Key lösen</button>` : ""}</td></tr>`; }).join("")
-      || '<tr><td class="muted">Noch keine Konten (entstehen bei der ersten Anmeldung mit Key)</td></tr>';
-    $("acT").querySelectorAll("[data-ac]").forEach(b => b.onclick = () => { b.disabled = true; (b.dataset.ac === "pw" ? resetPw(b.dataset.nk) : unlinkKey(b.dataset.nk)).catch(er => { alert(er.message); b.disabled = false; }); });
+  const nkOf = n => String(n || "").trim().toLowerCase().replace(/\s+/g, " ").replace(/[.#$\[\]\/]/g, "_");
+  const hue = n => [...String(n || "?")].reduce((a, c) => a + c.charCodeAt(0) * 37, 0) % 360;
+  const acOpen = new Set();
+  function acModel() {
+    const A = Object.entries(D.accounts).map(([nk, a]) => Object.assign({ nk }, a || {}));
+    const byName = {}; A.forEach(a => { byName[nkOf(a.n || a.nk)] = [a.nk, "c1"]; Object.entries(a.ch || {}).forEach(([id, c]) => { if (c && c.n) byName[nkOf(c.n)] = [a.nk, id]; }); });
+    const dev = {}, guests = [];
+    Object.entries(D.players).forEach(([uid, p0]) => { const p = Object.assign({ uid }, p0 || {});
+      let ref = p.an && D.accounts[p.an] ? [p.an, p.ci || "c1"] : byName[nkOf(p.n)];
+      if (!ref) { guests.push(p); return; }
+      (dev[ref[0] + "|" + ref[1]] = dev[ref[0] + "|" + ref[1]] || []).push(p); });
+    const accts = A.map(a => {
+      const ch = Object.entries(a.ch || {}).map(([id, c]) => Object.assign({ id }, c || {})); if (!ch.some(c => c.id === "c1")) ch.unshift({ id: "c1", n: a.n || a.nk, o: 0 });
+      ch.sort((x, y) => (x.o || 0) - (y.o || 0));
+      const chars = ch.map(c => { const ds = dev[a.nk + "|" + c.id] || [], w = {};
+        Object.keys(WORLDS).forEach(k => { const l = Math.max((c.lv && c.lv[k]) || 0, ...ds.map(d => (d.w && d.w[k] && d.w[k].l) || 0)); if (l) w[k] = l; });
+        const last = Math.max(c.t || 0, ...ds.map(d => d.on || 0)), lastDev = ds.slice().sort((x, y) => (y.on || 0) - (x.on || 0))[0];
+        return { id: c.id, n: c.n || "?", w, last, devs: ds.length, devList: ds, cw: lastDev && lastDev.cw, pf: lastDev && lastDev.pf, v: lastDev && lastDev.v, lv: Math.max(0, ...Object.values(w)) }; });
+      return Object.assign(a, { chars, lastAny: Math.max(a.last || 0, ...chars.map(c => c.last || 0)), lv: Math.max(0, ...chars.map(c => c.lv)), devs: chars.reduce((s, c) => s + c.devs, 0) });
+    });
+    return { accts, guests };
   }
-  $("acQ").oninput = renderAccounts;
+  function renderAccounts() {
+    const q = $("acQ").value.trim().toLowerCase(), f = $("acF").value, now = Date.now();
+    const { accts, guests } = acModel();
+    const hit = a => !q || (a.n || a.nk).toLowerCase().includes(q) || a.chars.some(c => c.n.toLowerCase().includes(q));
+    let A = accts.filter(hit);
+    if (f === "7") A = A.filter(a => now - a.lastAny < 7 * DAY); if (f === "key") A = A.filter(a => a.k); if (f === "multi") A = A.filter(a => a.chars.length > 1);
+    A.sort((a, b) => b.lastAny - a.lastAny);
+    const nChars = accts.reduce((s, a) => s + a.chars.length, 0);
+    $("acCount").textContent = `${accts.length} Konten · ${nChars} Charaktere`;
+    const wcols = Object.keys(WORLDS);
+    const head = `<tr><th>Konto / Charakter</th><th>Key</th><th class="num">Max. Lv</th>${wcols.map(w => `<th class="num">${WORLDS[w].slice(0, 5)}.</th>`).join("")}<th>Gerät</th><th>Zuletzt</th><th>Status</th><th></th></tr>`;
+    const lvCells = w => wcols.map(k => `<td class="num">${w && w[k] ? w[k] : '<span class="muted">–</span>'}</td>`).join("");
+    const rows = A.map(a => { const k = D.keys[a.k], open = acOpen.has(a.nk) || (q && a.chars.some(c => c.n.toLowerCase().includes(q)));
+      const best = {}; a.chars.forEach(c => Object.entries(c.w).forEach(([w, l]) => { best[w] = Math.max(best[w] || 0, l); }));
+      const accRow = `<tr class="acc${open ? " open" : ""}" data-nk="${esc(a.nk)}"><td><span class="tw">▸</span><b>${esc(a.n || a.nk)}</b> <span class="pill c">${a.chars.length} ${a.chars.length === 1 ? "Charakter" : "Charaktere"}</span></td>
+        <td>${k ? `<span class="key">${pretty(k.key)}</span> <span class="muted">${esc(k.name)}</span>${k.active ? "" : ' <span class="pill off">gesperrt</span>'}` : '<span class="muted">kein Key</span>'}</td>
+        <td class="num">${a.lv || '<span class="muted">–</span>'}</td>${lvCells(best)}<td>${a.devs ? a.devs + (a.devs === 1 ? " Gerät" : " Geräte") : '<span class="muted">–</span>'}</td><td>${when(a.lastAny)}</td>
+        <td>${a.mc ? '<span class="pill n">muss Passwort ändern</span>' : '<span class="pill on">ok</span>'}</td><td style="white-space:nowrap"><button class="btn ghost sm" data-ac="pw" data-nk="${esc(a.nk)}">Passwort zurücksetzen</button> ${a.k ? `<button class="btn ghost sm" data-ac="unlink" data-nk="${esc(a.nk)}">Key lösen</button>` : ""}</td></tr>`;
+      const chRows = a.chars.map((c, i) => `<tr class="chr" data-of="${esc(a.nk)}"${open ? "" : " hidden"}><td><span class="cav" style="background:hsl(${hue(c.n)} 55% 42%)">${esc(c.n.slice(0, 1).toUpperCase())}</span>${esc(c.n)}${c.id === "c1" ? ' <span class="muted">· Charakter 1</span>' : ""}${devPill(c)}</td>
+        <td class="muted">${c.devs ? "angemeldet" : "noch nicht online gesehen"}</td><td class="num">${c.lv || '<span class="muted">–</span>'}</td>${lvCells(c.w)}<td>${c.pf ? esc(PF[c.pf] || c.pf) + (c.v ? ` <span class="muted">${esc(c.v)}</span>` : "") : '<span class="muted">–</span>'}${c.cw ? ` <span class="muted">· ${esc(WORLDS[c.cw] || c.cw)}</span>` : ""}</td><td>${c.last ? when(c.last) : '<span class="muted">–</span>'}</td><td></td><td></td></tr>`).join("");
+      return accRow + chRows; }).join("");
+    $("acT").innerHTML = head + (rows || `<tr><td colspan="${8 + wcols.length}" class="muted">${accts.length ? "Nichts gefunden" : "Noch keine Konten (entstehen bei der ersten Anmeldung mit Key)"}</td></tr>`);
+    $("acT").querySelectorAll("[data-ac]").forEach(b => b.onclick = e => { e.stopPropagation(); b.disabled = true; (b.dataset.ac === "pw" ? resetPw(b.dataset.nk) : unlinkKey(b.dataset.nk)).catch(er => { alert(er.message); b.disabled = false; }); });
+    $("acT").querySelectorAll("tr.acc").forEach(tr => tr.onclick = () => { const nk = tr.dataset.nk, op = !tr.classList.contains("open"); tr.classList.toggle("open", op); op ? acOpen.add(nk) : acOpen.delete(nk);
+      $("acT").querySelectorAll(`tr.chr`).forEach(r => { if (r.dataset.of === nk) r.hidden = !op; }); });
+    $("acAll").textContent = A.length && A.every(a => acOpen.has(a.nk)) ? "Alle zuklappen" : "Alle aufklappen";
+    // Ohne Konto
+    let G = mergeP(guests); if (q) G = G.filter(p => (p.n || "").toLowerCase().includes(q)); if (f === "7") G = G.filter(p => p.on && now - p.on < 7 * DAY); if (f === "key" || f === "multi") G = [];
+    G.sort((a, b) => (b.on || 0) - (a.on || 0));
+    $("gT").innerHTML = `<tr><th>Name</th><th class="num">Max. Lv</th>${wcols.map(w => `<th class="num">${WORLDS[w].slice(0, 5)}.</th>`).join("")}<th>Welt</th><th>Gerät</th><th>Zuletzt</th><th>Erster Besuch</th></tr>`
+      + G.slice(0, 300).map(p => `<tr><td>${esc(p.n || "?")}${devPill(p)}</td><td class="num">${maxLevel(p)}</td>${wcols.map(w => `<td class="num">${(p.w && p.w[w] && p.w[w].l) || '<span class="muted">–</span>'}</td>`).join("")}<td>${esc(WORLDS[p.cw] || p.cw || "–")}</td><td>${esc(PF[p.pf] || p.pf || "–")}${p.v ? ` <span class="muted">${esc(p.v)}</span>` : ""}</td><td>${when(p.on)}</td><td>${p.f ? dt(p.f) : '<span class="muted">–</span>'}</td></tr>`).join("")
+      + (G.length ? (G.length > 300 ? `<tr><td colspan="12" class="muted">… ${G.length - 300} weitere</td></tr>` : "") : `<tr><td colspan="12" class="muted">Keine</td></tr>`);
+  }
+  $("acQ").oninput = renderAccounts; $("acF").onchange = renderAccounts;
+  $("acAll").onclick = () => { const { accts } = acModel(); const all = accts.every(a => acOpen.has(a.nk)); accts.forEach(a => all ? acOpen.delete(a.nk) : acOpen.add(a.nk)); renderAccounts(); };
   $("boardReset").onclick = async () => {
     if (!confirm("Weltrangliste im Spiel zurücksetzen? Es startet eine neue Saison: gezählt wird nur noch, was ab jetzt erspielt wird.")) return;
     try { await db.ref("config/boardEp").set(TS); toast("Neue Saison gestartet"); } catch (e) { alert(e.message); }
