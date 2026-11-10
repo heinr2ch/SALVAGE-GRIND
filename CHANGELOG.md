@@ -2,6 +2,10 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.23.0 · Koop-Automat aufgemotzt · 10.11.2026
+- Koop-Automat: Truck fährt durch eine Abendlandschaft, Walzen mit Spannung, Gewinnlinien und Münzflug
+- Neu zu zweit: Synchron-Hebel (×2) und Strecke mit Checkpoints
+
 ## Beta 1.22.0 · Wochen-Ereignisse, Seltene Momente, Medaillen · 10.11.2026
 - Jede Woche ein neues Ereignis pro Welt (z. B. Rabattwoche, Staubsturm, Goldrausch, Gratis-Boost)
 - Seltene Momente: etwa 1 von 1.000 Drehs ein goldenes Ereignis mit großem Bonus
