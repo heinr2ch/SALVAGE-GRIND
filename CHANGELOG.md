@@ -2,6 +2,12 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.22.0 · Wochen-Ereignisse, Seltene Momente, Medaillen · 10.11.2026
+- Jede Woche ein neues Ereignis pro Welt (z. B. Rabattwoche, Staubsturm, Goldrausch, Gratis-Boost)
+- Seltene Momente: etwa 1 von 1.000 Drehs ein goldenes Ereignis mit großem Bonus
+- Erfolge in Stufen: Bronze, Silber, Gold und Platin in 16 Kategorien
+- Einstellungen gelten jetzt in allen Welten
+
 ## Beta 1.21.1 · Genauere Heatmap · 10.11.2026
 - Heatmap: Klicks werden am getroffenen Knopf gespeichert und landen im Dashboard genau dort
 

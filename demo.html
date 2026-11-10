@@ -15,14 +15,19 @@ setInterval(function(){try{document.getAnimations().forEach(function(a){if(a.ani
 // Charaktere (1.21.0): Jeder Charakter eines Kontos hat eigene Spielstände. Charakter 1 nutzt die normalen Schlüssel, weitere bekommen "char:<id>:" davor.
 // Geräte-Einstellungen (Sprache, Barrierefreiheit, Anmeldung …) gelten für alle Charaktere.
 var S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem,L=localStorage;
-var DEV=/^welten-(acct|vault|char|chars|lang|a11y|online|pwahint|noheat|fpsask|tour|streamer|twitch|chintro)$/;
+var DEV=/^welten-(acct|vault|char|chars|lang|a11y|online|pwahint|noheat|fpsask|tour|streamer|twitch|chintro|set-[a-z]+)$/;
 function sc(k){return typeof k==="string"&&!/^(char|team):/.test(k)&&!DEV.test(k)&&(/^welten-/.test(k)||/-save$/.test(k))}
 window.SG_LSRAW={get:function(k){return g.call(L,k)},set:function(k,v){return s.call(L,k,v)},del:function(k){return r.call(L,k)}};
 window.sgCharScoped=sc;window.sgCharKey=function(id,k){return(!id||id==="c1"||!sc(k))?k:"char:"+id+":"+k};
 var c=g.call(L,"welten-char")||"c1";window.SG_CHAR=c;if(c==="c1")return;
 var f=function(st,k){return st===L&&sc(k)?"char:"+c+":"+k:k};
 S.getItem=function(k){return g.call(this,f(this,k))};S.setItem=function(k,v){return s.call(this,f(this,k),v)};S.removeItem=function(k){return r.call(this,f(this,k))};
-}catch(e){}})();</script><script>/*TEAM*/(function(){try{var S=Storage.prototype,g=S.getItem,t=g.call(localStorage,"welten-team");if(!t)return;var s=S.setItem,r=S.removeItem,f=function(k){return /-save$/.test(k)&&!/^(char|team):/.test(k)?"team:"+t+":"+k:k};S.getItem=function(k){return g.call(this,f(k))};S.setItem=function(k,v){return s.call(this,f(k),v)};S.removeItem=function(k){return r.call(this,f(k))};window.TEAM_ID=t;}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><title>Sternenwrack</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d1022'/%3E%3Cpath d='M24 6l1.2 3 3 1.2-3 1.2L24 14.4l-1.2-3-3-1.2 3-1.2z' fill='%23ffd34a'/%3E%3Cpath d='M5 20l9-6 10 3-4 6H9z' fill='%237ee0c8'/%3E%3Cpath d='M14 14l-2 9h8z' fill='%239b7bff'/%3E%3Ccircle cx='17' cy='18' r='1.8' fill='%230d1022'/%3E%3Cpath d='M5 20l-2 2 6 1z' fill='%23ff5fd2'/%3E%3C/svg%3E"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><meta name="claude:viewport-fit-sides" content="cover">
+}catch(e){}})();</script><script>/*TEAM*/(function(){try{var S=Storage.prototype,g=S.getItem,t=g.call(localStorage,"welten-team");if(!t)return;var s=S.setItem,r=S.removeItem,f=function(k){return /-save$/.test(k)&&!/^(char|team):/.test(k)?"team:"+t+":"+k:k};S.getItem=function(k){return g.call(this,f(k))};S.setItem=function(k,v){return s.call(this,f(k),v)};S.removeItem=function(k){return r.call(this,f(k))};window.TEAM_ID=t;}catch(e){}})();</script><script>/*SYNC*/(function(){try{
+// 1.22.0: Einstellungen gelten in allen Welten. Jede Welt hat eigene Schlüssel ("sw-music" …); ein gemeinsamer Wert "welten-set-music" wird beim Start übernommen und beim Ändern mitgeschrieben.
+var M=location.pathname.match(/\/(treibgut|eisenfront|neustadt|neonkueste)\//),P=M?{treibgut:"tg-",eisenfront:"ef-",neustadt:"ns-",neonkueste:"nk-"}[M[1]]:"sw-",K=["music","sound","lowfx","lefty","mtabs","bip","turbo","vm","vs","help"],S=Storage.prototype,g=S.getItem,L=localStorage,set=S.setItem;
+K.forEach(function(k){var v=g.call(L,"welten-set-"+k);if(v!==null)set.call(L,P+k,v);else{var w=g.call(L,P+k);if(w!==null)set.call(L,"welten-set-"+k,w)}});
+S.setItem=function(k,v){var r=set.call(this,k,v);try{if(this===L&&typeof k==="string"&&k.indexOf(P)===0&&K.indexOf(k.slice(P.length))>=0)set.call(L,"welten-set-"+k.slice(P.length),v)}catch(e){}return r};
+}catch(e){}})();</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"><title>Sternenwrack</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d1022'/%3E%3Cpath d='M24 6l1.2 3 3 1.2-3 1.2L24 14.4l-1.2-3-3-1.2 3-1.2z' fill='%23ffd34a'/%3E%3Cpath d='M5 20l9-6 10 3-4 6H9z' fill='%237ee0c8'/%3E%3Cpath d='M14 14l-2 9h8z' fill='%239b7bff'/%3E%3Ccircle cx='17' cy='18' r='1.8' fill='%230d1022'/%3E%3Cpath d='M5 20l-2 2 6 1z' fill='%23ff5fd2'/%3E%3C/svg%3E"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="fonts/sw.css">
 <style>
 /* Layout: Sternenfeld im Hintergrund. Breit: Automat links, Seitenpanel (Log + Info-Tabs) rechts. Schmal: untereinander.
@@ -5720,9 +5725,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.21.1";
+const GAME_VERSION = "1.22.0";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.22.0", date: "10.11.2026", title: "Wochen-Ereignisse, Seltene Momente, Medaillen", items: ["Jede Woche ein neues Ereignis pro Welt (z. B. Rabattwoche, Staubsturm, Goldrausch, Gratis-Boost)", "Seltene Momente: etwa 1 von 1.000 Drehs ein goldenes Ereignis mit großem Bonus", "Erfolge in Stufen: Bronze, Silber, Gold und Platin in 16 Kategorien", "Einstellungen gelten jetzt in allen Welten"] },
   { v: "1.21.1", date: "10.11.2026", title: "Genauere Heatmap", items: ["Heatmap: Klicks werden am getroffenen Knopf gespeichert und landen im Dashboard genau dort"] },
   { v: "1.21.0", date: "09.11.2026", title: "Charaktere", items: ["Pro Konto bis zu 5 Charaktere mit eigenem Namen – jeder mit eigenem Spielstand in allen Welten", "Charakter wählen, anlegen, umbenennen und löschen (Hauptmenü und Einstellungen)", "Andere sehen nur den Charakternamen, der Anmeldename bleibt privat", "Freunde und Crew gehören zum jeweiligen Charakter"] },
   { v: "1.20.1", date: "09.11.2026", title: "Web-App-Hinweis, Dashboard", items: ["Auf Handy und Tablet erscheint einmalig ein Hinweis, wie man das Spiel als App auf den Home-Bildschirm legt"] },
@@ -12551,6 +12557,238 @@ HELP_RULES.unshift(["#chPick", () => ["Charaktere", "Jeder Charakter hat einen e
       try { sessionStorage.setItem("sg-chpick", "1"); } catch (e) {} SG_LSRAW.set("welten-chintro", "1"); chOpen(intro); }, 700);
   }, 500);
 })();
+
+/* =================== Langzeit: Wochen-Ereignisse, Seltene Momente, Erfolge in Stufen =================== */
+const LR_RARE = (() => { try { return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob("eyJzdGVybmVud3JhY2siOiB7Im4iOiAiR29sZGVuZXIgS29tZXQiLCAidCI6ICJFaW4gS29tZXQgYXVzIHB1cmVtIEdvbGQgcmFzdCBkdXJjaCBkZWluZW4gU2VrdG9yIOKAkyB1bmQgemllaHQgZWluZSBTcHVyIGF1cyBTY2jDpHR6ZW4gaGludGVyIHNpY2ggaGVyLiIsICJhIjogImNvbWV0IiwgImMiOiAiI2ZmZDE2NiJ9LCAidHJlaWJndXQiOiB7Im4iOiAiR29sZGVuZXIgV2FsIiwgInQiOiAiRWluIFdhbCBtaXQgZ29sZGVuZW4gU2NodXBwZW4gdGF1Y2h0IG5lYmVuIGRlbSBGbG/DnyBhdWYgdW5kIHNjaMO8dHRlbHQgTXVzY2hlbG4gdm9uIHNlaW5lbSBSw7xja2VuLiIsICJhIjogIndoYWxlIiwgImMiOiAiI2ZmZDE2NiJ9LCAiZWlzZW5mcm9udCI6IHsibiI6ICJHb2xkZW5lciBQYW56ZXIiLCAidCI6ICJIaW50ZXIgZGVyIFdlcmtzdGF0dCBzdGVodCBwbMO2dHpsaWNoIGVpbiB2ZXJnb2xkZXRlciBQYW56ZXIg4oCTIHZvbGxlciBFcnNhdHp0ZWlsZSB1bmQgU2NocmF1YmVuLiIsICJhIjogInRhbmsiLCAiYyI6ICIjZmZkMTY2In0sICJuZXVzdGFkdCI6IHsibiI6ICJHb2xkZW5lIFN0dW5kZSIsICJ0IjogIkRpZSBnYW56ZSBTa3lsaW5lIGxldWNodGV0IGdvbGRlbiDigJMgZGllIFN0YWR0IGZlaWVydCBkaWNoIG1pdCBlaW5lbSBSZWdlbiBhdXMgVGFsZXJuLiIsICJhIjogImNpdHkiLCAiYyI6ICIjZmZkMTY2In0sICJuZW9ua3Vlc3RlIjogeyJuIjogIkdvbGRlbmVyIEZsaXR6ZXIiLCAidCI6ICJFaW4gdmVyZ29sZGV0ZXIgU3BvcnR3YWdlbiBkcmlmdGV0IMO8YmVyIGRpZSBLw7xzdGVuc3RyYcOfZSB1bmQgaHVwdCBkaXIgZWluZW4gSmFja3BvdCB6dS4iLCAiYSI6ICJjYXIiLCAiYyI6ICIjZmZkMTY2In19"), c => c.charCodeAt(0)))); } catch (e) { return {}; } })();
+(function lrCss() { const st = document.createElement("style"); st.textContent = `
+/* ---- Wochen-Ereignis ---- */
+#wkEv { position: relative; display: flex; align-items: center; gap: 12px; margin: 8px 0 10px; padding: 10px 12px; border-radius: 16px; cursor: pointer; overflow: hidden; isolation: isolate;
+  background: linear-gradient(110deg, color-mix(in srgb, var(--wc) 20%, rgba(10,14,28,.9)), rgba(10,14,28,.85) 60%); border: 1px solid color-mix(in srgb, var(--wc) 55%, transparent); }
+#wkEv::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--wc) 30%, transparent) 50%, transparent 70%); background-size: 250% 100%; animation: wkShine 5s linear infinite; }
+#wkEv .wk-ic { width: 40px; height: 40px; flex: none; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--wc) 25%, #0a0e1c); box-shadow: 0 0 18px color-mix(in srgb, var(--wc) 45%, transparent); animation: wkBob 3s ease-in-out infinite; }
+#wkEv .wk-ic svg { width: 26px; height: 26px; }
+#wkEv .wk-tx { min-width: 0; flex: 1; } #wkEv .wk-tx small { display: block; font: 800 .62rem system-ui; letter-spacing: .14em; text-transform: uppercase; color: var(--wc); }
+#wkEv .wk-tx b { display: block; font: 800 .95rem system-ui; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#wkEv .wk-fx { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; } #wkEv .wk-fx span { padding: 1px 7px; border-radius: 99px; font: 700 .68rem system-ui; background: rgba(120,255,160,.14); color: #a9ffc8; }
+#wkEv .wk-fx span.neg { background: rgba(255,170,90,.14); color: #ffc58f; }
+#wkEv .wk-left { flex: none; text-align: right; font: 700 .7rem system-ui; color: rgba(255,255,255,.65); } #wkEv .wk-left b { display: block; font: 800 .9rem system-ui; color: #fff; }
+#wkEv .wk-gain { position: absolute; right: 12px; top: -4px; font: 900 .8rem system-ui; color: #a9ffc8; pointer-events: none; animation: wkGain 1.4s ease-out forwards; }
+@keyframes wkShine { from { background-position: 150% 0; } to { background-position: -100% 0; } }
+@keyframes wkBob { 50% { transform: translateY(-2px) rotate(-4deg); } }
+@keyframes wkGain { from { opacity: 0; transform: translateY(14px); } 20% { opacity: 1; } to { opacity: 0; transform: translateY(-16px); } }
+.wk-card { display: grid; gap: 10px; text-align: left; } .wk-card .wk-row { display: flex; gap: 12px; align-items: center; padding: 12px; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
+.wk-card .wk-row.now { border-color: var(--wc); box-shadow: 0 0 0 1px var(--wc) inset; } .wk-card .wk-row .wk-ic { width: 44px; height: 44px; flex: none; border-radius: 12px; display: grid; place-items: center; background: rgba(0,0,0,.3); }
+.wk-card .wk-row .wk-ic svg { width: 28px; height: 28px; } .wk-card h4 { margin: 0; font: 800 .95rem system-ui; } .wk-card h4 small { display: block; font: 700 .66rem system-ui; letter-spacing: .1em; text-transform: uppercase; opacity: .65; }
+.wk-card p { margin: 3px 0 0; font: 500 .8rem/1.4 system-ui; opacity: .8; }
+.boost .wk-tag { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); padding: 1px 8px; border-radius: 99px; font: 800 .58rem system-ui; letter-spacing: .08em; text-transform: uppercase; background: #a9ffc8; color: #04210f; white-space: nowrap; }
+/* ---- Seltener Moment ---- */
+#rmOv { position: fixed; inset: 0; z-index: 380; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 45%, rgba(80,50,0,.85), rgba(5,4,0,.96)); animation: rmIn .5s ease both; }
+#rmOv .rm-rays { position: absolute; left: 50%; top: 45%; width: 220vmax; height: 220vmax; margin: -110vmax 0 0 -110vmax; background: repeating-conic-gradient(rgba(255,210,90,.16) 0 7deg, transparent 7deg 18deg); animation: rmSpin 18s linear infinite; }
+#rmOv .rm-glow { position: absolute; left: 50%; top: 45%; width: 70vmin; height: 70vmin; margin: -35vmin 0 0 -35vmin; border-radius: 50%; background: radial-gradient(circle, rgba(255,220,120,.55), transparent 65%); animation: rmPulse 1.6s ease-in-out infinite; }
+#rmOv .rm-art { position: absolute; left: 50%; top: 40%; width: min(64vmin, 420px); transform: translate(-50%, -50%); filter: drop-shadow(0 0 30px rgba(255,200,80,.8)); }
+#rmOv .rm-art.fly { animation: rmFly 2.4s cubic-bezier(.2,.8,.3,1) both; }
+#rmOv .rm-box { position: relative; z-index: 3; margin-top: 52vmin; text-align: center; color: #fff; padding: 0 16px; }
+#rmOv .rm-kick { font: 800 .8rem system-ui; letter-spacing: .3em; text-transform: uppercase; color: #ffe08a; animation: rmUp .5s .9s both; }
+#rmOv h2 { margin: 6px 0 4px; font: 900 clamp(1.8rem, 7vw, 3.4rem)/1 var(--f-display, system-ui); background: linear-gradient(180deg, #fff6d0, #ffd166 45%, #c98a1a); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 4px 0 rgba(0,0,0,.4)); animation: rmZoom .7s 1.1s cubic-bezier(.2,1.5,.4,1) both; }
+#rmOv p { max-width: 460px; margin: 0 auto; font: 500 .95rem/1.45 system-ui; color: rgba(255,240,210,.85); animation: rmUp .5s 1.4s both; }
+#rmOv .rm-amt { margin: 14px 0; font: 900 clamp(1.6rem, 6vw, 2.6rem) system-ui; color: #ffe08a; text-shadow: 0 0 20px rgba(255,200,80,.7); animation: rmUp .5s 1.6s both; }
+#rmOv .rm-amt small { display: block; font: 700 .85rem system-ui; color: #ffd6f6; margin-top: 2px; }
+#rmOv button { padding: 13px 34px; border-radius: 99px; border: 0; font: 900 1rem system-ui; color: #2a1800; background: linear-gradient(180deg, #fff1b8, #ffc94a); box-shadow: 0 8px 26px rgba(255,190,60,.5); cursor: pointer; animation: rmUp .5s 1.9s both; }
+#rmOv i.rm-c { position: absolute; top: -6vh; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff6c8, #ffc94a 55%, #a06a10); box-shadow: 0 0 6px rgba(255,200,80,.8); animation: rmRain linear infinite; z-index: 2; }
+#rmOv i.rm-s { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #fff; box-shadow: 0 0 8px #ffe08a; animation: rmTw 1.4s ease-in-out infinite; z-index: 2; }
+@keyframes rmIn { from { opacity: 0; } } @keyframes rmSpin { to { transform: rotate(360deg); } } @keyframes rmPulse { 50% { transform: scale(1.12); opacity: .8; } }
+@keyframes rmFly { 0% { transform: translate(-260%, -120%) rotate(-25deg) scale(.4); opacity: 0; } 25% { opacity: 1; } 70% { transform: translate(-50%, -50%) rotate(4deg) scale(1.08); } 100% { transform: translate(-50%, -50%) rotate(0) scale(1); } }
+@keyframes rmZoom { from { transform: scale(.2); opacity: 0; } } @keyframes rmUp { from { transform: translateY(18px); opacity: 0; } }
+@keyframes rmRain { to { transform: translateY(115vh) rotate(720deg); } } @keyframes rmTw { 50% { transform: scale(2.4); opacity: .3; } }
+/* ---- Erfolge in Stufen ---- */
+.ts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 8px; }
+.ts-c { position: relative; display: grid; gap: 6px; padding: 10px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); transition: transform .2s, border-color .2s; }
+.ts-c.t1 { border-color: rgba(205,127,50,.55); } .ts-c.t2 { border-color: rgba(200,210,225,.6); } .ts-c.t3 { border-color: rgba(255,209,102,.7); } .ts-c.t4 { border-color: rgba(150,240,255,.85); box-shadow: 0 0 18px rgba(150,240,255,.25); }
+.ts-c.flash { animation: tsFlash 1.2s ease; }
+.ts-c .ts-h { display: flex; gap: 8px; align-items: center; min-width: 0; } .ts-c .ts-h svg { width: 26px; height: 26px; flex: none; }
+.ts-c .ts-h b { font: 800 .8rem system-ui; line-height: 1.2; } .ts-c .ts-h small { display: block; font: 600 .66rem system-ui; opacity: .65; }
+.ts-m { display: flex; gap: 5px; } .ts-m i { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font: 900 .55rem system-ui; color: rgba(0,0,0,.65); background: rgba(255,255,255,.08); border: 1px dashed rgba(255,255,255,.25); }
+.ts-m i.on { border: 0; } .ts-m i.on.m1 { background: radial-gradient(circle at 35% 35%, #f3c08a, #cd7f32 60%, #7a4614); } .ts-m i.on.m2 { background: radial-gradient(circle at 35% 35%, #ffffff, #c4ccd8 60%, #7a8494); }
+.ts-m i.on.m3 { background: radial-gradient(circle at 35% 35%, #fff6c8, #ffd166 60%, #a8770a); } .ts-m i.on.m4 { background: radial-gradient(circle at 35% 35%, #ffffff, #9ff0ff 55%, #4a8fb0); box-shadow: 0 0 8px #9ff0ff; }
+.ts-bar { height: 5px; border-radius: 9px; background: rgba(255,255,255,.08); overflow: hidden; } .ts-bar b { display: block; height: 100%; border-radius: 9px; background: linear-gradient(90deg, #ffc94a, #ffe08a); transition: width .6s; }
+.ts-c .ts-n { font: 700 .66rem system-ui; opacity: .7; }
+@keyframes tsFlash { 30% { transform: scale(1.06); box-shadow: 0 0 30px rgba(255,209,102,.6); } }
+#tsPop { position: fixed; left: 50%; top: 18%; z-index: 360; transform: translateX(-50%); display: flex; gap: 12px; align-items: center; padding: 12px 18px 12px 12px; border-radius: 18px; background: linear-gradient(160deg, #1c2440, #0b0f1e); border: 1px solid var(--mc); box-shadow: 0 16px 40px rgba(0,0,0,.6), 0 0 30px color-mix(in srgb, var(--mc) 40%, transparent); color: #fff; animation: tsPop 3.6s ease forwards; pointer-events: none; }
+#tsPop .ts-medal { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font: 900 1.2rem system-ui; color: rgba(0,0,0,.6); background: radial-gradient(circle at 35% 35%, #fff, var(--mc) 60%, #333); animation: tsSpin 1s ease; }
+#tsPop small { display: block; font: 800 .62rem system-ui; letter-spacing: .14em; text-transform: uppercase; color: var(--mc); } #tsPop b { font: 800 1rem system-ui; } #tsPop span { display: block; font: 600 .78rem system-ui; opacity: .75; }
+@keyframes tsPop { 0% { opacity: 0; transform: translate(-50%, -20px) scale(.9); } 10%, 85% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 0; transform: translate(-50%, -10px); } }
+@keyframes tsSpin { from { transform: rotateY(540deg) scale(.4); } }
+html.a11y-rm :is(#wkEv, #wkEv *, #rmOv *, .ts-c, #tsPop, #tsPop *) { animation: none !important; }
+`; document.head.appendChild(st); })();
+
+/* ---------------- A1: Wochen-Ereignisse ---------------- */
+const WK_EVENTS = [
+  { k: "signal", b: "signal", cost: 1.15 },
+  { k: "scanner", b: "scanner", dust: .75 },
+  { k: "drones", b: "drones", cost: 1.1 },
+  { k: "guild", b: "guild", cost: 1.1 },
+  { k: "treasure", b: "treasure", dust: .75 },
+  { k: "rabatt", name: "Rabattwoche", icon: "up_hull", color: "#7cf0b0", desc: "Die Werft hat Überbestände – alle Ausbau-Stufen sind deutlich günstiger.", cost: .8, xp: .8 },
+  { k: "sturm", name: "Staubsturm", icon: "crystal", color: "#ff7ad9", desc: "Ein Sturm wirbelt Sternenstaub auf – du sammelst doppelt so viel.", dust: 2, cost: 1.1 },
+  { k: "gold", name: "Goldrausch", icon: "relic", color: "#ffd166", desc: "Alle Gewinne bekommen einen Aufschlag obendrauf.", haul: .1, cost: 1.15 },
+];
+const WK_DAY = 864e5;
+function wkStart(off) { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + 7 * (off || 0)); return d.getTime(); }
+function wkIndex(off) { const n = Math.round((wkStart(off) - new Date(2024, 0, 1).getTime()) / (7 * WK_DAY)); const wi = Math.max(0, (typeof WORLDS !== "undefined" ? WORLDS.findIndex(w => w.id === WORLD_ID) : 0)); return ((n + wi * 3) % WK_EVENTS.length + WK_EVENTS.length) % WK_EVENTS.length; }
+function wkInfo(off) {
+  const e = WK_EVENTS[wkIndex(off)], b = e.b && typeof BOOSTS !== "undefined" ? BOOSTS.find(x => x.id === e.b) : null;
+  const fx = [];
+  if (b) fx.push([b.effect + " die ganze Woche", 1]);
+  if (e.haul) fx.push([`+${Math.round(e.haul * 100)} % auf jeden Gewinn`, 1]);
+  if (e.dust) fx.push([e.dust > 1 ? `Sternenstaub ×${e.dust}` : `Sternenstaub −${Math.round((1 - e.dust) * 100)} %`, e.dust > 1]);
+  if (e.cost) fx.push([e.cost < 1 ? `Ausbau −${Math.round((1 - e.cost) * 100)} %` : `Ausbau +${Math.round((e.cost - 1) * 100)} %`, e.cost < 1]);
+  if (e.xp) fx.push([e.xp > 1 ? `XP ×${e.xp}` : `XP −${Math.round((1 - e.xp) * 100)} %`, e.xp > 1]);
+  return { e, b, name: b ? `${b.name} für alle` : e.name, icon: b ? b.icon : e.icon, color: b ? b.color : e.color,
+    desc: b ? `Die Gilde spendiert diese Woche „${b.name}“ – ohne Sternenstaub, rund um die Uhr.` : e.desc, fx, start: wkStart(off), end: wkStart((off || 0) + 1) };
+}
+const wkCur = () => wkInfo(0).e;
+/* Wirkungen */
+if (typeof coopCostMul === "function") { const cm0 = coopCostMul; coopCostMul = function () { return cm0.apply(this, arguments) * (wkCur().cost || 1); }; }
+if (typeof addXP === "function") { const ax0 = addXP; addXP = function (n) { return ax0.call(this, (n || 0) * (wkCur().xp || 1)); }; }
+if (typeof addDust === "function") { const ad0 = addDust; addDust = function (n, why) { const m = why === "rare" || why === "tier" ? 1 : (wkCur().dust || 1), v = (n || 0) * m, w = Math.floor(v) + (Math.random() < v - Math.floor(v) ? 1 : 0); return ad0.call(this, w, why); }; }
+/* Gratis-Boost der Woche: state.boosts bekommt eine Hülle, die den Boost bis Wochenende als aktiv meldet */
+function wkBoostWrap() {
+  try {
+    if (state.boosts && state.boosts.__wk) return;
+    const t = state.boosts && typeof state.boosts === "object" ? state.boosts : {};
+    state.boosts = new Proxy(t, { get(o, k) { if (k === "__wk") return true; const e = wkCur(); if (e.b && k === e.b) return Math.max(o[k] || 0, wkStart(1)); return o[k]; } });
+  } catch (e) {}
+}
+wkBoostWrap(); setInterval(wkBoostWrap, 2000);
+if (typeof applySave === "function") { const apW = applySave; applySave = function () { const r = apW.apply(this, arguments); wkBoostWrap(); return r; }; }
+if (typeof renderLab === "function") { const rl0 = renderLab; renderLab = function () { const r = rl0.apply(this, arguments); try { const e = wkCur(); if (e.b) { const btn = document.querySelector(`#labGrid [data-boost="${e.b}"]`); if (btn) { btn.style.position = "relative"; const l = btn.querySelector(".left"); if (l) l.textContent = "Woche"; if (!btn.querySelector(".wk-tag")) btn.insertAdjacentHTML("afterbegin", '<span class="wk-tag">Gratis diese Woche</span>'); } } } catch (x) {} return r; }; }
+/* Goldrausch: Aufschlag auf Gewinne */
+let wkGainT = 0;
+if (typeof track === "function") { const trW = track; track = function (type, amount) {
+  const r = trW.apply(this, arguments);
+  try { const e = wkCur(); if (type === "haul" && e.haul && amount > 0) { const x = Math.round(amount * e.haul); if (x > 0) { state.credits += x; state.peak = Math.max(state.peak, state.credits); setTimeout(() => { try { countCredits(state.credits, 400); } catch (er) {} }, 600); const box = $("wkEv"); if (box && Date.now() - wkGainT > 900) { wkGainT = Date.now(); const g = document.createElement("span"); g.className = "wk-gain"; g.textContent = "+" + fmtN(x); box.appendChild(g); setTimeout(() => g.remove(), 1500); } } } } catch (er) {}
+  return r; }; }
+/* Anzeige */
+function wkLeft(ms) { const d = Math.floor(ms / WK_DAY), h = Math.floor(ms % WK_DAY / 36e5); return d >= 1 ? `${d} T ${h} Std` : `${h} Std ${Math.floor(ms % 36e5 / 6e4)} Min`; }
+function wkRender() {
+  const r = document.querySelector(".machine .radio"); if (!r) return;
+  let el = $("wkEv"); if (!el) { r.insertAdjacentHTML("afterend", `<div id="wkEv" role="button" tabindex="0" aria-label="Wochen-Ereignis – Details"></div>`); el = $("wkEv"); el.addEventListener("click", wkOpen); el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); wkOpen(); } }); }
+  const w = wkInfo(0); el.style.setProperty("--wc", w.color);
+  el.innerHTML = `<div class="wk-ic">${ICONS[w.icon] || ""}</div><div class="wk-tx"><small>Wochen-Ereignis</small><b>${w.name}</b><div class="wk-fx">${w.fx.map(([t, g]) => `<span class="${g ? "" : "neg"}">${t}</span>`).join("")}</div></div><div class="wk-left">noch<b>${wkLeft(w.end - Date.now())}</b></div>`;
+}
+function wkOpen() {
+  const row = (w, lbl, now) => `<div class="wk-row${now ? " now" : ""}" style="--wc:${w.color}"><div class="wk-ic">${ICONS[w.icon] || ""}</div><div><h4><small>${lbl}</small>${w.name}</h4><p>${w.desc}</p><div class="wk-fx" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${w.fx.map(([t, g]) => `<span style="padding:1px 7px;border-radius:99px;font:700 .7rem system-ui;background:${g ? "rgba(120,255,160,.14);color:#a9ffc8" : "rgba(255,170,90,.14);color:#ffc58f"}">${t}</span>`).join("")}</div></div></div>`;
+  const a = wkInfo(0), b = wkInfo(1);
+  openBonus({ id: "crystal", color: a.color }, "Wochen-Ereignis", `Jede Woche gilt in jeder Welt eine andere Regel. Montags wechselt sie.`);
+  const card = $("bonusBody"); if (!card) return; try { $("bonusTotal").textContent = ""; } catch (e) {}
+  const box = document.createElement("div"); box.className = "wk-card"; box.innerHTML = row(a, `Diese Woche · noch ${wkLeft(a.end - Date.now())}`, true) + row(b, "Nächste Woche", false) + `<button type="button" class="ghost" id="wkClose" style="justify-self:center;padding:10px 26px">Alles klar</button>`;
+  card.appendChild(box); $("wkClose").onclick = () => { try { closeBonus(); } catch (e) { $("bonus").hidden = true; } };
+}
+wkRender(); setInterval(wkRender, 60000);
+(function wkHello() { try { const k = "welten-wkev-" + WORLD_ID, s = wkStart(0) + ""; if (localStorage.getItem(k) !== s) { localStorage.setItem(k, s); setTimeout(() => { const w = wkInfo(0); toast(`Neues Wochen-Ereignis: ${w.name}`, w.color); const el = $("wkEv"); if (el) el.animate([{ transform: "scale(1)" }, { transform: "scale(1.04)" }, { transform: "scale(1)" }], { duration: 700, iterations: 3 }); }, 4000); } } catch (e) {} })();
+
+/* ---------------- A2: Seltene Momente ---------------- */
+const RM_P = 1 / 1000;
+const RM_ART = {
+  comet: `<svg viewBox="0 0 400 200"><defs><linearGradient id="rmG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#ffd166"/><stop offset="1" stop-color="#a8770a"/></linearGradient><linearGradient id="rmT" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#ffd166"/><stop offset="1" stop-color="#ffd166" stop-opacity="0"/></linearGradient></defs><path d="M300 100 L20 40 L60 100 L20 160 Z" fill="url(#rmT)" opacity=".85"/><path d="M300 100 L90 70 L120 100 L90 130 Z" fill="#fff6c8" opacity=".6"/><circle cx="300" cy="100" r="58" fill="url(#rmG)"/><circle cx="282" cy="84" r="14" fill="#a8770a" opacity=".35"/><circle cx="318" cy="118" r="9" fill="#a8770a" opacity=".35"/><circle cx="286" cy="80" r="18" fill="#fff" opacity=".35"/></svg>`,
+  whale: `<svg viewBox="0 0 400 220"><defs><linearGradient id="rmG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#ffd166"/><stop offset="1" stop-color="#a8770a"/></linearGradient></defs><path d="M40 120 C60 50 200 30 290 70 C330 88 350 110 352 130 C330 160 250 175 160 168 C100 164 52 150 40 120 Z" fill="url(#rmG)"/><path d="M340 120 L392 76 L378 124 L396 166 Z" fill="url(#rmG)"/><path d="M60 132 C120 150 230 152 300 132" stroke="#a8770a" stroke-width="6" fill="none" opacity=".5"/><circle cx="96" cy="104" r="8" fill="#3a2600"/><path d="M150 40 C140 10 170 0 160 20 M160 38 C170 8 200 10 182 26" stroke="#bfefff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M180 150 L200 196 L222 150 Z" fill="#c9971f"/></svg>`,
+  tank: `<svg viewBox="0 0 400 220"><defs><linearGradient id="rmG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#ffd166"/><stop offset="1" stop-color="#a8770a"/></linearGradient></defs><rect x="150" y="70" width="110" height="50" rx="14" fill="url(#rmG)"/><rect x="250" y="84" width="140" height="16" rx="6" fill="url(#rmG)"/><path d="M50 120 H350 L330 160 H70 Z" fill="url(#rmG)"/><rect x="40" y="150" width="320" height="50" rx="25" fill="#7a5508"/>${[0, 1, 2, 3, 4, 5].map(i => `<circle cx="${80 + i * 48}" cy="175" r="18" fill="#ffd166" stroke="#5a3e05" stroke-width="5"/>`).join("")}<circle cx="190" cy="80" r="8" fill="#fff6c8"/></svg>`,
+  city: `<svg viewBox="0 0 400 220"><defs><linearGradient id="rmG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#ffd166"/><stop offset="1" stop-color="#a8770a"/></linearGradient></defs>${[[20, 110, 40], [64, 60, 46], [114, 130, 34], [152, 20, 54], [210, 80, 40], [254, 40, 50], [308, 100, 36], [348, 70, 40]].map(([x, y, w]) => `<rect x="${x}" y="${y}" width="${w}" height="${220 - y}" fill="url(#rmG)" stroke="#a8770a" stroke-width="2"/>` + Array.from({ length: Math.floor((200 - y) / 22) }, (_, r) => `<rect x="${x + 8}" y="${y + 12 + r * 22}" width="${w - 16}" height="8" fill="#fff6c8" opacity=".75"/>`).join("")).join("")}<path d="M179 20 V-4" stroke="#ffd166" stroke-width="4"/></svg>`,
+  car: `<svg viewBox="0 0 400 200"><defs><linearGradient id="rmG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#ffd166"/><stop offset="1" stop-color="#a8770a"/></linearGradient></defs><path d="M20 130 C24 108 60 100 100 96 L150 60 C170 48 250 46 280 62 L320 92 C356 98 384 108 386 132 L384 148 H20 Z" fill="url(#rmG)"/><path d="M160 66 L130 94 H300 L272 68 C250 58 180 58 160 66 Z" fill="#3a2a10" opacity=".7"/><rect x="340" y="110" width="40" height="10" rx="4" fill="#fff6c8"/><circle cx="96" cy="150" r="30" fill="#3a2600"/><circle cx="96" cy="150" r="14" fill="#ffd166"/><circle cx="306" cy="150" r="30" fill="#3a2600"/><circle cx="306" cy="150" r="14" fill="#ffd166"/><path d="M0 170 H60 M10 154 H40" stroke="#ffe08a" stroke-width="5" stroke-linecap="round" opacity=".7"/></svg>`,
+};
+const rmWorld = () => LR_RARE[WORLD_ID] || LR_RARE.sternenwrack || { n: "Goldener Fund", t: "", a: "comet" };
+let rmPending = false;
+function rmCount() { return (state.rare | 0); }
+if (typeof track === "function") { const trR = track; track = function (type) { const r = trR.apply(this, arguments); try { if (type === "spins" && !rmPending && Math.random() < RM_P) { rmPending = true; rmWait(); } } catch (e) {} return r; }; }
+function rmWait() { const t = setInterval(() => { const bo = document.querySelector(".bonus:not([hidden])"); if ((typeof spinning !== "undefined" && spinning) || (typeof busy !== "undefined" && busy) || bo || $("rmOv")) return; clearInterval(t); rmShow(); }, 400); }
+function rmShow() {
+  rmPending = false;
+  const W = rmWorld(), amt = Math.max(500, Math.round(bet() * 100)), dust = 10;
+  state.rare = rmCount() + 1; state.credits += amt; state.peak = Math.max(state.peak, state.credits);
+  try { addDust(dust, "rare"); } catch (e) {}
+  try { if (typeof ixBookRender === "function") ixBookRender(); } catch (e) {}
+  saveGame();
+  const ov = document.createElement("div"); ov.id = "rmOv"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true"); ov.setAttribute("aria-label", W.n);
+  const coins = Array.from({ length: 34 }, () => `<i class="rm-c" style="left:${(Math.random() * 100).toFixed(1)}%;animation-duration:${(2.2 + Math.random() * 2.5).toFixed(2)}s;animation-delay:${(Math.random() * 2.5).toFixed(2)}s;transform:scale(${(.6 + Math.random() * .8).toFixed(2)})"></i>`).join("");
+  const sparks = Array.from({ length: 26 }, () => `<i class="rm-s" style="left:${(Math.random() * 100).toFixed(1)}%;top:${(Math.random() * 100).toFixed(1)}%;animation-delay:${(Math.random() * 1.4).toFixed(2)}s"></i>`).join("");
+  ov.innerHTML = `<div class="rm-rays"></div><div class="rm-glow"></div>${sparks}${coins}<div class="rm-art fly">${RM_ART[W.a] || RM_ART.comet}</div>
+    <div class="rm-box"><div class="rm-kick">Seltener Moment · ${state.rare}. Mal</div><h2>${W.n}!</h2><p>${W.t}</p><div class="rm-amt"><span id="rmAmt">0</span><small>+${dust} Sternenstaub · neuer Eintrag im Sammelbuch</small></div><button type="button" id="rmGo">Einsammeln</button></div>`;
+  document.body.appendChild(ov);
+  try { sfx.fanfare(2); setTimeout(() => { try { sfx.fanfare(1); } catch (x) {} }, 900); } catch (e) {}
+  try { if (typeof a11ySay === "function") a11ySay(`Seltener Moment: ${W.n}! Gewinn ${fmtN(amt)}`, true); } catch (e) {}
+  const t0 = performance.now() + 1600; (function cnt(t) { const k = Math.max(0, Math.min(1, (t - t0) / 1400)); const el = $("rmAmt"); if (!el) return; el.textContent = "+" + fmtN(Math.round(amt * (1 - Math.pow(1 - k, 3)))); if (k < 1) requestAnimationFrame(cnt); })(performance.now());
+  const close = () => { ov.style.transition = "opacity .4s"; ov.style.opacity = "0"; setTimeout(() => ov.remove(), 420); try { countCredits(state.credits, 900); render(); renderDust && renderDust(true); } catch (e) {} };
+  $("rmGo").addEventListener("click", close);
+  try { addLog("relic", W.n, "+" + fmtN(amt), "#ffd166"); } catch (e) {}
+}
+window.sgRareTest = () => { rmPending = true; rmWait(); };
+/* Sammelbuch-Seite */
+if (typeof ixPages === "function") { const ip0 = ixPages; ixPages = function () { const P = ip0.apply(this, arguments); try { const W = rmWorld(); P.push({ id: "rare", name: W.n, have: Math.min(3, rmCount()), max: 3, ic: [[RM_ART[W.a] ? ICONS.relic : "", rmCount() >= 1], [ICONS.relic, rmCount() >= 2], [ICONS.relic, rmCount() >= 3]] }); } catch (e) {} return P; }; }
+
+/* ---------------- A3: Erfolge in Stufen ---------------- */
+const TS_MEDAL = [["Bronze", "#cd7f32"], ["Silber", "#c4ccd8"], ["Gold", "#ffd166"], ["Platin", "#9ff0ff"]];
+const TS_PAY = [250, 1000, 4000, 12000];
+const tsSt = () => (typeof st === "function" ? st() : (state.stats || {}));
+const TS = [
+  { id: "spins", name: "Scans", icon: "cell", get: () => state.spins || 0, t: [250, 1500, 6000, 20000] },
+  { id: "wins", name: "Gewinne", icon: "scrap", get: () => tsSt().wins || 0, t: [100, 750, 3000, 10000] },
+  { id: "fs", name: "Freispiele ausgelöst", icon: "beacon", get: () => tsSt().fs || 0, t: [5, 25, 100, 300] },
+  { id: "laser", name: "Bergungslaser", icon: "wild", get: () => tsSt().lasers || 0, t: [15, 60, 200, 600] },
+  { id: "jack", name: "Sternenschatz", icon: "crystal", get: () => tsSt().jackpots || 0, t: [1, 3, 8, 20] },
+  { id: "streak", name: "Längste Strähne", icon: "core", get: () => tsSt().maxStreak || 0, t: [4, 6, 8, 10] },
+  { id: "tix", name: "Rubbellose", icon: "scrap", get: () => tsSt().tickets || 0, t: [25, 100, 400, 1000] },
+  { id: "gamble", name: "Risiko gewonnen", icon: "beacon", get: () => tsSt().gambleWins || 0, t: [10, 50, 200, 500] },
+  { id: "up", name: "Ausbau-Stufen gekauft", icon: "up_hull", get: () => tsSt().upgrades || 0, t: [25, 90, 180, 300] },
+  { id: "exp", name: "Expeditionen", icon: "up_engine", get: () => tsSt().expeds || 0, t: [5, 25, 100, 250] },
+  { id: "dust", name: "Sternenstaub gesammelt", icon: "crystal", get: () => tsSt().dustTotal || 0, t: [50, 250, 1000, 3000] },
+  { id: "stars", name: "Sternschnuppen", icon: "crystal", get: () => tsSt().starsShot || 0, t: [25, 100, 300, 800] },
+  { id: "boost", name: "Boosts aktiviert", icon: "up_scanner", get: () => tsSt().boostsUsed || 0, t: [5, 25, 100, 300] },
+  { id: "daily", name: "Tägliche Bergung", icon: "crystal", get: () => tsSt().daily || 0, t: [14, 30, 90, 180] },
+  { id: "rank", name: "Rang", icon: "up_reactor", get: () => state.level || 1, t: [10, 20, 30, 40] },
+  { id: "rare", name: "Seltene Momente", icon: "relic", get: () => rmCount(), t: [1, 3, 10, 25] },
+];
+let tsBackfill = false, tsFirst = false;
+const tsState = () => { if (!state.tiers || typeof state.tiers !== "object") state.tiers = {}; return state.tiers; };
+function tsCheck(silent) {
+  const T = tsState(); let got = [];
+  TS.forEach(a => { let v = 0; try { v = a.get(); } catch (e) {} const have = T[a.id] | 0; let lv = have; while (lv < 4 && v >= a.t[lv]) lv++;
+    if (lv > have) { T[a.id] = lv; if (!silent) for (let k = have; k < lv; k++) got.push([a, k]); } });
+  if (!got.length) return;
+  let pay = 0, dust = 0; got.forEach(([, k]) => { pay += TS_PAY[k]; if (k === 3) dust += 5; });
+  state.credits += pay; state.peak = Math.max(state.peak, state.credits); if (dust) try { addDust(dust, "tier"); } catch (e) {}
+  if (tsBackfill || got.length > 3) { tsBackfill = false; const p = document.createElement("div"); p.id = "tsPop"; p.style.setProperty("--mc", "#ffd166");
+    p.innerHTML = `<div class="ts-medal">${got.length}</div><div><small>Erfolge in Stufen</small><b>${got.length} Medaillen ${tsFirst ? "nachgetragen" : "erreicht"}</b><span>+${fmtN(pay)}${dust ? ` · +${dust} Sternenstaub` : ""} · siehe Sammlung</span></div>`;
+    const o = $("tsPop"); if (o) o.remove(); document.body.appendChild(p); setTimeout(() => p.remove(), 4500); try { sfx.fanfare(1); } catch (e) {} tsFirst = false; }
+  else got.forEach(([a, k], i) => setTimeout(() => tsPop(a, k), i * 3800));
+  try { countCredits(state.credits, 700); saveGame(); } catch (e) {}
+  tsRender(got.map(g => g[0].id));
+}
+function tsPop(a, k) {
+  const old = $("tsPop"); if (old) old.remove();
+  const p = document.createElement("div"); p.id = "tsPop"; p.style.setProperty("--mc", TS_MEDAL[k][1]);
+  p.innerHTML = `<div class="ts-medal">${k + 1}</div><div><small>${TS_MEDAL[k][0]}-Erfolg</small><b>${a.name}</b><span>${fmtN(a.t[k])} erreicht · +${fmtN(TS_PAY[k])}${k === 3 ? " · +5 Sternenstaub" : ""}</span></div>`;
+  document.body.appendChild(p); setTimeout(() => p.remove(), 3700);
+  try { sfx.mission(); if (k >= 2) sfx.fanfare(k - 1); } catch (e) {}
+  try { if (typeof a11ySay === "function") a11ySay(`${TS_MEDAL[k][0]}-Erfolg: ${a.name}`); } catch (e) {}
+}
+function tsRender(flash) {
+  const box = $("tsGrid"); if (!box) return; const T = tsState();
+  box.innerHTML = TS.map(a => { const lv = T[a.id] | 0; let v = 0; try { v = a.get(); } catch (e) {} const next = a.t[Math.min(3, lv)], prev = lv ? a.t[lv - 1] : 0, pct = lv >= 4 ? 100 : Math.max(0, Math.min(100, (v - prev) / (next - prev) * 100));
+    return `<div class="ts-c t${lv}${flash && flash.includes(a.id) ? " flash" : ""}" title="${a.name}: Bronze ${fmtN(a.t[0])} · Silber ${fmtN(a.t[1])} · Gold ${fmtN(a.t[2])} · Platin ${fmtN(a.t[3])}"><div class="ts-h">${ICONS[a.icon] || ""}<div><b>${a.name}</b><small>${lv ? TS_MEDAL[lv - 1][0] : "Noch keine Medaille"}</small></div></div>
+      <div class="ts-m">${TS_MEDAL.map((m, i) => `<i class="m${i + 1}${lv > i ? " on" : ""}" title="${m[0]}: ${fmtN(a.t[i])}">${lv > i ? "" : i + 1}</i>`).join("")}</div>
+      <div class="ts-bar"><b style="width:${pct}%"></b></div><div class="ts-n">${lv >= 4 ? `${fmtN(v)} · alles geschafft` : `${fmtN(Math.min(v, next))} / ${fmtN(next)} → ${TS_MEDAL[lv][0]} (+${fmtN(TS_PAY[lv])})`}</div></div>`; }).join("");
+  const c = $("tsCount"); if (c) { const n = Object.values(T).reduce((s, x) => s + (x | 0), 0); c.textContent = `${n} / ${TS.length * 4} Medaillen`; }
+}
+(function tsUi() {
+  const col = $("pv-col"); if (!col) return;
+  const book = col.querySelector(".psec"); const html = `<div class="psec"><h3>Erfolge in Stufen <span id="tsCount"></span></h3><div class="ts-grid" id="tsGrid"></div><p class="note">Bronze, Silber, Gold und Platin – jede Medaille bringt Credits, Platin zusätzlich Sternenstaub.</p></div>`;
+  if (book) book.insertAdjacentHTML("afterend", html); else col.insertAdjacentHTML("afterbegin", html);
+  tsCheck(true); tsRender();
+  const t = document.querySelector('[aria-controls="pv-col"], #pt-col, [data-pv="col"]'); if (t) t.addEventListener("click", () => setTimeout(() => tsRender(), 30));
+})();
+setTimeout(() => setInterval(() => { if (!(typeof spinning !== "undefined" && spinning)) tsCheck(false); }, 4000), 5000);
+if (typeof serialize === "function") { const seL = serialize; serialize = function () { const d = seL.apply(this, arguments); try { d.tiers = tsState(); d.rare = rmCount(); } catch (e) {} return d; }; }
+if (typeof applySave === "function") { const apL = applySave; applySave = function (d) { const r = apL.apply(this, arguments); try { if (d && d.tiers && typeof d.tiers === "object") state.tiers = { ...d.tiers }; else { state.tiers = {}; tsBackfill = true; tsFirst = true; } if (d && d.rare) state.rare = d.rare | 0; tsRender(); } catch (e) {} return r; }; }
 /*MENU-JS-END*/
 /* ---------- Start-Knopf: Feedback beim Drücken, Drehen, Gewinnen ---------- */
 (function () {
