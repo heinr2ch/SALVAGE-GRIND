@@ -2,6 +2,11 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.24.0 · Kampagnen-Sterne und Saison-Pass · 10.11.2026
+- Kampagne: 3 Sterne pro Kapitel, Kapitel wiederholen, 5 Bonuskapitel und Sternenkrone
+- Saison-Pass: 6 Wochen, 30 Stufen, Rangliste, Abzeichen und Saison-Kleidung
+- Koop-Automat: Landschaft und Walzen-Darstellung korrigiert
+
 ## Beta 1.23.0 · Koop-Automat aufgemotzt · 10.11.2026
 - Koop-Automat: Truck fährt durch eine Abendlandschaft, Walzen mit Spannung, Gewinnlinien und Münzflug
 - Neu zu zweit: Synchron-Hebel (×2) und Strecke mit Checkpoints

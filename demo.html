@@ -5725,9 +5725,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.23.0";
+const GAME_VERSION = "1.24.0";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.24.0", date: "10.11.2026", title: "Kampagnen-Sterne und Saison-Pass", items: ["Kampagne: 3 Sterne pro Kapitel, Kapitel wiederholen, 5 Bonuskapitel und Sternenkrone", "Saison-Pass: 6 Wochen, 30 Stufen, Rangliste, Abzeichen und Saison-Kleidung", "Koop-Automat: Landschaft und Walzen-Darstellung korrigiert"] },
   { v: "1.23.0", date: "10.11.2026", title: "Koop-Automat aufgemotzt", items: ["Koop-Automat: Truck fährt durch eine Abendlandschaft, Walzen mit Spannung, Gewinnlinien und Münzflug", "Neu zu zweit: Synchron-Hebel (×2) und Strecke mit Checkpoints"] },
   { v: "1.22.0", date: "10.11.2026", title: "Wochen-Ereignisse, Seltene Momente, Medaillen", items: ["Jede Woche ein neues Ereignis pro Welt (z. B. Rabattwoche, Staubsturm, Goldrausch, Gratis-Boost)", "Seltene Momente: etwa 1 von 1.000 Drehs ein goldenes Ereignis mit großem Bonus", "Erfolge in Stufen: Bronze, Silber, Gold und Platin in 16 Kategorien", "Einstellungen gelten jetzt in allen Welten"] },
   { v: "1.21.1", date: "10.11.2026", title: "Genauere Heatmap", items: ["Heatmap: Klicks werden am getroffenen Knopf gespeichert und landen im Dashboard genau dort"] },
@@ -11111,12 +11112,12 @@ setInterval(() => { try { const d = ixWk(); if (d.p && !d.done) ixWkRender(); } 
 @keyframes coWheel { to { transform: rotate(360deg); } }
 #coop .co-road .co-puff { position: absolute; z-index: 3; width: 14px; height: 14px; border-radius: 50%; background: rgba(220,220,235,.55); animation: coPuff 1.2s ease-out forwards; pointer-events: none; }
 @keyframes coPuff { from { transform: translate(0, 0) scale(.4); opacity: .8; } to { transform: translate(-70px, -26px) scale(2.2); opacity: 0; } }
-#coop .co-road.fast { --spd: .22; } #coop .co-road.boost { --spd: .12; }
-#coop .co-road.boost .co-veh { left: 62%; } #coop .co-road.fast .co-veh { left: 54%; }
-#coop .co-road .co-nitro { position: absolute; z-index: 3; left: 0; bottom: 30px; width: 80px; height: 22px; opacity: 0; transition: opacity .2s; background: radial-gradient(ellipse at 100% 50%, #fff 0, #8ff0ff 25%, #4f7dff 55%, transparent 72%); filter: blur(1px); animation: coFlick .08s linear infinite alternate; }
-#coop .co-road.boost .co-nitro { opacity: 1; } @keyframes coFlick { to { transform: scaleX(1.25); } }
+#coop .co-road.co-fast { --spd: .22; } #coop .co-road.co-boost { --spd: .12; }
+#coop .co-road.co-boost .co-veh { left: 62%; } #coop .co-road.co-fast .co-veh { left: 54%; }
+#coop .co-road .co-nitro { position: absolute; z-index: -1; left: -62px; bottom: 30%; width: 80px; height: 22px; opacity: 0; transition: opacity .2s; background: radial-gradient(ellipse at 100% 50%, #fff 0, #8ff0ff 25%, #4f7dff 55%, transparent 72%); filter: blur(1px); animation: coFlick .08s linear infinite alternate; }
+#coop .co-road.co-boost .co-nitro { opacity: 1; } @keyframes coFlick { to { transform: scaleX(1.25); } }
 #coop .co-road .co-speed { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; transition: opacity .3s; background: repeating-linear-gradient(180deg, transparent 0 18px, rgba(255,255,255,.18) 18px 19px, transparent 19px 41px); mask-image: linear-gradient(90deg, #000, transparent 60%); -webkit-mask-image: linear-gradient(90deg, #000, transparent 60%); animation: coStreak .25s linear infinite; }
-#coop .co-road.fast .co-speed, #coop .co-road.boost .co-speed { opacity: 1; } @keyframes coStreak { from { background-position: 0 0; } to { background-position: -60px 0; } }
+#coop .co-road.co-fast .co-speed, #coop .co-road.co-boost .co-speed { opacity: 1; } @keyframes coStreak { from { background-position: 0 0; } to { background-position: -60px 0; } }
 #coop .co-road .co-hud { position: absolute; z-index: 6; left: 10px; top: 8px; right: 10px; display: flex; justify-content: space-between; gap: 8px; font: 700 11px system-ui; color: #fff; text-shadow: 0 1px 2px #000; }
 #coop .co-road .co-hud b { font: 800 15px ui-monospace, monospace; color: #ffe08a; }
 #coop .co-road .co-odo { display: grid; gap: 3px; } #coop .co-road .co-odo i { display: block; width: 130px; height: 5px; border-radius: 5px; background: rgba(255,255,255,.2); overflow: hidden; } #coop .co-road .co-odo i b { display: block; height: 100%; background: linear-gradient(90deg, #8ff0ff, #ffe08a); }
@@ -11128,12 +11129,12 @@ setInterval(() => { try { const d = ixWk(); if (d.p && !d.done) ixWkRender(); } 
 #coop .co-bulbs.t { top: 3px; } #coop .co-bulbs.b { bottom: 3px; }
 #coop .co-bulbs i { width: 6px; height: 6px; border-radius: 50%; background: #ffd34a; box-shadow: 0 0 6px #ffc94a; animation: coBulb 1.2s steps(1) infinite; opacity: .25; }
 #coop .co-bulbs i:nth-child(3n+1) { animation-delay: 0s; } #coop .co-bulbs i:nth-child(3n+2) { animation-delay: .4s; } #coop .co-bulbs i:nth-child(3n) { animation-delay: .8s; }
-#coop .co-mach.hot .co-bulbs i { animation-duration: .36s; background: #ff4fa8; box-shadow: 0 0 8px #ff4fa8; }
+#coop .co-mach.co-hot .co-bulbs i { animation-duration: .36s; background: #ff4fa8; box-shadow: 0 0 8px #ff4fa8; }
 @keyframes coBulb { 0% { opacity: 1; } 33% { opacity: .25; } }
-#coop .reel.spin .co-strip { filter: blur(1.6px) brightness(1.15); }
-#coop .reel.stopped { animation: coStop .35s ease-out; }
+#coop .reel.co-sp .co-strip { filter: blur(1.6px) brightness(1.15); }
+#coop .reel.co-stopped { animation: coStop .35s ease-out; }
 @keyframes coStop { 0% { box-shadow: 0 0 0 2px #fff inset, 0 0 22px rgba(255,255,255,.6); } 100% { box-shadow: none; } }
-#coop .reel.tease { box-shadow: 0 0 0 2px #b8ff5c inset, 0 0 22px rgba(184,255,92,.55); animation: coTease .5s ease-in-out infinite alternate; }
+#coop .reel.co-tease { box-shadow: 0 0 0 2px #b8ff5c inset, 0 0 22px rgba(184,255,92,.55); animation: coTease .5s ease-in-out infinite alternate; }
 @keyframes coTease { to { box-shadow: 0 0 0 3px #b8ff5c inset, 0 0 34px rgba(184,255,92,.85); } }
 #coop .cell.win svg { animation: coPop .6s cubic-bezier(.3,1.6,.5,1) infinite alternate; }
 @keyframes coPop { to { transform: scale(1.12) rotate(-3deg); } }
@@ -11145,7 +11146,7 @@ setInterval(() => { try { const d = ixWk(); if (d.p && !d.done) ixWkRender(); } 
 #coop .co-sync { display: flex; align-items: center; gap: 8px; justify-content: center; margin: -2px 0 8px; padding: 7px 12px; border-radius: 12px; font: 800 13px system-ui; color: #06202a; background: linear-gradient(90deg, #8ff0ff, #b8ff5c); box-shadow: 0 0 20px rgba(143,240,255,.5); animation: coPulse .8s ease-in-out infinite; }
 #coop .co-sync i { width: 70px; height: 5px; border-radius: 5px; background: rgba(0,0,0,.2); overflow: hidden; } #coop .co-sync i b { display: block; height: 100%; background: #06202a; transform-origin: left; transition: transform 1s linear; }
 #coop .co-big.sync { background: radial-gradient(circle at 50% 35%, #e8fff0, #b8ff5c 70%); color: #0b2a06; box-shadow: 0 0 0 5px rgba(184,255,92,.3), 0 8px 24px rgba(184,255,92,.45); }
-#coop .co-big.sync.armed { animation: coPulse .6s infinite; }
+#coop .co-big.sync.co-armed { animation: coPulse .6s infinite; }
 #coop .co-synfx { position: absolute; inset: 0; z-index: 8; display: grid; place-items: center; pointer-events: none; }
 #coop .co-synfx b { font: 900 clamp(30px, 7vw, 56px) system-ui; color: #b8ff5c; text-shadow: 0 0 20px #b8ff5c, 0 4px 0 #1d4a06; animation: coFloat 1.8s ease-out forwards; }
 #coop .co-build { animation: coBuildFx 1s ease; } @keyframes coBuildFx { 30% { filter: brightness(1.8) drop-shadow(0 0 16px #ffe08a); transform: translateX(-56%) scale(1.06); } }
@@ -11219,7 +11220,7 @@ const coSteps = v => CO_PARTS.reduce((a, p) => a + (v[p.id] || 0), 0);
 
 /* ---------- 1.23.0: Fahrende Szene (bleibt bestehen, damit die Bewegung nie ruckelt) ---------- */
 const CO_KM_CP = 5;
-const coUri = svg => `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+const coUri = svg => `url('data:image/svg+xml,${encodeURIComponent(svg).replace(/'/g, "%27")}')`;
 function coScene() {
   if (CO.scene) return CO.scene;
   const c = (typeof ixWorld === "function" && ixWorld().color) || "#4fe3ff";
@@ -11227,16 +11228,16 @@ function coScene() {
   const mid = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 60" preserveAspectRatio="none">${[[10, 22, 30], [50, 8, 36], [96, 30, 22], [130, 16, 40], [182, 34, 26], [220, 4, 30], [262, 26, 44], [320, 12, 28], [360, 36, 30], [404, 18, 38], [456, 6, 26], [494, 28, 40], [548, 14, 32], [592, 32, 24], [628, 10, 42], [684, 24, 30], [728, 2, 34], [770, 30, 30]].map(([x, y, w]) => `<rect x="${x}" y="${y}" width="${w}" height="${60 - y}" fill="#170f2a"/>` + (y < 20 ? `<rect x="${x + 6}" y="${y + 8}" width="4" height="4" fill="${c}" opacity=".8"/><rect x="${x + w - 10}" y="${y + 18}" width="4" height="4" fill="#ffd34a" opacity=".8"/>` : "")).join("")}</svg>`;
   const posts = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 40" preserveAspectRatio="none"><g fill="#0d0a18">${[60, 260, 460, 660].map(x => `<rect x="${x}" y="4" width="3" height="36"/><rect x="${x}" y="4" width="16" height="3"/>`).join("")}</g>${[60, 260, 460, 660].map(x => `<circle cx="${x + 15}" cy="8" r="3" fill="#ffe08a"/>`).join("")}</svg>`;
   const el = document.createElement("div"); el.id = "coScene"; el.className = "co-road";
-  el.innerHTML = `<div class="co-sun"></div><div class="co-lay co-far" style="background-image:${coUri(far)}"></div><div class="co-lay co-mid" style="background-image:${coUri(mid)}"></div><div class="co-ground"></div><div class="co-lay co-posts" style="background-image:${coUri(posts)}"></div><div class="co-lay co-lane"></div><div class="co-nitro"></div><div class="co-veh"></div><div class="co-speed"></div><div class="co-hud"><span data-stage></span><span class="co-odo"><span data-km></span><i><b data-kmbar></b></i></span></div>`;
+  el.innerHTML = `<div class="co-sun"></div><div class="co-lay co-far" style="background-image:${coUri(far)}"></div><div class="co-lay co-mid" style="background-image:${coUri(mid)}"></div><div class="co-ground"></div><div class="co-lay co-posts" style="background-image:${coUri(posts)}"></div><div class="co-lay co-lane"></div><div class="co-veh"></div><div class="co-speed"></div><div class="co-hud"><span data-stage></span><span class="co-odo"><span data-km></span><i><b data-kmbar></b></i></span></div>`;
   CO.scene = el; CO.sceneV = "";
   setInterval(() => { if (!el.isConnected || document.hidden || reduced || state.lowfx) return; const v = el.querySelector(".co-veh"); if (!v.firstElementChild) return; const r = el.getBoundingClientRect(), q = v.getBoundingClientRect(); const p = document.createElement("i"); p.className = "co-puff"; p.style.left = (q.left - r.left + q.width * .58) + "px"; p.style.top = (q.top - r.top + q.height * .08) + "px"; el.appendChild(p); setTimeout(() => p.remove(), 1250); }, 420);
   return el;
 }
 function coSceneUpdate(v, s) {
   const el = coScene(), key = JSON.stringify(v || {});
-  if (CO.sceneV !== key) { const veh = el.querySelector(".co-veh"), grew = CO.sceneV && coSteps(JSON.parse(CO.sceneV)) < coSteps(v || {}); veh.innerHTML = coTruckSVG(v || {}); CO.sceneV = key;
+  if (CO.sceneV !== key) { const veh = el.querySelector(".co-veh"), grew = CO.sceneV && coSteps(JSON.parse(CO.sceneV)) < coSteps(v || {}); veh.innerHTML = coTruckSVG(v || {}) + '<div class="co-nitro"></div>'; CO.sceneV = key;
     if (grew) { veh.classList.remove("co-build"); void veh.offsetWidth; veh.classList.add("co-build"); try { burstAt(veh, 40, ["#ffe08a", "#ffffff", "#8ff0ff"], 1); sfx.mission(); } catch (e) {} } }
-  el.classList.toggle("fast", !!CO.animating); el.classList.toggle("boost", Date.now() < (CO.boostUntil || 0));
+  el.classList.toggle("co-fast", !!CO.animating); el.classList.toggle("co-boost", Date.now() < (CO.boostUntil || 0));
   const st = el.querySelector("[data-stage]"), km = el.querySelector("[data-km]"), bar = el.querySelector("[data-kmbar]");
   if (s) { const k = s.km || 0, into = k % CO_KM_CP; st.innerHTML = `Koop-Truck · Ausbau <b>${coSteps(v || {})}/15</b>`; km.innerHTML = `Strecke <b>${k.toFixed(1).replace(".", ",")} km</b> · Checkpoint in ${(CO_KM_CP - into).toFixed(1).replace(".", ",")} km`; bar.style.width = (into / CO_KM_CP * 100) + "%"; }
   else { st.innerHTML = "Koop-Truck"; km.innerHTML = "Bereit zur Abfahrt"; bar.style.width = "0%"; }
@@ -11389,15 +11390,15 @@ async function coAnimate(s, id) {
   const bc = s.g.map(col => col.includes("beacon")); let before = 0; const tease = s.g.map((_, i) => { const t = !onlyNudge && i !== s.hold && before >= 2; if (bc[i]) before++; return t; });
   const runs = cols.map((col, i) => new Promise(res => {
     if (i === s.hold || (onlyNudge && i !== s.nudge)) return res();
-    col.classList.add("spin"); col.classList.remove("stopped", "tease");
+    col.classList.add("co-sp"); col.classList.remove("co-stopped", "co-tease");
     const strip = col.querySelector(".co-strip"), K = onlyNudge ? 1 : (tease[i] ? 16 : 8) + i * 3;
     const extra = Array.from({ length: K }, () => coPick());
     strip.innerHTML = s.g[i].concat(extra).map(x => `<div class="cell">${coSvg(x)}</div>`).join("");
     strip.style.transition = "none"; strip.style.transform = `translateY(${-K * cc}px)`; void strip.offsetHeight;
     const d = quick ? 120 : (onlyNudge ? 280 : 520 + i * 170 + (tease[i] ? 900 : 0));
-    if (tease[i] && !quick) setTimeout(() => { if (id === CO.anim) { col.classList.add("tease"); try { tone(330, .3, { type: "sawtooth", vol: .03 }); } catch (e) {} } }, 520 + (i - 1) * 170);
+    if (tease[i] && !quick) setTimeout(() => { if (id === CO.anim) { col.classList.add("co-tease"); try { tone(330, .3, { type: "sawtooth", vol: .03 }); } catch (e) {} } }, 520 + (i - 1) * 170);
     strip.style.transition = `transform ${d}ms cubic-bezier(.25,.75,.3,1.12)`; strip.style.transform = "translateY(0)";
-    setTimeout(() => { col.classList.remove("spin", "tease"); if (id !== CO.anim) return res(); col.classList.add("stopped"); try { sfx.stop(); } catch (e) {} strip.innerHTML = s.g[i].map(x => `<div class="cell">${coSvg(x)}</div>`).join(""); strip.style.transition = "none"; strip.style.transform = ""; res(); }, d);
+    setTimeout(() => { col.classList.remove("co-sp", "co-tease"); if (id !== CO.anim) return res(); col.classList.add("co-stopped"); try { sfx.stop(); } catch (e) {} strip.innerHTML = s.g[i].map(x => `<div class="cell">${coSvg(x)}</div>`).join(""); strip.style.transition = "none"; strip.style.transform = ""; res(); }, d);
   }));
   await Promise.all(runs);
 }
@@ -11426,7 +11427,7 @@ function coSynFx() { const m = document.querySelector("#coop .co-mach"); if (!m)
 function coWinFx(s) {
   const m = document.querySelector("#coop .co-mach"), w = $("coWin"); if (!s.win) return;
   coLines(s); coCoins(Math.min(24, 6 + Math.round(s.win / Math.max(1, s.bet)))); coBoost(s.win / Math.max(1, s.bet) >= 10 ? 2600 : 1400);
-  if (m) { m.classList.add("hot"); clearTimeout(CO.hotT); CO.hotT = setTimeout(() => m.classList.remove("hot"), 2600); }
+  if (m) { m.classList.add("co-hot"); clearTimeout(CO.hotT); CO.hotT = setTimeout(() => m.classList.remove("co-hot"), 2600); }
   const x = s.win / Math.max(1, s.bet), big = x >= 10, mega = x >= 25;
   try { mega ? sfx.fanfare(2) : big ? sfx.fanfare(1) : sfx.small(); } catch (e) {}
   if (w) { const t0 = performance.now(), dur = big ? 1200 : 500; const step = t => { const k = Math.min(1, (t - t0) / dur); w.textContent = fmtN(Math.round(s.win * k)); if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
@@ -11458,7 +11459,7 @@ function coRender(keepSpin) {
   let turn = "", ctrl = "", big = "", lim = 0;
   const syncOn = !!(s.sync && Date.now() - (s.sync.t || 0) < 6000), syncMine = syncOn && s.sync.u === me;
   if (s.phase === "bet") { turn = isP ? (syncOn ? "Dein Partner zieht mit – jetzt drehen für ×2!" : "Du bist Pilot: Einsatz wählen und drehen!") : syncMine ? `Du ziehst mit – ${coName(R.pilot)} muss jetzt drehen!` : `${coName(R.pilot)} ist Pilot. Zieh mit für ×2!`;
-    big = isP || solo ? `<button type="button" class="co-big${syncOn ? " sync armed" : ""}" data-co="spin" ${!isP || s.kasse < s.bet || CO.animating ? "disabled" : ""}>${syncOn ? "×2 Drehen" : coEsc(spinLbl)}</button>` : `<button type="button" class="co-big sync${syncMine ? " armed" : ""}" data-co="sync" ${syncOn || CO.animating ? "disabled" : ""}>${syncMine ? "Zieht mit ✓" : "Mit-ziehen"}</button>`; }
+    big = isP || solo ? `<button type="button" class="co-big${syncOn ? " sync co-armed" : ""}" data-co="spin" ${!isP || s.kasse < s.bet || CO.animating ? "disabled" : ""}>${syncOn ? "×2 Drehen" : coEsc(spinLbl)}</button>` : `<button type="button" class="co-big sync${syncMine ? " co-armed" : ""}" data-co="sync" ${syncOn || CO.animating ? "disabled" : ""}>${syncMine ? "Zieht mit ✓" : "Mit-ziehen"}</button>`; }
   if (s.phase === "hold") { turn = isM ? "Du bist Mechaniker: Walze halten (Rest dreht nach) oder eine Walze stupsen!" : `${coName(R.mech)} ist Mechaniker und entscheidet …`; lim = CO_TH * coSl(); big = `<button type="button" class="co-big pass" data-co="pass" ${!isM || CO.animating ? "disabled" : ""}>Passt so</button>`; }
   if (vbusy) { const mine = (s.pick || {})[me]; lim = CO_T * coSl(); turn = "TRESOR! Wählt alle gleichzeitig eine Truhe – gleiche Schätze bringen 30×."; ctrl = `<div class="vault">${[0, 1, 2, 3].map(i => `<button type="button" data-vault="${i}" class="${mine === i ? "mine" : ""}" ${mine != null ? "disabled" : ""}>${mine === i ? "✓" : "?"}</button>`).join("")}</div><small>${Object.keys(s.pick || {}).length} von ${o.filter(coAlive).length} haben gewählt.</small>`; big = `<button type="button" class="co-big" disabled>Tresor</button>`; }
   const vr = s.vres && Date.now() - s.vres.t < 6000 ? `<div class="vault">${s.vres.syms.map(x => `<button type="button" disabled>${coSvg(x)}</button>`).join("")}</div>` : "";
@@ -12325,12 +12326,12 @@ function wardHTML() {
   return `<div class="cp-card"><div class="cp-kick">${CT.ward}</div><p style="margin:4px 0 14px;opacity:.85">${CT.hint} · ${campCur()}: <b>${have}</b></p><div class="cp-ward">${CT.wear.map(it => {
     const own = W.own.includes(it.id), on = W.hat === it.id || W.aura === it.id, base = svg ? svg.cloneNode(true) : null;
     let pv = ""; if (base) { base.removeAttribute("id"); base.querySelectorAll(".bip-wear").forEach(g => g.remove()); pv = base.outerHTML.replace("</svg>", wearGroup(svg, it.id) + "</svg>"); }
-    const btn = it.camp && !own ? `<small>${CT.title}</small>` : it.globe && !own ? `<small>${CT.glob.cost.replace("{g}", it.globe)}</small>` : !own ? `<button type="button" class="cp-cbtn cp-main" data-wear="${it.id}" data-do="buy" ${have < it.c ? "disabled style='opacity:.45'" : ""}>${CT.buy} · ${it.c}</button>` : on ? `<button type="button" class="cp-cbtn" data-wear="${it.id}" data-do="off">${CT.off}</button>` : `<button type="button" class="cp-cbtn cp-main" data-wear="${it.id}" data-do="on">${CT.wear}</button>`;
+    const btn = it.season && !own ? `<small>Saison-Pass Stufe ${it.season}</small>` : it.camp && !own ? `<small>${CT.title}</small>` : it.globe && !own ? `<small>${CT.glob.cost.replace("{g}", it.globe)}</small>` : !own ? `<button type="button" class="cp-cbtn cp-main" data-wear="${it.id}" data-do="buy" ${have < it.c ? "disabled style='opacity:.45'" : ""}>${CT.buy} · ${it.c}</button>` : on ? `<button type="button" class="cp-cbtn" data-wear="${it.id}" data-do="off">${CT.off}</button>` : `<button type="button" class="cp-cbtn cp-main" data-wear="${it.id}" data-do="on">${CT.wear}</button>`;
     return `<div class="cp-wi ${on ? "cp-on" : ""}"><div class="cp-pv${it.aura ? " " + ({ spark: "aura-spark", rainbow: "aura-rainbow", snowaura: "aura-snow" }[it.id] || "") : ""}" style="${it.aura ? "" : ""}">${pv}</div><b>${it.n}</b>${on ? `<small style="color:#ffd46a">${CT.worn}</small>` : ""}${btn}</div>`; }).join("")}</div></div>`;
 }
 function wearAct(id, how) {
   const W = wearLoad(), it = CT.wear.find(x => x.id === id); if (!it) return;
-  if (how === "buy") { if ((state.dust || 0) < it.c || W.own.includes(id)) return; state.dust -= it.c; try { renderDust(false); saveGame(); } catch (e) {} W.own.push(id); how = "on"; try { sfx.fanfare(0); } catch (e) {} }
+  if (how === "buy") { if (it.season || it.camp || it.globe || (state.dust || 0) < it.c || W.own.includes(id)) return; state.dust -= it.c; try { renderDust(false); saveGame(); } catch (e) {} W.own.push(id); how = "on"; try { sfx.fanfare(0); } catch (e) {} }
   if (how === "on") { if (it.aura) W.aura = id; else W.hat = id; }
   if (how === "off") { if (W.aura === id) W.aura = null; if (W.hat === id) W.hat = null; }
   wearSave(W); wearApply(); campRender(); try { sfx.click(); } catch (e) {}
@@ -12702,14 +12703,14 @@ const LR_RARE = (() => { try { return JSON.parse(new TextDecoder().decode(Uint8A
 #wkEv .wk-tx { min-width: 0; flex: 1; } #wkEv .wk-tx small { display: block; font: 800 .62rem system-ui; letter-spacing: .14em; text-transform: uppercase; color: var(--wc); }
 #wkEv .wk-tx b { display: block; font: 800 .95rem system-ui; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #wkEv .wk-fx { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; } #wkEv .wk-fx span { padding: 1px 7px; border-radius: 99px; font: 700 .68rem system-ui; background: rgba(120,255,160,.14); color: #a9ffc8; }
-#wkEv .wk-fx span.neg { background: rgba(255,170,90,.14); color: #ffc58f; }
+#wkEv .wk-fx span.wk-neg { background: rgba(255,170,90,.14); color: #ffc58f; }
 #wkEv .wk-left { flex: none; text-align: right; font: 700 .7rem system-ui; color: rgba(255,255,255,.65); } #wkEv .wk-left b { display: block; font: 800 .9rem system-ui; color: #fff; }
 #wkEv .wk-gain { position: absolute; right: 12px; top: -4px; font: 900 .8rem system-ui; color: #a9ffc8; pointer-events: none; animation: wkGain 1.4s ease-out forwards; }
 @keyframes wkShine { from { background-position: 150% 0; } to { background-position: -100% 0; } }
 @keyframes wkBob { 50% { transform: translateY(-2px) rotate(-4deg); } }
 @keyframes wkGain { from { opacity: 0; transform: translateY(14px); } 20% { opacity: 1; } to { opacity: 0; transform: translateY(-16px); } }
 .wk-card { display: grid; gap: 10px; text-align: left; } .wk-card .wk-row { display: flex; gap: 12px; align-items: center; padding: 12px; border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
-.wk-card .wk-row.now { border-color: var(--wc); box-shadow: 0 0 0 1px var(--wc) inset; } .wk-card .wk-row .wk-ic { width: 44px; height: 44px; flex: none; border-radius: 12px; display: grid; place-items: center; background: rgba(0,0,0,.3); }
+.wk-card .wk-row.wk-now { border-color: var(--wc); box-shadow: 0 0 0 1px var(--wc) inset; } .wk-card .wk-row .wk-ic { width: 44px; height: 44px; flex: none; border-radius: 12px; display: grid; place-items: center; background: rgba(0,0,0,.3); }
 .wk-card .wk-row .wk-ic svg { width: 28px; height: 28px; } .wk-card h4 { margin: 0; font: 800 .95rem system-ui; } .wk-card h4 small { display: block; font: 700 .66rem system-ui; letter-spacing: .1em; text-transform: uppercase; opacity: .65; }
 .wk-card p { margin: 3px 0 0; font: 500 .8rem/1.4 system-ui; opacity: .8; }
 .boost .wk-tag { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); padding: 1px 8px; border-radius: 99px; font: 800 .58rem system-ui; letter-spacing: .08em; text-transform: uppercase; background: #a9ffc8; color: #04210f; white-space: nowrap; }
@@ -12718,7 +12719,7 @@ const LR_RARE = (() => { try { return JSON.parse(new TextDecoder().decode(Uint8A
 #rmOv .rm-rays { position: absolute; left: 50%; top: 45%; width: 220vmax; height: 220vmax; margin: -110vmax 0 0 -110vmax; background: repeating-conic-gradient(rgba(255,210,90,.16) 0 7deg, transparent 7deg 18deg); animation: rmSpin 18s linear infinite; }
 #rmOv .rm-glow { position: absolute; left: 50%; top: 45%; width: 70vmin; height: 70vmin; margin: -35vmin 0 0 -35vmin; border-radius: 50%; background: radial-gradient(circle, rgba(255,220,120,.55), transparent 65%); animation: rmPulse 1.6s ease-in-out infinite; }
 #rmOv .rm-art { position: absolute; left: 50%; top: 40%; width: min(64vmin, 420px); transform: translate(-50%, -50%); filter: drop-shadow(0 0 30px rgba(255,200,80,.8)); }
-#rmOv .rm-art.fly { animation: rmFly 2.4s cubic-bezier(.2,.8,.3,1) both; }
+#rmOv .rm-art.rm-fly { animation: rmFly 2.4s cubic-bezier(.2,.8,.3,1) both; }
 #rmOv .rm-box { position: relative; z-index: 3; margin-top: 52vmin; text-align: center; color: #fff; padding: 0 16px; }
 #rmOv .rm-kick { font: 800 .8rem system-ui; letter-spacing: .3em; text-transform: uppercase; color: #ffe08a; animation: rmUp .5s .9s both; }
 #rmOv h2 { margin: 6px 0 4px; font: 900 clamp(1.8rem, 7vw, 3.4rem)/1 var(--f-display, system-ui); background: linear-gradient(180deg, #fff6d0, #ffd166 45%, #c98a1a); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 4px 0 rgba(0,0,0,.4)); animation: rmZoom .7s 1.1s cubic-bezier(.2,1.5,.4,1) both; }
@@ -12736,12 +12737,12 @@ const LR_RARE = (() => { try { return JSON.parse(new TextDecoder().decode(Uint8A
 .ts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 8px; }
 .ts-c { position: relative; display: grid; gap: 6px; padding: 10px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); transition: transform .2s, border-color .2s; }
 .ts-c.t1 { border-color: rgba(205,127,50,.55); } .ts-c.t2 { border-color: rgba(200,210,225,.6); } .ts-c.t3 { border-color: rgba(255,209,102,.7); } .ts-c.t4 { border-color: rgba(150,240,255,.85); box-shadow: 0 0 18px rgba(150,240,255,.25); }
-.ts-c.flash { animation: tsFlash 1.2s ease; }
+.ts-c.ts-flash { animation: tsFlash 1.2s ease; }
 .ts-c .ts-h { display: flex; gap: 8px; align-items: center; min-width: 0; } .ts-c .ts-h svg { width: 26px; height: 26px; flex: none; }
 .ts-c .ts-h b { font: 800 .8rem system-ui; line-height: 1.2; } .ts-c .ts-h small { display: block; font: 600 .66rem system-ui; opacity: .65; }
 .ts-m { display: flex; gap: 5px; } .ts-m i { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font: 900 .55rem system-ui; color: rgba(0,0,0,.65); background: rgba(255,255,255,.08); border: 1px dashed rgba(255,255,255,.25); }
-.ts-m i.on { border: 0; } .ts-m i.on.m1 { background: radial-gradient(circle at 35% 35%, #f3c08a, #cd7f32 60%, #7a4614); } .ts-m i.on.m2 { background: radial-gradient(circle at 35% 35%, #ffffff, #c4ccd8 60%, #7a8494); }
-.ts-m i.on.m3 { background: radial-gradient(circle at 35% 35%, #fff6c8, #ffd166 60%, #a8770a); } .ts-m i.on.m4 { background: radial-gradient(circle at 35% 35%, #ffffff, #9ff0ff 55%, #4a8fb0); box-shadow: 0 0 8px #9ff0ff; }
+.ts-m i.ts-on { border: 0; } .ts-m i.ts-on.m1 { background: radial-gradient(circle at 35% 35%, #f3c08a, #cd7f32 60%, #7a4614); } .ts-m i.ts-on.m2 { background: radial-gradient(circle at 35% 35%, #ffffff, #c4ccd8 60%, #7a8494); }
+.ts-m i.ts-on.m3 { background: radial-gradient(circle at 35% 35%, #fff6c8, #ffd166 60%, #a8770a); } .ts-m i.ts-on.m4 { background: radial-gradient(circle at 35% 35%, #ffffff, #9ff0ff 55%, #4a8fb0); box-shadow: 0 0 8px #9ff0ff; }
 .ts-bar { height: 5px; border-radius: 9px; background: rgba(255,255,255,.08); overflow: hidden; } .ts-bar b { display: block; height: 100%; border-radius: 9px; background: linear-gradient(90deg, #ffc94a, #ffe08a); transition: width .6s; }
 .ts-c .ts-n { font: 700 .66rem system-ui; opacity: .7; }
 @keyframes tsFlash { 30% { transform: scale(1.06); box-shadow: 0 0 30px rgba(255,209,102,.6); } }
@@ -12806,10 +12807,10 @@ function wkRender() {
   const r = document.querySelector(".machine .radio"); if (!r) return;
   let el = $("wkEv"); if (!el) { r.insertAdjacentHTML("afterend", `<div id="wkEv" role="button" tabindex="0" aria-label="Wochen-Ereignis – Details"></div>`); el = $("wkEv"); el.addEventListener("click", wkOpen); el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); wkOpen(); } }); }
   const w = wkInfo(0); el.style.setProperty("--wc", w.color);
-  el.innerHTML = `<div class="wk-ic">${ICONS[w.icon] || ""}</div><div class="wk-tx"><small>Wochen-Ereignis</small><b>${w.name}</b><div class="wk-fx">${w.fx.map(([t, g]) => `<span class="${g ? "" : "neg"}">${t}</span>`).join("")}</div></div><div class="wk-left">noch<b>${wkLeft(w.end - Date.now())}</b></div>`;
+  el.innerHTML = `<div class="wk-ic">${ICONS[w.icon] || ""}</div><div class="wk-tx"><small>Wochen-Ereignis</small><b>${w.name}</b><div class="wk-fx">${w.fx.map(([t, g]) => `<span class="${g ? "" : "wk-neg"}">${t}</span>`).join("")}</div></div><div class="wk-left">noch<b>${wkLeft(w.end - Date.now())}</b></div>`;
 }
 function wkOpen() {
-  const row = (w, lbl, now) => `<div class="wk-row${now ? " now" : ""}" style="--wc:${w.color}"><div class="wk-ic">${ICONS[w.icon] || ""}</div><div><h4><small>${lbl}</small>${w.name}</h4><p>${w.desc}</p><div class="wk-fx" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${w.fx.map(([t, g]) => `<span style="padding:1px 7px;border-radius:99px;font:700 .7rem system-ui;background:${g ? "rgba(120,255,160,.14);color:#a9ffc8" : "rgba(255,170,90,.14);color:#ffc58f"}">${t}</span>`).join("")}</div></div></div>`;
+  const row = (w, lbl, now) => `<div class="wk-row${now ? " wk-now" : ""}" style="--wc:${w.color}"><div class="wk-ic">${ICONS[w.icon] || ""}</div><div><h4><small>${lbl}</small>${w.name}</h4><p>${w.desc}</p><div class="wk-fx" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${w.fx.map(([t, g]) => `<span style="padding:1px 7px;border-radius:99px;font:700 .7rem system-ui;background:${g ? "rgba(120,255,160,.14);color:#a9ffc8" : "rgba(255,170,90,.14);color:#ffc58f"}">${t}</span>`).join("")}</div></div></div>`;
   const a = wkInfo(0), b = wkInfo(1);
   openBonus({ id: "crystal", color: a.color }, "Wochen-Ereignis", `Jede Woche gilt in jeder Welt eine andere Regel. Montags wechselt sie.`);
   const card = $("bonusBody"); if (!card) return; try { $("bonusTotal").textContent = ""; } catch (e) {}
@@ -12843,7 +12844,7 @@ function rmShow() {
   const ov = document.createElement("div"); ov.id = "rmOv"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true"); ov.setAttribute("aria-label", W.n);
   const coins = Array.from({ length: 34 }, () => `<i class="rm-c" style="left:${(Math.random() * 100).toFixed(1)}%;animation-duration:${(2.2 + Math.random() * 2.5).toFixed(2)}s;animation-delay:${(Math.random() * 2.5).toFixed(2)}s;transform:scale(${(.6 + Math.random() * .8).toFixed(2)})"></i>`).join("");
   const sparks = Array.from({ length: 26 }, () => `<i class="rm-s" style="left:${(Math.random() * 100).toFixed(1)}%;top:${(Math.random() * 100).toFixed(1)}%;animation-delay:${(Math.random() * 1.4).toFixed(2)}s"></i>`).join("");
-  ov.innerHTML = `<div class="rm-rays"></div><div class="rm-glow"></div>${sparks}${coins}<div class="rm-art fly">${RM_ART[W.a] || RM_ART.comet}</div>
+  ov.innerHTML = `<div class="rm-rays"></div><div class="rm-glow"></div>${sparks}${coins}<div class="rm-art rm-fly">${RM_ART[W.a] || RM_ART.comet}</div>
     <div class="rm-box"><div class="rm-kick">Seltener Moment · ${state.rare}. Mal</div><h2>${W.n}!</h2><p>${W.t}</p><div class="rm-amt"><span id="rmAmt">0</span><small>+${dust} Sternenstaub · neuer Eintrag im Sammelbuch</small></div><button type="button" id="rmGo">Einsammeln</button></div>`;
   document.body.appendChild(ov);
   try { sfx.fanfare(2); setTimeout(() => { try { sfx.fanfare(1); } catch (x) {} }, 900); } catch (e) {}
@@ -12906,8 +12907,8 @@ function tsPop(a, k) {
 function tsRender(flash) {
   const box = $("tsGrid"); if (!box) return; const T = tsState();
   box.innerHTML = TS.map(a => { const lv = T[a.id] | 0; let v = 0; try { v = a.get(); } catch (e) {} const next = a.t[Math.min(3, lv)], prev = lv ? a.t[lv - 1] : 0, pct = lv >= 4 ? 100 : Math.max(0, Math.min(100, (v - prev) / (next - prev) * 100));
-    return `<div class="ts-c t${lv}${flash && flash.includes(a.id) ? " flash" : ""}" title="${a.name}: Bronze ${fmtN(a.t[0])} · Silber ${fmtN(a.t[1])} · Gold ${fmtN(a.t[2])} · Platin ${fmtN(a.t[3])}"><div class="ts-h">${ICONS[a.icon] || ""}<div><b>${a.name}</b><small>${lv ? TS_MEDAL[lv - 1][0] : "Noch keine Medaille"}</small></div></div>
-      <div class="ts-m">${TS_MEDAL.map((m, i) => `<i class="m${i + 1}${lv > i ? " on" : ""}" title="${m[0]}: ${fmtN(a.t[i])}">${lv > i ? "" : i + 1}</i>`).join("")}</div>
+    return `<div class="ts-c t${lv}${flash && flash.includes(a.id) ? " ts-flash" : ""}" title="${a.name}: Bronze ${fmtN(a.t[0])} · Silber ${fmtN(a.t[1])} · Gold ${fmtN(a.t[2])} · Platin ${fmtN(a.t[3])}"><div class="ts-h">${ICONS[a.icon] || ""}<div><b>${a.name}</b><small>${lv ? TS_MEDAL[lv - 1][0] : "Noch keine Medaille"}</small></div></div>
+      <div class="ts-m">${TS_MEDAL.map((m, i) => `<i class="m${i + 1}${lv > i ? " ts-on" : ""}" title="${m[0]}: ${fmtN(a.t[i])}">${lv > i ? "" : i + 1}</i>`).join("")}</div>
       <div class="ts-bar"><b style="width:${pct}%"></b></div><div class="ts-n">${lv >= 4 ? `${fmtN(v)} · alles geschafft` : `${fmtN(Math.min(v, next))} / ${fmtN(next)} → ${TS_MEDAL[lv][0]} (+${fmtN(TS_PAY[lv])})`}</div></div>`; }).join("");
   const c = $("tsCount"); if (c) { const n = Object.values(T).reduce((s, x) => s + (x | 0), 0); c.textContent = `${n} / ${TS.length * 4} Medaillen`; }
 }
@@ -12921,6 +12922,215 @@ function tsRender(flash) {
 setTimeout(() => setInterval(() => { if (!(typeof spinning !== "undefined" && spinning)) tsCheck(false); }, 4000), 5000);
 if (typeof serialize === "function") { const seL = serialize; serialize = function () { const d = seL.apply(this, arguments); try { d.tiers = tsState(); d.rare = rmCount(); } catch (e) {} return d; }; }
 if (typeof applySave === "function") { const apL = applySave; applySave = function (d) { const r = apL.apply(this, arguments); try { if (d && d.tiers && typeof d.tiers === "object") state.tiers = { ...d.tiers }; else { state.tiers = {}; tsBackfill = true; tsFirst = true; } if (d && d.rare) state.rare = d.rare | 0; tsRender(); } catch (e) {} return r; }; }
+
+/* =================== Langzeit B: Kampagnen-Sterne, Bonuskapitel, Saison-Pass =================== */
+const LB = (() => { try { return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob("eyJiIjogW3sidCI6ICJFY2hvIGRlciBBdXJvcmEiLCAicyI6ICJEYXMgYWx0ZSBTaWduYWwgaXN0IHdpZWRlciBkYSDigJMgc3TDpHJrZXIgYWxzIGplIHp1dm9yLiBXZXIgZXMgZHJlaW1hbCBlaW5mw6RuZ3QsIGZpbmRldCBkYXMgTG9nYnVjaCBkZXIgQXVyb3JhLiIsICJrIjogImZzIiwgIm4iOiAzLCAiZCI6ICJMw7ZzZSAzLW1hbCBGcmVpc3BpZWxlIGF1cyJ9LCB7InQiOiAiRGVyIFJpZXNlbmZhbmciLCAicyI6ICJEcmF1w59lbiBhdWYgaG9oZXIgU2VlIHdhcnRldCBkZXIgZ3LDtsOfdGUgRmFuZyBkZWluZXMgTGViZW5zLiBEcmVpIHJpY2h0aWcgZ3Jvw59lIEdld2lubmUhIiwgImsiOiAiYmlnd2luIiwgIm4iOiAzLCAiZCI6ICJFcnppZWxlIDMgR2V3aW5uZSBhYiAxMMOXIEVpbnNhdHoifSwgeyJ0IjogIkVpc2VybmUgTmVydmVuIiwgInMiOiAiTnVyIHdlciBsYW5nZSBhbSBTdMO8Y2sgZ2V3aW5udCwga29tbXQgaGludGVyIGRpZSBsZXR6dGUgTGluaWUuIiwgImsiOiAic3RyZWFrIiwgIm4iOiA0LCAiZCI6ICJTY2hhZmZlIDQgR2V3aW5uLVN0csOkaG5lbiJ9LCB7InQiOiAiU2t5bGluZS1NZWlzdGVyIiwgInMiOiAiRGllIFN0YWR0IHdpbGwgVm9sbHRyZWZmZXIgc2VoZW4g4oCTIGVpbmVuIG5hY2ggZGVtIGFuZGVyZW4uIiwgImsiOiAiZm91ciIsICJuIjogOCwgImQiOiAiTGFuZGUgOCBHZXdpbm5lIG1pdCA0IG9kZXIgNSBHbGVpY2hlbiJ9LCB7InQiOiAiTmVvbi1MZWdlbmRlIiwgInMiOiAiRWluIGxldHp0ZXMgUmVubmVuIGVudGxhbmcgZGVyIEvDvHN0ZS4gVmllciBncm/Dn2UgR2V3aW5uZSwgdW5kIGR1IGJpc3QgTGVnZW5kZS4iLCAiayI6ICJiaWd3aW4iLCAibiI6IDQsICJkIjogIkVyemllbGUgNCBHZXdpbm5lIGFiIDEww5cgRWluc2F0eiJ9XSwgInMiOiBbIlN0ZXJuZW5zdGF1Yi1TdHVybSIsICJHb2xkZW5lIEdlemVpdGVuIiwgIlJvc3QgdW5kIFJ1aG0iLCAiTGljaHRlciBkZXIgTmFjaHQiLCAiTmVvbmZpZWJlciIsICJFaXNrYWx0ZSBCZXJndW5nIiwgIkZyw7xobGluZ3NmdW5rZW4iLCAiU29tbWVyZ2x1dCJdfQ=="), c => c.charCodeAt(0)))); } catch (e) { return { b: [], s: ["Saison"] }; } })();
+(function lbCss() { const st = document.createElement("style"); st.textContent = `
+#camp .cs-card { display: grid; gap: 12px; }
+#camp .cs-goals { display: grid; gap: 6px; } #camp .cs-goal { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: rgba(255,255,255,.05); font: 600 14px system-ui; }
+#camp .cs-goal i { font-style: normal; font-size: 20px; color: rgba(255,255,255,.25); transition: color .3s, text-shadow .3s; } #camp .cs-goal.cs-ok i { color: #ffd46a; text-shadow: 0 0 10px #ffb84a; }
+#camp .cs-goal small { margin-left: auto; opacity: .7; font-weight: 700; }
+#camp .cs-acts { display: grid; gap: 8px; } #camp .cs-act { display: grid; gap: 6px; padding: 10px 12px; border-radius: 14px; background: rgba(0,0,0,.2); border: 1px solid rgba(255,255,255,.08); }
+#camp .cs-act h4 { display: flex; align-items: center; gap: 8px; margin: 0; font: 800 14px system-ui; } #camp .cs-act h4 span { margin-left: auto; color: #ffd46a; }
+#camp .cs-chs { display: flex; gap: 6px; flex-wrap: wrap; }
+#camp .cs-ch { display: flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 99px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.05); color: #fff; font: 700 12px system-ui; cursor: pointer; }
+#camp .cs-ch b { letter-spacing: 1px; color: #ffd46a; } #camp .cs-ch:disabled { opacity: .45; cursor: default; } #camp .cs-ch.cs-full { border-color: rgba(255,212,106,.5); }
+#camp .cs-ch.cs-bon { background: linear-gradient(135deg, rgba(255,212,106,.25), rgba(255,122,217,.25)); border-color: #ffd46a; } #camp .cs-ch.cs-bon:disabled { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.15); }
+#camp .cs-run { padding: 14px; border-radius: 16px; background: linear-gradient(135deg, rgba(122,92,255,.25), rgba(255,122,217,.18)); border: 1.5px solid rgba(255,212,106,.55); box-shadow: 0 0 24px rgba(255,212,106,.15); }
+#camp .cs-node-st { font: 800 9px system-ui; fill: #ffd46a; letter-spacing: .5px; }
+#campWin .cs-stars { display: flex; justify-content: center; gap: 10px; margin: 6px 0; } #campWin .cs-stars i { font-style: normal; font-size: 40px; color: rgba(255,255,255,.18); }
+#campWin .cs-stars i.cs-on { color: #ffd46a; text-shadow: 0 0 16px #ffb84a; animation: csStar .6s cubic-bezier(.3,1.6,.5,1) both; } @keyframes csStar { from { transform: scale(0) rotate(-180deg); } }
+/* Saison-Pass */
+#spPill { position: relative; }
+#spPass { position: fixed; inset: 0; z-index: 2147479100; overflow-y: auto; color: #eef; font: 15px/1.5 system-ui, sans-serif; background: radial-gradient(900px 500px at 20% -10%, color-mix(in srgb, var(--spc) 40%, transparent), transparent 60%), radial-gradient(700px 500px at 100% 100%, #2b1048, transparent 60%), #08071a; }
+#spPass[hidden] { display: none; }
+#spPass .sp-cw { max-width: 1100px; margin: 0 auto; padding: 18px 16px 40px; display: grid; gap: 16px; }
+#spPass .sp-hd { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; } #spPass .sp-hd h2 { margin: 0; flex: 1; font: 900 clamp(22px, 4vw, 32px) system-ui; } #spPass .sp-hd h2 small { display: block; font: 800 12px system-ui; letter-spacing: .16em; text-transform: uppercase; color: var(--spc); }
+#spPass .sp-x { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.06); color: #fff; font: 700 18px system-ui; cursor: pointer; }
+#spPass .sp-top { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; padding: 16px; border-radius: 20px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
+#spPass .sp-ring { position: relative; width: 110px; height: 110px; } #spPass .sp-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+#spPass .sp-ring b { position: absolute; inset: 0; display: grid; place-items: center; font: 900 34px system-ui; } #spPass .sp-ring small { position: absolute; left: 0; right: 0; bottom: 18px; text-align: center; font: 800 10px system-ui; letter-spacing: .14em; text-transform: uppercase; opacity: .7; }
+#spPass .sp-info p { margin: 2px 0; opacity: .85; } #spPass .sp-info .sp-badges { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+#spPass .sp-badge { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 99px; font: 800 12px system-ui; background: rgba(255,255,255,.06); opacity: .45; } #spPass .sp-badge.sp-on { opacity: 1; box-shadow: 0 0 14px color-mix(in srgb, var(--bc) 50%, transparent); }
+#spPass .sp-badge i { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff, var(--bc) 60%, #333); }
+#spPass .sp-track { display: grid; grid-auto-flow: column; grid-auto-columns: 96px; gap: 8px; overflow-x: auto; padding: 18px 4px 12px; scroll-snap-type: x proximity; }
+#spPass .sp-n { position: relative; scroll-snap-align: center; display: grid; justify-items: center; gap: 6px; padding: 10px 6px; border-radius: 16px; background: rgba(255,255,255,.04); border: 1.5px solid rgba(255,255,255,.1); text-align: center; font: 700 12px system-ui; }
+#spPass .sp-n .sp-lv { position: absolute; top: -10px; padding: 1px 8px; border-radius: 99px; font: 900 11px system-ui; background: #2a2650; border: 1px solid rgba(255,255,255,.2); }
+#spPass .sp-n .sp-ic { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; background: rgba(0,0,0,.3); font-size: 24px; } #spPass .sp-n .sp-ic svg { width: 32px; height: 32px; }
+#spPass .sp-n.sp-big { border-color: color-mix(in srgb, var(--spc) 60%, transparent); background: color-mix(in srgb, var(--spc) 12%, transparent); }
+#spPass .sp-n.sp-reach { border-color: #ffd46a; box-shadow: 0 0 18px rgba(255,212,106,.35); animation: spGlow 1.4s ease-in-out infinite; } @keyframes spGlow { 50% { box-shadow: 0 0 4px rgba(255,212,106,.15); } }
+#spPass .sp-n.sp-got { opacity: .55; } #spPass .sp-n.sp-got::after { content: "✓"; position: absolute; right: 6px; top: 4px; color: #8fe9a8; font: 900 14px system-ui; }
+#spPass .sp-n button { padding: 5px 10px; border-radius: 99px; border: 0; font: 800 11px system-ui; background: linear-gradient(135deg, #ffd46a, #ff8a5c); color: #2a1200; cursor: pointer; }
+#spPass .sp-row { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; } @media (max-width: 760px) { #spPass .sp-row { grid-template-columns: 1fr; } #spPass .sp-top { grid-template-columns: 1fr; justify-items: center; text-align: center; } }
+#spPass .sp-card { padding: 16px; border-radius: 20px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); } #spPass .sp-card h3 { margin: 0 0 10px; font: 800 16px system-ui; }
+#spPass .sp-earn { display: grid; gap: 6px; } #spPass .sp-earn div { display: flex; justify-content: space-between; padding: 6px 10px; border-radius: 10px; background: rgba(0,0,0,.2); font: 600 13px system-ui; } #spPass .sp-earn b { color: var(--spc); }
+#spPass .sp-lb { display: grid; gap: 4px; } #spPass .sp-lb div { display: grid; grid-template-columns: 30px 1fr auto; gap: 8px; align-items: center; padding: 6px 10px; border-radius: 10px; background: rgba(0,0,0,.2); font: 600 13px system-ui; }
+#spPass .sp-lb div.me { background: color-mix(in srgb, var(--spc) 25%, transparent); } #spPass .sp-lb b { font: 900 13px ui-monospace, monospace; }
+#spPass .sp-all { padding: 10px 20px; border-radius: 99px; border: 0; font: 800 14px system-ui; background: linear-gradient(135deg, #ffd46a, #ff8a5c); color: #2a1200; cursor: pointer; }
+.sp-gain { position: fixed; z-index: 2147480700; pointer-events: none; font: 900 13px system-ui; color: var(--spc, #ffd46a); text-shadow: 0 1px 3px #000; animation: wkGain 1.5s ease-out forwards; }
+html.a11y-rm :is(#spPass *, #camp .cs-card *, #campWin .cs-stars *) { animation: none !important; }
+`; document.head.appendChild(st); })();
+
+/* ---------------- B1: Sterne pro Kapitel, Wiederholen, Bonuskapitel ---------------- */
+const CS_PAR = { laser: 25, upgrade: 0, fs: 110, symwin: 2.5, four: 30, bonus: 140, bigwin: 70, haul: 2.6, streak: 22, spins: 0 };
+const csLoad = () => { let d = null; try { d = JSON.parse(localStorage.getItem("welten-campx") || "null"); } catch (e) {} d = Object.assign({ stars: {}, bonus: {}, r: null, cur: null }, d || {}); return d; };
+const csSave = d => { try { localStorage.setItem("welten-campx", JSON.stringify(d)); } catch (e) {} };
+const csKey = (a, c) => a + "." + c;
+const csChDef = (a, c) => c === 4 ? LB.b[a] : (CT.acts[a] || {}).ch ? CT.acts[a].ch[c] : null;
+function csGoals(ch) { const par = Math.max(8, Math.round((CS_PAR[ch.k] || 0) * ch.n));
+  if (ch.k === "spins" || ch.k === "upgrade") return [["Kapitel schaffen", null], ["Am Ende im Plus", "plus"], ["Dabei eine Gewinn-Strähne", "streak"]];
+  return [["Kapitel schaffen", null], [`In höchstens ${par} Drehs`, "par", par], ["Am Ende im Plus", "plus"]]; }
+function csEval(ch, rec, credits) { const g = csGoals(ch); return g.map(([, k, par]) => k === null ? true : k === "plus" ? credits >= (rec.cr0 || 0) : k === "streak" ? !!rec.sk : (rec.sp || 0) <= par); }
+// Alte Spielstände: geschaffte Kapitel bekommen den ersten Stern
+(function csInit() { const d = csLoad(); if (d.init) return; try { for (let a = 0; a < CT.acts.length; a++) for (let c = 0; c < 4; c++) { const done = CAMP.fin || a < CAMP.a || (a === CAMP.a && c < CAMP.c); if (done && !d.stars[csKey(a, c)]) d.stars[csKey(a, c)] = 1; } } catch (e) {} d.init = 1; csSave(d); })();
+const csActStars = (d, a) => [0, 1, 2, 3].reduce((s, c) => s + (d.stars[csKey(a, c)] || 0), 0);
+function csDoneMain(a, c) { return CAMP.fin || a < CAMP.a || (a === CAMP.a && c < CAMP.c); }
+/* Mitzählen */
+if (typeof track === "function") { const trC = track; track = function (type, amount, meta) {
+  const r = trC.apply(this, arguments);
+  try {
+    const d = csLoad(); let dirty = false;
+    // laufendes Hauptkapitel
+    if (!CAMP.fin) { const A = CT.acts[CAMP.a], k = csKey(CAMP.a, CAMP.c); if (A && campW(A.w).id === WORLD_ID) {
+      if (!d.cur || d.cur.key !== k) { d.cur = { key: k, sp: 0, cr0: state.credits + (type === "spins" ? bet() : 0), sk: false }; dirty = true; }
+      if (type === "spins") { d.cur.sp++; dirty = true; } if (type === "streak") { d.cur.sk = true; dirty = true; } } }
+    // Wiederholung oder Bonuskapitel
+    if (d.r) { const A = CT.acts[d.r.a], ch = csChDef(d.r.a, d.r.c); if (A && ch && campW(A.w).id === WORLD_ID) {
+      if (type === "spins") { d.r.sp++; dirty = true; } if (type === "streak") { d.r.sk = true; dirty = true; }
+      if (type === ch.k && !(ch.m && meta !== ch.m) && !(type === "haul" && !(amount > 0))) { d.r.p = Math.min(ch.n, d.r.p + (type === "haul" || type === "symwin" || type === "spins" ? 1 : (amount || 1))); dirty = true;
+        if (d.r.p >= ch.n) { csSave(d); setTimeout(csReplayDone, 1400); return r; } } } }
+    if (dirty) csSave(d);
+  } catch (e) {}
+  return r; }; }
+/* Hauptkapitel geschafft: Sterne vergeben und im Fenster zeigen */
+if (typeof campComplete === "function") { const cc0 = campComplete; campComplete = function () {
+  let got = null, key = null, ch = null;
+  try { CAMP = campLoad(); ch = campCh(); if (ch && CAMP.p >= ch.n) { const d = csLoad(); key = csKey(CAMP.a, CAMP.c); const rec = d.cur && d.cur.key === key ? d.cur : { sp: 0, cr0: 0, sk: false }; got = csEval(ch, rec, state.credits); const n = got.filter(Boolean).length; d.stars[key] = Math.max(d.stars[key] || 0, n); d.cur = null; csSave(d); spAdd(40 + n * 15, "Kapitel"); } } catch (e) {}
+  const r = cc0.apply(this, arguments);
+  try { if (got) { const w = $("campWin"); const box = w && w.querySelector(".cp-box h3"); if (box) box.insertAdjacentHTML("afterend", `<div class="cs-stars">${got.map((ok, i) => `<i class="${ok ? "cs-on" : ""}" style="animation-delay:${.3 + i * .35}s" title="${csGoals(ch)[i][0]}">★</i>`).join("")}</div><small style="opacity:.8">${csGoals(ch).map((g, i) => (got[i] ? "✓ " : "✗ ") + g[0]).join(" · ")}</small>`); } } catch (e) {}
+  return r; }; }
+function csStart(a, c) { const d = csLoad(); if (d.r && !confirm("Die laufende Wiederholung wird abgebrochen. Weiter?")) return; d.r = { a, c, p: 0, sp: 0, cr0: state.credits, sk: false }; csSave(d); const w = campW(CT.acts[a].w);
+  toast(c === 4 ? `Bonuskapitel gestartet: ${LB.b[a].t}` : `Kapitel ${a + 1}.${c + 1} wird wiederholt`, "#ffd46a"); if (w.id !== WORLD_ID) toast(`Zählt in ${w.name}`, w.color); campRender(); }
+function csStop() { const d = csLoad(); d.r = null; csSave(d); campRender(); }
+function csReplayDone() {
+  const d = csLoad(); if (!d.r) return; const { a, c } = d.r, ch = csChDef(a, c); if (!ch || d.r.p < ch.n) return;
+  const rec = d.r; d.r = null; const key = csKey(a, c);
+  let cr = 0, du = 0, title;
+  if (c === 4) { d.bonus[a] = 1; cr = Math.round(Math.max(1, bet()) * 150); du = 15; title = `Bonuskapitel geschafft: ${ch.t}`; spAdd(250, "Bonuskapitel"); }
+  else { const got = csEval(ch, Object.assign({}, rec, { cr0: rec.cr0 }), state.credits).filter(Boolean).length, old = d.stars[key] || 0; d.stars[key] = Math.max(old, got); const plus = Math.max(0, got - old); cr = Math.round(Math.max(1, bet()) * (5 + plus * 12)); du = plus; title = plus ? `+${plus} Stern${plus > 1 ? "e" : ""} für Kapitel ${a + 1}.${c + 1}!` : `Kapitel ${a + 1}.${c + 1}: ${got} von 3 Sternen`; spAdd(20 + plus * 20, "Sterne"); }
+  csSave(d); state.credits += cr; try { if (du) addDust(du, "rare"); countCredits(state.credits, 800); saveGame(); render(); sfx.fanfare(c === 4 ? 2 : 1); burst(c === 4 ? 120 : 60, ["#ffd46a", "#ff7ad9", "#ffffff"], 1.1); } catch (e) {}
+  toast(`${title} +${fmtN(cr)}${du ? ` · +${du} Sternenstaub` : ""}`, "#ffd46a"); try { a11ySay(title, true); } catch (e) {}
+  if (c === 4 && Object.keys(d.bonus).length >= 5) { try { const W = wearLoad(); if (!W.own.includes("starcrown")) { W.own.push("starcrown"); wearSave(W); toast("Alle Bonuskapitel! Neu in der Garderobe: Sternenkrone", "#ffd46a"); } } catch (e) {} }
+  campRender();
+}
+function csCard() {
+  const d = csLoad(); const total = CT.acts.reduce((s, A, a) => s + csActStars(d, a), 0);
+  let run = "";
+  if (d.r) { const ch = csChDef(d.r.a, d.r.c), w = campW(CT.acts[d.r.a].w), g = csGoals(ch), ok = csEval(ch, d.r, state.credits);
+    run = `<div class="cs-run"><div class="cp-kick">${d.r.c === 4 ? "Bonuskapitel" : `Wiederholung · Kapitel ${d.r.a + 1}.${d.r.c + 1}`} · zählt in ${w.name}</div><h3 style="margin:2px 0 6px">${ch.t}</h3>${d.r.c === 4 ? `<div class="cp-bubble" style="margin-bottom:8px">${ch.s}</div>` : ""}
+      <div class="cp-task"><b>${ch.d}</b><div class="cp-bar"><i style="width:${Math.min(100, d.r.p / ch.n * 100)}%"></i></div><small>${d.r.p} / ${ch.n} · ${d.r.sp} Drehs</small></div>
+      ${d.r.c === 4 ? "" : `<div class="cs-goals" style="margin-top:8px">${g.map((x, i) => `<div class="cs-goal ${i === 0 ? "" : ok[i] ? "cs-ok" : ""}"><i>★</i>${x[0]}${x[1] === "par" ? `<small>${d.r.sp} / ${x[2]}</small>` : ""}</div>`).join("")}</div>`}
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">${w.id !== WORLD_ID ? `<button type="button" class="cp-cbtn cp-main" data-cs="go" data-w="${d.r.a}">Weiter nach ${w.name} →</button>` : ""}<button type="button" class="cp-cbtn" data-cs="stop">Abbrechen</button></div></div>`; }
+  let cur = "";
+  if (!CAMP.fin) { const ch = campCh(), k = csKey(CAMP.a, CAMP.c), rec = d.cur && d.cur.key === k ? d.cur : { sp: 0, cr0: state.credits, sk: false }, g = csGoals(ch), ok = csEval(ch, rec, state.credits);
+    cur = `<div><div class="cp-kick">Sterne im aktuellen Kapitel ${CAMP.a + 1}.${CAMP.c + 1}</div><div class="cs-goals" style="margin-top:6px">${g.map((x, i) => `<div class="cs-goal ${i > 0 && ok[i] ? "cs-ok" : ""}"><i>★</i>${x[0]}${x[1] === "par" ? `<small>${rec.sp || 0} / ${x[2]} Drehs</small>` : x[1] === "plus" ? `<small>${ok[i] ? "im Plus" : "noch im Minus"}</small>` : x[1] === "streak" ? `<small>${ok[i] ? "geschafft" : "noch nicht"}</small>` : ""}</div>`).join("")}</div></div>`; }
+  const acts = CT.acts.map((A, a) => { const w = campW(A.w), n = csActStars(d, a), bonusOpen = n >= 12, bonusDone = !!d.bonus[a];
+    return `<div class="cs-act"><h4><span style="color:${w.color};margin:0">●</span>${CT.act} ${a + 1}: ${A.t}<span>${n}/12 ★${bonusDone ? " · 🏆" : ""}</span></h4><div class="cs-chs">${A.ch.map((c, k) => { const s = d.stars[csKey(a, k)] || 0, done = csDoneMain(a, k);
+      return `<button type="button" class="cs-ch ${s >= 3 ? "cs-full" : ""}" data-cs="start" data-a="${a}" data-c="${k}" ${!done || s >= 3 ? "disabled" : ""} title="${done ? (s >= 3 ? "Alle Sterne" : "Wiederholen für mehr Sterne") : "Noch nicht gespielt"}">${a + 1}.${k + 1} <b>${"★".repeat(s)}${"☆".repeat(3 - s)}</b></button>`; }).join("")}
+      <button type="button" class="cs-ch cs-bon" data-cs="start" data-a="${a}" data-c="4" ${!bonusOpen || bonusDone ? "disabled" : ""} title="${bonusDone ? "Geschafft" : bonusOpen ? "Bonuskapitel starten" : "Alle 12 Sterne des Akts freischalten"}">${bonusDone ? "🏆 Bonus geschafft" : bonusOpen ? `🔓 Bonus: ${LB.b[a].t}` : "🔒 Bonuskapitel"}</button></div></div>`; }).join("");
+  return `<div class="cp-card cs-card"><div class="cp-kick">Sterne · ${total} von 60</div>${run}${cur}<p style="margin:0;opacity:.8;font-size:14px">Jedes Kapitel hat 3 Sterne. Fehlende Sterne holst du durch Wiederholen. Alle 12 Sterne eines Akts öffnen sein Bonuskapitel – alle 5 Bonuskapitel bringen die Sternenkrone für deinen Begleiter.</p><div class="cs-acts">${acts}</div></div>`;
+}
+if (typeof campRender === "function") { const cr0 = campRender; campRender = function () { const r = cr0.apply(this, arguments);
+  try { const el = $("camp"); if (el && !el.hidden && el.dataset.tab !== "ward") { const box = el.querySelector(".cp-cw"); box.insertAdjacentHTML("beforeend", csCard());
+    const d = csLoad(); el.querySelectorAll(".cp-isle[data-act]").forEach(g => { const a = +g.dataset.act; g.querySelectorAll(".cp-node").forEach((nd, k) => { const s = d.stars[csKey(a, k)] || 0; if (!s) return; const t = document.createElementNS("http://www.w3.org/2000/svg", "text"); t.setAttribute("x", nd.getAttribute("cx")); t.setAttribute("y", +nd.getAttribute("cy") - 12); t.setAttribute("text-anchor", "middle"); t.setAttribute("class", "cs-node-st"); t.textContent = "★".repeat(s); g.appendChild(t); }); });
+    if (!el.dataset.csBound) { el.dataset.csBound = 1; el.addEventListener("click", e => { const b = e.target.closest("[data-cs]"); if (!b || b.disabled) return; const k = b.dataset.cs; if (k === "start") csStart(+b.dataset.a, +b.dataset.c); if (k === "stop") csStop(); if (k === "go") { const wd = campW(CT.acts[+b.dataset.w].w); try { wsGo(worldUrl(wd), wd); } catch (x) {} } }); } } } catch (e) {}
+  return r; }; }
+/* Sternenkrone für den Begleiter */
+try { if (typeof WEAR_ART !== "undefined") {
+  WEAR_ART.starcrown = `<path d="M10 62 L18 22 L36 44 L50 8 L64 44 L82 22 L90 62 Z" fill="#ffd46a" stroke="#6a4a00" stroke-width="3" stroke-linejoin="round"/><rect x="10" y="58" width="80" height="12" rx="4" fill="#ffb84a" stroke="#6a4a00" stroke-width="3"/>${[[18, 22], [50, 8], [82, 22]].map(([x, y]) => `<path d="M${x} ${y - 9} l2.6 6 6.4 .6 -4.8 4.2 1.4 6.3 -5.6 -3.3 -5.6 3.3 1.4 -6.3 -4.8 -4.2 6.4 -.6z" fill="#fff6c8" stroke="#6a4a00" stroke-width="1.5"/>`).join("")}<circle cx="50" cy="64" r="4" fill="#ff7ad9"/>`;
+  WEAR_ART.seasoncap = `<path d="M16 58 Q16 20 50 18 Q84 20 84 58 Z" fill="var(--spcap, #4fe3ff)" stroke="#102030" stroke-width="3"/><path d="M50 18 V58" stroke="#102030" stroke-width="2" opacity=".5"/><path d="M80 56 Q104 56 104 66 L72 66 Z" fill="var(--spcap, #4fe3ff)" stroke="#102030" stroke-width="3"/><circle cx="50" cy="18" r="5" fill="#fff"/><text x="40" y="46" font-size="18" font-weight="900" fill="#fff" font-family="system-ui">S</text>`;
+  WEAR_ART.seasonwings = `<g opacity=".9"><path d="M50 50 C20 20 0 30 2 54 C20 46 30 56 50 56 Z" fill="#c9f4ff" stroke="#4fe3ff" stroke-width="2"/><path d="M50 50 C80 20 100 30 98 54 C80 46 70 56 50 56 Z" fill="#c9f4ff" stroke="#4fe3ff" stroke-width="2"/></g>`;
+  if (!CT.wear.find(x => x.id === "starcrown")) CT.wear.push({ id: "starcrown", n: "Sternenkrone", c: 0, camp: 1 });
+  if (!CT.wear.find(x => x.id === "seasoncap")) CT.wear.push({ id: "seasoncap", n: "Saison-Kappe", c: 0, season: 10 });
+  if (!CT.wear.find(x => x.id === "seasonwings")) CT.wear.push({ id: "seasonwings", n: "Saison-Flügel", c: 0, season: 30, aura: 1 });
+} } catch (e) {}
+
+/* ---------------- B2: Saison-Pass (6 Wochen, gilt für alle Welten) ---------------- */
+const SP_EPOCH = new Date(2026, 10, 9).getTime(), SP_LEN = 42 * 864e5, SP_LV = 30, SP_PER = 120;
+const SP_COL = ["#ffd46a", "#4fe3ff", "#ff7ad9", "#b8ff5c", "#ff9a3c", "#9ad4ff", "#ffb3e6", "#ffe08a"];
+const spId = () => Math.max(1, Math.floor((Date.now() - SP_EPOCH) / SP_LEN) + 1);
+const spName = id => LB.s[(id - 1) % LB.s.length] || "Saison";
+const spEnd = id => SP_EPOCH + id * SP_LEN;
+function spLoad() { let d = null; try { d = JSON.parse(localStorage.getItem("welten-spass") || "null"); } catch (e) {} const id = spId(); if (!d || d.id !== id) { const old = d; d = { id, sp: 0, got: [], last: old ? { id: old.id, lv: spLvOf(old.sp) } : null }; spSave(d); } return d; }
+function spSave(d) { try { localStorage.setItem("welten-spass", JSON.stringify(d)); } catch (e) {} }
+const spLvOf = sp => Math.min(SP_LV, Math.floor((sp || 0) / SP_PER));
+function spReward(l) { // l = 1 … 30
+  if (l === 10) return { t: "wear", id: "seasoncap", n: "Saison-Kappe", ic: "🧢", big: 1 };
+  if (l === 30) return { t: "wear", id: "seasonwings", n: "Saison-Flügel", ic: "🪽", big: 1 };
+  if (l % 5 === 0) return { t: "mix", cr: 60, du: 10, n: "Großes Paket", ic: "🎁", big: 1 };
+  if (l % 2 === 0) return { t: "du", du: 3 + Math.floor(l / 10), n: `${3 + Math.floor(l / 10)} Sternenstaub`, ic: "✨" };
+  return { t: "cr", cr: 12 + l, n: "Credits-Bündel", ic: "💰" };
+}
+const SP_BADGE = [[10, "Bronze", "#cd7f32"], [20, "Silber", "#c4ccd8"], [30, "Gold", "#ffd166"]];
+let spPend = 0, spT = 0;
+function spAdd(n, why) {
+  if (!n) return; const d = spLoad(), lv0 = spLvOf(d.sp); d.sp += n; spSave(d); const lv = spLvOf(d.sp);
+  spPend += n; clearTimeout(spT); spT = setTimeout(() => { const p = $("spPill"); if (p && spPend >= 5) { const r = p.getBoundingClientRect(), g = document.createElement("div"); g.className = "sp-gain"; g.style.left = (r.left + r.width / 2 - 14) + "px"; g.style.top = (r.top - 6) + "px"; g.style.setProperty("--spc", SP_COL[(d.id - 1) % SP_COL.length]); g.textContent = `+${spPend} SP`; document.body.appendChild(g); setTimeout(() => g.remove(), 1600); } spPend = 0; }, 900);
+  if (lv > lv0) { toast(`Saison-Pass Stufe ${lv}! Belohnung abholen.`, SP_COL[(d.id - 1) % SP_COL.length]); try { sfx.mission(); } catch (e) {} const b = SP_BADGE.find(x => x[0] === lv); if (b) setTimeout(() => toast(`Saison-Abzeichen ${b[1]} erreicht!`, b[2]), 1800); }
+  spPill(); spPush();
+}
+let spPushT = 0;
+function spPush() { clearTimeout(spPushT); spPushT = setTimeout(() => { try { if (!(typeof OL !== "undefined" && OL.ready && OL.db && OL.uid)) return; const d = spLoad(); OL.db.ref(`spass/${d.id}/${OL.uid}`).set({ n: String(olName()).slice(0, 24), sp: d.sp, t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {}); } catch (e) {} }, 20000); }
+/* Punkte sammeln */
+if (typeof track === "function") { const trS = track; track = function (type, amount) { const r = trS.apply(this, arguments);
+  try { if (type === "spins") spAdd(1); else if (type === "bigwin") spAdd(6); else if (type === "fs") spAdd(12); else if (type === "bonus") spAdd(10); else if (type === "four") spAdd(2); } catch (e) {} return r; }; }
+if (typeof tsPop === "function") { const tp0 = tsPop; tsPop = function (a, k) { try { spAdd(25 * (k + 1), "Medaille"); } catch (e) {} return tp0.apply(this, arguments); }; }
+if (typeof rmShow === "function") { const rs0 = rmShow; rmShow = function () { try { spAdd(150, "Selten"); } catch (e) {} return rs0.apply(this, arguments); }; }
+/* Anzeige */
+function spPill() {
+  let p = $("spPill"); if (!p) { const tg = document.querySelector(".machine .toggles"); if (!tg) return; tg.insertAdjacentHTML("beforeend", `<button type="button" class="chip camp-chip" id="spPill" aria-label="Saison-Pass"></button>`); p = $("spPill"); p.addEventListener("click", spOpen); }
+  const d = spLoad(), lv = spLvOf(d.sp), k = lv >= SP_LV ? 1 : (d.sp % SP_PER) / SP_PER, c = SP_COL[(d.id - 1) % SP_COL.length], open = Array.from({ length: lv }, (_, i) => i + 1).filter(l => !d.got.includes(l)).length;
+  p.innerHTML = `<svg class="cr" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="3"/><circle cx="10" cy="10" r="8" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="${Math.round(k * 100)} 100" transform="rotate(-90 10 10)"/></svg><b>S${lv}</b><span class="cl">${open ? `${open} abholen` : "Saison"}</span>`;
+  p.title = `Saison-Pass „${spName(d.id)}“ · Stufe ${lv} von ${SP_LV}`; p.classList.toggle("pop", !!open);
+}
+function spOpen() {
+  let el = $("spPass"); if (!el) { document.body.insertAdjacentHTML("beforeend", `<div id="spPass" role="dialog" aria-modal="true" aria-label="Saison-Pass" hidden><div class="sp-cw"></div></div>`); el = $("spPass");
+    el.addEventListener("click", e => { const b = e.target.closest("[data-sp]"); if (!b) return; const k = b.dataset.sp; if (k === "x") { el.hidden = true; return; } if (k === "get") spClaim(+b.dataset.l); if (k === "all") { const d = spLoad(); for (let l = 1; l <= spLvOf(d.sp); l++) if (!d.got.includes(l)) spClaim(l, true); spRender(); } });
+    addEventListener("keydown", e => { if (e.key === "Escape" && !el.hidden) el.hidden = true; }); }
+  el.hidden = false; spRender(); spBoard(); try { sfx.click(); } catch (e) {}
+}
+function spClaim(l, quiet) {
+  const d = spLoad(); if (l > spLvOf(d.sp) || d.got.includes(l)) return; const r = spReward(l), m = Math.max(1, bet()); d.got.push(l); spSave(d);
+  if (r.cr) { state.credits += Math.round(r.cr * m); try { countCredits(state.credits, 600); } catch (e) {} }
+  if (r.du) try { addDust(r.du, "rare"); } catch (e) {}
+  if (r.t === "wear") { try { const W = wearLoad(); if (!W.own.includes(r.id)) { W.own.push(r.id); wearSave(W); } } catch (e) {} toast(`Neu in der Garderobe: ${r.n}`, "#ffd46a"); }
+  try { saveGame(); render(); if (!quiet) { sfx.fanfare(r.big ? 1 : 0); } } catch (e) {}
+  if (!quiet) spRender(); spPill();
+}
+function spRender() {
+  const el = $("spPass"); if (!el || el.hidden) return; const d = spLoad(), lv = spLvOf(d.sp), c = SP_COL[(d.id - 1) % SP_COL.length], left = spEnd(d.id) - Date.now(), m = Math.max(1, bet());
+  el.style.setProperty("--spc", c);
+  const open = Array.from({ length: lv }, (_, i) => i + 1).filter(l => !d.got.includes(l));
+  const ring = `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="4"/><circle cx="20" cy="20" r="17" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="${lv >= SP_LV ? 100 : Math.round((d.sp % SP_PER) / SP_PER * 100)} 100"/></svg>`;
+  const nodes = Array.from({ length: SP_LV }, (_, i) => { const l = i + 1, r = spReward(l), got = d.got.includes(l), reach = l <= lv && !got;
+    const val = r.t === "cr" ? `${fmtN(Math.round(r.cr * m))}` : r.t === "du" ? `+${r.du} ✨` : r.t === "mix" ? `${fmtN(r.cr * m)} + ${r.du} ✨` : r.n;
+    return `<div class="sp-n${r.big ? " sp-big" : ""}${got ? " sp-got" : ""}${reach ? " sp-reach" : ""}"><span class="sp-lv">${l}</span><span class="sp-ic">${r.ic}</span><span>${val}</span>${reach ? `<button type="button" data-sp="get" data-l="${l}">Abholen</button>` : got ? "" : `<small style="opacity:.55">${l * SP_PER} SP</small>`}</div>`; }).join("");
+  el.querySelector(".sp-cw").innerHTML = `<div class="sp-hd"><h2><small>Saison ${d.id} · noch ${Math.max(0, Math.ceil(left / 864e5))} Tage</small>${spName(d.id)}</h2>${open.length > 1 ? `<button type="button" class="sp-all" data-sp="all">Alle ${open.length} abholen</button>` : ""}<button type="button" class="sp-x" data-sp="x" aria-label="Schließen">✕</button></div>
+    <div class="sp-top"><div class="sp-ring">${ring}<b>${lv}</b><small>Stufe</small></div><div class="sp-info"><b style="font-size:18px">${fmtN(d.sp)} Saisonpunkte</b><p>${lv >= SP_LV ? "Höchste Stufe erreicht – stark!" : `Noch ${fmtN(SP_PER - d.sp % SP_PER)} SP bis Stufe ${lv + 1}.`} Der Pass ist kostenlos und zählt in allen Welten. Belohnungen landen in der Welt, in der du sie abholst.</p>
+      <div class="sp-badges">${SP_BADGE.map(([l, n, bc]) => `<span class="sp-badge ${lv >= l ? "sp-on" : ""}" style="--bc:${bc}"><i></i>${n}-Abzeichen · Stufe ${l}</span>`).join("")}</div>${d.last ? `<p style="font-size:13px;opacity:.65">Letzte Saison: Stufe ${d.last.lv}</p>` : ""}</div></div>
+    <div class="sp-track" id="spTrack">${nodes}</div>
+    <div class="sp-row"><div class="sp-card"><h3>Rangliste dieser Saison</h3><div class="sp-lb" id="spLb"><div style="grid-template-columns:1fr;opacity:.7">${typeof OL !== "undefined" && OL.ready ? "lädt …" : "Online gehen, um die Rangliste zu sehen."}</div></div></div>
+      <div class="sp-card"><h3>So sammelst du Saisonpunkte</h3><div class="sp-earn">${[["Jeder Dreh", 1], ["Gewinn mit 4 oder 5 Gleichen", 2], ["Großer Gewinn (ab 10×)", 6], ["Bonus ausgelöst", 10], ["Freispiele ausgelöst", 12], ["Medaille (Bronze bis Platin)", "25–100"], ["Kampagnen-Kapitel (+15 je Stern)", "40+"], ["Seltener Moment", 150], ["Bonuskapitel", 250]].map(([t, v]) => `<div><span>${t}</span><b>+${v}</b></div>`).join("")}</div></div></div>`;
+  const tr = $("spTrack"); if (tr) { const tgt = tr.children[Math.max(0, Math.min(SP_LV - 1, (open[0] || lv + 1) - 2))]; if (tgt) tr.scrollLeft = tgt.offsetLeft - 8; }
+}
+async function spBoard() {
+  const box = $("spLb"); if (!box || !(typeof OL !== "undefined" && OL.ready && OL.db)) return; const d = spLoad();
+  try { spPush(); const snap = await OL.db.ref(`spass/${d.id}`).orderByChild("sp").limitToLast(20).get(); const v = snap.val() || {}; const rows = Object.entries(v).map(([u, x]) => ({ u, n: (x && x.n) || "?", sp: (x && x.sp) || 0 }));
+    if (!rows.find(r => r.u === OL.uid)) rows.push({ u: OL.uid, n: olName(), sp: d.sp }); rows.sort((a, b) => b.sp - a.sp);
+    box.innerHTML = rows.slice(0, 20).map((r, i) => { const l = spLvOf(r.sp), b = SP_BADGE.filter(x => l >= x[0]).pop(); return `<div class="${r.u === OL.uid ? "me" : ""}"><b>${i + 1}.</b><span>${escapeHTML(r.n)}${b ? ` <span title="${b[1]}-Abzeichen" style="color:${b[2]}">●</span>` : ""}</span><b>S${l} · ${fmtN(r.sp)}</b></div>`; }).join(""); } catch (e) { box.innerHTML = `<div style="grid-template-columns:1fr;opacity:.7">Rangliste gerade nicht erreichbar.</div>`; }
+}
+spPill(); setInterval(spPill, 30000);
+(function spHello() { try { const d = spLoad(), k = "welten-spseen"; if (localStorage.getItem(k) !== String(d.id)) { localStorage.setItem(k, String(d.id)); setTimeout(() => { toast(`Neue Saison: „${spName(d.id)}“ – kostenloser Saison-Pass mit 30 Stufen!`, SP_COL[(d.id - 1) % SP_COL.length]); const p = $("spPill"); if (p) p.animate([{ transform: "scale(1)" }, { transform: "scale(1.15)" }, { transform: "scale(1)" }], { duration: 600, iterations: 3 }); }, 7000); } } catch (e) {} })();
 /*MENU-JS-END*/
 /* ---------- Start-Knopf: Feedback beim Drücken, Drehen, Gewinnen ---------- */
 (function () {
