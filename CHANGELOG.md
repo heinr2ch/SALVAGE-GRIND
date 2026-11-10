@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.21.1 · Genauere Heatmap · 10.11.2026
+- Heatmap: Klicks werden am getroffenen Knopf gespeichert und landen im Dashboard genau dort
+
 ## Beta 1.21.0 · Charaktere · 09.11.2026
 - Pro Konto bis zu 5 Charaktere mit eigenem Namen – jeder mit eigenem Spielstand in allen Welten
 - Charakter wählen, anlegen, umbenennen und löschen (Hauptmenü und Einstellungen)

@@ -234,6 +234,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
           <div class="card"><h2>Auswertung</h2><ul id="hmTips" style="margin:0;padding-left:18px;display:grid;gap:8px"></ul></div>
           <div class="card"><h2>Meistgeklickt <small>Knöpfe und Bereiche</small></h2><div class="bars" id="hmTop"></div></div>
           <div class="card"><h2>Klicks ins Leere <small>wo nichts anklickbar ist</small></h2><div class="bars" id="hmDead"></div></div>
+          <div class="card"><h2>In Fenstern &amp; Menüs <small>nicht im Bild zu sehen</small></h2><div class="bars" id="hmWin"></div></div>
         </div>
       </div>
     </section>
@@ -516,53 +517,70 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
   }
 
   /* ---------- Heatmap: Klicks und Zeigerbewegungen (heat/<welt>/<tag>) ---------- */
-  const HM = { cache: {} };
+  const HM = { cache: {}, maps: {} };
+  /* 1.21.1: Klicks werden über den Anker (Element mit id + Stelle darin) auf das aktuelle Bild gelegt. Alte Daten ohne Anker:
+     nur wenn das Etikett eine bekannte id ist (dann Mitte des Elements). Alles andere (Fenster, Menüs, alte Prozentwerte) wird gezählt, aber nicht gemalt. */
+  async function heatMap(w, dev) { const k = w + "-" + dev; if (!(k in HM.maps)) { try { HM.maps[k] = await (await fetch(`media/heat/${k}.json`, { cache: "no-cache" })).json(); } catch (e) { HM.maps[k] = null; } } return HM.maps[k]; }
+  function heatPlace(map, aid, rx, ry, label) {
+    if (!map) return null;
+    const r = (aid && map.r[aid]) || (!aid && label && map.r[label]); if (!r) return null;
+    const fx = aid && rx !== "" && rx != null ? (+rx + .5) / 100 : .5, fy = aid && ry !== "" && ry != null ? (+ry + .5) / 100 : .5;
+    return [r[0] + fx * r[2], r[1] + fy * r[3]];
+  }
   async function heatLoad() {
     const w = $("hmW").value, days = +$("hmR").value, dev = $("hmD").value, kind = $("hmK").value;
     $("hmInfo").textContent = "lädt …";
     if (!HM.cache[w]) HM.cache[w] = (await get("heat/" + w)) || {};
+    const map = await heatMap(w, dev);
     const from = dayKey(Date.now() - (days - 1) * DAY), pts = [], clicks = [], ver = {};
-    let batches = 0;
+    let batches = 0, moves = 0, movesIn = 0;
     Object.entries(HM.cache[w]).forEach(([d, list]) => { if (d < from) return; Object.values(list || {}).forEach(b => {
       if (!b || b.d !== dev) return; batches++; ver[b.v || "?"] = (ver[b.v || "?"] || 0) + 1;
-      (b.c || "").split("|").filter(Boolean).forEach(s => { const [x, y, l, dead] = s.split(","); clicks.push({ x: +x, y: +y, l: l || "?", dead: dead === "1" }); });
-      if (kind === "m") (b.m || "").split("|").filter(Boolean).forEach(s => { const [x, y] = s.split(","); pts.push([+x, +y]); });
+      (b.c || "").split("|").filter(Boolean).forEach(s => { const [x, y, l, dead, aid, rx, ry, win] = s.split(","); clicks.push({ x: +x, y: +y, l: l || "?", dead: dead === "1", win: win || "", at: heatPlace(map, aid, rx, ry, (l || "").replace(/^~/, "")) }); });
+      if (kind === "m") (b.m || "").split("|").filter(Boolean).forEach(s => { const [, , aid, rx, ry] = s.split(","); moves++; const at = aid ? heatPlace(map, aid, rx, ry) : null; if (at) { movesIn++; pts.push(at); } });
     }); });
-    if (kind === "c") clicks.forEach(c => pts.push([c.x, c.y]));
-    await heatDraw(w, dev, pts, kind);
+    if (kind === "c") clicks.forEach(c => { if (c.at) pts.push(c.at); });
+    await heatDraw(w, dev, pts, kind, map);
     // Auswertung
-    const n = clicks.length, dead = clicks.filter(c => c.dead), by = {}, deadBy = {};
-    clicks.forEach(c => { by[c.l] = (by[c.l] || 0) + 1; }); dead.forEach(c => { deadBy[c.l] = (deadBy[c.l] || 0) + 1; });
-    const zones = [0, 0, 0]; clicks.forEach(c => zones[c.y < 33.3 ? 0 : c.y < 66.6 ? 1 : 2]++);
-    const kpi = (l, v, sub) => `<div class="kpi"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
-    $("hmKpis").innerHTML = kpi("Klicks", fmt(n)) + kpi("Zeigerpunkte", fmt(kind === "m" ? pts.length : 0), kind === "m" ? "" : "Art „Bewegung“ wählen") + kpi("Klicks ins Leere", n ? Math.round(dead.length / n * 100) + " %" : "–", "kein Knopf getroffen")
-      + kpi("Datenpakete", fmt(batches), "je bis zu 20 Sek. Spielzeit") + (() => { const nm = ["Oben", "Mitte", "Unten"], mx = zones.indexOf(Math.max(...zones)); return kpi("Meiste Klicks", n ? `${nm[mx]} ${Math.round(zones[mx] / n * 100)} %` : "–", n ? nm.map((z, i) => z.toLowerCase() + " " + Math.round(zones[i] / n * 100) + " %").join(" · ") : "Seitenbereich"); })();
-    const top = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 15), topDead = Object.entries(deadBy).sort((a, b) => b[1] - a[1]).slice(0, 8);
-    bars("hmTop", top.map(([l, v]) => [l.replace(/^~/, "· "), v, n ? Math.round(v / n * 100) + " %" : ""]));
+    const n = clicks.length, dead = clicks.filter(c => c.dead), by = {}, deadBy = {}, winBy = {};
+    clicks.forEach(c => { by[c.l] = (by[c.l] || 0) + 1; if (c.win) winBy[c.win] = (winBy[c.win] || 0) + 1; }); dead.forEach(c => { deadBy[c.l] = (deadBy[c.l] || 0) + 1; });
+    const placed = clicks.filter(c => c.at), inWin = clicks.filter(c => !c.at && c.win).length, lost = n - placed.length - inWin;
+    const zones = [0, 0, 0]; placed.forEach(c => { const f = map ? c.at[1] / map.H : 0; zones[f < 1 / 3 ? 0 : f < 2 / 3 ? 1 : 2]++; });
+    const kpi = (l, v, sub) => `<div class="kpi"><span>${l}</span><b>${v}</b>${sub ? `<small>${sub}</small>` : ""}</div>`, pc = (a, b) => b ? Math.round(a / b * 100) + " %" : "–";
+    $("hmKpis").innerHTML = kpi("Klicks", fmt(n), `${fmt(placed.length)} genau im Bild · ${fmt(inWin)} in Fenstern/Menüs${lost ? ` · ${fmt(lost)} alt/ohne Ort` : ""}`)
+      + kpi("Zeigerpunkte", kind === "m" ? fmt(movesIn) : "–", kind === "m" ? (moves > movesIn ? `${fmt(moves - movesIn)} ältere ohne genauen Ort` : "") : "Art „Bewegung“ wählen")
+      + kpi("Klicks ins Leere", pc(dead.length, n), "kein Knopf getroffen")
+      + kpi("Datenpakete", fmt(batches), "je bis zu 20 Sek. Spielzeit")
+      + (() => { const t = placed.length, nm = ["Oben", "Mitte", "Unten"], mx = zones.indexOf(Math.max(...zones)); return kpi("Meiste Klicks", t ? `${nm[mx]} ${pc(zones[mx], t)}` : "–", t ? nm.map((z, i) => z.toLowerCase() + " " + pc(zones[i], t)).join(" · ") : "Seitenbereich"); })();
+    const top = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 15), topDead = Object.entries(deadBy).sort((a, b) => b[1] - a[1]).slice(0, 8), topWin = Object.entries(winBy).sort((a, b) => b[1] - a[1]).slice(0, 8);
+    bars("hmTop", top.map(([l, v]) => [l.replace(/^~/, "· "), v, pc(v, n)]));
     bars("hmDead", topDead.map(([l, v]) => [l.replace(/^~/, ""), v]));
+    bars("hmWin", topWin.map(([l, v]) => [HM_WIN[l] || l, v, pc(v, n)]));
     const tips = [];
-    if (n >= 20 && dead.length / n > .25) tips.push(`Viele Klicks ins Leere (${Math.round(dead.length / n * 100)} %). Die Stellen oben bei „Klicks ins Leere“ prüfen: Dort erwarten Spieler offenbar etwas Anklickbares.`);
+    if (n >= 20 && dead.length / n > .25) tips.push(`Viele Klicks ins Leere (${pc(dead.length, n)}). Die Stellen bei „Klicks ins Leere“ prüfen: Dort erwarten Spieler offenbar etwas Anklickbares.`);
     if (topDead[0] && topDead[0][1] >= 5) tips.push(`Häufigster Fehlklick: „${topDead[0][0].replace(/^~/, "")}“ (${topDead[0][1]}×). Kandidat für einen Knopf oder eine Erklärung.`);
-    if (n >= 20 && zones[2] / n < .05) tips.push("Der untere Seitenbereich wird kaum angeklickt. Was dort steht, sehen die meisten vermutlich nicht.");
-    if (top[0] && n >= 20) tips.push(`Am meisten benutzt: „${top[0][0].replace(/^~/, "")}“ mit ${Math.round(top[0][1] / n * 100)} % aller Klicks.`);
+    if (placed.length >= 20 && zones[2] / placed.length < .05) tips.push("Der untere Seitenbereich wird kaum angeklickt. Was dort steht, sehen die meisten vermutlich nicht.");
+    if (top[0] && n >= 20) tips.push(`Am meisten benutzt: „${top[0][0].replace(/^~/, "")}“ mit ${pc(top[0][1], n)} aller Klicks.`);
+    if (lost && lost / n > .3) tips.push(`${pc(lost, n)} der Klicks stammen aus älteren Versionen (vor 1.21.1) und haben keinen genauen Ort. Sie zählen in den Listen, erscheinen aber nicht in der Heatmap. Mit neuen Daten wird das Bild schnell genauer.`);
     $("hmTips").innerHTML = tips.length ? tips.map(t => `<li>${esc(t)}</li>`).join("") : `<li class="muted">${n < 20 ? "Noch zu wenige Daten für eine Auswertung. Die Heatmap füllt sich, sobald gespielt wird." : "Keine Auffälligkeiten."}</li>`;
-    $("hmInfo").textContent = `${WORLDS[w]} · ${dev === "d" ? "Computer" : "Handy"} · letzte ${days} Tage · Versionen: ${Object.keys(ver).sort().join(", ") || "–"}`;
+    $("hmInfo").textContent = `${WORLDS[w]} · ${dev === "d" ? "Computer" : "Handy"} · letzte ${days} Tage · Versionen: ${Object.keys(ver).sort().join(", ") || "–"}${map ? "" : " · Bild ohne Lageplan"}`;
   }
-  function heatDraw(w, dev, pts, kind) {
+  const HM_WIN = { intro: "Hauptmenü", acct: "Anmelden", mmSet: "Einstellungen", camp: "Kampagne", coop: "Koop-Automat", chPick: "Charaktere", bonus: "Bonus-/Infofenster", pwHint: "App-Hinweis" };
+  function heatDraw(w, dev, pts, kind, map) {
     return new Promise(res => {
       const img = new Image(); img.onload = () => {
         const cv = $("hmCanvas"), W = img.naturalWidth, H = img.naturalHeight; cv.width = W; cv.height = H;
         const c = cv.getContext("2d"); c.clearRect(0, 0, W, H); c.drawImage(img, 0, 0); c.fillStyle = "rgba(5,8,22,.45)"; c.fillRect(0, 0, W, H);
         const o = document.createElement("canvas"); o.width = W; o.height = H; const oc = o.getContext("2d");
-        const r = Math.max(10, W * (dev === "d" ? .035 : .07)), a = Math.min(.5, Math.max(.04, (kind === "c" ? 6 : 3) / Math.sqrt(pts.length + 1)));
-        pts.forEach(([x, y]) => { const px = x / 100 * W, py = y / 100 * H, g = oc.createRadialGradient(px, py, 0, px, py, r); g.addColorStop(0, `rgba(0,0,0,${a})`); g.addColorStop(1, "rgba(0,0,0,0)"); oc.fillStyle = g; oc.fillRect(px - r, py - r, r * 2, r * 2); });
+        const sc = map ? W / map.W : 1, r = Math.max(8, W * (dev === "d" ? .018 : .045)), a = Math.min(.55, Math.max(.05, (kind === "c" ? 6 : 3) / Math.sqrt(pts.length + 1)));
+        pts.forEach(([x, y]) => { const px = x * sc, py = y * sc, g = oc.createRadialGradient(px, py, 0, px, py, r); g.addColorStop(0, `rgba(0,0,0,${a})`); g.addColorStop(1, "rgba(0,0,0,0)"); oc.fillStyle = g; oc.fillRect(px - r, py - r, r * 2, r * 2); });
         const d = oc.getImageData(0, 0, W, H), px = d.data;
         const pal = [[40, 60, 255], [0, 220, 255], [80, 255, 120], [255, 230, 0], [255, 60, 40]];
         for (let i = 0; i < px.length; i += 4) { const v = px[i + 3] / 255; if (!v) continue; const f = Math.min(.999, v * 1.4) * (pal.length - 1), k = Math.floor(f), t = f - k, A = pal[k], B = pal[k + 1];
           px[i] = A[0] + (B[0] - A[0]) * t; px[i + 1] = A[1] + (B[1] - A[1]) * t; px[i + 2] = A[2] + (B[2] - A[2]) * t; px[i + 3] = Math.min(230, 60 + v * 400); }
         oc.putImageData(d, 0, 0); c.drawImage(o, 0, 0); res();
       };
-      img.onerror = () => res(); img.src = `media/heat/${w}-${dev}.jpg`;
+      img.onerror = () => res(); img.src = `media/heat/${w}-${dev}.jpg?v=${map ? map.H : 0}`;
     });
   }
   ["hmW", "hmR", "hmD", "hmK"].forEach(id => $(id).onchange = () => heatLoad().catch(e => alert(e.message)));
