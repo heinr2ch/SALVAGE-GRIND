@@ -2,6 +2,14 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.25.0 · Meister, Baupläne, Bauweisen, Waren, Begleiter · 10.11.2026
+- Meister-Durchgänge: Welt neu bergen für Meistersterne mit dauerhaften Vorteilen
+- Baupläne für die letzte Ausbaustufe, seltene und legendäre Teile
+- Bauweisen pro Fahrzeug: Sprinter, Bollwerk, Sammler
+- Waren aus anderen Welten für spätere Kampagnen-Kapitel
+- Begleiter steigt bis Stufe 20 auf und lernt Fähigkeiten
+- Dashboard: Spielzeit-Auswertung
+
 ## Beta 1.24.0 · Kampagnen-Sterne und Saison-Pass · 10.11.2026
 - Kampagne: 3 Sterne pro Kapitel, Kapitel wiederholen, 5 Bonuskapitel und Sternenkrone
 - Saison-Pass: 6 Wochen, 30 Stufen, Rangliste, Abzeichen und Saison-Kleidung

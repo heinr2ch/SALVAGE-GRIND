@@ -183,6 +183,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
         <div class="card"><h2>Welten <small>Spieler mit Fortschritt · Ø Level</small></h2><div class="bars" id="worldBars"></div></div>
         <div class="card"><h2>Gerade gespielt <small>zuletzt geöffnete Welt</small></h2><div class="bars" id="cwBars"></div></div>
       </div>
+      <div class="card" style="margin-bottom:16px"><h2>Spielzeit <small>aktive Minuten ohne Pausen · typischer Wert (Median) · gemessen seit 1.25.0</small></h2><div id="ptBox" class="tbl"></div><p class="note" id="ptNote"></p></div>
       <div class="grid two">
         <div class="card"><h2>Plattform <small>Geräte</small></h2><div class="bars" id="pfBars"></div></div>
         <div class="card"><h2>Version <small>Geräte</small></h2><div class="bars" id="verBars"></div></div>
@@ -379,7 +380,7 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
     $("topT").innerHTML = `<tr><th>#</th><th>Name</th><th class="num">Level</th><th>Welten</th><th>Zuletzt</th></tr>` + top.map((p, i) => `<tr><td>${i + 1}</td><td>${esc(p.n || "?")}${devPill(p)}</td><td class="num">${maxLevel(p)}</td><td>${Object.keys(p.w || {}).map(w => (WORLDS[w] || w).slice(0, 2)).join(" ")}</td><td>${when(p.on)}</td></tr>`).join("");
     $("onCount").textContent = onl.length ? onl.length + " gerade im Spiel · aktualisiert sich alle 30 Sek." : "";
     $("onList").innerHTML = onl.map(p => `<span class="op"><i style="--c:hsl(${[...String(p.n || "?")].reduce((a, ch) => a + ch.charCodeAt(0) * 7, 0) % 360} 55% 42%)">${esc((p.n || "?").slice(0, 1).toUpperCase())}</i><span><b>${esc(p.n || "?")}</b> <small>${esc(WORLDS[p.cw] || p.cw || "")}${p.pf ? " · " + esc({ app: "App", handy: "Handy", web: "Browser" }[p.pf] || p.pf) : ""}</small></span></span>`).join("") || '<span class="muted">Gerade ist niemand online.</span>';
-    renderAccounts(); renderKeys(); renderLogins(); renderReports();
+    renderAccounts(); renderKeys(); renderLogins(); renderReports(); try { renderPlaytime(); } catch (e) { console.warn(e); }
   }
 
   /* ---------- Keys ---------- */
@@ -514,6 +515,20 @@ svg.chart { width: 100%; height: 190px; display: block; overflow: visible; }
   async function unlinkKey(nk) {
     const a = D.accounts[nk]; if (!a || !a.k || !confirm(`Key von „${a.n}“ lösen? Der Spieler muss beim nächsten Anmelden einen Key eingeben, der Key ist wieder frei.`)) return;
     await db.ref().update({ ["keyowner/" + a.k]: null, ["acctkey/" + a.h]: null, ["accounts/" + nk + "/k"]: null }); toast("Key gelöst"); await load();
+  }
+
+  /* ---------- Spielzeit (players/<uid>/pt = {m: {welt: Minuten}, ms: {"welt:v2": Minuten, "camp:a1": Minuten gesamt …}}) ---------- */
+  function renderPlaytime() {
+    const P = Object.values(D.players).map(p => p && p.pt).filter(Boolean), med = a => { if (!a.length) return null; const s = a.slice().sort((x, y) => x - y), m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : Math.round((s[m - 1] + s[m]) / 2); };
+    const hm = m => m == null ? '<span class="muted">–</span>' : m >= 60 ? `${Math.floor(m / 60)} Std ${m % 60 ? (m % 60) + " Min" : ""}` : `${m} Min`;
+    const col = (k, f) => { const a = P.map(f).filter(v => v != null && v > 0); return [med(a), a.length]; };
+    const rows = Object.entries(WORLDS).map(([w, name]) => { const tot = col(0, p => (p.m || {})[w]), v2 = col(0, p => (p.ms || {})[w + ":v2"]), v3 = col(0, p => (p.ms || {})[w + ":v3"]), f = col(0, p => (p.ms || {})[w + ":fertig"]), m1 = col(0, p => (p.ms || {})[w + ":m1"]);
+      const c = (x) => `<td class="num">${hm(x[0])}${x[1] ? ` <span class="muted">(${x[1]})</span>` : ""}</td>`;
+      return `<tr><td>${esc(name)}</td>${c(tot)}${c(v2)}${c(v3)}${c(f)}${c(m1)}</tr>`; }).join("");
+    const camp = [1, 2, 3, 4, 5].map(a => col(0, p => (p.ms || {})["camp:a" + a])), fin = col(0, p => (p.ms || {})["camp:fertig"]);
+    $("ptBox").innerHTML = `<table><tr><th>Welt</th><th class="num">Spielzeit gesamt</th><th class="num">bis Fahrzeug 2</th><th class="num">bis Fahrzeug 3</th><th class="num">bis komplett</th><th class="num">bis 1. Meisterstern</th></tr>${rows}</table>
+      <table style="margin-top:12px"><tr><th>Kampagne</th>${[1, 2, 3, 4, 5].map(a => `<th class="num">Akt ${a} fertig</th>`).join("")}<th class="num">Kampagne fertig</th></tr><tr><td>alle Welten zusammen</td>${camp.map(x => `<td class="num">${hm(x[0])}${x[1] ? ` <span class="muted">(${x[1]})</span>` : ""}</td>`).join("")}<td class="num">${hm(fin[0])}${fin[1] ? ` <span class="muted">(${fin[1]})</span>` : ""}</td></tr></table>`;
+    $("ptNote").textContent = P.length ? `${P.length} Spieler mit Messung. In Klammern: wie viele Spieler den Punkt schon erreicht haben. Wenige Werte = noch wenig aussagekräftig.` : "Noch keine Messwerte. Das Spiel zählt seit Version 1.25.0 die aktive Spielzeit und schickt sie alle 5 Minuten mit.";
   }
 
   /* ---------- Heatmap: Klicks und Zeigerbewegungen (heat/<welt>/<tag>) ---------- */
