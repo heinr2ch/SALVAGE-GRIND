@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.25.2 · Lange Restzeiten lesbar · 11.11.2026
+- Restzeiten über einen Tag werden als „4 T 17 Std“ angezeigt
+
 ## Beta 1.25.1 · Handy-Leiste aufgeräumt · 11.11.2026
 - Handy: Knöpfe oben in einer Zeile mit Symbolen, Musik/Turbo/Einstellungen/Feedback unter „Mehr“
 

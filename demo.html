@@ -5104,7 +5104,7 @@ const EXPED = [
 const sectorIdx = () => Math.max(0, SECTORS.findIndex(x => x.id === (state.sector || "orion")));
 function expedReward(e) { return Math.round(e.min * (2 + 0.4 * effTotal()) * (1 + 0.25 * sectorIdx())); }
 function expedDuration(e) { return e.min * 60000 * (1 - (hasCrew("juno") ? .25 + .08 * crewLv("juno") : 0)); }
-const fmtTime = ms => { const s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h}:${String(m).padStart(2, "0")}:${String(x).padStart(2, "0")}` : `${m}:${String(x).padStart(2, "0")}`; };
+const fmtTime = ms => { const s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; if (h >= 24) return `${Math.floor(h / 24)} T ${h % 24} Std`; return h ? `${h}:${String(m).padStart(2, "0")}:${String(x).padStart(2, "0")}` : `${m}:${String(x).padStart(2, "0")}`; };
 let expedNotified = false;
 function startExped(id) {
   const e = EXPED.find(x => x.id === id); if (!e || state.exped || spinning || busy) return;
@@ -5725,9 +5725,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.25.1";
+const GAME_VERSION = "1.25.2";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.25.2", date: "11.11.2026", title: "Lange Restzeiten lesbar", items: ["Restzeiten über einen Tag werden als „4 T 17 Std“ angezeigt"] },
   { v: "1.25.1", date: "11.11.2026", title: "Handy-Leiste aufgeräumt", items: ["Handy: Knöpfe oben in einer Zeile mit Symbolen, Musik/Turbo/Einstellungen/Feedback unter „Mehr“"] },
   { v: "1.25.0", date: "10.11.2026", title: "Meister, Baupläne, Bauweisen, Waren, Begleiter", items: ["Meister-Durchgänge: Welt neu bergen für Meistersterne mit dauerhaften Vorteilen", "Baupläne für die letzte Ausbaustufe, seltene und legendäre Teile", "Bauweisen pro Fahrzeug: Sprinter, Bollwerk, Sammler", "Waren aus anderen Welten für spätere Kampagnen-Kapitel", "Begleiter steigt bis Stufe 20 auf und lernt Fähigkeiten", "Dashboard: Spielzeit-Auswertung"] },
   { v: "1.24.0", date: "10.11.2026", title: "Kampagnen-Sterne und Saison-Pass", items: ["Kampagne: 3 Sterne pro Kapitel, Kapitel wiederholen, 5 Bonuskapitel und Sternenkrone", "Saison-Pass: 6 Wochen, 30 Stufen, Rangliste, Abzeichen und Saison-Kleidung", "Koop-Automat: Landschaft und Walzen-Darstellung korrigiert"] },
