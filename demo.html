@@ -15,7 +15,7 @@ setInterval(function(){try{document.getAnimations().forEach(function(a){if(a.ani
 // Charaktere (1.21.0): Jeder Charakter eines Kontos hat eigene Spielstände. Charakter 1 nutzt die normalen Schlüssel, weitere bekommen "char:<id>:" davor.
 // Geräte-Einstellungen (Sprache, Barrierefreiheit, Anmeldung …) gelten für alle Charaktere.
 var S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem,L=localStorage;
-var DEV=/^welten-(acct|vault|char|chars|lang|a11y|online|pwahint|noheat|fpsask|tour|streamer|twitch|chintro|set-[a-z]+)$/;
+var DEV=/^welten-(acct|vault|char|chars|lang|a11y|online|pwahint|noheat|fpsask|tour|streamer|twitch|chintro|haptic|set-[a-z]+)$/;
 function sc(k){return typeof k==="string"&&!/^(char|team):/.test(k)&&!DEV.test(k)&&(/^welten-/.test(k)||/-save$/.test(k))}
 window.SG_LSRAW={get:function(k){return g.call(L,k)},set:function(k,v){return s.call(L,k,v)},del:function(k){return r.call(L,k)}};
 window.sgCharScoped=sc;window.sgCharKey=function(id,k){return(!id||id==="c1"||!sc(k))?k:"char:"+id+":"+k};
@@ -5725,9 +5725,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.25.2";
+const GAME_VERSION = "1.26.0";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.26.0", date: "11.11.2026", title: "Vibration", items: ["Handy-Vibration: Rückmeldung beim Drehen, Walzen-Stopp, Gewinnen, Freispielen, Käufen und mehr (Aus / Leicht / Stark)"] },
   { v: "1.25.2", date: "11.11.2026", title: "Lange Restzeiten lesbar", items: ["Restzeiten über einen Tag werden als „4 T 17 Std“ angezeigt"] },
   { v: "1.25.1", date: "11.11.2026", title: "Handy-Leiste aufgeräumt", items: ["Handy: Knöpfe oben in einer Zeile mit Symbolen, Musik/Turbo/Einstellungen/Feedback unter „Mehr“"] },
   { v: "1.25.0", date: "10.11.2026", title: "Meister, Baupläne, Bauweisen, Waren, Begleiter", items: ["Meister-Durchgänge: Welt neu bergen für Meistersterne mit dauerhaften Vorteilen", "Baupläne für die letzte Ausbaustufe, seltene und legendäre Teile", "Bauweisen pro Fahrzeug: Sprinter, Bollwerk, Sammler", "Waren aus anderen Welten für spätere Kampagnen-Kapitel", "Begleiter steigt bis Stufe 20 auf und lernt Fähigkeiten", "Dashboard: Spielzeit-Auswertung"] },
@@ -12063,7 +12064,7 @@ if (typeof toast === "function") { const to0 = toast; toast = function (text, co
     ${row("slow", "Langsamer Modus", "Hinweise bleiben länger stehen, mehr Zeit beim Koop-Automaten")}
     ${row("speak", "Gewinne vorlesen", "Sagt Gewinne, Freispiele und Hinweise laut an. Für Bildschirmleser werden sie immer mitgeteilt.")}
     ${row("big", "Große Knöpfe", "Größere Tippflächen, besonders auf dem Handy")}
-    ${"vibrate" in navigator ? row("vib", "Vibration bei Gewinn", "Spürbare Rückmeldung ohne Ton (Android)") : ""}</div>`);
+</div>`);
   const sec = $("mmsA11y");
   const sync = () => { sec.querySelectorAll("[data-a11y]").forEach(b => { const on = !!A11Y[b.dataset.a11y]; b.setAttribute("aria-checked", String(on)); b.classList.toggle("on", on); }); sec.querySelectorAll("[data-ts]").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.ts === A11Y.text))); };
   sec.addEventListener("click", e => {
@@ -13396,6 +13397,41 @@ setInterval(ptTick, 60000);
   };
   run(); [300, 1000, 2500, 5000].forEach(t => setTimeout(run, t)); addEventListener("resize", run);
 })();
+
+const HAP = (() => {
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const can = "vibrate" in navigator || ios;
+  let lv = 1; try { const v = localStorage.getItem("welten-haptic"); if (v !== null) lv = +v; else if (typeof A11Y !== "undefined" && A11Y.vib) { lv = 2; } } catch (e) {}
+  try { if (typeof A11Y !== "undefined" && A11Y.vib) { A11Y.vib = false; a11ySave(); } } catch (e) {}
+  let sw = null, lastTap = 0, lastStop = 0;
+  if (ios) { const l = document.createElement("label"); l.setAttribute("aria-hidden", "true"); l.style.cssText = "position:fixed;left:-99px;top:0;width:1px;height:1px;opacity:0;pointer-events:none"; l.innerHTML = '<input type="checkbox" switch tabindex="-1">'; document.body.appendChild(l); sw = l; }
+  addEventListener("pointerdown", () => { lastTap = Date.now(); }, { capture: true, passive: true });
+  const P = { nope: [20, 40, 20], tap: [8], spin: [14], stop: [6], win: [22], big: [40, 40, 70], mega: [70, 40, 70, 40, 160], fs: [80, 60, 80, 60, 220], buy: [16], bigbuy: [30, 30, 60], rare: [60, 40, 60, 40, 60, 40, 240], medal: [40, 40, 90], sync: [20, 40, 20, 40, 60], cp: [40, 30, 90] };
+  function go(kind) {
+    if (!can || !lv || document.hidden) return; const p = P[kind]; if (!p) return;
+    if (kind === "stop") { if (Date.now() - lastStop < 45) return; lastStop = Date.now(); }
+    if ("vibrate" in navigator) { try { navigator.vibrate(lv >= 2 ? p.map((x, i) => i % 2 ? x : Math.round(x * 1.8)) : p); } catch (e) {} return; }
+    if (sw && Date.now() - lastTap < 900) { try { sw.click(); if (lv >= 2 && p.length > 1) setTimeout(() => { try { sw.click(); } catch (e) {} }, 90); } catch (e) {} }
+  }
+  return { go, can, ios, get lv() { return lv; }, set lv(v) { lv = v; try { localStorage.setItem("welten-haptic", String(v)); } catch (e) {} } };
+})();
+/* Anlässe */
+if (typeof track === "function") { const trH = track; track = function (type, amount) { const r = trH.apply(this, arguments);
+  try { if (type === "spins") HAP.go("spin"); else if (type === "haul" && amount > 0) { const x = amount / Math.max(1, bet()); HAP.go(x >= 25 ? "mega" : x >= 10 ? "big" : "win"); } else if (type === "fs" || type === "bonus") HAP.go("fs"); } catch (e) {} return r; }; }
+try { const st0 = sfx.stop; sfx.stop = function () { HAP.go("stop"); return st0.apply(this, arguments); }; } catch (e) {}
+if (typeof buyUpgrade === "function") { const buH = buyUpgrade; buyUpgrade = function (id) { const s0 = state.ship[id]; const r = buH.apply(this, arguments); try { if (state.ship[id] > s0) HAP.go(state.ship[id] % 3 === 0 ? "bigbuy" : "buy"); } catch (e) {} return r; }; }
+if (typeof rmShow === "function") { const rsH = rmShow; rmShow = function () { HAP.go("rare"); return rsH.apply(this, arguments); }; }
+if (typeof tsPop === "function") { const tpH = tsPop; tsPop = function () { HAP.go("medal"); return tpH.apply(this, arguments); }; }
+if (typeof coSynFx === "function") { const csH = coSynFx; coSynFx = function () { HAP.go("sync"); return csH.apply(this, arguments); }; }
+if (typeof coCheckpoint === "function") { const ccH = coCheckpoint; coCheckpoint = function () { HAP.go("cp"); return ccH.apply(this, arguments); }; }
+document.addEventListener("click", e => { if (e.target.closest(".chip, .mms-sw, .stepper button, #tbMoreBtn")) HAP.go("tap"); }, { capture: true });
+/* Einstellung */
+(function hapUi() {
+  const g = $("mmsGame"); if (!g || !HAP.can) return;
+  g.insertAdjacentHTML("beforeend", `<div class="mms-row"><span>Vibration<small>${HAP.ios ? "Kurzes Klick-Gefühl beim Drehen, Stoppen und Kaufen (iPhone mit iOS 18 oder neuer)." : "Spürbare Rückmeldung beim Drehen, bei Walzen-Stopps, Gewinnen, Freispielen und Käufen."}</small></span><div class="a11y-seg" role="group" aria-label="Vibration" id="hapSeg"><button type="button" data-hap="0">Aus</button><button type="button" data-hap="1">Leicht</button><button type="button" data-hap="2">Stark</button></div></div>`);
+  const seg = $("hapSeg"), sync = () => seg.querySelectorAll("[data-hap]").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.hap === HAP.lv)));
+  seg.addEventListener("click", e => { const b = e.target.closest("[data-hap]"); if (!b) return; HAP.lv = +b.dataset.hap; sync(); HAP.go(HAP.lv >= 2 ? "big" : "win"); }); sync();
+})();
 /*MENU-JS-END*/
 /* ---------- Start-Knopf: Feedback beim Drücken, Drehen, Gewinnen ---------- */
 (function () {
@@ -13407,9 +13443,9 @@ setInterval(ptTick, 60000);
     wrap.classList.remove("pressed"); void wrap.offsetWidth; wrap.classList.add("pressed");
     setTimeout(() => wrap.classList.remove("pressed"), 130);
     const r = document.createElement("i"); r.className = "sp-ripple"; wrap.appendChild(r); setTimeout(() => r.remove(), 650);
-    try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {}
+    try { HAP.go("tap"); } catch (e) {}
   };
-  const nope = () => { wrap.classList.remove("nope"); void wrap.offsetWidth; wrap.classList.add("nope"); try { if (navigator.vibrate) navigator.vibrate([20, 40, 20]); } catch (e) {} };
+  const nope = () => { wrap.classList.remove("nope"); void wrap.offsetWidth; wrap.classList.add("nope"); try { HAP.go("nope"); } catch (e) {} };
   wrap.addEventListener("pointerdown", () => { if (btn.disabled) { if (ready) nope(); } else kick(); });
   document.addEventListener("keydown", e => { if (e.code !== "Space" || e.repeat || (e.target.closest && e.target.closest("input, textarea, select"))) return; if (btn.disabled) { if (ready) nope(); } else kick(); });
   const celebrateBase = celebrateWin;

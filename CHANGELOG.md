@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.26.0 · Vibration · 11.11.2026
+- Handy-Vibration: Rückmeldung beim Drehen, Walzen-Stopp, Gewinnen, Freispielen, Käufen und mehr (Aus / Leicht / Stark)
+
 ## Beta 1.25.2 · Lange Restzeiten lesbar · 11.11.2026
 - Restzeiten über einen Tag werden als „4 T 17 Std“ angezeigt
 
