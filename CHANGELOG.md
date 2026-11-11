@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.26.3 · Vibration nur Android · 11.11.2026
+- Vibration-Einstellung nur noch auf Geräten, die es können (Android). Auf dem iPhone lässt Apple das für Webseiten nicht zu
+
 ## Beta 1.26.2 · iPhone-Vibration neu · 11.11.2026
 - iPhone: Klick-Gefühl über unsichtbare Schalter auf den Knöpfen (funktioniert auch mit iOS 26.5 und neuer)
 

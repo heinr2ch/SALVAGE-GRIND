@@ -5725,9 +5725,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.26.2";
+const GAME_VERSION = "1.26.3";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.26.3", date: "11.11.2026", title: "Vibration nur Android", items: ["Vibration-Einstellung nur noch auf Geräten, die es können (Android). Auf dem iPhone lässt Apple das für Webseiten nicht zu"] },
   { v: "1.26.2", date: "11.11.2026", title: "iPhone-Vibration neu", items: ["iPhone: Klick-Gefühl über unsichtbare Schalter auf den Knöpfen (funktioniert auch mit iOS 26.5 und neuer)"] },
   { v: "1.26.1", date: "11.11.2026", title: "iPhone-Vibration", items: ["iPhone: Klick-Gefühl beim Antippen jetzt nach Apples Regeln ausgelöst"] },
   { v: "1.26.0", date: "11.11.2026", title: "Vibration", items: ["Handy-Vibration: Rückmeldung beim Drehen, Walzen-Stopp, Gewinnen, Freispielen, Käufen und mehr (Aus / Leicht / Stark)"] },
@@ -13402,13 +13403,13 @@ setInterval(ptTick, 60000);
 
 const HAP = (() => {
   const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  const can = "vibrate" in navigator || ios;
+  const can = "vibrate" in navigator;   // iPhone: Apple lässt Webseiten seit iOS 26.5 keine Haptik mehr auslösen (am Gerät geprüft) → dort ausgeblendet
   let lv = 1; try { const v = localStorage.getItem("welten-haptic"); if (v !== null) lv = +v; else if (typeof A11Y !== "undefined" && A11Y.vib) { lv = 2; } } catch (e) {}
   try { if (typeof A11Y !== "undefined" && A11Y.vib) { A11Y.vib = false; a11ySave(); } } catch (e) {}
   let lastStop = 0;
   /* iPhone (seit iOS 26.5): Nur wenn der Finger selbst auf einem <label> mit Schalter landet, gibt es das Klick-Gefühl.
      Darum liegt über jedem wichtigen Knopf ein durchsichtiges Label mit verstecktem Schalter. Der Tipp geht ganz normal an den Knopf weiter. */
-  if (ios && !("vibrate" in navigator)) {
+  if (false) {
     const st = document.createElement("style"); st.textContent = `.hap-ov { position: absolute; inset: 0; z-index: 6; display: block; margin: 0; padding: 0; border-radius: inherit; background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
       .hap-ov input { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; visibility: hidden; pointer-events: none; }
       :disabled > .hap-ov, html.hap-off .hap-ov { display: none !important; }`; document.head.appendChild(st);
