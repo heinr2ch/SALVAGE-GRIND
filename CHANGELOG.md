@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.26.2 · iPhone-Vibration neu · 11.11.2026
+- iPhone: Klick-Gefühl über unsichtbare Schalter auf den Knöpfen (funktioniert auch mit iOS 26.5 und neuer)
+
 ## Beta 1.26.1 · iPhone-Vibration · 11.11.2026
 - iPhone: Klick-Gefühl beim Antippen jetzt nach Apples Regeln ausgelöst
 
