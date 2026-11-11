@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.25.1 · Handy-Leiste aufgeräumt · 11.11.2026
+- Handy: Knöpfe oben in einer Zeile mit Symbolen, Musik/Turbo/Einstellungen/Feedback unter „Mehr“
+
 ## Beta 1.25.0 · Meister, Baupläne, Bauweisen, Waren, Begleiter · 10.11.2026
 - Meister-Durchgänge: Welt neu bergen für Meistersterne mit dauerhaften Vorteilen
 - Baupläne für die letzte Ausbaustufe, seltene und legendäre Teile

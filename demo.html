@@ -5725,9 +5725,10 @@ function forceWin(results) {
 
 /* ---------- Version und Änderungsprotokoll ---------- */
 // Schema: Beta 0.MINOR.PATCH — neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. 1.0 bleibt der fertigen Version vorbehalten.
-const GAME_VERSION = "1.25.0";
+const GAME_VERSION = "1.25.1";
 const RELEASE_NAME = "Closed Beta 1.0";   // wird zu „Public Beta“, sobald das Spiel auf Steam ist
 const CHANGELOG = [
+  { v: "1.25.1", date: "11.11.2026", title: "Handy-Leiste aufgeräumt", items: ["Handy: Knöpfe oben in einer Zeile mit Symbolen, Musik/Turbo/Einstellungen/Feedback unter „Mehr“"] },
   { v: "1.25.0", date: "10.11.2026", title: "Meister, Baupläne, Bauweisen, Waren, Begleiter", items: ["Meister-Durchgänge: Welt neu bergen für Meistersterne mit dauerhaften Vorteilen", "Baupläne für die letzte Ausbaustufe, seltene und legendäre Teile", "Bauweisen pro Fahrzeug: Sprinter, Bollwerk, Sammler", "Waren aus anderen Welten für spätere Kampagnen-Kapitel", "Begleiter steigt bis Stufe 20 auf und lernt Fähigkeiten", "Dashboard: Spielzeit-Auswertung"] },
   { v: "1.24.0", date: "10.11.2026", title: "Kampagnen-Sterne und Saison-Pass", items: ["Kampagne: 3 Sterne pro Kapitel, Kapitel wiederholen, 5 Bonuskapitel und Sternenkrone", "Saison-Pass: 6 Wochen, 30 Stufen, Rangliste, Abzeichen und Saison-Kleidung", "Koop-Automat: Landschaft und Walzen-Darstellung korrigiert"] },
   { v: "1.23.0", date: "10.11.2026", title: "Koop-Automat aufgemotzt", items: ["Koop-Automat: Truck fährt durch eine Abendlandschaft, Walzen mit Spannung, Gewinnlinien und Münzflug", "Neu zu zweit: Synchron-Hebel (×2) und Strecke mit Checkpoints"] },
@@ -13341,6 +13342,59 @@ function ptTick() {
   if (tot % 5 === 0 && typeof OL !== "undefined" && OL.ready && OL.db && OL.uid) OL.db.ref(`players/${OL.uid}/pt`).set({ m: d.m, ms: d.ms }).catch(() => {});
 }
 setInterval(ptTick, 60000);
+
+(function tbCss() { const st = document.createElement("style"); st.textContent = `
+#tbMoreBtn, #tbMore { display: none; }
+@media (max-width: 760px) {
+  html body .topbar .toggles { display: flex !important; flex-wrap: nowrap !important; gap: 6px !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; justify-content: space-between; }
+  html body .topbar .toggles > .chip { flex: 1 1 0 !important; min-width: 0 !important; height: 40px; padding: 0 !important; margin: 0 !important; justify-content: center; align-items: center; gap: 0 !important; font-size: 0 !important; letter-spacing: 0 !important; border-radius: 13px !important; }
+  html body .topbar .toggles > .chip svg { width: 19px !important; height: 19px !important; margin: 0 !important; }
+  html body .topbar .toggles > .chip > :not(svg):not(.cr):not(b):not(i) { display: none !important; }
+  html body .topbar .toggles > .camp-chip { gap: 3px !important; } html body .topbar .toggles > .camp-chip svg.cr { width: 16px !important; height: 16px !important; }
+  html body .topbar .toggles > .camp-chip b { font-size: 10px !important; letter-spacing: 0 !important; }
+  html body .topbar .toggles > #olChip i, html body .topbar .toggles > #olChip .dot { margin: 0 !important; }
+  #olChip { order: 1; } #qsBtn { order: 2; } #sound { order: 3; } #campPill { order: 4; } #spPill { order: 5; } #menuBtn { order: 6; } #tbMoreBtn { order: 7; display: flex !important; }
+  #tbMore { position: absolute; z-index: 90; right: 0; top: calc(100% + 8px); width: min(300px, calc(100vw - 32px)); display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 10px; border-radius: 18px; background: rgba(10,14,28,.97); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 18px 40px rgba(0,0,0,.6); transform-origin: top right; animation: tbIn .18s ease-out; }
+  #tbMore[hidden] { display: none; }
+  #tbMore .chip { width: 100%; justify-content: flex-start; height: 44px; padding: 0 12px !important; font-size: .72rem !important; gap: 8px !important; border-radius: 12px !important; }
+  #tbMore .chip svg { width: 18px; height: 18px; flex: none; }
+  #tbMore #setBtn::after { content: "Einstellungen"; }
+  #tbMore .chip { letter-spacing: .03em !important; overflow: hidden; white-space: nowrap; }
+  #tbMore { background: #0b1020 !important; backdrop-filter: blur(10px); }
+  #tbMore .tb-h { grid-column: 1 / -1; font: 800 .62rem system-ui; letter-spacing: .14em; text-transform: uppercase; opacity: .6; padding: 2px 4px; }
+  #tbMoreBtn[aria-expanded="true"] { background: rgba(79,227,255,.18) !important; border-color: var(--cyan, #4fe3ff) !important; }
+  @keyframes tbIn { from { opacity: 0; transform: scale(.92) translateY(-6px); } }
+  /* Wochen-Ereignis kompakter */
+  #wkEv { padding: 7px 10px !important; gap: 10px !important; margin: 6px 0 8px !important; border-radius: 13px !important; }
+  #wkEv .wk-ic { width: 32px !important; height: 32px !important; border-radius: 10px !important; } #wkEv .wk-ic svg { width: 20px !important; height: 20px !important; }
+  #wkEv .wk-tx b { font-size: .84rem !important; } #wkEv .wk-fx span { font-size: .62rem !important; } #wkEv .wk-left { font-size: .62rem !important; } #wkEv .wk-left b { font-size: .76rem !important; }
+  /* Kopf etwas kompakter */
+  html body .topbar { gap: 10px !important; }
+}
+`; document.head.appendChild(st); })();
+(function tbLayout() {
+  const MOVE = ["music", "turbo", "setBtn", "fbChip"];
+  const small = () => matchMedia("(max-width: 760px)").matches;
+  const ph = {};
+  const run = () => {
+    const tg = document.querySelector(".topbar .toggles"); if (!tg) return;
+    tg.style.position = "relative";
+    let more = $("tbMoreBtn"), pop = $("tbMore");
+    if (!more) { tg.insertAdjacentHTML("beforeend", `<button type="button" class="chip" id="tbMoreBtn" aria-haspopup="true" aria-expanded="false" aria-label="Mehr: Musik, Turbo, Einstellungen, Feedback" title="Mehr"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3" cy="8" r="1.6" fill="currentColor"/><circle cx="8" cy="8" r="1.6" fill="currentColor"/><circle cx="13" cy="8" r="1.6" fill="currentColor"/></svg></button><div id="tbMore" hidden role="menu"><div class="tb-h">Mehr</div></div>`);
+      more = $("tbMoreBtn"); pop = $("tbMore");
+      const close = () => { pop.hidden = true; more.setAttribute("aria-expanded", "false"); };
+      more.addEventListener("click", e => { e.stopPropagation(); const op = pop.hidden; pop.hidden = !op; more.setAttribute("aria-expanded", String(op)); try { sfx.click(); } catch (x) {} });
+      pop.addEventListener("click", e => { if (e.target.closest("#setBtn, #fbChip")) setTimeout(close, 50); });
+      document.addEventListener("click", e => { if (!pop.hidden && !e.target.closest("#tbMore, #tbMoreBtn")) close(); });
+      addEventListener("keydown", e => { if (e.key === "Escape") close(); }); }
+    MOVE.forEach(id => { const el = $(id); if (!el) return;
+      if (!ph[id] && el.parentNode === tg) { ph[id] = document.createComment("tb:" + id); tg.insertBefore(ph[id], el); }
+      if (small()) { if (el.parentNode !== pop) pop.appendChild(el); }
+      else if (ph[id] && el.parentNode !== tg) ph[id].parentNode.insertBefore(el, ph[id]); });
+    if (!small()) { pop.hidden = true; more.setAttribute("aria-expanded", "false"); }
+  };
+  run(); [300, 1000, 2500, 5000].forEach(t => setTimeout(run, t)); addEventListener("resize", run);
+})();
 /*MENU-JS-END*/
 /* ---------- Start-Knopf: Feedback beim Drücken, Drehen, Gewinnen ---------- */
 (function () {
