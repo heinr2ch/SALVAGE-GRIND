@@ -2,6 +2,9 @@
 
 Versionsschema: **Beta 0.MINOR.PATCH**. Neue Features erhöhen MINOR, Korrekturen und kleine Verbesserungen PATCH. Version 1.0 ist der fertigen Fassung vorbehalten.
 
+## Beta 1.26.1 · iPhone-Vibration · 11.11.2026
+- iPhone: Klick-Gefühl beim Antippen jetzt nach Apples Regeln ausgelöst
+
 ## Beta 1.26.0 · Vibration · 11.11.2026
 - Handy-Vibration: Rückmeldung beim Drehen, Walzen-Stopp, Gewinnen, Freispielen, Käufen und mehr (Aus / Leicht / Stark)
 
